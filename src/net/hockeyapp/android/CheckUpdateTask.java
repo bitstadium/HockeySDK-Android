@@ -137,8 +137,9 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
   }
   
   private void showDialog(final JSONArray updateInfo) {
+    VersionCache.setVersionInfo(activity, updateInfo.toString());
+    
     if ((activity == null) || (activity.isFinishing())) {
-      VersionCache.setVersionInfo(activity, updateInfo.toString());
       return;
     }
     
@@ -150,7 +151,6 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
   
       builder.setNegativeButton(R.string.update_dialog_negative_button, new DialogInterface.OnClickListener() {
         public void onClick(DialogInterface dialog, int which) {
-          VersionCache.setVersionInfo(activity, updateInfo.toString());
         } 
       });
       
