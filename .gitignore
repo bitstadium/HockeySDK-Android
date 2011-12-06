@@ -1,0 +1,6 @@
+# Java
+bin
+
+# OS X Noise
+.DS_Store
+*.swp
