@@ -12,6 +12,8 @@
     <string name="download_failed_dialog_negative_button">Cancel</string>
     <string name="download_failed_dialog_positive_button">Retry</string>
 
+    <string name="update_mandatory_toast">Please install the latest version to continue to use this app.</string>
+        
     <string name="update_dialog_title">Update Available</string>
     <string name="update_dialog_message">Show information about the new update?</string>
     <string name="update_dialog_negative_button">Dismiss</string>

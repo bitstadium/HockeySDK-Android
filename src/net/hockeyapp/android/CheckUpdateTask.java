@@ -10,6 +10,7 @@ import java.net.URLConnection;
 import java.net.URLEncoder;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
@@ -19,11 +20,13 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.provider.Settings;
+import android.widget.Toast;
 
 public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
   private Activity activity = null;
   private String urlString = null;
   private String appIdentifier = null;
+  private Boolean mandatory = false;
   
   public CheckUpdateTask(Activity activity, String urlString) {
     this.appIdentifier = null;
@@ -56,6 +59,11 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
     try {
       int versionCode = activity.getPackageManager().getPackageInfo(activity.getPackageName(), PackageManager.GET_META_DATA).versionCode;
       
+      JSONArray json = new JSONArray(VersionCache.getVersionInfo(activity));
+      if (findNewVersion(json, versionCode)) {
+        return json;
+      }
+      
       URL url = new URL(getURLString("json"));
       URLConnection connection = url.openConnection();
       connection.addRequestProperty("User-Agent", "Hockey/Android");
@@ -66,12 +74,9 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
       String jsonString = convertStreamToString(inputStream);
       inputStream.close();
       
-      JSONArray json = new JSONArray(jsonString);
-      for (int index = 0; index < json.length(); index++) {
-        JSONObject entry = json.getJSONObject(index);
-        if (entry.getInt("version") > versionCode) {
-          return json;
-        }
+      json = new JSONArray(jsonString);
+      if (findNewVersion(json, versionCode)) {
+        return json;
       }
     }
     catch (Exception e) {
@@ -81,13 +86,40 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
     return null;
   }
 
+  private boolean findNewVersion(JSONArray json, int versionCode) {
+    try {
+      for (int index = 0; index < json.length(); index++) {
+        JSONObject entry = json.getJSONObject(index);
+        if (entry.getInt("version") > versionCode) {
+          if (entry.has("mandatory")) {
+            mandatory = entry.getBoolean("mandatory");
+          }
+          return true;
+        }
+      }
+      
+      return false;
+    }
+    catch (JSONException e) {
+      return false;
+    }
+  }
+
   @Override
   protected void onPostExecute(JSONArray updateInfo) {
     if (updateInfo != null) {
       showDialog(updateInfo);
     }
+    
+    cleanUp();
   }
   
+  private void cleanUp() {
+    activity = null;
+    urlString = null;
+    appIdentifier = null;
+  }
+
   private String getURLString(String format) {
     StringBuilder builder = new StringBuilder();
     builder.append(urlString);
@@ -106,28 +138,48 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
   
   private void showDialog(final JSONArray updateInfo) {
     if ((activity == null) || (activity.isFinishing())) {
+      VersionCache.setVersionInfo(activity, updateInfo.toString());
       return;
     }
     
     AlertDialog.Builder builder = new AlertDialog.Builder(activity);
     builder.setTitle(R.string.update_dialog_title);
-    builder.setMessage(R.string.update_dialog_message);
+    
+    if (!mandatory) {
+      builder.setMessage(R.string.update_dialog_message);
+  
+      builder.setNegativeButton(R.string.update_dialog_negative_button, new DialogInterface.OnClickListener() {
+        public void onClick(DialogInterface dialog, int which) {
+          VersionCache.setVersionInfo(activity, updateInfo.toString());
+        } 
+      });
+      
+      builder.setPositiveButton(R.string.update_dialog_positive_button, new DialogInterface.OnClickListener() {
+        public void onClick(DialogInterface dialog, int which) {
+          VersionCache.setVersionInfo(activity, "[]");
+          startUpdateIntent(updateInfo, false);
+        } 
+      });
 
-    builder.setNegativeButton(R.string.update_dialog_negative_button, new DialogInterface.OnClickListener() {
-      public void onClick(DialogInterface dialog, int which) {
-      } 
-    });
+      builder.create().show();
+    }
+    else {
+      startUpdateIntent(updateInfo, true);
+      
+      Toast.makeText(activity, R.string.update_mandatory_toast, Toast.LENGTH_LONG).show();
+    }
+  }
+  
+  private void startUpdateIntent(final JSONArray updateInfo, Boolean finish) {
+    Intent intent = new Intent();
+    intent.setClass(activity, UpdateActivity.class);
+    intent.putExtra("json", updateInfo.toString());
+    intent.putExtra("url", getURLString("apk"));
+    activity.startActivity(intent);
     
-    builder.setPositiveButton(R.string.update_dialog_positive_button, new DialogInterface.OnClickListener() {
-      public void onClick(DialogInterface dialog, int which) {
-        Intent intent = new Intent(activity, UpdateActivity.class);
-        intent.putExtra("json", updateInfo.toString());
-        intent.putExtra("url", getURLString("apk"));
-        activity.startActivity(intent);
-      } 
-    });
-    
-    builder.create().show();
+    if (finish) {
+      activity.finish();
+    }
   }
 
   private static String convertStreamToString(InputStream inputStream) {
