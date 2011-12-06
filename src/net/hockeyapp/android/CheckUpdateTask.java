@@ -110,8 +110,6 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
     if (updateInfo != null) {
       showDialog(updateInfo);
     }
-    
-    cleanUp();
   }
   
   private void cleanUp() {
@@ -151,6 +149,7 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
   
       builder.setNegativeButton(R.string.update_dialog_negative_button, new DialogInterface.OnClickListener() {
         public void onClick(DialogInterface dialog, int which) {
+          cleanUp();
         } 
       });
       
@@ -180,6 +179,8 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
     if (finish) {
       activity.finish();
     }
+    
+    cleanUp();
   }
 
   private static String convertStreamToString(InputStream inputStream) {
