@@ -9,7 +9,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.UUID;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
@@ -22,9 +21,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class UpdateActivity extends ListActivity {
@@ -38,7 +35,10 @@ public class UpdateActivity extends ListActivity {
 
     setTitle("Application Update");
     setContentView(R.layout.update_view);
-    moveViewBelowOrBesideHeader(this, android.R.id.list, R.id.header_view, 23);
+
+    ViewGroup headerView = (ViewGroup)findViewById(R.id.header_view); 
+    View view = (View)findViewById(android.R.id.list);
+    ViewHelper.moveViewBelowOrBesideHeader(this, view, headerView, 23, false);
 
     adapter = new UpdateInfoAdapter(this, getIntent().getStringExtra("json"));
     getListView().setDivider(null);
@@ -59,22 +59,6 @@ public class UpdateActivity extends ListActivity {
     
     TextView versionLabel = (TextView)findViewById(R.id.version_label);
     versionLabel.setText("Version " + adapter.getVersionString() + "\n" + adapter.getFileInfoString());
-  }
-
-  private static void moveViewBelowOrBesideHeader(Activity activity, int viewID, int headerID, float offset) {
-    ViewGroup headerView = (ViewGroup)activity.findViewById(headerID); 
-    View view = (View)activity.findViewById(viewID);
-    float density = activity.getResources().getDisplayMetrics().density; 
-    RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, activity.getWindowManager().getDefaultDisplay().getHeight() - headerView.getHeight() + (int)(offset * density));
-    if (((String)view.getTag()).equalsIgnoreCase("right")) {
-      layoutParams.addRule(RelativeLayout.RIGHT_OF, R.id.header_view);
-      layoutParams.setMargins(-(int)(offset * density), 0, 0, (int)(10 * density));
-    }
-    else {
-      layoutParams.addRule(RelativeLayout.BELOW, R.id.header_view);
-      layoutParams.setMargins(0, -(int)(offset * density), 0, (int)(10 * density));
-    }
-    view.setLayoutParams(layoutParams);
   }
 
   @Override

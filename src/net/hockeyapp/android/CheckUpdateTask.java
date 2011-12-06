@@ -15,6 +15,9 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.DialogFragment;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -156,7 +159,8 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
       builder.setPositiveButton(R.string.update_dialog_positive_button, new DialogInterface.OnClickListener() {
         public void onClick(DialogInterface dialog, int which) {
           VersionCache.setVersionInfo(activity, "[]");
-          startUpdateIntent(updateInfo, false);
+          //startUpdateIntent(updateInfo, false);
+          showUpdateFragment(updateInfo);
         } 
       });
 
@@ -183,6 +187,19 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
     cleanUp();
   }
 
+  void showUpdateFragment(final JSONArray updateInfo) {
+    FragmentTransaction fragmentTransation = activity.getFragmentManager().beginTransaction();
+    Fragment existingFragment = activity.getFragmentManager().findFragmentByTag("dialog");
+    if (existingFragment != null) {
+      fragmentTransation.remove(existingFragment);
+    }
+    fragmentTransation.addToBackStack(null);
+
+    // Create and show the dialog.
+    DialogFragment updateFragment = new UpdateFragment(updateInfo);
+    updateFragment.show(fragmentTransation, "dialog");
+  }
+  
   private static String convertStreamToString(InputStream inputStream) {
     BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream), 1024);
     StringBuilder stringBuilder = new StringBuilder();
