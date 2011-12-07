@@ -24,7 +24,7 @@ public class CrashManager {
   private static String identifier = null;
   private static String urlString = null;
 
-  public static void register(Context context, String urlString, String appIdentifier) {
+  public static void register(Context context, String urlString, String appIdentifier, boolean ignoreDefaultHandler) {
     CrashManager.urlString = urlString;
     CrashManager.identifier = appIdentifier;
 
@@ -35,18 +35,22 @@ public class CrashManager {
     }
 
     if (hasStackTraces()) {
-      showDialog(context);
+      showDialog(context, ignoreDefaultHandler);
     }
     else {
-      registerHandler();
+      registerHandler(context, ignoreDefaultHandler);
     }
+  }
+
+  public static void register(Context context, String url, String appIdentifier) {
+    register(context, url, null, false);
   }
 
   public static void register(Context context, String url) {
     register(context, url, null);
   }
 
-  private static void showDialog(final Context context) {
+  private static void showDialog(final Context context, final boolean ignoreDefaultHandler) {
     if (context == null) {
       return;
     }
@@ -58,7 +62,7 @@ public class CrashManager {
     builder.setNegativeButton(R.string.crash_dialog_negative_button, new DialogInterface.OnClickListener() {
       public void onClick(DialogInterface dialog, int which) {
         deleteStackTraces(context);
-        registerHandler();
+        registerHandler(context, ignoreDefaultHandler);
       } 
     });
 
@@ -68,7 +72,7 @@ public class CrashManager {
           @Override
           public void run() {
             submitStackTraces(context);
-            registerHandler();
+            registerHandler(context, ignoreDefaultHandler);
           }
         }.start();
       } 
@@ -77,7 +81,7 @@ public class CrashManager {
     builder.create().show();
   }
 
-  private static void registerHandler() {
+  private static void registerHandler(Context context, boolean ignoreDefaultHandler) {
     // Get current handler
     UncaughtExceptionHandler currentHandler = Thread.getDefaultUncaughtExceptionHandler();
     if (currentHandler != null) {
@@ -86,7 +90,7 @@ public class CrashManager {
 
     // Register if not already registered
     if (!(currentHandler instanceof ExceptionHandler)) {
-      Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(currentHandler));
+      Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(currentHandler, ignoreDefaultHandler));
     }
   }
 

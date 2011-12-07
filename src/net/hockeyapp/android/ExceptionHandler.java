@@ -43,13 +43,18 @@ import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.Date;
 import java.util.UUID;
 
+import android.app.Application;
 import android.util.Log;
 
 public class ExceptionHandler implements UncaughtExceptionHandler {
+  private Application application = null;
+  private boolean ignoreDefaultHandler = false;
   private UncaughtExceptionHandler defaultExceptionHandler;
 
-  public ExceptionHandler(UncaughtExceptionHandler defaultExceptionHandler) {
+  public ExceptionHandler(UncaughtExceptionHandler defaultExceptionHandler, boolean ignoreDefaultHandler) {
+    this.application = application;
     this.defaultExceptionHandler = defaultExceptionHandler;
+    this.ignoreDefaultHandler = ignoreDefaultHandler;
   }
 
   public void uncaughtException(Thread thread, Throwable exception) {
@@ -82,6 +87,12 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
       Log.e(Constants.TAG, "Error saving exception stacktrace!\n", another);
     }
 
-    defaultExceptionHandler.uncaughtException(thread, exception);
+    if (!ignoreDefaultHandler) {
+      defaultExceptionHandler.uncaughtException(thread, exception);
+    }
+    else {
+      android.os.Process.killProcess(android.os.Process.myPid());
+      System.exit(10);
+    }
   }
 }
