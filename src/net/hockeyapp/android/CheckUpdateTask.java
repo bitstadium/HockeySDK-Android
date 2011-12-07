@@ -159,8 +159,12 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
       builder.setPositiveButton(R.string.update_dialog_positive_button, new DialogInterface.OnClickListener() {
         public void onClick(DialogInterface dialog, int which) {
           VersionCache.setVersionInfo(activity, "[]");
-          //startUpdateIntent(updateInfo, false);
-          showUpdateFragment(updateInfo);
+          if ((UpdateManager.fragmentsSupported()) && (UpdateManager.runsOnTablet(activity))) {
+            showUpdateFragment(updateInfo);
+          }
+          else {
+            startUpdateIntent(updateInfo, false);
+          }
         } 
       });
 
@@ -187,17 +191,19 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
     cleanUp();
   }
 
-  void showUpdateFragment(final JSONArray updateInfo) {
-    FragmentTransaction fragmentTransation = activity.getFragmentManager().beginTransaction();
-    Fragment existingFragment = activity.getFragmentManager().findFragmentByTag("dialog");
+  private void showUpdateFragment(final JSONArray updateInfo) {
+    FragmentTransaction fragmentTransaction = activity.getFragmentManager().beginTransaction();
+    fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+    
+    Fragment existingFragment = activity.getFragmentManager().findFragmentByTag("hockey_update_dialog");
     if (existingFragment != null) {
-      fragmentTransation.remove(existingFragment);
+      fragmentTransaction.remove(existingFragment);
     }
-    fragmentTransation.addToBackStack(null);
+    fragmentTransaction.addToBackStack(null);
 
     // Create and show the dialog.
-    DialogFragment updateFragment = new UpdateFragment(updateInfo);
-    updateFragment.show(fragmentTransation, "dialog");
+    DialogFragment updateFragment = UpdateFragment.newInstance(updateInfo, getURLString("apk"));
+    updateFragment.show(fragmentTransaction, "hockey_update_dialog");
   }
   
   private static String convertStreamToString(InputStream inputStream) {
