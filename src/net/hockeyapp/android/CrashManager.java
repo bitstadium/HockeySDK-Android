@@ -128,6 +128,7 @@ public class CrashManager {
       for (int index = 0; index < list.length; index++) {
         try {
           Log.d(Constants.TAG, "Delete stacktrace " + list[index] + ".");
+          deleteStackTrace(context, list[index]);
           context.deleteFile(list[index]);
         } 
         catch (Exception e) {
@@ -137,6 +138,19 @@ public class CrashManager {
     }
   }
   
+  private static void deleteStackTrace(Context context, String filename) {
+    context.deleteFile(filename);
+    
+    String user = filename.replace(".stacktrace", ".user");
+    context.deleteFile(user);
+    
+    String contact = filename.replace(".stacktrace", ".contact");
+    context.deleteFile(contact);
+    
+    String description = filename.replace(".stacktrace", ".description");
+    context.deleteFile(description);
+  }
+
   public static void submitStackTraces(Context context, CrashManagerListener listener) {
     Log.d(Constants.TAG, "Looking for exceptions in: " + Constants.FILES_PATH);
     String[] list = searchForStackTraces();
@@ -173,12 +187,7 @@ public class CrashManager {
         } 
         finally {
           if (successful) {
-            try {
-              context.deleteFile(list[index]);
-            } 
-            catch (Exception e) {
-              e.printStackTrace();
-            }
+            deleteStackTrace(context, list[index]);
 
             if (listener != null) {
               listener.onCrashesSent();
