@@ -43,18 +43,17 @@ import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.Date;
 import java.util.UUID;
 
-import android.app.Application;
 import android.util.Log;
 
 public class ExceptionHandler implements UncaughtExceptionHandler {
-  private Application application = null;
   private boolean ignoreDefaultHandler = false;
+  private CrashManagerListener listener;
   private UncaughtExceptionHandler defaultExceptionHandler;
 
-  public ExceptionHandler(UncaughtExceptionHandler defaultExceptionHandler, boolean ignoreDefaultHandler) {
-    this.application = application;
+  public ExceptionHandler(UncaughtExceptionHandler defaultExceptionHandler, CrashManagerListener listener, boolean ignoreDefaultHandler) {
     this.defaultExceptionHandler = defaultExceptionHandler;
     this.ignoreDefaultHandler = ignoreDefaultHandler;
+    this.listener = listener;
   }
 
   public void uncaughtException(Thread thread, Throwable exception) {
@@ -82,6 +81,13 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
       write.write(result.toString());
       write.flush();
       write.close();
+      
+      if (listener != null) {
+        writeValueToFile(limitedString(listener.getUserID()), filename + ".user");
+        writeValueToFile(limitedString(listener.getContact()), filename + ".contact");
+        writeValueToFile(listener.getDescription(), filename + ".description");
+      }
+      
     } 
     catch (Exception another) {
       Log.e(Constants.TAG, "Error saving exception stacktrace!\n", another);
@@ -94,5 +100,26 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
       android.os.Process.killProcess(android.os.Process.myPid());
       System.exit(10);
     }
+  }
+
+  private void writeValueToFile(String value, String filename) {
+    try {
+      String path = Constants.FILES_PATH + "/" + filename;
+      if (value.trim().length() > 0) {
+        BufferedWriter writer = new BufferedWriter(new FileWriter(path));
+        writer.write(value);
+        writer.flush();
+        writer.close();
+      }
+    }
+    catch (Exception e) {
+    }
+  }
+
+  private static String limitedString(String string) {
+    if ((string != null) && (string.length() > 255)) {
+      string = string.substring(0, 255);
+    }
+    return string;
   }
 }

@@ -2,7 +2,9 @@ package net.hockeyapp.android;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.ArrayList;
@@ -21,10 +23,12 @@ import android.content.DialogInterface;
 import android.util.Log;
 
 public class CrashManager {
+  private static String BASE_URL = "https://rink.hockeyapp.net/";
+  
   private static String identifier = null;
   private static String urlString = null;
 
-  public static void register(Context context, String urlString, String appIdentifier, boolean ignoreDefaultHandler) {
+  public static void register(Context context, String urlString, String appIdentifier, CrashManagerListener listener) {
     CrashManager.urlString = urlString;
     CrashManager.identifier = appIdentifier;
 
@@ -34,23 +38,35 @@ public class CrashManager {
       CrashManager.identifier = Constants.APP_PACKAGE;
     }
 
+    
+    Boolean ignoreDefaultHandler = (listener != null) && (listener.ignoreDefaultHandler());
     if (hasStackTraces()) {
-      showDialog(context, ignoreDefaultHandler);
+      Boolean autoSend = false;
+      if (listener != null) {
+        autoSend = listener.onCrashesFound();
+      }
+      
+      if (!autoSend) {
+        showDialog(context, listener, ignoreDefaultHandler);
+      }
+      else {
+        sendCrashes(context, listener, ignoreDefaultHandler);
+      }
     }
     else {
-      registerHandler(context, ignoreDefaultHandler);
+      registerHandler(context, listener, ignoreDefaultHandler);
     }
   }
 
-  public static void register(Context context, String url, String appIdentifier) {
-    register(context, url, null, false);
+  public static void register(Context context, String appIdentifier, CrashManagerListener listener) {
+    register(context, BASE_URL, appIdentifier, listener);
   }
 
-  public static void register(Context context, String url) {
-    register(context, url, null);
+  public static void register(Context context, String appIdentifier) {
+    register(context, BASE_URL, appIdentifier, null);
   }
 
-  private static void showDialog(final Context context, final boolean ignoreDefaultHandler) {
+  private static void showDialog(final Context context, final CrashManagerListener listener, final boolean ignoreDefaultHandler) {
     if (context == null) {
       return;
     }
@@ -62,26 +78,30 @@ public class CrashManager {
     builder.setNegativeButton(R.string.crash_dialog_negative_button, new DialogInterface.OnClickListener() {
       public void onClick(DialogInterface dialog, int which) {
         deleteStackTraces(context);
-        registerHandler(context, ignoreDefaultHandler);
+        registerHandler(context, listener, ignoreDefaultHandler);
       } 
     });
 
     builder.setPositiveButton(R.string.crash_dialog_positive_button, new DialogInterface.OnClickListener() {
       public void onClick(DialogInterface dialog, int which) {
-        new Thread() {
-          @Override
-          public void run() {
-            submitStackTraces(context);
-            registerHandler(context, ignoreDefaultHandler);
-          }
-        }.start();
+        sendCrashes(context, listener, ignoreDefaultHandler);
       } 
     });
 
     builder.create().show();
   }
+  
+  private static void sendCrashes(final Context context, final CrashManagerListener listener, final boolean ignoreDefaultHandler) {
+    new Thread() {
+      @Override
+      public void run() {
+        submitStackTraces(context, listener);
+        registerHandler(context, listener, ignoreDefaultHandler);
+      }
+    }.start();
+  }
 
-  private static void registerHandler(Context context, boolean ignoreDefaultHandler) {
+  private static void registerHandler(Context context, CrashManagerListener listener, boolean ignoreDefaultHandler) {
     // Get current handler
     UncaughtExceptionHandler currentHandler = Thread.getDefaultUncaughtExceptionHandler();
     if (currentHandler != null) {
@@ -90,7 +110,7 @@ public class CrashManager {
 
     // Register if not already registered
     if (!(currentHandler instanceof ExceptionHandler)) {
-      Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(currentHandler, ignoreDefaultHandler));
+      Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(currentHandler, listener, ignoreDefaultHandler));
     }
   }
 
@@ -117,9 +137,10 @@ public class CrashManager {
     }
   }
   
-  public static void submitStackTraces(Context context) {
+  public static void submitStackTraces(Context context, CrashManagerListener listener) {
     Log.d(Constants.TAG, "Looking for exceptions in: " + Constants.FILES_PATH);
     String[] list = searchForStackTraces();
+    Boolean successful = false;
 
     if ((list != null) && (list.length > 0)) {
       Log.d(Constants.TAG, "Found " + list.length + " stacktrace(s).");
@@ -127,39 +148,80 @@ public class CrashManager {
       for (int index = 0; index < list.length; index++) {
         try {
           // Read contents of stack trace
-          StringBuilder contents = new StringBuilder();
-          BufferedReader reader = new BufferedReader(new InputStreamReader(context.openFileInput(list[index])));
-          String line = null;
-          while ((line = reader.readLine()) != null) {
-            contents.append(line);
-            contents.append(System.getProperty("line.separator"));
+          String filename = list[index];
+          String stacktrace = contentsOfFile(context, filename);
+          if (stacktrace.length() > 0) {
+            // Transmit stack trace with POST request
+            Log.d(Constants.TAG, "Transmitting crash data: \n" + stacktrace);
+            DefaultHttpClient httpClient = new DefaultHttpClient(); 
+            HttpPost httpPost = new HttpPost(getURLString());
+            
+            List <NameValuePair> parameters = new ArrayList <NameValuePair>(); 
+            parameters.add(new BasicNameValuePair("raw", stacktrace));
+            parameters.add(new BasicNameValuePair("userID", contentsOfFile(context, filename.replace(".stacktrace", ".user"))));
+            parameters.add(new BasicNameValuePair("contact", contentsOfFile(context, filename.replace(".stacktrace", ".contact"))));
+            parameters.add(new BasicNameValuePair("description", contentsOfFile(context, filename.replace(".stacktrace", ".description"))));
+            
+            httpPost.setEntity(new UrlEncodedFormEntity(parameters, HTTP.UTF_8));
+            
+            httpClient.execute(httpPost);   
+            successful = true;
           }
-          reader.close();
-          String stacktrace = contents.toString();
-
-          // Transmit stack trace with POST request
-          Log.d(Constants.TAG, "Transmitting crash data: \n" + stacktrace);
-          DefaultHttpClient httpClient = new DefaultHttpClient(); 
-          HttpPost httpPost = new HttpPost(getURLString());
-          List <NameValuePair> nvps = new ArrayList <NameValuePair>(); 
-          nvps.add(new BasicNameValuePair("raw", stacktrace));
-          httpPost.setEntity(new UrlEncodedFormEntity(nvps, HTTP.UTF_8)); 
-          httpClient.execute(httpPost);                                   
         }
         catch (Exception e) {
           e.printStackTrace();
         } 
         finally {
-          try {
-            context.deleteFile(list[index]);
-          } 
-          catch (Exception e) {
-            e.printStackTrace();
+          if (successful) {
+            try {
+              context.deleteFile(list[index]);
+            } 
+            catch (Exception e) {
+              e.printStackTrace();
+            }
+
+            if (listener != null) {
+              listener.onCrashesSent();
+            }
+          }
+          else {
+            if (listener != null) {
+              listener.onCrashesNotSent();
+            }
           }
         }
       }
     }
   } 
+
+  private static String contentsOfFile(Context context, String filename) {
+    StringBuilder contents = new StringBuilder();
+    BufferedReader reader = null;
+    try {
+      reader = new BufferedReader(new InputStreamReader(context.openFileInput(filename)));
+      String line = null;
+      while ((line = reader.readLine()) != null) {
+        contents.append(line);
+        contents.append(System.getProperty("line.separator"));
+      }
+    }
+    catch (FileNotFoundException e) {
+    }
+    catch (IOException e) {
+      e.printStackTrace();
+    }
+    finally {
+      if (reader != null) {
+        try { 
+          reader.close(); 
+        } 
+        catch (IOException ignored) { 
+        }
+      }
+    }
+    
+    return contents.toString();
+  }
 
   public static boolean hasStackTraces() {
     return (searchForStackTraces().length > 0);
