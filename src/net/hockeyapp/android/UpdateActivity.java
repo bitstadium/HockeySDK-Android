@@ -1,13 +1,15 @@
 package net.hockeyapp.android;
 
 import android.app.ListActivity;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class UpdateActivity extends ListActivity {
+public class UpdateActivity extends ListActivity implements UpdateInfoListener {
   public static int iconDrawableId = -1;
 
   private DownloadFileTask downloadTask;
@@ -23,7 +25,7 @@ public class UpdateActivity extends ListActivity {
     View view = (View)findViewById(android.R.id.list);
     ViewHelper.moveViewBelowOrBesideHeader(this, view, headerView, 23, false);
 
-    adapter = new UpdateInfoAdapter(this, getIntent().getStringExtra("json"));
+    adapter = new UpdateInfoAdapter(this, getIntent().getStringExtra("json"), this);
     getListView().setDivider(null);
     setListAdapter(adapter);
     configureView();
@@ -34,7 +36,7 @@ public class UpdateActivity extends ListActivity {
     }
   }
   
-  private void configureView() {
+  protected void configureView() {
     if (iconDrawableId != -1) {
       ImageView iconView = (ImageView)findViewById(R.id.icon_view);
       iconView.setImageDrawable(getResources().getDrawable(iconDrawableId));
@@ -58,7 +60,7 @@ public class UpdateActivity extends ListActivity {
   
   private void startDownloadTask() {
     final String url = getIntent().getStringExtra("url");
-    downloadTask = new DownloadFileTask(this, url, new DownloadFileNotifier() {
+    downloadTask = new DownloadFileTask(this, url, new DownloadFileListener() {
       @Override
       public void downloadFailed(DownloadFileTask task, Boolean userWantsRetry) {
         startDownloadTask();
@@ -66,4 +68,16 @@ public class UpdateActivity extends ListActivity {
     });
     downloadTask.execute();
   }
-}
+  
+  public int getCurrentVersionCode() {
+    int currentVersionCode = -1;
+    
+    try {
+      currentVersionCode = getPackageManager().getPackageInfo(this.getPackageName(), PackageManager.GET_META_DATA).versionCode;
+    }
+    catch (NameNotFoundException e) {
+    }
+    
+    return currentVersionCode;
+  }
+ }

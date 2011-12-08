@@ -20,13 +20,13 @@ import android.os.Environment;
 
 public class DownloadFileTask extends AsyncTask<String, Integer, Boolean>{
   private Context context;
-  private DownloadFileNotifier notifier;
+  private DownloadFileListener notifier;
   private String urlString;
   private String filename;
   private String filePath;
   private ProgressDialog progressDialog;
 
-  public DownloadFileTask(Context context, String urlString, DownloadFileNotifier notifier) {
+  public DownloadFileTask(Context context, String urlString, DownloadFileListener notifier) {
     this.context = context;
     this.urlString = urlString;
     this.filename = UUID.randomUUID() + ".apk";

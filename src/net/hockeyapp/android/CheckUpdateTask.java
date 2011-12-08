@@ -21,14 +21,16 @@ import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.AsyncTask;
 import android.provider.Settings;
 import android.widget.Toast;
 
 public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
+  protected String urlString = null;
+  protected String appIdentifier = null;
+  
   private Activity activity = null;
-  private String urlString = null;
-  private String appIdentifier = null;
   private Boolean mandatory = false;
   
   public CheckUpdateTask(Activity activity, String urlString) {
@@ -56,11 +58,20 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
   public void detach() {
     activity = null;
   }
+
+  protected int getVersionCode() {
+    try {
+      return activity.getPackageManager().getPackageInfo(activity.getPackageName(), PackageManager.GET_META_DATA).versionCode;
+    }
+    catch (NameNotFoundException e) {
+      return 0;
+    }
+  }
   
   @Override
   protected JSONArray doInBackground(String... args) {
     try {
-      int versionCode = activity.getPackageManager().getPackageInfo(activity.getPackageName(), PackageManager.GET_META_DATA).versionCode;
+      int versionCode = getVersionCode();
       
       JSONArray json = new JSONArray(VersionCache.getVersionInfo(activity));
       if (findNewVersion(json, versionCode)) {

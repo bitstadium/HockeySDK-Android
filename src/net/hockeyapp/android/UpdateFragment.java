@@ -5,6 +5,8 @@ import org.json.JSONException;
 
 import android.app.Activity;
 import android.app.DialogFragment;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +17,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class UpdateFragment extends DialogFragment implements OnClickListener {
+public class UpdateFragment extends DialogFragment implements OnClickListener, UpdateInfoListener {
   private DownloadFileTask downloadTask;
   private JSONArray versionInfo;
   private String urlString;
@@ -55,7 +57,7 @@ public class UpdateFragment extends DialogFragment implements OnClickListener {
     ListView listView = (ListView)view.findViewById(R.id.list_view);
     ViewHelper.moveViewBelowOrBesideHeader(getActivity(), listView, headerView, 23, true);
 
-    adapter = new UpdateInfoAdapter(this.getActivity(), versionInfo.toString());
+    adapter = new UpdateInfoAdapter(this.getActivity(), versionInfo.toString(), this);
     listView.setDivider(null);
     listView.setAdapter(adapter);
 
@@ -80,7 +82,7 @@ public class UpdateFragment extends DialogFragment implements OnClickListener {
   }
     
   private void startDownloadTask(final Activity activity) {
-    downloadTask = new DownloadFileTask(activity, urlString, new DownloadFileNotifier() {
+    downloadTask = new DownloadFileTask(activity, urlString, new DownloadFileListener() {
       @Override
       public void downloadFailed(DownloadFileTask task, Boolean userWantsRetry) {
         if (userWantsRetry) {
@@ -89,5 +91,19 @@ public class UpdateFragment extends DialogFragment implements OnClickListener {
       }
     });
     downloadTask.execute();
+  }
+
+  public int getCurrentVersionCode() {
+    int currentVersionCode = -1;
+    
+    try {
+      currentVersionCode = getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), PackageManager.GET_META_DATA).versionCode;
+    }
+    catch (NameNotFoundException e) {
+    }
+    catch (NullPointerException e) {
+    }
+    
+    return currentVersionCode;
   }
 }
