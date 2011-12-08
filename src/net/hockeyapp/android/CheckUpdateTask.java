@@ -32,6 +32,7 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
   
   private Activity activity = null;
   private Boolean mandatory = false;
+  private UpdateManagerListener listener;
   
   public CheckUpdateTask(Activity activity, String urlString) {
     this.appIdentifier = null;
@@ -49,6 +50,15 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
     Constants.loadFromContext(activity);
   }
   
+  public CheckUpdateTask(Activity activity, String urlString, String appIdentifier, UpdateManagerListener listener) {
+    this.appIdentifier = appIdentifier;
+    this.activity = activity;
+    this.urlString = urlString;
+    this.listener = listener;
+
+    Constants.loadFromContext(activity);
+  }
+
   public void attach(Activity activity) {
     this.activity = activity;
 
@@ -189,8 +199,13 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
   }
   
   private void startUpdateIntent(final JSONArray updateInfo, Boolean finish) {
+    Class<UpdateActivity> activityClass = UpdateActivity.class;
+    if (listener != null) {
+      activityClass = listener.getUpdateActivityClass();
+    }
+    
     Intent intent = new Intent();
-    intent.setClass(activity, UpdateActivity.class);
+    intent.setClass(activity, activityClass);
     intent.putExtra("json", updateInfo.toString());
     intent.putExtra("url", getURLString("apk"));
     activity.startActivity(intent);

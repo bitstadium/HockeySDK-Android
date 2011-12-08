@@ -6,20 +6,17 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 public class UpdateActivity extends ListActivity implements UpdateInfoListener {
-  public static int iconDrawableId = -1;
-
   private DownloadFileTask downloadTask;
   private UpdateInfoAdapter adapter;
   
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
-    setTitle("Application Update");
-    setContentView(R.layout.update_view);
+    setTitle("App Update");
+    setContentView(getLayout());
 
     ViewGroup headerView = (ViewGroup)findViewById(R.id.header_view); 
     View view = (View)findViewById(android.R.id.list);
@@ -37,11 +34,6 @@ public class UpdateActivity extends ListActivity implements UpdateInfoListener {
   }
   
   protected void configureView() {
-    if (iconDrawableId != -1) {
-      ImageView iconView = (ImageView)findViewById(R.id.icon_view);
-      iconView.setImageDrawable(getResources().getDrawable(iconDrawableId));
-    }
-    
     TextView versionLabel = (TextView)findViewById(R.id.version_label);
     versionLabel.setText("Version " + adapter.getVersionString() + "\n" + adapter.getFileInfoString());
   }
@@ -80,4 +72,8 @@ public class UpdateActivity extends ListActivity implements UpdateInfoListener {
     
     return currentVersionCode;
   }
- }
+  
+  public int getLayout() {
+    return R.layout.update_view;
+  }
+}

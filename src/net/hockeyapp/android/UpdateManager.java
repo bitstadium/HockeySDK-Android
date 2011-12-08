@@ -8,20 +8,22 @@ import android.os.AsyncTask.Status;
 public class UpdateManager {
   private static CheckUpdateTask updateTask = null;
   
-  public static void register(Activity activity, String urlString, String appIdentifier, int iconDrawableId) {
-    UpdateActivity.iconDrawableId = iconDrawableId;
-    
+  public static void register(Activity activity, String appIdentifier, UpdateManagerListener listener) {
     if ((fragmentsSupported()) && (dialogShown(activity))) {
       return;
     }
     
     if ((updateTask == null) || (updateTask.getStatus() == Status.FINISHED)) {
-      updateTask = new CheckUpdateTask(activity, urlString, appIdentifier);
+      updateTask = new CheckUpdateTask(activity, "https://rink.hockeyapp.net/", appIdentifier, listener);
       updateTask.execute();
     }
     else {
       updateTask.attach(activity);
     }
+  }
+
+  public static void register(Activity activity, String appIdentifier) {
+    register(activity, appIdentifier, null);
   }
 
   private static boolean dialogShown(Activity activity) {

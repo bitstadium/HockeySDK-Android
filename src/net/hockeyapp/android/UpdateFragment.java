@@ -13,7 +13,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -60,11 +59,6 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
     adapter = new UpdateInfoAdapter(this.getActivity(), versionInfo.toString(), this);
     listView.setDivider(null);
     listView.setAdapter(adapter);
-
-    if (UpdateActivity.iconDrawableId != -1) {
-      ImageView iconView = (ImageView)view.findViewById(R.id.icon_view);
-      iconView.setImageDrawable(getResources().getDrawable(UpdateActivity.iconDrawableId));
-    }
     
     TextView versionLabel = (TextView)view.findViewById(R.id.version_label);
     versionLabel.setText("Version " + adapter.getVersionString() + "\n" + adapter.getFileInfoString());
