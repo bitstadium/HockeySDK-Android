@@ -162,7 +162,7 @@ public class UpdateInfoAdapter extends BaseAdapter {
     
     TextView textView = (TextView)row.findViewById(android.R.id.text1);
     float scale = activity.getResources().getDisplayMetrics().density;
-    boolean leftPadding = (parent.getTag().equals("right"));
+    boolean leftPadding = false; //(parent.getTag().equals("right"));
     boolean topPadding = (position == 0);
     textView.setPadding((int)(20 * scale) * (leftPadding ? 2 : 1), (int)(20 * scale) * (!leftPadding && topPadding ? 1 : 0), (int)(20 * scale), 0);
     textView.setText(item);
@@ -183,7 +183,7 @@ public class UpdateInfoAdapter extends BaseAdapter {
       webView.setId(1337);
       RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.FILL_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT); 
       float scale = activity.getResources().getDisplayMetrics().density;
-      boolean leftPadding = (parent.getTag().equals("right"));
+      boolean leftPadding = false; //(parent.getTag().equals("right"));
       params.setMargins((int)(20 * scale) * (leftPadding ? 2 : 1), (int)(0 * scale), (int)(20 * scale), 0);
       webView.setLayoutParams(params);
       layout.addView(webView);

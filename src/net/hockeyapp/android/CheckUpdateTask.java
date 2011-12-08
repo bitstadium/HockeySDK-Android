@@ -84,7 +84,7 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
       int versionCode = getVersionCode();
       
       JSONArray json = new JSONArray(VersionCache.getVersionInfo(activity));
-      if (findNewVersion(json, versionCode)) {
+      if ((getCachingEnabled()) && (findNewVersion(json, versionCode))) {
         return json;
       }
       
@@ -142,7 +142,7 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
     appIdentifier = null;
   }
 
-  private String getURLString(String format) {
+  protected String getURLString(String format) {
     StringBuilder builder = new StringBuilder();
     builder.append(urlString);
     builder.append("api/2/apps/");
@@ -159,7 +159,9 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
   }
   
   private void showDialog(final JSONArray updateInfo) {
-    VersionCache.setVersionInfo(activity, updateInfo.toString());
+    if (getCachingEnabled()) {
+      VersionCache.setVersionInfo(activity, updateInfo.toString());
+    }
     
     if ((activity == null) || (activity.isFinishing())) {
       return;
@@ -179,7 +181,10 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
       
       builder.setPositiveButton(R.string.update_dialog_positive_button, new DialogInterface.OnClickListener() {
         public void onClick(DialogInterface dialog, int which) {
-          VersionCache.setVersionInfo(activity, "[]");
+          if (getCachingEnabled()) {
+            VersionCache.setVersionInfo(activity, "[]");
+          }
+          
           if ((UpdateManager.fragmentsSupported()) && (UpdateManager.runsOnTablet(activity))) {
             showUpdateFragment(updateInfo);
           }
@@ -254,5 +259,9 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
       }
     }
     return stringBuilder.toString();
+  }
+
+  protected boolean getCachingEnabled() {
+    return true;
   }
 }

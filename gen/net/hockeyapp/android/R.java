@@ -15,19 +15,15 @@ public final class R {
         public static int button_update_normal=0x7f020001;
         public static int button_update_pressed=0x7f020002;
         public static int button_update_selected=0x7f020003;
-        public static int header_update_landscape=0x7f020004;
-        public static int header_update_portrait=0x7f020005;
+        public static int shadow_top=0x7f020004;
     }
     public static final class id {
-        public static int header_image_view=0x7f050002;
-        public static int header_start=0x7f050007;
-        public static int header_view=0x7f050001;
-        public static int icon_view=0x7f050003;
-        public static int list_view=0x7f050000;
-        public static int name_label=0x7f050005;
-        public static int update_button=0x7f050004;
-        public static int version_label=0x7f050006;
-        public static int web_view=0x7f050008;
+        public static int header_view=0x7f050000;
+        public static int list_view=0x7f050004;
+        public static int name_label=0x7f050002;
+        public static int update_button=0x7f050001;
+        public static int version_label=0x7f050003;
+        public static int web_view=0x7f050005;
     }
     public static final class layout {
         public static int update_fragment=0x7f030000;

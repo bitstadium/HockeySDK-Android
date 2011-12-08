@@ -5,7 +5,6 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
 
 public class UpdateActivity extends ListActivity implements UpdateInfoListener {
@@ -17,10 +16,6 @@ public class UpdateActivity extends ListActivity implements UpdateInfoListener {
 
     setTitle("App Update");
     setContentView(getLayout());
-
-    ViewGroup headerView = (ViewGroup)findViewById(R.id.header_view); 
-    View view = (View)findViewById(android.R.id.list);
-    ViewHelper.moveViewBelowOrBesideHeader(this, view, headerView, 23, false);
 
     adapter = new UpdateInfoAdapter(this, getIntent().getStringExtra("json"), this);
     getListView().setDivider(null);

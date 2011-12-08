@@ -6,34 +6,14 @@
     android:layout_height="wrap_content"
     >
 
-    <ListView
-        android:id="@+id/list_view"
-        android:background="#fff"
-        android:cacheColorHint="#fff"
-        android:fastScrollEnabled="false"
-        android:layout_marginTop="-25dip"
-        android:layout_height="400dip"
-        android:layout_width="fill_parent"
-        android:listSelector="#ffffffff"
-        android:scrollingCache="false"
-        android:scrollbars="none"
-        android:tag="bottom"
-    />
-
     <RelativeLayout 
         android:id="@+id/header_view"
+        android:background="#e6ecef"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:paddingBottom="20dip"
     >
 
-        <ImageView  
-            android:id="@+id/header_image_view"
-            android:layout_height="wrap_content" 
-            android:layout_width="fill_parent" 
-            android:scaleType="fitXY"
-            android:src="@drawable/header_update_portrait"
-            />
-            
         <ImageButton
             android:id="@+id/update_button"
             android:background="@drawable/button_update"
@@ -54,11 +34,12 @@
             android:layout_marginRight="20dip" 
             android:layout_marginTop="20dip" 
             android:layout_width="wrap_content"
-            android:shadowColor="#000"
+            android:shadowColor="#fff"
             android:shadowDy="1"
+            android:shadowRadius="1.0"
             android:singleLine="true"
             android:text="@string/app_name" 
-            android:textColor="#fff"
+            android:textColor="#000"
             android:textStyle="bold"
             android:textSize="20sp"
             />
@@ -74,13 +55,36 @@
             android:layout_width="wrap_content"
             android:lines="2"
             android:lineSpacingExtra="4sp"
-            android:shadowColor="#000"
+            android:shadowColor="#fff"
             android:shadowDy="1"
-            android:textColor="#fff"
+            android:shadowRadius="1.0"
+            android:textColor="#000"
             android:textStyle="bold"
             android:textSize="16sp"
             />
 
     </RelativeLayout>
+
+    <ListView
+        android:id="@+id/list_view"
+        android:background="#fff"
+        android:cacheColorHint="#fff"
+        android:fastScrollEnabled="false"
+        android:layout_below="@id/header_view"
+        android:layout_marginTop="0dip"
+        android:layout_height="400dip"
+        android:layout_width="fill_parent"
+        android:listSelector="#ffffffff"
+        android:scrollingCache="false"
+        android:scrollbars="none"
+    />
+
+    <ImageView
+        android:layout_below="@id/header_view"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent" 
+        android:scaleType="fitXY"
+        android:src="@drawable/shadow_top"
+        />
         
 </RelativeLayout>

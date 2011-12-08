@@ -52,11 +52,9 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.update_fragment, container, false);
 
-    ViewGroup headerView = (ViewGroup)view.findViewById(R.id.header_view); 
-    ListView listView = (ListView)view.findViewById(R.id.list_view);
-    ViewHelper.moveViewBelowOrBesideHeader(getActivity(), listView, headerView, 23, true);
-
     adapter = new UpdateInfoAdapter(this.getActivity(), versionInfo.toString(), this);
+
+    ListView listView = (ListView)view.findViewById(R.id.list_view);
     listView.setDivider(null);
     listView.setAdapter(adapter);
     
