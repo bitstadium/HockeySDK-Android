@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
-public class UpdateActivity extends ListActivity implements UpdateInfoListener {
+public class UpdateActivity extends ListActivity implements UpdateActivityInterface, UpdateInfoListener {
   private DownloadFileTask downloadTask;
   private UpdateInfoAdapter adapter;
   

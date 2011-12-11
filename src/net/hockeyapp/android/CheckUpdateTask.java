@@ -204,7 +204,7 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
   }
   
   private void startUpdateIntent(final JSONArray updateInfo, Boolean finish) {
-    Class<UpdateActivity> activityClass = UpdateActivity.class;
+    Class<?> activityClass = UpdateActivity.class;
     if (listener != null) {
       activityClass = listener.getUpdateActivityClass();
     }
