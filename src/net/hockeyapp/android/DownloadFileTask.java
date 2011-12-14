@@ -106,23 +106,28 @@ public class DownloadFileTask extends AsyncTask<String, Integer, Boolean>{
        context.startActivity(intent);
      }
      else {
-       AlertDialog.Builder builder = new AlertDialog.Builder(context);
-       builder.setTitle(R.string.download_failed_dialog_title);
-       builder.setMessage(R.string.download_failed_dialog_message);
-
-       builder.setNegativeButton(R.string.download_failed_dialog_negative_button, new DialogInterface.OnClickListener() {
-         public void onClick(DialogInterface dialog, int which) {
-           notifier.downloadFailed(DownloadFileTask.this, false);
-         } 
-       });
-
-       builder.setPositiveButton(R.string.download_failed_dialog_positive_button, new DialogInterface.OnClickListener() {
-         public void onClick(DialogInterface dialog, int which) {
-           notifier.downloadFailed(DownloadFileTask.this, true);
-         } 
-       });
-       
-       builder.create().show();
+       try {
+         AlertDialog.Builder builder = new AlertDialog.Builder(context);
+         builder.setTitle(R.string.download_failed_dialog_title);
+         builder.setMessage(R.string.download_failed_dialog_message);
+  
+         builder.setNegativeButton(R.string.download_failed_dialog_negative_button, new DialogInterface.OnClickListener() {
+           public void onClick(DialogInterface dialog, int which) {
+             notifier.downloadFailed(DownloadFileTask.this, false);
+           } 
+         });
+  
+         builder.setPositiveButton(R.string.download_failed_dialog_positive_button, new DialogInterface.OnClickListener() {
+           public void onClick(DialogInterface dialog, int which) {
+             notifier.downloadFailed(DownloadFileTask.this, true);
+           } 
+         });
+         
+         builder.create().show();
+       }
+       catch (Exception e) {
+         // Ignore all exceptions
+       }
      }
    }
 
