@@ -100,6 +100,8 @@ public class DownloadFileTask extends AsyncTask<String, Integer, Boolean>{
      }
      
      if (result) {
+       notifier.downloadSuccessful(this);
+       
        Intent intent = new Intent(Intent.ACTION_VIEW);
        intent.setDataAndType(Uri.fromFile(new File(this.filePath, this.filename)), "application/vnd.android.package-archive");
        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
