@@ -61,7 +61,6 @@ public class UpdateInfoAdapter extends BaseAdapter {
 
   private void sortVersions() {
     Collections.sort(sortedVersions, new Comparator<JSONObject>() {
-      @Override
       public int compare(JSONObject object1, JSONObject object2) {
         try {
           if (object1.getInt("version") > object2.getInt("version")) {

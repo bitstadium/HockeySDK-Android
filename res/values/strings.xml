@@ -2,6 +2,9 @@
 <resources>
     <string name="app_name">Hockey</string>
     
+    <string name="accessibility_update_button">Update App</string>
+    <string name="accessibility_style_view"></string>
+    
     <string name="crash_dialog_title">Crash Data</string>
     <string name="crash_dialog_message">The app found information about previous crashes. Would you like to send this data to the developer?</string>
     <string name="crash_dialog_negative_button">Dismiss</string>

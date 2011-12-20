@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <issue id="Overdraw">
+        <ignore path="res/layout-land/update_view.xml" />
+        <ignore path="res/layout/update_fragment.xml" />
+        <ignore path="res/layout/update_view.xml" />
+    </issue>
+</lint>

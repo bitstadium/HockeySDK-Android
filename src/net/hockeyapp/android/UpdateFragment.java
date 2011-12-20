@@ -50,7 +50,7 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
   
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    View view = inflater.inflate(R.layout.update_fragment, container, false);
+    View view = inflater.inflate(getLayout(), container, false);
 
     adapter = new UpdateInfoAdapter(this.getActivity(), versionInfo.toString(), this);
 
@@ -67,7 +67,6 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
     return view;
   }
 
-  @Override
   public void onClick(View v) {
     startDownloadTask(this.getActivity());
     dismiss();
@@ -75,16 +74,18 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
     
   private void startDownloadTask(final Activity activity) {
     downloadTask = new DownloadFileTask(activity, urlString, new DownloadFileListener() {
-      @Override
       public void downloadFailed(DownloadFileTask task, Boolean userWantsRetry) {
         if (userWantsRetry) {
           startDownloadTask(activity);
         }
       }
+
+      public void downloadSuccessful(DownloadFileTask task) {
+      }
     });
     downloadTask.execute();
   }
-
+  
   public int getCurrentVersionCode() {
     int currentVersionCode = -1;
     
@@ -97,5 +98,9 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
     }
     
     return currentVersionCode;
+  }
+  
+  public int getLayout() {
+    return R.layout.update_fragment;
   }
 }

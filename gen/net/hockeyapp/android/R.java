@@ -23,27 +23,27 @@ public final class R {
         public static int name_label=0x7f050002;
         public static int update_button=0x7f050001;
         public static int version_label=0x7f050003;
-        public static int web_view=0x7f050005;
     }
     public static final class layout {
         public static int update_fragment=0x7f030000;
         public static int update_view=0x7f030001;
-        public static int web_view_list_item=0x7f030002;
     }
     public static final class string {
+        public static int accessibility_style_view=0x7f040002;
+        public static int accessibility_update_button=0x7f040001;
         public static int app_name=0x7f040000;
-        public static int crash_dialog_message=0x7f040002;
-        public static int crash_dialog_negative_button=0x7f040003;
-        public static int crash_dialog_positive_button=0x7f040004;
-        public static int crash_dialog_title=0x7f040001;
-        public static int download_failed_dialog_message=0x7f040006;
-        public static int download_failed_dialog_negative_button=0x7f040007;
-        public static int download_failed_dialog_positive_button=0x7f040008;
-        public static int download_failed_dialog_title=0x7f040005;
-        public static int update_dialog_message=0x7f04000b;
-        public static int update_dialog_negative_button=0x7f04000c;
-        public static int update_dialog_positive_button=0x7f04000d;
-        public static int update_dialog_title=0x7f04000a;
-        public static int update_mandatory_toast=0x7f040009;
+        public static int crash_dialog_message=0x7f040004;
+        public static int crash_dialog_negative_button=0x7f040005;
+        public static int crash_dialog_positive_button=0x7f040006;
+        public static int crash_dialog_title=0x7f040003;
+        public static int download_failed_dialog_message=0x7f040008;
+        public static int download_failed_dialog_negative_button=0x7f040009;
+        public static int download_failed_dialog_positive_button=0x7f04000a;
+        public static int download_failed_dialog_title=0x7f040007;
+        public static int update_dialog_message=0x7f04000d;
+        public static int update_dialog_negative_button=0x7f04000e;
+        public static int update_dialog_positive_button=0x7f04000f;
+        public static int update_dialog_title=0x7f04000c;
+        public static int update_mandatory_toast=0x7f04000b;
     }
 }

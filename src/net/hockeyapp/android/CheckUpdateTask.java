@@ -5,6 +5,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -24,6 +25,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.AsyncTask;
 import android.provider.Settings;
+import android.util.Log;
 import android.widget.Toast;
 
 public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
@@ -246,9 +248,23 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
     }
     fragmentTransaction.addToBackStack(null);
 
-    // Create and show the dialog.
-    DialogFragment updateFragment = UpdateFragment.newInstance(updateInfo, getURLString("apk"));
-    updateFragment.show(fragmentTransaction, "hockey_update_dialog");
+    // Create and show the dialog
+    Class<? extends UpdateFragment> fragmentClass = UpdateFragment.class;
+    if (listener != null) {
+      fragmentClass = listener.getUpdateFragmentClass();
+    }
+    
+    try {
+      Method method = fragmentClass.getMethod("newInstance", JSONArray.class, String.class);
+      DialogFragment updateFragment = (DialogFragment)method.invoke(null, updateInfo, getURLString("apk"));
+      updateFragment.show(fragmentTransaction, "hockey_update_dialog");
+    }
+    catch (Exception e) {
+      Log.d(Constants.TAG, "An exception happened while showing the update fragment:");
+      e.printStackTrace();
+      Log.d(Constants.TAG, "Showing update activity instead.");
+      startUpdateIntent(updateInfo, false);
+    }
   }
   
   private static String convertStreamToString(InputStream inputStream) {

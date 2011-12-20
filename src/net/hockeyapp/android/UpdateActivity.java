@@ -43,17 +43,31 @@ public class UpdateActivity extends ListActivity implements UpdateActivityInterf
   
   public void onClickUpdate(View v) {
     startDownloadTask();
+    v.setEnabled(false);
   }
   
   private void startDownloadTask() {
     final String url = getIntent().getStringExtra("url");
     downloadTask = new DownloadFileTask(this, url, new DownloadFileListener() {
-      @Override
+      public void downloadSuccessful(DownloadFileTask task) {
+        enableUpdateButton();
+      }
+      
       public void downloadFailed(DownloadFileTask task, Boolean userWantsRetry) {
-        startDownloadTask();
+        if (userWantsRetry) {
+          startDownloadTask();
+        }
+        else {
+          enableUpdateButton();
+        }
       }
     });
     downloadTask.execute();
+  }
+  
+  public void enableUpdateButton() {
+    View updateButton = findViewById(R.id.update_button);
+    updateButton.setEnabled(true);
   }
   
   public int getCurrentVersionCode() {
