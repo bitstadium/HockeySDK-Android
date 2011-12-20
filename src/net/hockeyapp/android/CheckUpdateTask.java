@@ -132,7 +132,16 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
   @Override
   protected void onPostExecute(JSONArray updateInfo) {
     if (updateInfo != null) {
+      if (listener != null) {
+        listener.onUpdateAvailable();
+      }
+      
       showDialog(updateInfo);
+    }
+    else {
+      if (listener != null) {
+        listener.onNoUpdateAvailable();
+      }
     }
   }
   
