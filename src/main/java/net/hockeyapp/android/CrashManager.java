@@ -28,6 +28,49 @@ public class CrashManager {
   private static String identifier = null;
   private static String urlString = null;
 
+  // Public Methods
+
+  /**
+   * Register new crash manager. The crash manager sets an exception 
+   * handler to catch all unhandled exceptions. The handler writes the
+   * stack trace and additional meta data to a file. If it finds one or
+   * more of these files at the next start, it shows an alert dialog
+   * to ask the user if he want the send the crash data to HockeyApp.
+   * 
+   * @param context Parent activity.
+   * @param appIdentifier App ID of your app on HockeyApp.
+   */
+  public static void register(Context context, String appIdentifier) {
+    register(context, BASE_URL, appIdentifier, null);
+  }
+
+  /**
+   * Register new crash manager. The crash manager sets an exception 
+   * handler to catch all unhandled exceptions. The handler writes the
+   * stack trace and additional meta data to a file. If it finds one or
+   * more of these files at the next start, it shows an alert dialog
+   * to ask the user if he want the send the crash data to HockeyApp.
+   * 
+   * @param context Parent activity.
+   * @param appIdentifier App ID of your app on HockeyApp.
+   * @param listener Implement for callback functions.
+   */
+  public static void register(Context context, String appIdentifier, CrashManagerListener listener) {
+    register(context, BASE_URL, appIdentifier, listener);
+  }
+
+  /**
+   * Register new crash manager. The crash manager sets an exception 
+   * handler to catch all unhandled exceptions. The handler writes the
+   * stack trace and additional meta data to a file. If it finds one or
+   * more of these files at the next start, it shows an alert dialog
+   * to ask the user if he want the send the crash data to HockeyApp.
+   * 
+   * @param context Parent activity.
+   * @param urlString URL of your private QuincyKit server.
+   * @param appIdentifier App ID of your app on HockeyApp.
+   * @param listener Implement for callback functions.
+   */
   public static void register(Context context, String urlString, String appIdentifier, CrashManagerListener listener) {
     CrashManager.urlString = urlString;
     CrashManager.identifier = appIdentifier;
@@ -37,7 +80,6 @@ public class CrashManager {
     if (CrashManager.identifier == null) {
       CrashManager.identifier = Constants.APP_PACKAGE;
     }
-
     
     Boolean ignoreDefaultHandler = (listener != null) && (listener.ignoreDefaultHandler());
     if (hasStackTraces()) {
@@ -58,13 +100,7 @@ public class CrashManager {
     }
   }
 
-  public static void register(Context context, String appIdentifier, CrashManagerListener listener) {
-    register(context, BASE_URL, appIdentifier, listener);
-  }
-
-  public static void register(Context context, String appIdentifier) {
-    register(context, BASE_URL, appIdentifier, null);
-  }
+  // Private Methods
 
   private static void showDialog(final Context context, final CrashManagerListener listener, final boolean ignoreDefaultHandler) {
     if (context == null) {

@@ -7,7 +7,28 @@ import android.os.AsyncTask.Status;
 
 public class UpdateManager {
   private static CheckUpdateTask updateTask = null;
+
+  // Public Methods
+
+  /**
+   * Register new update manager. The update manager sends version information
+   * to HockeyApp and shows an alert dialog if a new version was found.
+   * 
+   * @param activity Parent activity.
+   * @param appIdentifier App ID of your app on HockeyApp.
+   */
+  public static void register(Activity activity, String appIdentifier) {
+    register(activity, appIdentifier, null);
+  }
   
+  /**
+   * Register new update manager. The update manager sends version information
+   * to HockeyApp and shows an alert dialog if a new version was found.
+   * 
+   * @param activity Parent activity.
+   * @param appIdentifier App ID of your app on HockeyApp.
+   * @param listener Implement for callback functions.
+   */
   public static void register(Activity activity, String appIdentifier, UpdateManagerListener listener) {
     if ((fragmentsSupported()) && (dialogShown(activity))) {
       return;
@@ -21,10 +42,8 @@ public class UpdateManager {
       updateTask.attach(activity);
     }
   }
-
-  public static void register(Activity activity, String appIdentifier) {
-    register(activity, appIdentifier, null);
-  }
+  
+  // Private Methods
 
   private static boolean dialogShown(Activity activity) {
     Fragment existingFragment = activity.getFragmentManager().findFragmentByTag("hockey_update_dialog");
