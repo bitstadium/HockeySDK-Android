@@ -3,10 +3,10 @@ This README describes on how to integrate HockeyApp into you Android apps. The c
 ## Requirements
 
 * ADT Plugin 0.9.7 (or higher)
-* Android 2.2 (or higher)
+* Android SDK 3.0 (or higher)
 * Eclipse 3.5 (or higher)
 
-It might work with older SDKs and/or without Eclipse, but we haven't tested it.
+The SDK runs on devices with Android 2.1 or higher, but you need Android SDK 3.0 (Level 11) to build the library.
 
 ## Integration Into Your Own App
 
@@ -46,7 +46,6 @@ public class YourActivity extends Activity {
     // Your own code to create the view
     // ...
     
-    // Check for updates
     checkForUpdates();
   }
 
@@ -56,18 +55,12 @@ public class YourActivity extends Activity {
     checkForCrashes();
   }
 
-  @Override
-  public Object onRetainNonConfigurationInstance() {
-    checkUpdateTask.detach();
-    return checkUpdateTask;
-  }
-    
   private void checkForCrashes() {
-    CrashManager.register(this, "https://rink.hockeyapp.net/", "APP_ID");
+    CrashManager.register(this, APP_ID);
   }
 
   private void checkForUpdates() {
-    UpdateManager.register(this, "https://rink.hockeyapp.net/", "APP_ID", R.drawable.icon);
+    UpdateManager.register(this, APP_ID);
   }
   
   // Probably more methods
@@ -78,7 +71,7 @@ public class YourActivity extends Activity {
 
 The above code does two things: 
 
-1. When the activity is created, the update managed launched an async tasks which checks for new updates. If it finds a new update, an alert dialog is shown and if the user presses Show, another activity is launched. Therefore the async task stores your activity as its context. 
+1. When the activity is created, the update managed launched an async tasks which checks for new updates. If it finds a new update, an alert dialog is shown and if the user presses Show, another activity is launched.
 2. When the activity is resumed, the crash manager is triggered and checks if a new crash was created before. If yes, it brings up a dialog to ask the user whether he wants to send the crash log to HockeyApp. The crash manage also registers a new exception handler, but only on the first launch.
 
 The reason for the two different entry points is that the update check causes network traffic and therefore potential costs for your users. In contrast, the crash manager only searches for new files in the file system, i.e. the call is pretty cheap. 
