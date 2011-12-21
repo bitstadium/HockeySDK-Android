@@ -32,7 +32,7 @@ The SDK runs on devices with Android 2.1 or higher, but you need Android SDK 3.0
 * Add the following line as a child element of application: <pre>&lt;activity android:name="net.hockeyapp.android.UpdateActivity" /></pre>
 * If you want to do beta distribution and crash reporting, add the following lines as child elements of your manifest: <pre>&lt;uses-permission android:name="android.permission.INTERNET" />
 &lt;uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /></pre>
-* If you want to do only crash reporting (e.g. for apps in the Android Market), add the following line as child elements of your manifest: <pre>&lt;uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /></pre>
+* If you want to do only crash reporting (e.g. for apps in the Android Market), add the following line as child elements of your manifest: <pre>&lt;uses-permission android:name="android.permission.INTERNET" />
 * Save the AndroidManifest.xml.
 * Open your main activity or the activity in which you want to integrate the update process.
 * Add the following lines:
