@@ -33,7 +33,7 @@
   <scm>
     <url>https://github.com/codenauts/HockeySDK-Android</url>
     <connection>scm:git:git://github.com/codenauts/HockeySDK-Android.git</connection>
-    <developerConnection>scm:git:git://github.com/codenauts/HockeySDK-Android.git</developerConnection>
+    <developerConnection>scm:git:git@github.com:codenauts/HockeySDK-Android.git</developerConnection>
   </scm>
   
   <developers>
