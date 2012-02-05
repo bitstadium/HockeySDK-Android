@@ -213,9 +213,8 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
       builder.create().show();
     }
     else {
-      startUpdateIntent(updateInfo, true);
-      
       Toast.makeText(activity, R.string.update_mandatory_toast, Toast.LENGTH_LONG).show();
+      startUpdateIntent(updateInfo, true);
     }
   }
   
