@@ -195,7 +195,7 @@ public class UpdateInfoAdapter extends BaseAdapter {
       webView.loadData("<em>No information.</em>", "text/html", "utf-8");
     }
     else {
-      webView.loadData(item, "text/html", "utf-8");
+      webView.loadDataWithBaseURL("https://rink.hockeyapp.net/", item, "text/html", "utf-8", null);
     }
     
     return row;
