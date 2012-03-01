@@ -55,8 +55,8 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
     this.ignoreDefaultHandler = ignoreDefaultHandler;
     this.listener = listener;
   }
-
-  public void uncaughtException(Thread thread, Throwable exception) {
+  
+  public static void saveException(Throwable exception, CrashManagerListener listener) {
     final Date now = new Date();
     final Writer result = new StringWriter();
     final PrintWriter printWriter = new PrintWriter(result);
@@ -92,6 +92,10 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
     catch (Exception another) {
       Log.e(Constants.TAG, "Error saving exception stacktrace!\n", another);
     }
+  }
+  
+  public void uncaughtException(Thread thread, Throwable exception) {
+    saveException(exception, listener);
 
     if (!ignoreDefaultHandler) {
       defaultExceptionHandler.uncaughtException(thread, exception);
@@ -102,7 +106,7 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
     }
   }
 
-  private void writeValueToFile(String value, String filename) {
+  private static void writeValueToFile(String value, String filename) {
     try {
       String path = Constants.FILES_PATH + "/" + filename;
       if (value.trim().length() > 0) {
