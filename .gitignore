@@ -1,6 +1,7 @@
 # Java
 bin
 target
+local.properties
 
 # OS X Noise
 .DS_Store
