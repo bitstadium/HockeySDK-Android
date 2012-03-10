@@ -170,6 +170,8 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
     builder.append("&device=" + URLEncoder.encode(Constants.PHONE_MODEL));
     builder.append("&oem=" + URLEncoder.encode(Constants.PHONE_MANUFACTURER));
     builder.append("&app_version=" + URLEncoder.encode(Constants.APP_VERSION));
+    builder.append("&sdk=" + URLEncoder.encode(Constants.SDK_NAME));
+    builder.append("&sdk_version=" + URLEncoder.encode(Constants.SDK_VERSION));
     
     return builder.toString();
   }

@@ -35,7 +35,7 @@ public class UpdateManager {
     }
     
     if ((updateTask == null) || (updateTask.getStatus() == Status.FINISHED)) {
-      updateTask = new CheckUpdateTask(activity, "https://rink.hockeyapp.net/", appIdentifier, listener);
+      updateTask = new CheckUpdateTask(activity, Constants.BASE_URL, appIdentifier, listener);
       updateTask.execute();
     }
     else {

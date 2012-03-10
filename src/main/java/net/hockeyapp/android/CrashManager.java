@@ -7,6 +7,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,8 +24,6 @@ import android.content.DialogInterface;
 import android.util.Log;
 
 public class CrashManager {
-  private static String BASE_URL = "https://rink.hockeyapp.net/";
-  
   private static String identifier = null;
   private static String urlString = null;
 
@@ -41,7 +40,7 @@ public class CrashManager {
    * @param appIdentifier App ID of your app on HockeyApp.
    */
   public static void register(Context context, String appIdentifier) {
-    register(context, BASE_URL, appIdentifier, null);
+    register(context, Constants.BASE_URL, appIdentifier, null);
   }
 
   /**
@@ -56,7 +55,7 @@ public class CrashManager {
    * @param listener Implement for callback functions.
    */
   public static void register(Context context, String appIdentifier, CrashManagerListener listener) {
-    register(context, BASE_URL, appIdentifier, listener);
+    register(context, Constants.BASE_URL, appIdentifier, listener);
   }
 
   /**
@@ -211,6 +210,8 @@ public class CrashManager {
             parameters.add(new BasicNameValuePair("userID", contentsOfFile(context, filename.replace(".stacktrace", ".user"))));
             parameters.add(new BasicNameValuePair("contact", contentsOfFile(context, filename.replace(".stacktrace", ".contact"))));
             parameters.add(new BasicNameValuePair("description", contentsOfFile(context, filename.replace(".stacktrace", ".description"))));
+            parameters.add(new BasicNameValuePair("sdk", Constants.SDK_NAME));
+            parameters.add(new BasicNameValuePair("sdk_version", Constants.SDK_VERSION));
             
             httpPost.setEntity(new UrlEncodedFormEntity(parameters, HTTP.UTF_8));
             
