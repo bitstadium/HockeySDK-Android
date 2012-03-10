@@ -7,7 +7,6 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.Thread.UncaughtExceptionHandler;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
