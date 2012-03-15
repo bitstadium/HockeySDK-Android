@@ -106,17 +106,17 @@ public class CrashManager {
     }
 
     AlertDialog.Builder builder = new AlertDialog.Builder(context);
-    builder.setTitle(R.string.crash_dialog_title);
-    builder.setMessage(R.string.crash_dialog_message);
+    builder.setTitle(Strings.CRASH_DIALOG_TITLE);
+    builder.setMessage(Strings.CRASH_DIALOG_MESSAGE);
 
-    builder.setNegativeButton(R.string.crash_dialog_negative_button, new DialogInterface.OnClickListener() {
+    builder.setNegativeButton(Strings.CRASH_DIALOG_NEGATIVE_BUTTON, new DialogInterface.OnClickListener() {
       public void onClick(DialogInterface dialog, int which) {
         deleteStackTraces(context);
         registerHandler(context, listener, ignoreDefaultHandler);
       } 
     });
 
-    builder.setPositiveButton(R.string.crash_dialog_positive_button, new DialogInterface.OnClickListener() {
+    builder.setPositiveButton(Strings.CRASH_DIALOG_POSITIVE_BUTTON, new DialogInterface.OnClickListener() {
       public void onClick(DialogInterface dialog, int which) {
         sendCrashes(context, listener, ignoreDefaultHandler);
       } 

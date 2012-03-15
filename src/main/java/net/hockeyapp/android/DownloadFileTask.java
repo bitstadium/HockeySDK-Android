@@ -110,16 +110,16 @@ public class DownloadFileTask extends AsyncTask<String, Integer, Boolean>{
      else {
        try {
          AlertDialog.Builder builder = new AlertDialog.Builder(context);
-         builder.setTitle(R.string.download_failed_dialog_title);
-         builder.setMessage(R.string.download_failed_dialog_message);
+         builder.setTitle(Strings.DOWNLOAD_FAILED_DIALOG_TITLE);
+         builder.setMessage(Strings.DOWNLOAD_FAILED_DIALOG_MESSAGE);
   
-         builder.setNegativeButton(R.string.download_failed_dialog_negative_button, new DialogInterface.OnClickListener() {
+         builder.setNegativeButton(Strings.CRASH_DIALOG_NEGATIVE_BUTTON, new DialogInterface.OnClickListener() {
            public void onClick(DialogInterface dialog, int which) {
              notifier.downloadFailed(DownloadFileTask.this, false);
            } 
          });
   
-         builder.setPositiveButton(R.string.download_failed_dialog_positive_button, new DialogInterface.OnClickListener() {
+         builder.setPositiveButton(Strings.DOWNLOAD_FAILED_DIALOG_POSITIVE_BUTTON, new DialogInterface.OnClickListener() {
            public void onClick(DialogInterface dialog, int which) {
              notifier.downloadFailed(DownloadFileTask.this, true);
            } 
