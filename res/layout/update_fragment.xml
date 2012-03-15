@@ -17,7 +17,6 @@
         <ImageButton
             android:id="@+id/update_button"
             android:background="@drawable/button_update"
-            android:contentDescription="@string/accessibility_update_button"
             android:layout_alignParentRight="true"
             android:layout_height="wrap_content"
             android:layout_width="120dip" 
@@ -81,7 +80,6 @@
     />
 
     <ImageView
-	    android:contentDescription="@string/accessibility_style_view"
         android:layout_below="@id/header_view"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent" 

@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 public class UpdateActivity extends ListActivity implements UpdateActivityInterface, UpdateInfoListener {
@@ -15,7 +16,7 @@ public class UpdateActivity extends ListActivity implements UpdateActivityInterf
     super.onCreate(savedInstanceState);
 
     setTitle("App Update");
-    setContentView(getLayout());
+    setContentView(getLayoutView());
 
     adapter = new UpdateInfoAdapter(this, getIntent().getStringExtra("json"), this);
     getListView().setDivider(null);
@@ -29,8 +30,11 @@ public class UpdateActivity extends ListActivity implements UpdateActivityInterf
   }
   
   protected void configureView() {
-    TextView versionLabel = (TextView)findViewById(R.id.version_label);
-    versionLabel.setText("Version " + adapter.getVersionString() + "\n" + adapter.getFileInfoString());
+    TextView nameLabel = (TextView)findViewById(UpdateView.NAME_LABEL_ID);
+    nameLabel.setText("APP NAME"); // TODO
+    
+    //TextView versionLabel = (TextView)findViewById(R.id.version_label);
+    //versionLabel.setText("Version " + adapter.getVersionString() + "\n" + adapter.getFileInfoString());
   }
 
   @Override
@@ -84,5 +88,9 @@ public class UpdateActivity extends ListActivity implements UpdateActivityInterf
   
   public int getLayout() {
     return R.layout.update_view;
+  }
+
+  public ViewGroup getLayoutView() {
+    return new UpdateView(this);
   }
 }
