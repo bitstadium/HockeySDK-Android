@@ -1,14 +1,17 @@
 package net.hockeyapp.android;
 
 import android.app.ListActivity;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
-public class UpdateActivity extends ListActivity implements UpdateActivityInterface, UpdateInfoListener {
+public class UpdateActivity extends ListActivity implements UpdateActivityInterface, UpdateInfoListener, OnClickListener {
   private DownloadFileTask downloadTask;
   private UpdateInfoAdapter adapter;
   
@@ -31,10 +34,13 @@ public class UpdateActivity extends ListActivity implements UpdateActivityInterf
   
   protected void configureView() {
     TextView nameLabel = (TextView)findViewById(UpdateView.NAME_LABEL_ID);
-    nameLabel.setText("APP NAME"); // TODO
+    nameLabel.setText(getAppName());
     
-    //TextView versionLabel = (TextView)findViewById(R.id.version_label);
-    //versionLabel.setText("Version " + adapter.getVersionString() + "\n" + adapter.getFileInfoString());
+    TextView versionLabel = (TextView)findViewById(UpdateView.VERSION_LABEL_ID);
+    versionLabel.setText("Version " + adapter.getVersionString() + "\n" + adapter.getFileInfoString());
+    
+    Button updateButton = (Button)findViewById(UpdateView.UPDATE_BUTTON_ID);
+    updateButton.setOnClickListener(this);
   }
 
   @Override
@@ -43,11 +49,6 @@ public class UpdateActivity extends ListActivity implements UpdateActivityInterf
       downloadTask.detach();
     }
     return downloadTask;
-  }
-  
-  public void onClickUpdate(View v) {
-    startDownloadTask();
-    v.setEnabled(false);
   }
   
   private void startDownloadTask() {
@@ -70,7 +71,7 @@ public class UpdateActivity extends ListActivity implements UpdateActivityInterf
   }
   
   public void enableUpdateButton() {
-    View updateButton = findViewById(R.id.update_button);
+    View updateButton = findViewById(UpdateView.UPDATE_BUTTON_ID);
     updateButton.setEnabled(true);
   }
   
@@ -86,11 +87,23 @@ public class UpdateActivity extends ListActivity implements UpdateActivityInterf
     return currentVersionCode;
   }
   
-  public int getLayout() {
-    return R.layout.update_view;
-  }
-
   public ViewGroup getLayoutView() {
     return new UpdateView(this);
+  }
+
+  public CharSequence getAppName() {
+    try {
+      PackageManager pm = getPackageManager();
+      ApplicationInfo applicationInfo = pm.getApplicationInfo(getPackageName(), 0);
+      return pm.getApplicationLabel(applicationInfo);
+    }
+    catch (NameNotFoundException exception) {
+      return "";
+    }
+  }
+
+  public void onClick(View v) {
+    startDownloadTask();
+    v.setEnabled(false);
   }
 }

@@ -10,25 +10,7 @@ package net.hockeyapp.android;
 public final class R {
     public static final class attr {
     }
-    public static final class drawable {
-        public static int button_update=0x7f020000;
-        public static int button_update_normal=0x7f020001;
-        public static int button_update_pressed=0x7f020002;
-        public static int button_update_selected=0x7f020003;
-        public static int shadow_top=0x7f020004;
-    }
-    public static final class id {
-        public static int header_view=0x7f050000;
-        public static int list_view=0x7f050004;
-        public static int name_label=0x7f050002;
-        public static int update_button=0x7f050001;
-        public static int version_label=0x7f050003;
-    }
-    public static final class layout {
-        public static int update_fragment=0x7f030000;
-        public static int update_view=0x7f030001;
-    }
     public static final class string {
-        public static int app_name=0x7f040000;
+        public static final int app_name=0x7f020000;
     }
 }

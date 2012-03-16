@@ -5,6 +5,7 @@ import org.json.JSONException;
 
 import android.app.Activity;
 import android.app.DialogFragment;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
@@ -12,7 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -50,18 +51,21 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
   
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    View view = inflater.inflate(getLayout(), container, false);
+    View view = getLayoutView();
 
-    adapter = new UpdateInfoAdapter(this.getActivity(), versionInfo.toString(), this);
+    adapter = new UpdateInfoAdapter(getActivity(), versionInfo.toString(), this);
 
-    ListView listView = (ListView)view.findViewById(R.id.list_view);
+    ListView listView = (ListView)view.findViewById(android.R.id.list);
     listView.setDivider(null);
     listView.setAdapter(adapter);
     
-    TextView versionLabel = (TextView)view.findViewById(R.id.version_label);
+    TextView nameLabel = (TextView)view.findViewById(UpdateView.NAME_LABEL_ID);
+    nameLabel.setText(getAppName());
+    
+    TextView versionLabel = (TextView)view.findViewById(UpdateView.VERSION_LABEL_ID);
     versionLabel.setText("Version " + adapter.getVersionString() + "\n" + adapter.getFileInfoString());
 
-    ImageButton updateButton = (ImageButton)view.findViewById(R.id.update_button);
+    Button updateButton = (Button)view.findViewById(UpdateView.UPDATE_BUTTON_ID);
     updateButton.setOnClickListener(this);
     
     return view;
@@ -99,8 +103,21 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
     
     return currentVersionCode;
   }
+
+  public CharSequence getAppName() {
+    Activity activity = getActivity();
+    
+    try {
+      PackageManager pm = activity.getPackageManager();
+      ApplicationInfo applicationInfo = pm.getApplicationInfo(activity.getPackageName(), 0);
+      return pm.getApplicationLabel(applicationInfo);
+    }
+    catch (NameNotFoundException exception) {
+      return "";
+    }
+  }
   
-  public int getLayout() {
-    return R.layout.update_fragment;
+  public View getLayoutView() {
+    return new UpdateView(getActivity(), false);
   }
 }

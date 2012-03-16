@@ -1,5 +1,7 @@
 package net.hockeyapp.android;
 
+import android.view.View;
+
 public interface UpdateActivityInterface {
-  public int getLayout();
+  public View getLayoutView();
 }
