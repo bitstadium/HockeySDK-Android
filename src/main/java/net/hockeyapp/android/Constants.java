@@ -55,7 +55,7 @@ public class Constants {
   public static final String TAG = "HockeyApp";
   public static final String BASE_URL = "https://rink.hockeyapp.net/";
   public static final String SDK_NAME = "HockeySDK";
-  public static final String SDK_VERSION = "2.0.2";
+  public static final String SDK_VERSION = "2.1.0";
 
   public static void loadFromContext(Context context) {
     Constants.ANDROID_VERSION = android.os.Build.VERSION.RELEASE;
