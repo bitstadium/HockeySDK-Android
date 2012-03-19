@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.http.NameValuePair;
@@ -20,6 +21,8 @@ import org.apache.http.protocol.HTTP;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.util.Log;
 
 public class CrashManager {
@@ -80,7 +83,8 @@ public class CrashManager {
     }
     
     Boolean ignoreDefaultHandler = (listener != null) && (listener.ignoreDefaultHandler());
-    if (hasStackTraces()) {
+    int foundOrSend = hasStackTraces(context);
+    if (foundOrSend == 1) {
       Boolean autoSend = false;
       if (listener != null) {
         autoSend = listener.onCrashesFound();
@@ -92,6 +96,9 @@ public class CrashManager {
       else {
         sendCrashes(context, listener, ignoreDefaultHandler);
       }
+    }
+    else if (foundOrSend == 2) {
+      sendCrashes(context, listener, ignoreDefaultHandler);
     }
     else {
       registerHandler(context, listener, ignoreDefaultHandler);
@@ -118,6 +125,7 @@ public class CrashManager {
 
     builder.setPositiveButton(Strings.CRASH_DIALOG_POSITIVE_BUTTON, new DialogInterface.OnClickListener() {
       public void onClick(DialogInterface dialog, int which) {
+        saveConfirmedStackTraces(context);
         sendCrashes(context, listener, ignoreDefaultHandler);
       } 
     });
@@ -267,9 +275,60 @@ public class CrashManager {
     
     return contents.toString();
   }
+  
+  public static void saveConfirmedStackTraces(Context context) {
+    try {
+      String[] filenames = searchForStackTraces();
+      SharedPreferences preferences = context.getSharedPreferences("HockeySDK", Context.MODE_PRIVATE);
+      Editor editor = preferences.edit();
+      editor.putString("ConfirmedFilenames", joinArray(filenames, "|"));
+      editor.commit();
+    }
+    catch (Exception e) {
+      // Just in case, we catch all exceptions here
+    }
+  }
+  
+  private static String joinArray(String[] array, String delimiter) {
+    StringBuffer buffer = new StringBuffer();
+    for (int index = 0; index < array.length; index++) {
+      buffer.append(array[index]);
+      if (index < array.length - 1) {
+        buffer.append(delimiter);
+      }
+    }
+    return buffer.toString();
+  }
 
-  public static boolean hasStackTraces() {
-    return (searchForStackTraces().length > 0);
+  public static int hasStackTraces(Context context) {
+    String[] filenames = searchForStackTraces();
+    List<String> confirmedFilenames = null;
+    int result = 0;
+    if (filenames.length > 0) {
+      try {
+        SharedPreferences preferences = context.getSharedPreferences("HockeySDK", Context.MODE_PRIVATE);
+        confirmedFilenames = Arrays.asList(preferences.getString("ConfirmedFilenames", "").split("|"));
+      }
+      catch (Exception e) {
+        // Just in case, we catch all exceptions here
+      }
+
+      if (confirmedFilenames != null) {
+        result = 2;
+        
+        for (String filename : filenames) {
+          if (!confirmedFilenames.contains(filename)) {
+            result = 1;
+            break;
+          }
+        }
+      }
+      else {
+        result = 1;
+      }
+    }
+
+    return result;
   }
 
   private static String[] searchForStackTraces() {
