@@ -125,7 +125,6 @@ public class CrashManager {
 
     builder.setPositiveButton(Strings.CRASH_DIALOG_POSITIVE_BUTTON, new DialogInterface.OnClickListener() {
       public void onClick(DialogInterface dialog, int which) {
-        saveConfirmedStackTraces(context);
         sendCrashes(context, listener, ignoreDefaultHandler);
       } 
     });
@@ -134,6 +133,8 @@ public class CrashManager {
   }
   
   private static void sendCrashes(final Context context, final CrashManagerListener listener, final boolean ignoreDefaultHandler) {
+    saveConfirmedStackTraces(context);
+    
     new Thread() {
       @Override
       public void run() {
@@ -307,7 +308,7 @@ public class CrashManager {
     if (filenames.length > 0) {
       try {
         SharedPreferences preferences = context.getSharedPreferences("HockeySDK", Context.MODE_PRIVATE);
-        confirmedFilenames = Arrays.asList(preferences.getString("ConfirmedFilenames", "").split("|"));
+        confirmedFilenames = Arrays.asList(preferences.getString("ConfirmedFilenames", "").split("\\|"));
       }
       catch (Exception e) {
         // Just in case, we catch all exceptions here
