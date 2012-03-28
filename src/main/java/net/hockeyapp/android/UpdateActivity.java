@@ -66,6 +66,16 @@ public class UpdateActivity extends ListActivity implements UpdateActivityInterf
           enableUpdateButton();
         }
       }
+      
+      public String getStringForResource(int resourceID) {
+        UpdateManagerListener listener = UpdateManager.getLastListener();
+        if (listener != null) {
+          return listener.getStringForResource(resourceID);
+        }
+        else {
+          return null;
+        }
+      }
     });
     downloadTask.execute();
   }

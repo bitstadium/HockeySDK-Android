@@ -1,6 +1,6 @@
 package net.hockeyapp.android;
 
-public abstract class UpdateManagerListener {
+public abstract class UpdateManagerListener extends StringListener {
   /**
    * Return your own subclass of UpdateActivity for customization. 
    */
@@ -29,3 +29,4 @@ public abstract class UpdateManagerListener {
     // Do nothing
   }
 }
+  

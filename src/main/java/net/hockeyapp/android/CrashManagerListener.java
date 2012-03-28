@@ -1,6 +1,6 @@
 package net.hockeyapp.android;
 
-public abstract class CrashManagerListener {
+public abstract class CrashManagerListener extends StringListener {
   /**
    * Return true to ignore the default exception handler, i.e. the user will not
    * get the alert dialog with the "Force Close" button.

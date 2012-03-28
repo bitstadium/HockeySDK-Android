@@ -186,18 +186,18 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
     }
     
     AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-    builder.setTitle(Strings.UPDATE_DIALOG_TITLE);
+    builder.setTitle(Strings.get(listener, Strings.UPDATE_DIALOG_TITLE_ID));
     
     if (!mandatory) {
-      builder.setMessage(Strings.UPDATE_DIALOG_MESSAGE);
+      builder.setMessage(Strings.get(listener, Strings.UPDATE_DIALOG_MESSAGE_ID));
   
-      builder.setNegativeButton(Strings.UPDATE_DIALOG_NEGATIVE_BUTTON, new DialogInterface.OnClickListener() {
+      builder.setNegativeButton(Strings.get(listener, Strings.UPDATE_DIALOG_NEGATIVE_BUTTON_ID), new DialogInterface.OnClickListener() {
         public void onClick(DialogInterface dialog, int which) {
           cleanUp();
         } 
       });
       
-      builder.setPositiveButton(Strings.UPDATE_DIALOG_POSITIVE_BUTTON, new DialogInterface.OnClickListener() {
+      builder.setPositiveButton(Strings.get(listener, Strings.UPDATE_DIALOG_POSITIVE_BUTTON_ID), new DialogInterface.OnClickListener() {
         public void onClick(DialogInterface dialog, int which) {
           if (getCachingEnabled()) {
             VersionCache.setVersionInfo(activity, "[]");
@@ -215,7 +215,7 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
       builder.create().show();
     }
     else {
-      Toast.makeText(activity, Strings.UPDATE_MANDATROY_TOAST, Toast.LENGTH_LONG).show();
+      Toast.makeText(activity, Strings.get(listener, Strings.UPDATE_MANDATROY_TOAST_ID), Toast.LENGTH_LONG).show();
       startUpdateIntent(updateInfo, true);
     }
   }

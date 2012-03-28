@@ -7,6 +7,7 @@ import android.os.AsyncTask.Status;
 
 public class UpdateManager {
   private static CheckUpdateTask updateTask = null;
+  private static UpdateManagerListener lastListener = null;
 
   // Public Methods
 
@@ -30,6 +31,8 @@ public class UpdateManager {
    * @param listener Implement for callback functions.
    */
   public static void register(Activity activity, String appIdentifier, UpdateManagerListener listener) {
+    lastListener = listener;
+    
     if ((fragmentsSupported()) && (dialogShown(activity))) {
       return;
     }
@@ -62,5 +65,9 @@ public class UpdateManager {
   public static Boolean runsOnTablet(Activity activity) {
     Configuration configuration = activity.getResources().getConfiguration();
     return (((configuration.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE) || ((configuration.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_XLARGE));
+  }
+  
+  public static UpdateManagerListener getLastListener() {
+    return lastListener;
   }
 }
