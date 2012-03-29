@@ -11,7 +11,7 @@ public class Strings {
   public final static int DOWNLOAD_FAILED_DIALOG_NEGATIVE_BUTTON_ID = 0x06;
   public final static int DOWNLOAD_FAILED_DIALOG_POSITIVE_BUTTON_ID = 0x07;
 
-  public final static int UPDATE_MANDATROY_TOAST_ID                 = 0x08;
+  public final static int UPDATE_MANDATORY_TOAST_ID                 = 0x08;
       
   public final static int UPDATE_DIALOG_TITLE_ID                    = 0x09;
   public final static int UPDATE_DIALOG_MESSAGE_ID                  = 0x0a;
