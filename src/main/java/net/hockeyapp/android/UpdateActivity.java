@@ -1,5 +1,10 @@
 package net.hockeyapp.android;
 
+import net.hockeyapp.android.internal.DownloadFileListener;
+import net.hockeyapp.android.internal.DownloadFileTask;
+import net.hockeyapp.android.internal.UpdateInfoAdapter;
+import net.hockeyapp.android.internal.UpdateInfoListener;
+import net.hockeyapp.android.internal.UpdateView;
 import android.app.ListActivity;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;

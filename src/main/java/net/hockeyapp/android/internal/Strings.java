@@ -1,4 +1,6 @@
-package net.hockeyapp.android;
+package net.hockeyapp.android.internal;
+
+import net.hockeyapp.android.StringListener;
 
 public class Strings {
   public final static int CRASH_DIALOG_TITLE_ID                     = 0x00;

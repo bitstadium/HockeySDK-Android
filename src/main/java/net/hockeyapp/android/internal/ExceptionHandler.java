@@ -1,4 +1,4 @@
-package net.hockeyapp.android;
+package net.hockeyapp.android.internal;
 
 /**
  * LICENSE INFORMATION
@@ -42,6 +42,9 @@ import java.io.Writer;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.Date;
 import java.util.UUID;
+
+import net.hockeyapp.android.Constants;
+import net.hockeyapp.android.CrashManagerListener;
 
 import android.util.Log;
 

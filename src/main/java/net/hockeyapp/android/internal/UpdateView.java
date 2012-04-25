@@ -1,4 +1,4 @@
-package net.hockeyapp.android;
+package net.hockeyapp.android.internal;
 
 import android.content.Context;
 import android.content.res.Configuration;

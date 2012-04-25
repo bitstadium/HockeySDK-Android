@@ -1,4 +1,4 @@
-package net.hockeyapp.android;
+package net.hockeyapp.android.internal;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -9,6 +9,12 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+
+import net.hockeyapp.android.Constants;
+import net.hockeyapp.android.UpdateActivity;
+import net.hockeyapp.android.UpdateFragment;
+import net.hockeyapp.android.UpdateManager;
+import net.hockeyapp.android.UpdateManagerListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;

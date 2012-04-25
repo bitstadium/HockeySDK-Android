@@ -1,5 +1,11 @@
 package net.hockeyapp.android;
 
+import net.hockeyapp.android.internal.DownloadFileListener;
+import net.hockeyapp.android.internal.DownloadFileTask;
+import net.hockeyapp.android.internal.UpdateInfoAdapter;
+import net.hockeyapp.android.internal.UpdateInfoListener;
+import net.hockeyapp.android.internal.UpdateView;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 

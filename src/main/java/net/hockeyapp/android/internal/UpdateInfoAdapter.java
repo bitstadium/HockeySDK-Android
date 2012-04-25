@@ -1,10 +1,12 @@
-package net.hockeyapp.android;
+package net.hockeyapp.android.internal;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+
+import net.hockeyapp.android.Constants;
 
 import org.json.JSONArray;
 import org.json.JSONException;

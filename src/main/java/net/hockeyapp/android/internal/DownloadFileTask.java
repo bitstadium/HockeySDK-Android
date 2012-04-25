@@ -1,4 +1,4 @@
-package net.hockeyapp.android;
+package net.hockeyapp.android.internal;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.UUID;
+
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;

@@ -1,5 +1,6 @@
 package net.hockeyapp.android;
 
+import net.hockeyapp.android.internal.CheckUpdateTask;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.res.Configuration;
