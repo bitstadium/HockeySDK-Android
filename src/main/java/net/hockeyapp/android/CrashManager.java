@@ -12,7 +12,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import net.hockeyapp.android.internal.ExceptionHandler;
-import net.hockeyapp.android.internal.Strings;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;

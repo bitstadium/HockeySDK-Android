@@ -11,6 +11,7 @@ import java.net.URLConnection;
 import java.net.URLEncoder;
 
 import net.hockeyapp.android.Constants;
+import net.hockeyapp.android.Strings;
 import net.hockeyapp.android.UpdateActivity;
 import net.hockeyapp.android.UpdateFragment;
 import net.hockeyapp.android.UpdateManager;
