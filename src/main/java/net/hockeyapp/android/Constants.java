@@ -6,10 +6,16 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 
 /**
- * LICENSE INFORMATION
+ * <h4>Description</h4>
  * 
+ * Various constants and meta information loaded from the context.
+ * 
+ * <h4>License</h4>
+ * 
+ * <pre>
  * Copyright (c) 2009 nullwire aps
- *
+ * Copyright (c) 2012 Codenauts UG
+ * 
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without
@@ -30,33 +36,71 @@ import android.content.pm.PackageManager.NameNotFoundException;
  * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
+ * </pre>
  *
- * Contributors:
- * Mads Kristiansen, mads.kristiansen@nullwire.com
- * Glen Humphrey
- * Evan Charlton
- * Peter Hewitt
- * Thomas Dohmke, thomas@dohmke.de
+ * @author Mads Kristiansen
+ * @author Glen Humphrey
+ * @author Evan Charlton
+ * @author Peter Hewitt
+ * @author Thomas Dohmke
  **/
-
 public class Constants {
-  // Since the exception handler doesn't have access to the context,
-  // or anything really, the library prepares these values for when
-  // the handler needs them.
+  /**
+   * Path where crash logs and temporary files are stored.
+   */
   public static String FILES_PATH = null;
+  
+  /**
+   * The app's version code.
+   */
   public static String APP_VERSION = null;
+
+  /**
+   * The app's package name.
+   */
   public static String APP_PACKAGE = null;
   
+  /**
+   * The device's OS version.
+   */
   public static String ANDROID_VERSION  = null;
+
+  /**
+   * The device's model name.
+   */
   public static String PHONE_MODEL = null;
+
+  /**
+   * The device's model manufacturer name.
+   */
   public static String PHONE_MANUFACTURER = null;
-  
-  // Constants
+
+  /**
+   * Tag for internal logging statements.
+   */
   public static final String TAG = "HockeyApp";
+  
+  /**
+   * HockeyApp API URL.
+   */
   public static final String BASE_URL = "https://rink.hockeyapp.net/";
+  
+  /**
+   * Name of this SDK.
+   */
   public static final String SDK_NAME = "HockeySDK";
+  
+  /**
+   * Version of this SDK.
+   */
   public static final String SDK_VERSION = "2.1.0";
 
+  /**
+   * Initializes constants from the given context. The context is used to set 
+   * the package name, version code, and the files dir.  
+   *
+   * @param context The context to use. Usually your Activity object.
+   */
   public static void loadFromContext(Context context) {
     Constants.ANDROID_VERSION = android.os.Build.VERSION.RELEASE;
     Constants.PHONE_MODEL = android.os.Build.MODEL;
