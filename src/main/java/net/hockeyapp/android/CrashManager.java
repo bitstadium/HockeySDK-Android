@@ -139,7 +139,7 @@ public class CrashManager {
    * @param context The context to use. Usually your Activity object.
    * @param listener Implement for callback functions.
    */
-  private static void execute(Context context, CrashManagerListener listener) {
+  public static void execute(Context context, CrashManagerListener listener) {
     Boolean ignoreDefaultHandler = (listener != null) && (listener.ignoreDefaultHandler());
     
     int foundOrSend = hasStackTraces(context);
