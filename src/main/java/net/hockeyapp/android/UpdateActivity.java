@@ -189,11 +189,11 @@ public class UpdateActivity extends ListActivity implements UpdateActivityInterf
    * 
    * @return The app's name as a String.
    */
-  public CharSequence getAppName() {
+  public String getAppName() {
     try {
       PackageManager pm = getPackageManager();
       ApplicationInfo applicationInfo = pm.getApplicationInfo(getPackageName(), 0);
-      return pm.getApplicationLabel(applicationInfo);
+      return pm.getApplicationLabel(applicationInfo).toString();
     }
     catch (NameNotFoundException exception) {
       return "";
