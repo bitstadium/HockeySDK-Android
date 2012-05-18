@@ -37,5 +37,10 @@ import android.view.View;
  * @author Thomas Dohmke
  **/
 public interface UpdateActivityInterface {
+  /**
+   * Return an instance of View to show the update information.
+   * 
+   * @return Instance of View
+   */
   public View getLayoutView();
 }
