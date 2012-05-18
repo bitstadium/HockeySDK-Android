@@ -1,12 +1,10 @@
-package net.hockeyapp.android.internal;
-
-import android.content.Context;
-import android.content.SharedPreferences;
+package net.hockeyapp.android;
 
 /**
  * <h4>Description</h4>
  * 
- * Internal helper class to cache version data.
+ * Abstract class for callbacks to be invoked from UpdateActivity
+ * and UpdateFragment. 
  * 
  * <h4>License</h4>
  * 
@@ -36,25 +34,10 @@ import android.content.SharedPreferences;
  * </pre>
  *
  * @author Thomas Dohmke
- **/public class VersionCache {
-  private static String VERSION_INFO_KEY = "versionInfo";
-  
-  public static void setVersionInfo(Context context, String json) {
-    if (context != null) {
-      SharedPreferences preferences = context.getSharedPreferences("HockeyApp", Context.MODE_PRIVATE);
-      SharedPreferences.Editor editor = preferences.edit();
-      editor.putString(VERSION_INFO_KEY, json);
-      editor.commit();
-    }
-  }
-  
-  public static String getVersionInfo(Context context) {
-    if (context != null) {
-      SharedPreferences preferences = context.getSharedPreferences("HockeyApp", Context.MODE_PRIVATE);
-      return preferences.getString(VERSION_INFO_KEY, "[]");
-    }
-    else {
-      return "[]";
-    }
-  }
+ **/
+public interface UpdateInfoListener {
+  /**
+   * Implement to return the app's current version code.
+   */
+  public int getCurrentVersionCode();
 }

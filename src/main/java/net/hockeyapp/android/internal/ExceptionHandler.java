@@ -1,9 +1,31 @@
 package net.hockeyapp.android.internal;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.lang.Thread.UncaughtExceptionHandler;
+import java.util.Date;
+import java.util.UUID;
+
+import net.hockeyapp.android.Constants;
+import net.hockeyapp.android.CrashManagerListener;
+
+import android.util.Log;
+
 /**
- * LICENSE INFORMATION
+ * <h4>Description</h4>
  * 
+ * Internal helper class to catch exceptions. Saves the stack trace
+ * as a file and executes callback methods to ask the app for 
+ * additional information and meta data (see CrashManagerListener). 
+ * 
+ * <h4>License</h4>
+ * 
+ * <pre>
  * Copyright (c) 2009 nullwire aps
+ * Copyright (c) 2011,2012 Codenauts UG
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -25,29 +47,14 @@ package net.hockeyapp.android.internal;
  * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
+ * </pre>
  *
- * Contributors:
- * Mads Kristiansen, mads.kristiansen@nullwire.com
- * Glen Humphrey
- * Evan Charlton
- * Peter Hewitt
- * Thomas Dohmke, thomas@dohmke.de
+ * @author Mads Kristiansen
+ * @author Glen Humphrey
+ * @author Evan Charlton
+ * @author Peter Hewitt
+ * @author Thomas Dohmke
  **/
-
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.lang.Thread.UncaughtExceptionHandler;
-import java.util.Date;
-import java.util.UUID;
-
-import net.hockeyapp.android.Constants;
-import net.hockeyapp.android.CrashManagerListener;
-
-import android.util.Log;
-
 public class ExceptionHandler implements UncaughtExceptionHandler {
   private boolean ignoreDefaultHandler = false;
   private CrashManagerListener listener;
