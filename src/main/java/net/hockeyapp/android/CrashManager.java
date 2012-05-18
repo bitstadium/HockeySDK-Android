@@ -66,7 +66,14 @@ import android.util.Log;
  * @author Thomas Dohmke
  **/
 public class CrashManager {
+  /**
+   * App identifier from HockeyApp.
+   */
   private static String identifier = null;
+  
+  /**
+   * URL of HockeyApp service.
+   */
   private static String urlString = null;
 
   /**
