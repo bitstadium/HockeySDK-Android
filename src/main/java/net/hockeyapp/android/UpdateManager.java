@@ -70,6 +70,18 @@ public class UpdateManager {
    * @param listener Implement for callback functions.
    */
   public static void register(Activity activity, String appIdentifier, UpdateManagerListener listener) {
+    register(activity, Constants.BASE_URL, appIdentifier, listener);
+  }
+  
+  /**
+   * Registers new update manager.
+   * 
+   * @param activity Parent activity.
+   * @param urlString URL of the HockeyApp server.
+   * @param appIdentifier App ID of your app on HockeyApp.
+   * @param listener Implement for callback functions.
+   */
+  public static void register(Activity activity, String urlString, String appIdentifier, UpdateManagerListener listener) {
     lastListener = listener;
     
     if ((fragmentsSupported()) && (dialogShown(activity))) {
@@ -77,7 +89,7 @@ public class UpdateManager {
     }
     
     if ((updateTask == null) || (updateTask.getStatus() == Status.FINISHED)) {
-      updateTask = new CheckUpdateTask(activity, Constants.BASE_URL, appIdentifier, listener);
+      updateTask = new CheckUpdateTask(activity, urlString, appIdentifier, listener);
       updateTask.execute();
     }
     else {
