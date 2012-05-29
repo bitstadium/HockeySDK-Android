@@ -101,7 +101,7 @@ public class CrashManager {
    * Registers new crash manager and handles existing crash logs.
    * 
    * @param context The context to use. Usually your Activity object.
-   * @param urlString URL of your private QuincyKit server.
+   * @param urlString URL of the HockeyApp server.
    * @param appIdentifier App ID of your app on HockeyApp.
    * @param listener Implement for callback functions.
    */
@@ -131,7 +131,7 @@ public class CrashManager {
    * at some point after this method. 
    * 
    * @param context The context to use. Usually your Activity object.
-   * @param urlString URL of your private QuincyKit server.
+   * @param urlString URL of the HockeyApp server.
    * @param appIdentifier App ID of your app on HockeyApp.
    * @param listener Implement for callback functions.
    */
@@ -365,15 +365,20 @@ public class CrashManager {
    * Registers the exception handler. 
    */
   private static void registerHandler(Context context, CrashManagerListener listener, boolean ignoreDefaultHandler) {
-    // Get current handler
-    UncaughtExceptionHandler currentHandler = Thread.getDefaultUncaughtExceptionHandler();
-    if (currentHandler != null) {
-      Log.d(Constants.TAG, "Current handler class = " + currentHandler.getClass().getName());
+    if ((Constants.APP_VERSION != null) && (Constants.APP_PACKAGE != null)) {
+      // Get current handler
+      UncaughtExceptionHandler currentHandler = Thread.getDefaultUncaughtExceptionHandler();
+      if (currentHandler != null) {
+        Log.d(Constants.TAG, "Current handler class = " + currentHandler.getClass().getName());
+      }
+  
+      // Register if not already registered
+      if (!(currentHandler instanceof ExceptionHandler)) {
+        Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(currentHandler, listener, ignoreDefaultHandler));
+      }
     }
-
-    // Register if not already registered
-    if (!(currentHandler instanceof ExceptionHandler)) {
-      Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(currentHandler, listener, ignoreDefaultHandler));
+    else {
+      Log.d(Constants.TAG, "Exception handler not set because version or package is null.");
     }
   }
 
@@ -464,6 +469,9 @@ public class CrashManager {
     return buffer.toString();
   }
 
+  /**
+   * Searches .stacktrace files and returns then as array. 
+   */
   private static String[] searchForStackTraces() {
     // Try to create the files folder if it doesn't exist
     File dir = new File(Constants.FILES_PATH + "/");
