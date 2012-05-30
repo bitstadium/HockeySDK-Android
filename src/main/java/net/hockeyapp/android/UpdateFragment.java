@@ -227,6 +227,6 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
    * @return Instance of UpdateView
    */
   public View getLayoutView() {
-    return new UpdateView(getActivity(), false);
+    return new UpdateView(getActivity(), false, true);
   }
 }

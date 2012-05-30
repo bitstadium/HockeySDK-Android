@@ -58,6 +58,7 @@ public class UpdateView extends RelativeLayout {
   public final static int UPDATE_BUTTON_ID = 0x1004;
   
   private boolean layoutHorizontally = false;
+  private boolean limitHeight = false;
   private RelativeLayout headerView = null;
   
   public UpdateView(Context context) {
@@ -65,14 +66,20 @@ public class UpdateView extends RelativeLayout {
   }
 
   public UpdateView(Context context, boolean allowHorizontalLayout) {
-    super(context);
+    this(context, true, false);
+  }
 
+  public UpdateView(Context context, boolean allowHorizontalLayout, boolean limitHeight) {
+    super(context);
+    
     if (allowHorizontalLayout) {
       setLayoutHorizontally(context);
     }
     else {
       layoutHorizontally = false;
     }
+    this.limitHeight = limitHeight;
+    
     loadLayoutParams(context);
     loadHeaderView(context);
     loadListView(context);
@@ -90,7 +97,7 @@ public class UpdateView extends RelativeLayout {
   }
 
   private void loadLayoutParams(Context context) {
-    LayoutParams params = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
+    LayoutParams params = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
     setBackgroundColor(Color.WHITE);
     setLayoutParams(params);
   }
@@ -229,7 +236,8 @@ public class UpdateView extends RelativeLayout {
     ListView listView = new ListView(context);
     listView.setId(android.R.id.list);
     
-    LayoutParams params = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
+    int height = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 400, context.getResources().getDisplayMetrics());
+    LayoutParams params = new LayoutParams(LayoutParams.FILL_PARENT, (this.limitHeight ? height : LayoutParams.FILL_PARENT));
     if (layoutHorizontally) {
       params.addRule(RIGHT_OF, HEADER_VIEW_ID);
     }
