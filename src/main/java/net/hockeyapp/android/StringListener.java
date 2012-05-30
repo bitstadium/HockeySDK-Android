@@ -3,7 +3,10 @@ package net.hockeyapp.android;
 /**
  * <h4>Description</h4>
  * 
- * Abstract class for callbacks to be invoked from the UpdateManager. 
+ * Abstract class for callbacks to be invoked with regard to string resources.
+ * This is used as the base class for both CrashManagerListener and 
+ * UpdateManagerListener. Implement getStringForResource to return custom
+ * or localized strings for dialogs and views.
  * 
  * <h4>License</h4>
  * 
@@ -33,34 +36,13 @@ package net.hockeyapp.android;
  * </pre>
  *
  * @author Thomas Dohmke
+ * @see Strings
  **/
-public abstract class UpdateManagerListener extends StringListener {
+public abstract class StringListener {
   /**
-   * Return your own subclass of UpdateActivity for customization. 
+   * Return a custom string for the specified resource ID.
    */
-  public Class<? extends UpdateActivity> getUpdateActivityClass() {
-    return UpdateActivity.class;
-  }
-
-  /**
-   * Return your own subclass of UpdateFragment for customization. 
-   */
-  public Class<? extends UpdateFragment> getUpdateFragmentClass() {
-    return UpdateFragment.class;
-  }
-  
-  /**
-   * Called when the update manager found no update. 
-   */
-  public void onNoUpdateAvailable() {
-    // Do nothing
-  }
-  
-  /**
-   * Called when the update manager found an update. 
-   */
-  public void onUpdateAvailable() {
-    // Do nothing
+  public String getStringForResource(int resourceID) {
+    return null;
   }
 }
-  

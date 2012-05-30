@@ -1,9 +1,12 @@
-package net.hockeyapp.android;
+package net.hockeyapp.android.internal;
+
+import android.content.Context;
+import android.content.SharedPreferences;
 
 /**
  * <h4>Description</h4>
  * 
- * Abstract class for callbacks to be invoked from the UpdateManager. 
+ * Internal helper class to cache version data.
  * 
  * <h4>License</h4>
  * 
@@ -33,34 +36,25 @@ package net.hockeyapp.android;
  * </pre>
  *
  * @author Thomas Dohmke
- **/
-public abstract class UpdateManagerListener extends StringListener {
-  /**
-   * Return your own subclass of UpdateActivity for customization. 
-   */
-  public Class<? extends UpdateActivity> getUpdateActivityClass() {
-    return UpdateActivity.class;
-  }
-
-  /**
-   * Return your own subclass of UpdateFragment for customization. 
-   */
-  public Class<? extends UpdateFragment> getUpdateFragmentClass() {
-    return UpdateFragment.class;
+ **/public class VersionCache {
+  private static String VERSION_INFO_KEY = "versionInfo";
+  
+  public static void setVersionInfo(Context context, String json) {
+    if (context != null) {
+      SharedPreferences preferences = context.getSharedPreferences("HockeyApp", Context.MODE_PRIVATE);
+      SharedPreferences.Editor editor = preferences.edit();
+      editor.putString(VERSION_INFO_KEY, json);
+      editor.commit();
+    }
   }
   
-  /**
-   * Called when the update manager found no update. 
-   */
-  public void onNoUpdateAvailable() {
-    // Do nothing
-  }
-  
-  /**
-   * Called when the update manager found an update. 
-   */
-  public void onUpdateAvailable() {
-    // Do nothing
+  public static String getVersionInfo(Context context) {
+    if (context != null) {
+      SharedPreferences preferences = context.getSharedPreferences("HockeyApp", Context.MODE_PRIVATE);
+      return preferences.getString(VERSION_INFO_KEY, "[]");
+    }
+    else {
+      return "[]";
+    }
   }
 }
-  

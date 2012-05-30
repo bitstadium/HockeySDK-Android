@@ -1,4 +1,4 @@
-package net.hockeyapp.android;
+package net.hockeyapp.android.internal;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -9,6 +9,9 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.UUID;
 
+import net.hockeyapp.android.Strings;
+
+
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -18,6 +21,42 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
 
+/**
+ * <h4>Description</h4>
+ * 
+ * Internal helper class. Downloads an .apk from HockeyApp and stores
+ * it on external storage. If the download was successful, the file 
+ * is then opened to trigger the installation. 
+ * 
+ * <h4>License</h4>
+ * 
+ * <pre>
+ * Copyright (c) 2012 Codenauts UG
+ * 
+ * Permission is hereby granted, free of charge, to any person
+ * obtaining a copy of this software and associated documentation
+ * files (the "Software"), to deal in the Software without
+ * restriction, including without limitation the rights to use,
+ * copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following
+ * conditions:
+ * 
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ * OTHER DEALINGS IN THE SOFTWARE.
+ * </pre>
+ *
+ * @author Thomas Dohmke
+ **/
 public class DownloadFileTask extends AsyncTask<String, Integer, Boolean>{
   private Context context;
   private DownloadFileListener notifier;
@@ -110,16 +149,16 @@ public class DownloadFileTask extends AsyncTask<String, Integer, Boolean>{
      else {
        try {
          AlertDialog.Builder builder = new AlertDialog.Builder(context);
-         builder.setTitle(R.string.download_failed_dialog_title);
-         builder.setMessage(R.string.download_failed_dialog_message);
+         builder.setTitle(Strings.get(notifier, Strings.DOWNLOAD_FAILED_DIALOG_TITLE_ID));
+         builder.setMessage(Strings.get(notifier, Strings.DOWNLOAD_FAILED_DIALOG_MESSAGE_ID));
   
-         builder.setNegativeButton(R.string.download_failed_dialog_negative_button, new DialogInterface.OnClickListener() {
+         builder.setNegativeButton(Strings.get(notifier, Strings.DOWNLOAD_FAILED_DIALOG_NEGATIVE_BUTTON_ID), new DialogInterface.OnClickListener() {
            public void onClick(DialogInterface dialog, int which) {
              notifier.downloadFailed(DownloadFileTask.this, false);
            } 
          });
   
-         builder.setPositiveButton(R.string.download_failed_dialog_positive_button, new DialogInterface.OnClickListener() {
+         builder.setPositiveButton(Strings.get(notifier, Strings.DOWNLOAD_FAILED_DIALOG_POSITIVE_BUTTON_ID), new DialogInterface.OnClickListener() {
            public void onClick(DialogInterface dialog, int which) {
              notifier.downloadFailed(DownloadFileTask.this, true);
            } 

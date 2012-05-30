@@ -1,9 +1,11 @@
-package net.hockeyapp.android;
+package net.hockeyapp.android.internal;
+
+import net.hockeyapp.android.StringListener;
 
 /**
  * <h4>Description</h4>
  * 
- * Abstract class for callbacks to be invoked from the UpdateManager. 
+ * Abstract class for callbacks to be invoked from the DownloadFileTask. 
  * 
  * <h4>License</h4>
  * 
@@ -34,33 +36,10 @@ package net.hockeyapp.android;
  *
  * @author Thomas Dohmke
  **/
-public abstract class UpdateManagerListener extends StringListener {
-  /**
-   * Return your own subclass of UpdateActivity for customization. 
-   */
-  public Class<? extends UpdateActivity> getUpdateActivityClass() {
-    return UpdateActivity.class;
-  }
-
-  /**
-   * Return your own subclass of UpdateFragment for customization. 
-   */
-  public Class<? extends UpdateFragment> getUpdateFragmentClass() {
-    return UpdateFragment.class;
+public abstract class DownloadFileListener extends StringListener {
+  public void downloadFailed(DownloadFileTask task, Boolean userWantsRetry) {
   }
   
-  /**
-   * Called when the update manager found no update. 
-   */
-  public void onNoUpdateAvailable() {
-    // Do nothing
-  }
-  
-  /**
-   * Called when the update manager found an update. 
-   */
-  public void onUpdateAvailable() {
-    // Do nothing
+  public void downloadSuccessful(DownloadFileTask task) {
   }
 }
-  

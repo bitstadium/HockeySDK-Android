@@ -1,4 +1,4 @@
-package net.hockeyapp.android;
+package net.hockeyapp.android.internal;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -9,6 +9,13 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+
+import net.hockeyapp.android.Constants;
+import net.hockeyapp.android.Strings;
+import net.hockeyapp.android.UpdateActivity;
+import net.hockeyapp.android.UpdateFragment;
+import net.hockeyapp.android.UpdateManager;
+import net.hockeyapp.android.UpdateManagerListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,6 +35,41 @@ import android.provider.Settings;
 import android.util.Log;
 import android.widget.Toast;
 
+/**
+ * <h4>Description</h4>
+ * 
+ * Internal helper class. Checks if a new update is available by 
+ * fetching version data from Hockeyapp. 
+ * 
+ * <h4>License</h4>
+ * 
+ * <pre>
+ * Copyright (c) 2012 Codenauts UG
+ * 
+ * Permission is hereby granted, free of charge, to any person
+ * obtaining a copy of this software and associated documentation
+ * files (the "Software"), to deal in the Software without
+ * restriction, including without limitation the rights to use,
+ * copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following
+ * conditions:
+ * 
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ * OTHER DEALINGS IN THE SOFTWARE.
+ * </pre>
+ *
+ * @author Thomas Dohmke
+ **/
 public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
   protected String urlString = null;
   protected String appIdentifier = null;
@@ -186,18 +228,18 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
     }
     
     AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-    builder.setTitle(R.string.update_dialog_title);
+    builder.setTitle(Strings.get(listener, Strings.UPDATE_DIALOG_TITLE_ID));
     
     if (!mandatory) {
-      builder.setMessage(R.string.update_dialog_message);
+      builder.setMessage(Strings.get(listener, Strings.UPDATE_DIALOG_MESSAGE_ID));
   
-      builder.setNegativeButton(R.string.update_dialog_negative_button, new DialogInterface.OnClickListener() {
+      builder.setNegativeButton(Strings.get(listener, Strings.UPDATE_DIALOG_NEGATIVE_BUTTON_ID), new DialogInterface.OnClickListener() {
         public void onClick(DialogInterface dialog, int which) {
           cleanUp();
         } 
       });
       
-      builder.setPositiveButton(R.string.update_dialog_positive_button, new DialogInterface.OnClickListener() {
+      builder.setPositiveButton(Strings.get(listener, Strings.UPDATE_DIALOG_POSITIVE_BUTTON_ID), new DialogInterface.OnClickListener() {
         public void onClick(DialogInterface dialog, int which) {
           if (getCachingEnabled()) {
             VersionCache.setVersionInfo(activity, "[]");
@@ -215,7 +257,7 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
       builder.create().show();
     }
     else {
-      Toast.makeText(activity, R.string.update_mandatory_toast, Toast.LENGTH_LONG).show();
+      Toast.makeText(activity, Strings.get(listener, Strings.UPDATE_MANDATORY_TOAST_ID), Toast.LENGTH_LONG).show();
       startUpdateIntent(updateInfo, true);
     }
   }
