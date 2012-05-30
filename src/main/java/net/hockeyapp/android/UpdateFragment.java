@@ -99,8 +99,8 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
    * Called when the fragment is starting. Sets the instance arguments
    * and the style of the fragment.
    * 
-   * @params savedInstanceState Data it most recently supplied in 
-   *                            onSaveInstanceState(Bundle)
+   * @param savedInstanceState Data it most recently supplied in 
+   *                           onSaveInstanceState(Bundle)
    */
   @Override
   public void onCreate(Bundle savedInstanceState) {

@@ -66,8 +66,8 @@ public class UpdateActivity extends ListActivity implements UpdateActivityInterf
    * Configures the list view adapter. Attaches itself to a previously 
    * started download task.
    * 
-   * @params savedInstanceState Data it most recently supplied in 
-   *                            onSaveInstanceState(Bundle)
+   * @param savedInstanceState Data it most recently supplied in 
+   *                           onSaveInstanceState(Bundle)
    */
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
