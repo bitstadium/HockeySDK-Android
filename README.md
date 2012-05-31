@@ -2,29 +2,16 @@ This README describes on how to integrate HockeyApp into you Android apps. The c
 
 ## Requirements
 
-* ADT Plugin 0.9.7 (or higher)
-* Android SDK 3.0 (or higher)
-* Eclipse 3.5 (or higher)
-
-The SDK runs on devices with Android 2.1 or higher, but you need Android SDK 3.0 (Level 11) to build the library.
+The SDK runs on devices with Android 2.1 or higher, but you need Android SDK 3.0 (Level 11) or higher to build the library.
 
 ## Integration Into Your Own App
 
-### Import Library Project
+### Download the Library
 
-* Checkout the latest version of [HockeySDK-Android](https://github.com/codenauts/HockeySDK-Android from GitHub:)<pre>git co git://github.com/codenauts/HockeySDK-Android</pre>
-* Open Eclipse.
-* Go to File > Import.
-* Select General > Existing Projects into Workspace, then Next.
-* Click Browse to choose the checked-out directory.
-* Click Finish.
-
-### Add Library Project
-
-* Right-click on your project in the Package Explorer and select Properties.
-* Select Android in the sidebar.
-* Click on Add in the Library section.
-* Select Hockey and then twice OK. You should be back in the Eclipse main window.
+* Download the latest release from [here](https://github.com/codenauts/HockeySDK-Android/downloads).
+* Unzip the file.
+* Copy the file libs/HockeySDK.jar to the libs folder of your Android project.
+* If you use ADT 16 or older, then add the .jar file to your classpath. With ADT 17 or newer, this is done automatically.
 
 ### Change Code
 
