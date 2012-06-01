@@ -1,5 +1,7 @@
 package net.hockeyapp.android;
 
+import java.util.Date;
+
 /**
  * <h4>Description</h4>
  * 
@@ -61,6 +63,22 @@ public abstract class UpdateManagerListener extends StringListener {
    */
   public void onUpdateAvailable() {
     // Do nothing
+  }
+  
+  /**
+   * Return an expiry date for this build or null. After this date the
+   * build will be blocked by a dialog.
+   */
+  public Date getExpiryDate() {
+    return null;
+  }
+  
+  /**
+   * Called when the build is expired. Return false to if you handle
+   * the expiry in your code.
+   */
+  public boolean onBuildExpired() {
+    return true;
   }
 }
   

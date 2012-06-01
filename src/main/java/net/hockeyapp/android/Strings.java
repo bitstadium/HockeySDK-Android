@@ -105,6 +105,16 @@ public class Strings {
    * update was found.
    */
   public final static int UPDATE_DIALOG_POSITIVE_BUTTON_ID          = 0x0c;
+  
+  /**
+   * Resource ID for the title of the expiry info view.
+   */
+  public final static int EXPIRY_INFO_TITLE_ID                      = 0x0d;
+  
+  /**
+   * Resource ID for the text of the expiry info view.
+   */
+  public final static int EXPIRY_INFO_TEXT_ID                       = 0x0e;
 
   /**
    * Default strings.
@@ -125,7 +135,10 @@ public class Strings {
       "Update Available",
       "Show information about the new update?",
       "Dismiss",
-      "Show"
+      "Show",
+      
+      "Build Expired",
+      "This has build has expired. Please check HockeyApp for any updates."
   };
   
   /**

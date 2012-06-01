@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.text.TextUtils.TruncateAt;
 import android.util.TypedValue;
@@ -84,7 +83,7 @@ public class UpdateView extends RelativeLayout {
     loadHeaderView(context);
     loadListView(context);
     loadShadow(headerView, context);
-}
+  }
 
   private void setLayoutHorizontally(Context context) {
     int orientation = getResources().getConfiguration().orientation;
@@ -206,7 +205,7 @@ public class UpdateView extends RelativeLayout {
     else {
       params = new LayoutParams(LayoutParams.FILL_PARENT, height);
       params.addRule(RelativeLayout.ALIGN_PARENT_TOP, TRUE);
-      topShadowView.setBackgroundDrawable(getGradient());
+      topShadowView.setBackgroundDrawable(ViewHelper.getGradient());
     }
     topShadowView.setLayoutParams(params);
     
@@ -221,15 +220,9 @@ public class UpdateView extends RelativeLayout {
       params.addRule(RelativeLayout.BELOW, HEADER_VIEW_ID);
     }
     bottomShadowView.setLayoutParams(params);
-    bottomShadowView.setBackgroundDrawable(getGradient());
+    bottomShadowView.setBackgroundDrawable(ViewHelper.getGradient());
     
     addView(bottomShadowView);
-  }
-  
-  private Drawable getGradient() {
-    int colors[] = { 0xff000000, 0x00000000 };
-    GradientDrawable gradient = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, colors);
-    return gradient;
   }
 
   private void loadListView(Context context) {

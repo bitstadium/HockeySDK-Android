@@ -1,8 +1,11 @@
 package net.hockeyapp.android;
 
+import java.util.Date;
+
 import net.hockeyapp.android.internal.CheckUpdateTask;
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.AsyncTask.Status;
 
@@ -88,6 +91,43 @@ public class UpdateManager {
       return;
     }
     
+    if (!checkExpiryDate(activity, listener)) {
+      startUpdateTask(activity, urlString, appIdentifier, listener);
+    }
+  }
+
+  /**
+   * Returns true if the build is expired and starts an activity if not
+   * handled by the owner of the UpdateManager.  
+   */
+  private static boolean checkExpiryDate(Activity activity, UpdateManagerListener listener) {
+    boolean result = false;
+    boolean handle = false;
+    
+    if (listener != null) {
+      Date expiryDate = listener.getExpiryDate();
+      result = ((expiryDate != null) && (new Date().compareTo(expiryDate) > 0));
+      if (result) {
+        handle = listener.onBuildExpired();
+      }
+    }
+    
+    if ((result) && (handle)) {
+      startExpiryInfoIntent(activity);
+    }
+    
+    return result;
+  }
+
+  private static void startExpiryInfoIntent(Activity activity) {
+    activity.finish();
+    
+    Intent intent = new Intent(activity, ExpiryInfoActivity.class);
+    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+    activity.startActivity(intent);
+  }
+
+  private static void startUpdateTask(Activity activity, String urlString, String appIdentifier, UpdateManagerListener listener) {
     if ((updateTask == null) || (updateTask.getStatus() == Status.FINISHED)) {
       updateTask = new CheckUpdateTask(activity, urlString, appIdentifier, listener);
       updateTask.execute();
