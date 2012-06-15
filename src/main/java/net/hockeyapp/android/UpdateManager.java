@@ -119,6 +119,10 @@ public class UpdateManager {
     return result;
   }
 
+  /**
+   * Starts the ExpiryInfoActivity as a new task and finished the current 
+   * activity. 
+   */
   private static void startExpiryInfoIntent(Activity activity) {
     activity.finish();
     
@@ -127,6 +131,10 @@ public class UpdateManager {
     activity.startActivity(intent);
   }
 
+  /**
+   * Starts the UpdateTask if not already running. Otherwise attaches the
+   * activity to it. 
+   */
   private static void startUpdateTask(Activity activity, String urlString, String appIdentifier, UpdateManagerListener listener) {
     if ((updateTask == null) || (updateTask.getStatus() == Status.FINISHED)) {
       updateTask = new CheckUpdateTask(activity, urlString, appIdentifier, listener);
