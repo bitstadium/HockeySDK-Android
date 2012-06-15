@@ -9,9 +9,9 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
 import android.text.TextUtils.TruncateAt;
 import android.util.TypedValue;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -55,6 +55,7 @@ public class UpdateView extends RelativeLayout {
   public final static int NAME_LABEL_ID = 0x1002;
   public final static int VERSION_LABEL_ID = 0x1003;
   public final static int UPDATE_BUTTON_ID = 0x1004;
+  public final static int WEB_VIEW_ID = 0x1005;
   
   private boolean layoutHorizontally = false;
   private boolean limitHeight = false;
@@ -81,7 +82,7 @@ public class UpdateView extends RelativeLayout {
     
     loadLayoutParams(context);
     loadHeaderView(context);
-    loadListView(context);
+    loadWebView(context);
     loadShadow(headerView, context);
   }
 
@@ -225,9 +226,9 @@ public class UpdateView extends RelativeLayout {
     addView(bottomShadowView);
   }
 
-  private void loadListView(Context context) {
-    ListView listView = new ListView(context);
-    listView.setId(android.R.id.list);
+  private void loadWebView(Context context) {
+    WebView webView = new WebView(context);
+    webView.setId(WEB_VIEW_ID);
     
     int height = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 400, context.getResources().getDisplayMetrics());
     LayoutParams params = new LayoutParams(LayoutParams.FILL_PARENT, (this.limitHeight ? height : LayoutParams.FILL_PARENT));
@@ -238,14 +239,9 @@ public class UpdateView extends RelativeLayout {
       params.addRule(BELOW, HEADER_VIEW_ID);
     }
     params.setMargins(0, 0, 0, 0);
-    listView.setLayoutParams(params);
-    listView.setBackgroundColor(Color.WHITE);
-    listView.setCacheColorHint(Color.WHITE);
-    listView.setFastScrollEnabled(true);
-    listView.setSelector(new ColorDrawable(Color.WHITE));
-    listView.setScrollingCacheEnabled(false);
-    listView.setTag("bottom");
+    webView.setLayoutParams(params);
+    webView.setBackgroundColor(Color.WHITE);
     
-    addView(listView);
+    addView(webView);
   }
 }

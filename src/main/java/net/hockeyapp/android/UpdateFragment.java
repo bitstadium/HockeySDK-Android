@@ -2,8 +2,8 @@ package net.hockeyapp.android;
 
 import net.hockeyapp.android.internal.DownloadFileListener;
 import net.hockeyapp.android.internal.DownloadFileTask;
-import net.hockeyapp.android.internal.UpdateInfoAdapter;
 import net.hockeyapp.android.internal.UpdateView;
+import net.hockeyapp.android.internal.VersionHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,8 +18,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.TextView;
 
 /**
@@ -74,9 +74,9 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
   private String urlString;
   
   /**
-   * Adapter to provide views and data for the list viw. 
+   * Helper for version management.
    */
-  private UpdateInfoAdapter adapter;
+  private VersionHelper versionHelper;
   
   /**
    * Creates a new instance of the fragment. 
@@ -128,21 +128,20 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     View view = getLayoutView();
 
-    adapter = new UpdateInfoAdapter(getActivity(), versionInfo.toString(), this);
+    versionHelper = new VersionHelper(versionInfo.toString(), this);
 
-    ListView listView = (ListView)view.findViewById(android.R.id.list);
-    listView.setDivider(null);
-    listView.setAdapter(adapter);
-    
     TextView nameLabel = (TextView)view.findViewById(UpdateView.NAME_LABEL_ID);
     nameLabel.setText(getAppName());
     
     TextView versionLabel = (TextView)view.findViewById(UpdateView.VERSION_LABEL_ID);
-    versionLabel.setText("Version " + adapter.getVersionString() + "\n" + adapter.getFileInfoString());
+    versionLabel.setText("Version " + versionHelper.getVersionString() + "\n" + versionHelper.getFileInfoString());
 
     Button updateButton = (Button)view.findViewById(UpdateView.UPDATE_BUTTON_ID);
     updateButton.setOnClickListener(this);
     
+    WebView webView = (WebView)view.findViewById(UpdateView.WEB_VIEW_ID);
+    webView.loadDataWithBaseURL(Constants.BASE_URL, versionHelper.getReleaseNotes(), "text/html", "utf-8", null);
+
     return view;
   }
 

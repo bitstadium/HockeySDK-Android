@@ -2,9 +2,9 @@ package net.hockeyapp.android;
 
 import net.hockeyapp.android.internal.DownloadFileListener;
 import net.hockeyapp.android.internal.DownloadFileTask;
-import net.hockeyapp.android.internal.UpdateInfoAdapter;
 import net.hockeyapp.android.internal.UpdateView;
-import android.app.ListActivity;
+import net.hockeyapp.android.internal.VersionHelper;
+import android.app.Activity;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -50,16 +51,16 @@ import android.widget.TextView;
  *
  * @author Thomas Dohmke
  **/
-public class UpdateActivity extends ListActivity implements UpdateActivityInterface, UpdateInfoListener, OnClickListener {
+public class UpdateActivity extends Activity implements UpdateActivityInterface, UpdateInfoListener, OnClickListener {
   /**
    * Task to download the .apk file.
    */
   private DownloadFileTask downloadTask;
   
   /**
-   * Adapter to provide views and data for the list viw. 
+   * Helper for version management.
    */
-  private UpdateInfoAdapter adapter;
+  private VersionHelper versionHelper;
   
   /**
    * Called when the activity is starting. Sets the title and content view.
@@ -75,9 +76,7 @@ public class UpdateActivity extends ListActivity implements UpdateActivityInterf
     setTitle("App Update");
     setContentView(getLayoutView());
 
-    adapter = new UpdateInfoAdapter(this, getIntent().getStringExtra("json"), this);
-    getListView().setDivider(null);
-    setListAdapter(adapter);
+    versionHelper = new VersionHelper(getIntent().getStringExtra("json"), this);
     configureView();
     
     downloadTask = (DownloadFileTask)getLastNonConfigurationInstance();
@@ -95,10 +94,13 @@ public class UpdateActivity extends ListActivity implements UpdateActivityInterf
     nameLabel.setText(getAppName());
     
     TextView versionLabel = (TextView)findViewById(UpdateView.VERSION_LABEL_ID);
-    versionLabel.setText("Version " + adapter.getVersionString() + "\n" + adapter.getFileInfoString());
+    versionLabel.setText("Version " + versionHelper.getVersionString() + "\n" + versionHelper.getFileInfoString());
     
     Button updateButton = (Button)findViewById(UpdateView.UPDATE_BUTTON_ID);
     updateButton.setOnClickListener(this);
+    
+    WebView webView = (WebView)findViewById(UpdateView.WEB_VIEW_ID);
+    webView.loadDataWithBaseURL(Constants.BASE_URL, versionHelper.getReleaseNotes(), "text/html", "utf-8", null);
   }
 
   /**
