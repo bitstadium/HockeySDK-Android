@@ -122,14 +122,19 @@ public class DownloadFileTask extends AsyncTask<String, Integer, Boolean>{
 
    @Override
    protected void onProgressUpdate(Integer... args){
-     if (progressDialog == null) {
-       progressDialog = new ProgressDialog(context);
-       progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-       progressDialog.setMessage("Loading...");
-       progressDialog.setCancelable(false);
-       progressDialog.show();
+     try {
+       if (progressDialog == null) {
+         progressDialog = new ProgressDialog(context);
+         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+         progressDialog.setMessage("Loading...");
+         progressDialog.setCancelable(false);
+         progressDialog.show();
+       }
+       progressDialog.setProgress(args[0]);
      }
-     progressDialog.setProgress(args[0]);
+     catch (Exception e) {
+       // Ignore all exceptions
+     }
    }
    
    @Override
