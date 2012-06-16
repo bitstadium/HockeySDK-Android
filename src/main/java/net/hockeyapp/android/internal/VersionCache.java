@@ -36,7 +36,8 @@ import android.content.SharedPreferences;
  * </pre>
  *
  * @author Thomas Dohmke
- **/public class VersionCache {
+ **/
+public class VersionCache {
   private static String VERSION_INFO_KEY = "versionInfo";
   
   public static void setVersionInfo(Context context, String json) {
