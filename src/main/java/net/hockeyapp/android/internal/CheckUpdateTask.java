@@ -12,6 +12,7 @@ import java.net.URLEncoder;
 
 import net.hockeyapp.android.Constants;
 import net.hockeyapp.android.Strings;
+import net.hockeyapp.android.Tracking;
 import net.hockeyapp.android.UpdateActivity;
 import net.hockeyapp.android.UpdateFragment;
 import net.hockeyapp.android.UpdateManager;
@@ -77,11 +78,13 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
   private Activity activity = null;
   private Boolean mandatory = false;
   private UpdateManagerListener listener;
+  private long usageTime = 0;
   
   public CheckUpdateTask(Activity activity, String urlString) {
     this.appIdentifier = null;
     this.activity = activity;
     this.urlString = urlString;
+    this.usageTime = Tracking.getUsageTime(activity);
     
     Constants.loadFromContext(activity);
   }
@@ -90,6 +93,7 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
     this.appIdentifier = appIdentifier;
     this.activity = activity;
     this.urlString = urlString;
+    this.usageTime = Tracking.getUsageTime(activity);
 
     Constants.loadFromContext(activity);
   }
@@ -99,6 +103,7 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
     this.activity = activity;
     this.urlString = urlString;
     this.listener = listener;
+    this.usageTime = Tracking.getUsageTime(activity);
 
     Constants.loadFromContext(activity);
   }
@@ -214,6 +219,7 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
     builder.append("&app_version=" + URLEncoder.encode(Constants.APP_VERSION));
     builder.append("&sdk=" + URLEncoder.encode(Constants.SDK_NAME));
     builder.append("&sdk_version=" + URLEncoder.encode(Constants.SDK_VERSION));
+    builder.append("&usage_time=" + usageTime);
     
     return builder.toString();
   }
