@@ -100,6 +100,8 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
     updateButton.setOnClickListener(this);
     
     WebView webView = (WebView)findViewById(UpdateView.WEB_VIEW_ID);
+    webView.clearCache(true);
+    webView.destroyDrawingCache();
     webView.loadDataWithBaseURL(Constants.BASE_URL, versionHelper.getReleaseNotes(), "text/html", "utf-8", null);
   }
 
