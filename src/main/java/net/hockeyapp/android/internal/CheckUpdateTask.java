@@ -5,6 +5,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLConnection;
@@ -138,9 +139,7 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
       }
       
       URL url = new URL(getURLString("json"));
-      URLConnection connection = url.openConnection();
-      connection.addRequestProperty("User-Agent", "Hockey/Android");
-      connection.setRequestProperty("connection", "close");
+      URLConnection connection = createConnection(url);
       connection.connect();
 
       InputStream inputStream = new BufferedInputStream(connection.getInputStream());
@@ -157,6 +156,13 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
     }
     
     return null;
+  }
+
+  protected URLConnection createConnection(URL url) throws IOException {
+    URLConnection connection = url.openConnection();
+    connection.addRequestProperty("User-Agent", "Hockey/Android");
+    connection.setRequestProperty("connection", "close");
+    return connection;
   }
 
   private boolean findNewVersion(JSONArray json, int versionCode) {
@@ -209,19 +215,29 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
 
     String deviceIdentifier = Settings.Secure.getString(activity.getContentResolver(), Settings.Secure.ANDROID_ID);
     if (deviceIdentifier != null) {
-      builder.append("&udid=" + URLEncoder.encode(Settings.Secure.getString(activity.getContentResolver(), Settings.Secure.ANDROID_ID)));
+      builder.append("&udid=" + encodeParam(Settings.Secure.getString(activity.getContentResolver(), Settings.Secure.ANDROID_ID)));
     }
     
     builder.append("&os=Android");
-    builder.append("&os_version=" + URLEncoder.encode(Constants.ANDROID_VERSION));
-    builder.append("&device=" + URLEncoder.encode(Constants.PHONE_MODEL));
-    builder.append("&oem=" + URLEncoder.encode(Constants.PHONE_MANUFACTURER));
-    builder.append("&app_version=" + URLEncoder.encode(Constants.APP_VERSION));
-    builder.append("&sdk=" + URLEncoder.encode(Constants.SDK_NAME));
-    builder.append("&sdk_version=" + URLEncoder.encode(Constants.SDK_VERSION));
+    builder.append("&os_version=" + encodeParam(Constants.ANDROID_VERSION));
+    builder.append("&device=" + encodeParam(Constants.PHONE_MODEL));
+    builder.append("&oem=" + encodeParam(Constants.PHONE_MANUFACTURER));
+    builder.append("&app_version=" + encodeParam(Constants.APP_VERSION));
+    builder.append("&sdk=" + encodeParam(Constants.SDK_NAME));
+    builder.append("&sdk_version=" + encodeParam(Constants.SDK_VERSION));
     builder.append("&usage_time=" + usageTime);
     
     return builder.toString();
+  }
+  
+  private String encodeParam(String param) {
+    try {
+      return URLEncoder.encode(param, "UTF-8");
+    }
+    catch (UnsupportedEncodingException e) {
+      // UTF-8 should be available, so just in case
+      return "";
+    }
   }
   
   private void showDialog(final JSONArray updateInfo) {

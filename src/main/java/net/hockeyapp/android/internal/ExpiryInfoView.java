@@ -56,14 +56,14 @@ public class ExpiryInfoView extends RelativeLayout {
   }
 
   private void loadLayoutParams(Context context) {
-    LayoutParams params = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
+    LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
     setBackgroundColor(Color.WHITE);
     setLayoutParams(params);
   }
 
   private void loadShadowView(Context context) {
     int height = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float)3.0, getResources().getDisplayMetrics());
-    LayoutParams params = new LayoutParams(LayoutParams.FILL_PARENT, height);
+    LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, height);
     params.addRule(RelativeLayout.ALIGN_PARENT_TOP, TRUE);
 
     ImageView shadowView = new ImageView(context);
@@ -76,7 +76,7 @@ public class ExpiryInfoView extends RelativeLayout {
   private void loadTextView(Context context, String text) {
     int margin = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float)20.0, getResources().getDisplayMetrics());
 
-    LayoutParams params = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+    LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
     params.addRule(RelativeLayout.CENTER_IN_PARENT, TRUE);
     params.setMargins(margin, margin, margin, margin);
     

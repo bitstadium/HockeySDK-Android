@@ -8,6 +8,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
 import android.text.TextUtils.TruncateAt;
+import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.webkit.WebView;
 import android.widget.Button;
@@ -57,12 +58,16 @@ public class UpdateView extends RelativeLayout {
   public final static int UPDATE_BUTTON_ID = 0x1004;
   public final static int WEB_VIEW_ID = 0x1005;
   
-  private boolean layoutHorizontally = false;
-  private boolean limitHeight = false;
-  private RelativeLayout headerView = null;
+  protected RelativeLayout headerView = null;
+  protected boolean layoutHorizontally = false;
+  protected boolean limitHeight = false;
   
   public UpdateView(Context context) {
     this(context, true);
+  }
+
+  public UpdateView(Context context, AttributeSet attrs) {
+    this(context, true, false);
   }
 
   public UpdateView(Context context, boolean allowHorizontalLayout) {
@@ -97,7 +102,7 @@ public class UpdateView extends RelativeLayout {
   }
 
   private void loadLayoutParams(Context context) {
-    LayoutParams params = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+    LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
     setBackgroundColor(Color.WHITE);
     setLayoutParams(params);
   }
@@ -108,12 +113,12 @@ public class UpdateView extends RelativeLayout {
     
     LayoutParams params = null;
     if (layoutHorizontally) {
-      params = new LayoutParams((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float)250.0, getResources().getDisplayMetrics()), LayoutParams.FILL_PARENT);
+      params = new LayoutParams((int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float)250.0, getResources().getDisplayMetrics()), LayoutParams.MATCH_PARENT);
       params.addRule(RelativeLayout.ALIGN_PARENT_LEFT, TRUE);
       headerView.setPadding(0, 0, 0, 0);
     }
     else {
-      params = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+      params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
       headerView.setPadding(0, 0, 0, (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float)20.0, getResources().getDisplayMetrics()));
     }
     headerView.setLayoutParams(params);
@@ -199,12 +204,12 @@ public class UpdateView extends RelativeLayout {
     
     ImageView topShadowView = new ImageView(context);
     if (layoutHorizontally) {
-      params = new LayoutParams(1, LayoutParams.FILL_PARENT);
+      params = new LayoutParams(1, LayoutParams.MATCH_PARENT);
       params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, TRUE);
       topShadowView.setBackgroundDrawable(new ColorDrawable(Color.BLACK));
     }
     else {
-      params = new LayoutParams(LayoutParams.FILL_PARENT, height);
+      params = new LayoutParams(LayoutParams.MATCH_PARENT, height);
       params.addRule(RelativeLayout.ALIGN_PARENT_TOP, TRUE);
       topShadowView.setBackgroundDrawable(ViewHelper.getGradient());
     }
@@ -213,7 +218,7 @@ public class UpdateView extends RelativeLayout {
     headerView.addView(topShadowView);
     
     ImageView bottomShadowView = new ImageView(context);
-    params = new LayoutParams(LayoutParams.FILL_PARENT, height);
+    params = new LayoutParams(LayoutParams.MATCH_PARENT, height);
     if (layoutHorizontally) {
       params.addRule(RelativeLayout.ALIGN_PARENT_TOP, TRUE);
     }
@@ -231,7 +236,7 @@ public class UpdateView extends RelativeLayout {
     webView.setId(WEB_VIEW_ID);
     
     int height = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 400, context.getResources().getDisplayMetrics());
-    LayoutParams params = new LayoutParams(LayoutParams.FILL_PARENT, (this.limitHeight ? height : LayoutParams.FILL_PARENT));
+    LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, (this.limitHeight ? height : LayoutParams.MATCH_PARENT));
     if (layoutHorizontally) {
       params.addRule(RIGHT_OF, HEADER_VIEW_ID);
     }

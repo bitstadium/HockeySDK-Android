@@ -70,6 +70,7 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
    * @param savedInstanceState Data it most recently supplied in 
    *                           onSaveInstanceState(Bundle)
    */
+  @SuppressWarnings("deprecation")
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
