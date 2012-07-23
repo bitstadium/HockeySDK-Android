@@ -55,12 +55,12 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
   /**
    * Task to download the .apk file.
    */
-  private DownloadFileTask downloadTask;
+  protected DownloadFileTask downloadTask;
   
   /**
    * Helper for version management.
    */
-  private VersionHelper versionHelper;
+  protected VersionHelper versionHelper;
   
   /**
    * Called when the activity is starting. Sets the title and content view.
@@ -127,7 +127,7 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
    */
   private void startDownloadTask() {
     final String url = getIntent().getStringExtra("url");
-    downloadTask = new DownloadFileTask(this, url, new DownloadFileListener() {
+    createDownloadTask(url, new DownloadFileListener() {
       public void downloadSuccessful(DownloadFileTask task) {
         enableUpdateButton();
       }
@@ -152,6 +152,10 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
       }
     });
     downloadTask.execute();
+  }
+  
+  protected void createDownloadTask(String url, DownloadFileListener listener) {
+    downloadTask = new DownloadFileTask(this, url, listener);
   }
   
   /**

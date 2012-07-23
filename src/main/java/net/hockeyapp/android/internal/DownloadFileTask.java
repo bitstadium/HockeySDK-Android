@@ -3,6 +3,7 @@ package net.hockeyapp.android.internal;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
@@ -72,11 +73,11 @@ public class DownloadFileTask extends AsyncTask<String, Integer, Boolean>{
     this.filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Download";
     this.notifier = notifier;
   }
-  
+
   public void attach(Context context) {
     this.context = context;
   }
-  
+
   public void detach() {
     context = null;
     progressDialog = null;
@@ -86,8 +87,7 @@ public class DownloadFileTask extends AsyncTask<String, Integer, Boolean>{
   protected Boolean doInBackground(String... args) {
     try {
       URL url = new URL(getURLString());
-      URLConnection connection = url.openConnection();
-      connection.setRequestProperty("connection", "close");
+      URLConnection connection = createConnection(url);
       connection.connect();
 
       int lenghtOfFile = connection.getContentLength();
@@ -111,7 +111,7 @@ public class DownloadFileTask extends AsyncTask<String, Integer, Boolean>{
       output.flush();
       output.close();
       input.close();
-      
+
       return (total > 0);
     } 
     catch (Exception e) {
@@ -120,64 +120,70 @@ public class DownloadFileTask extends AsyncTask<String, Integer, Boolean>{
     }
   }
 
-   @Override
-   protected void onProgressUpdate(Integer... args){
-     try {
-       if (progressDialog == null) {
-         progressDialog = new ProgressDialog(context);
-         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-         progressDialog.setMessage("Loading...");
-         progressDialog.setCancelable(false);
-         progressDialog.show();
-       }
-       progressDialog.setProgress(args[0]);
-     }
-     catch (Exception e) {
-       // Ignore all exceptions
-     }
-   }
-   
-   @Override
-   protected void onPostExecute(Boolean result) {
-     if (progressDialog != null) {
-       progressDialog.dismiss();
-     }
-     
-     if (result) {
-       notifier.downloadSuccessful(this);
-       
-       Intent intent = new Intent(Intent.ACTION_VIEW);
-       intent.setDataAndType(Uri.fromFile(new File(this.filePath, this.filename)), "application/vnd.android.package-archive");
-       intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-       context.startActivity(intent);
-     }
-     else {
-       try {
-         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-         builder.setTitle(Strings.get(notifier, Strings.DOWNLOAD_FAILED_DIALOG_TITLE_ID));
-         builder.setMessage(Strings.get(notifier, Strings.DOWNLOAD_FAILED_DIALOG_MESSAGE_ID));
-  
-         builder.setNegativeButton(Strings.get(notifier, Strings.DOWNLOAD_FAILED_DIALOG_NEGATIVE_BUTTON_ID), new DialogInterface.OnClickListener() {
-           public void onClick(DialogInterface dialog, int which) {
-             notifier.downloadFailed(DownloadFileTask.this, false);
-           } 
-         });
-  
-         builder.setPositiveButton(Strings.get(notifier, Strings.DOWNLOAD_FAILED_DIALOG_POSITIVE_BUTTON_ID), new DialogInterface.OnClickListener() {
-           public void onClick(DialogInterface dialog, int which) {
-             notifier.downloadFailed(DownloadFileTask.this, true);
-           } 
-         });
-         
-         builder.create().show();
-       }
-       catch (Exception e) {
-         // Ignore all exceptions
-       }
-     }
-   }
+  protected URLConnection createConnection(URL url) throws IOException {
+    URLConnection connection = url.openConnection();
+    connection.setRequestProperty("connection", "close");
+    return connection;
+  }
 
-   private String getURLString() {
-     return urlString + "&type=apk";      
-   }
+  @Override
+  protected void onProgressUpdate(Integer... args){
+    try {
+      if (progressDialog == null) {
+        progressDialog = new ProgressDialog(context);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progressDialog.setMessage("Loading...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+      }
+      progressDialog.setProgress(args[0]);
+    }
+    catch (Exception e) {
+      // Ignore all exceptions
+    }
+  }
+
+  @Override
+  protected void onPostExecute(Boolean result) {
+    if (progressDialog != null) {
+      progressDialog.dismiss();
+    }
+
+    if (result) {
+      notifier.downloadSuccessful(this);
+
+      Intent intent = new Intent(Intent.ACTION_VIEW);
+      intent.setDataAndType(Uri.fromFile(new File(this.filePath, this.filename)), "application/vnd.android.package-archive");
+      intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+      context.startActivity(intent);
+    }
+    else {
+      try {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(Strings.get(notifier, Strings.DOWNLOAD_FAILED_DIALOG_TITLE_ID));
+        builder.setMessage(Strings.get(notifier, Strings.DOWNLOAD_FAILED_DIALOG_MESSAGE_ID));
+
+        builder.setNegativeButton(Strings.get(notifier, Strings.DOWNLOAD_FAILED_DIALOG_NEGATIVE_BUTTON_ID), new DialogInterface.OnClickListener() {
+          public void onClick(DialogInterface dialog, int which) {
+            notifier.downloadFailed(DownloadFileTask.this, false);
+          } 
+        });
+
+        builder.setPositiveButton(Strings.get(notifier, Strings.DOWNLOAD_FAILED_DIALOG_POSITIVE_BUTTON_ID), new DialogInterface.OnClickListener() {
+          public void onClick(DialogInterface dialog, int which) {
+            notifier.downloadFailed(DownloadFileTask.this, true);
+          } 
+        });
+
+        builder.create().show();
+      }
+      catch (Exception e) {
+        // Ignore all exceptions
+      }
+    }
+  }
+
+  private String getURLString() {
+    return urlString + "&type=apk";      
+  }
 }
