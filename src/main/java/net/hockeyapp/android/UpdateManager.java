@@ -97,6 +97,19 @@ public class UpdateManager {
   }
 
   /**
+   * Unregisters the update manager
+   */
+  public static void unregister() {
+    if (updateTask != null) {
+      updateTask.cancel(true);
+      updateTask.detach();
+      updateTask = null;
+    }
+
+    lastListener = null;
+  }
+
+  /**
    * Returns true if the build is expired and starts an activity if not
    * handled by the owner of the UpdateManager.  
    */
