@@ -47,6 +47,7 @@ public class YourActivity extends Activity {
   }
 
   private void checkForUpdates() {
+    // Remove this for store builds!
     UpdateManager.register(this, APP_ID);
   }
   
