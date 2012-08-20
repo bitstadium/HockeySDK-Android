@@ -146,7 +146,12 @@ public class DownloadFileTask extends AsyncTask<String, Integer, Boolean>{
   @Override
   protected void onPostExecute(Boolean result) {
     if (progressDialog != null) {
-      progressDialog.dismiss();
+      try {
+        progressDialog.dismiss();
+      }
+      catch (Exception e) {
+        // Ignore all exceptions
+      }
     }
 
     if (result) {
