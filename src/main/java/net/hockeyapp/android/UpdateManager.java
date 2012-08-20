@@ -3,6 +3,8 @@ package net.hockeyapp.android;
 import java.util.Date;
 
 import net.hockeyapp.android.internal.CheckUpdateTask;
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
@@ -161,6 +163,7 @@ public class UpdateManager {
   /**
    * Returns true if the dialog is already shown (only works on Android 3.0+). 
    */
+  @TargetApi(11)
   private static boolean dialogShown(Activity activity) {
     Fragment existingFragment = activity.getFragmentManager().findFragmentByTag("hockey_update_dialog");
     return (existingFragment != null);
@@ -169,6 +172,7 @@ public class UpdateManager {
   /**
    * Returns true if the Fragment API is supported (should be on Android 3.0+).
    */
+  @SuppressLint("NewApi")
   public static Boolean fragmentsSupported() {
     try {
       return (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) && (android.app.Fragment.class != null);
