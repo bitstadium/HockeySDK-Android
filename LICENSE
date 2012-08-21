@@ -2,12 +2,9 @@
 LICENSE INFORMATION (I)
 **********************************************************************
 
-This section is valid for the following classes:
-+ CheckUpdateTask
-+ UpdateActivity
-+ UpdateInfoAdapter
+The Hockey SDK is provided under the following license:
 
-Copyright (c) 2011 Codenauts UG
+Copyright (c) 2011, 2012 HockeyApp, Bit Stadium GmbH.
 
 Permission is hereby granted, free of charge, to any person
 obtaining a copy of this software and associated documentation
@@ -30,9 +27,6 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 
-Contributors:
-+ Thomas Dohmke, thomas@dohmke.de
-
 **********************************************************************
 LICENSE INFORMATION (II)
 **********************************************************************
@@ -44,6 +38,8 @@ android-remote-stacktrace:
 + ExceptionHandler
 
 Source: http://code.google.com/p/android-remote-stacktrace/
+
+The original license of these classes is:
 
 Copyright (c) 2009 nullwire aps
 
