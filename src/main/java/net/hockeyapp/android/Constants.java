@@ -83,7 +83,7 @@ public class Constants {
   /**
    * HockeyApp API URL.
    */
-  public static final String BASE_URL = "https://rink.hockeyapp.net/";
+  public static final String BASE_URL = "https://sdk.hockeyapp.net/";
   
   /**
    * Name of this SDK.
@@ -93,7 +93,7 @@ public class Constants {
   /**
    * Version of this SDK.
    */
-  public static final String SDK_VERSION = "2.1.0";
+  public static final String SDK_VERSION = "2.2.0";
 
   /**
    * Initializes constants from the given context. The context is used to set 
