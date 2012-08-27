@@ -39,9 +39,9 @@
   </licenses>
 
   <scm>
-    <url>https://github.com/codenauts/HockeySDK-Android</url>
-    <connection>scm:git:git://github.com/codenauts/HockeySDK-Android.git</connection>
-    <developerConnection>scm:git:git@github.com:codenauts/HockeySDK-Android.git</developerConnection>
+    <url>https://github.com/bitstadium/HockeySDK-Android</url>
+    <connection>scm:git:git://github.com/bitstadium/HockeySDK-Android.git</connection>
+    <developerConnection>scm:git:git@github.com:bitstadium/HockeySDK-Android.git</developerConnection>
   </scm>
   
   <developers>
