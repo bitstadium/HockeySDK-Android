@@ -3,10 +3,9 @@ package net.hockeyapp.android;
 import java.util.Date;
 
 import net.hockeyapp.android.internal.CheckUpdateTask;
-import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.Fragment;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.AsyncTask.Status;
@@ -58,12 +57,17 @@ public class UpdateManager {
   private static UpdateManagerListener lastListener = null;
 
   /**
+   * The value of Configuration.SCREENLAYOUT_SIZE_XLARGE. Not added till API 9, so we recreate it here.
+   */
+  private static final int SCREENLAYOUT_SIZE_XLARGE = 4;
+
+  /**
    * Registers new update manager.
    * 
    * @param activity Parent activity.
    * @param appIdentifier App ID of your app on HockeyApp.
    */
-  public static void register(Activity activity, String appIdentifier) {
+  public static void register(FragmentActivity activity, String appIdentifier) {
     register(activity, appIdentifier, null);
   }
   
@@ -74,7 +78,7 @@ public class UpdateManager {
    * @param appIdentifier App ID of your app on HockeyApp.
    * @param listener Implement for callback functions.
    */
-  public static void register(Activity activity, String appIdentifier, UpdateManagerListener listener) {
+  public static void register(FragmentActivity activity, String appIdentifier, UpdateManagerListener listener) {
     register(activity, Constants.BASE_URL, appIdentifier, listener);
   }
   
@@ -86,7 +90,7 @@ public class UpdateManager {
    * @param appIdentifier App ID of your app on HockeyApp.
    * @param listener Implement for callback functions.
    */
-  public static void register(Activity activity, String urlString, String appIdentifier, UpdateManagerListener listener) {
+  public static void register(FragmentActivity activity, String urlString, String appIdentifier, UpdateManagerListener listener) {
     lastListener = listener;
     
     if ((fragmentsSupported()) && (dialogShown(activity))) {
@@ -150,7 +154,7 @@ public class UpdateManager {
    * Starts the UpdateTask if not already running. Otherwise attaches the
    * activity to it. 
    */
-  private static void startUpdateTask(Activity activity, String urlString, String appIdentifier, UpdateManagerListener listener) {
+  private static void startUpdateTask(FragmentActivity activity, String urlString, String appIdentifier, UpdateManagerListener listener) {
     if ((updateTask == null) || (updateTask.getStatus() == Status.FINISHED)) {
       updateTask = new CheckUpdateTask(activity, urlString, appIdentifier, listener);
       updateTask.execute();
@@ -163,31 +167,28 @@ public class UpdateManager {
   /**
    * Returns true if the dialog is already shown (only works on Android 3.0+). 
    */
-  @TargetApi(11)
-  private static boolean dialogShown(Activity activity) {
-    Fragment existingFragment = activity.getFragmentManager().findFragmentByTag("hockey_update_dialog");
+  private static boolean dialogShown(FragmentActivity activity) {
+    Fragment existingFragment = activity.getSupportFragmentManager().findFragmentByTag("hockey_update_dialog");
     return (existingFragment != null);
   }
 
   /**
    * Returns true if the Fragment API is supported (should be on Android 3.0+).
    */
-  @SuppressLint("NewApi")
   public static Boolean fragmentsSupported() {
-    try {
-      return (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) && (android.app.Fragment.class != null);
-    }
-    catch (NoClassDefFoundError e) {
-      return false;
-    }
+    return true;
   }
+
+  // Not added till API 9, so we recreate it here
+  private static final int SCREENLAYOUT_SIZE_XLARGE = 4;
 
   /**
    * Returns true if the app runs on large or very large screens (i.e. tablets). 
    */
   public static Boolean runsOnTablet(Activity activity) {
     Configuration configuration = activity.getResources().getConfiguration();
-    return (((configuration.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE) || ((configuration.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_XLARGE));
+
+    return (((configuration.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE) || ((configuration.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == SCREENLAYOUT_SIZE_XLARGE));
   }
 
   /**

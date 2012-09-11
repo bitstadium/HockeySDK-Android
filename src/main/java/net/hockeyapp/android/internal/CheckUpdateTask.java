@@ -25,9 +25,10 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.DialogFragment;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -75,13 +76,13 @@ import android.widget.Toast;
 public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
   protected String urlString = null;
   protected String appIdentifier = null;
-  
-  private Activity activity = null;
+
+  private FragmentActivity activity = null;
   private Boolean mandatory = false;
   private UpdateManagerListener listener;
   private long usageTime = 0;
-  
-  public CheckUpdateTask(Activity activity, String urlString) {
+
+  public CheckUpdateTask(FragmentActivity activity, String urlString) {
     this.appIdentifier = null;
     this.activity = activity;
     this.urlString = urlString;
@@ -89,8 +90,8 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
     
     Constants.loadFromContext(activity);
   }
-  
-  public CheckUpdateTask(Activity activity, String urlString, String appIdentifier) {
+
+  public CheckUpdateTask(FragmentActivity activity, String urlString, String appIdentifier) {
     this.appIdentifier = appIdentifier;
     this.activity = activity;
     this.urlString = urlString;
@@ -98,8 +99,8 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
 
     Constants.loadFromContext(activity);
   }
-  
-  public CheckUpdateTask(Activity activity, String urlString, String appIdentifier, UpdateManagerListener listener) {
+
+  public CheckUpdateTask(FragmentActivity activity, String urlString, String appIdentifier, UpdateManagerListener listener) {
     this.appIdentifier = appIdentifier;
     this.activity = activity;
     this.urlString = urlString;
@@ -109,7 +110,7 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
     Constants.loadFromContext(activity);
   }
 
-  public void attach(Activity activity) {
+  public void attach(FragmentActivity activity) {
     this.activity = activity;
 
     Constants.loadFromContext(activity);
@@ -304,10 +305,10 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
   }
 
   private void showUpdateFragment(final JSONArray updateInfo) {
-    FragmentTransaction fragmentTransaction = activity.getFragmentManager().beginTransaction();
+    FragmentTransaction fragmentTransaction = activity.getSupportFragmentManager().beginTransaction();
     fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-    
-    Fragment existingFragment = activity.getFragmentManager().findFragmentByTag("hockey_update_dialog");
+
+    Fragment existingFragment = activity.getSupportFragmentManager().findFragmentByTag("hockey_update_dialog");
     if (existingFragment != null) {
       fragmentTransaction.remove(existingFragment);
     }
