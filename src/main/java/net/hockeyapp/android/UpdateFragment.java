@@ -9,7 +9,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import android.app.Activity;
-import android.app.DialogFragment;
+import android.support.v4.app.DialogFragment;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -114,8 +114,9 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
       dismiss();
       return;
     }
-    
-    setStyle(DialogFragment.STYLE_NO_TITLE, android.R.style.Theme_Holo_Light_Dialog);
+
+    // theme 0 chooses "an appropriate theme (based on the style)"
+    setStyle(DialogFragment.STYLE_NO_TITLE, 0);
   }
   
   /**

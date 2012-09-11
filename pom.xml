@@ -17,16 +17,14 @@
     <dependency>
       <groupId>android</groupId>
       <artifactId>android</artifactId>
-      <version>4.0.3_r3</version>
+      <version>2.1_r3</version>
       <scope>provided</scope>
     </dependency>
 
     <dependency>
-      <groupId>android</groupId>
-      <artifactId>annotations</artifactId>
-      <version>4.0.3_r3</version>
-      <scope>system</scope>
-      <systemPath>${ANDROID_HOME}/tools/support/annotations.jar</systemPath>
+      <groupId>com.google.android</groupId>
+      <artifactId>support-v4</artifactId>
+      <version>r7</version>
     </dependency>
   </dependencies>
   
@@ -64,7 +62,7 @@
           <assetsDirectory>${project.basedir}/assets</assetsDirectory>
           <resourceDirectory>${project.basedir}/res</resourceDirectory>
           <sdk>
-            <platform>11</platform>
+            <platform>7</platform>
           </sdk>
           <deleteConflictingFiles>true</deleteConflictingFiles>
           <undeployBeforeDeploy>true</undeployBeforeDeploy>
