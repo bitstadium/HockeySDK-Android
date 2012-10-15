@@ -89,4 +89,10 @@ public abstract class CrashManagerListener extends StringListener {
    */
   public void onCrashesNotSent() {
   }
+  
+  /**
+   * Called when the user denied to send crashes to HockeyApp.
+   */
+  public void onUserDeniedCrashes() {
+  }
 }
