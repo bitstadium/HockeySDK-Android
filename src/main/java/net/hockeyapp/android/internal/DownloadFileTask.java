@@ -93,7 +93,10 @@ public class DownloadFileTask extends AsyncTask<String, Integer, Boolean>{
       int lenghtOfFile = connection.getContentLength();
 
       File dir = new File(this.filePath);
-      dir.mkdirs();
+      boolean result = dir.mkdirs();
+      if (!result && !dir.exists()) {
+        throw new IOException("Could not create the dir(s):" + dir.getAbsolutePath());
+      }
       File file = new File(dir, this.filename);
 
       InputStream input = new BufferedInputStream(connection.getInputStream());
