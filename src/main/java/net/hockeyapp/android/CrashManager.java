@@ -331,7 +331,10 @@ public class CrashManager {
 
     builder.setNegativeButton(Strings.get(listener, Strings.CRASH_DIALOG_NEGATIVE_BUTTON_ID), new DialogInterface.OnClickListener() {
       public void onClick(DialogInterface dialog, int which) {
-        listener.onUserDeniedCrashes();
+        if (listener != null) {
+          listener.onUserDeniedCrashes();
+        }
+        
         deleteStackTraces(context);
         registerHandler(context, listener, ignoreDefaultHandler);
       } 

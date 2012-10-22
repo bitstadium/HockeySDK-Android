@@ -73,6 +73,8 @@ import android.widget.Toast;
  * @author Thomas Dohmke
  **/
 public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
+  private static final int MAX_NUMBER_OF_VERSIONS = 25;
+  
   protected String urlString = null;
   protected String appIdentifier = null;
   
@@ -148,6 +150,7 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
       
       json = new JSONArray(jsonString);
       if (findNewVersion(json, versionCode)) {
+        json = limitResponseSize(json);
         return json;
       }
     }
@@ -182,6 +185,18 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
     catch (JSONException e) {
       return false;
     }
+  }
+
+  private JSONArray limitResponseSize(JSONArray json) {
+    JSONArray result = new JSONArray();
+    for (int index = 0; index < Math.min(json.length(), MAX_NUMBER_OF_VERSIONS); index++) {
+      try {
+        result.put(json.get(index));
+      }
+      catch (JSONException e) {
+      }
+    }
+    return result;
   }
 
   @Override
