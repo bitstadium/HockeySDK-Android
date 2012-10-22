@@ -479,7 +479,10 @@ public class CrashManager {
   private static String[] searchForStackTraces() {
     // Try to create the files folder if it doesn't exist
     File dir = new File(Constants.FILES_PATH + "/");
-    dir.mkdir();
+    boolean created = dir.mkdir();
+    if (!created && !dir.exists()) {
+      return new String[0];
+    }
 
     // Filter for ".stacktrace" files
     FilenameFilter filter = new FilenameFilter() { 
