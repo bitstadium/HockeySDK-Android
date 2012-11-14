@@ -103,7 +103,16 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
     WebView webView = (WebView)findViewById(UpdateView.WEB_VIEW_ID);
     webView.clearCache(true);
     webView.destroyDrawingCache();
-    webView.loadDataWithBaseURL(Constants.BASE_URL, versionHelper.getReleaseNotes(), "text/html", "utf-8", null);
+    webView.loadDataWithBaseURL(Constants.BASE_URL, getReleaseNotes(), "text/html", "utf-8", null);
+  }
+
+  /**
+   * Returns the release notes as HTML.
+   * 
+   * @return String with release notes.
+   */
+  protected String getReleaseNotes() {
+    return versionHelper.getReleaseNotes(false);
   }
 
   /**
@@ -122,11 +131,20 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
   }
   
   /**
+   * Starts the download task for the app and sets the listener 
+   * for a successful download, a failed download, and configuration 
+   * strings.
+   */
+  protected void startDownloadTask() {
+    String url = getIntent().getStringExtra("url");
+    startDownloadTask(url);
+  }
+  
+  /**
    * Starts the download task and sets the listener for a successful
    * download, a failed download, and configuration strings.
    */
-  private void startDownloadTask() {
-    final String url = getIntent().getStringExtra("url");
+  protected void startDownloadTask(String url) {
     createDownloadTask(url, new DownloadFileListener() {
       public void downloadSuccessful(DownloadFileTask task) {
         enableUpdateButton();

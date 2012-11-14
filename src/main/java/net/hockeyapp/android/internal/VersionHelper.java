@@ -126,13 +126,19 @@ public class VersionHelper {
     }
   }
   
-  public String getReleaseNotes() {
+  public String getReleaseNotes(boolean showRestore) {
     StringBuilder result = new StringBuilder();
     result.append("<html>");
-    result.append("<body style='padding: 0px 0px 10px 0px'>");
+    result.append("<body style='padding: 0px 0px 20px 0px'>");
     
     int count = 0;
     for (JSONObject version : sortedVersions) {
+      if (count > 0) {
+        result.append(getSeparator());
+        if (showRestore) { 
+          result.append(getRestoreButton(count, version));
+        }
+      }
       result.append(getVersionLine(count, version));
       result.append(getVersionNotes(count, version));
       count++;
@@ -144,21 +150,40 @@ public class VersionHelper {
     return result.toString();
   }
 
-  private Object getVersionLine(int count, JSONObject version) {
+  private Object getSeparator() {
+    return "<hr style='border-top: 1px solid #c8c8c8; border-bottom: 0px; margin: 40px 10px 0px 10px;' />";
+  }
+
+  private String getRestoreButton(int count, JSONObject version) {
     StringBuilder result = new StringBuilder();
 
-    int versionCode = 0;
-    String versionName= "";
+    String versionID = getVersionID(version);
+    if (versionID.length() > 0) {
+      result.append("<a href='restore:" + versionID + "'  style='background: #c8c8c8; color: #000; display: block; float: right; padding: 7px; margin: 0px 10px 10px; text-decoration: none;'>Restore</a>");
+    }
+
+    return result.toString();
+  }
+
+  private String getVersionID(JSONObject version) {
+    String versionID = "";
     try { 
-      versionCode = version.getInt("version");
-      versionName = version.getString("shortversion");
+      versionID = version.getString("id");
     }
     catch (JSONException e) {
     }
+    return versionID;
+  }
+
+  private String getVersionLine(int count, JSONObject version) {
+    StringBuilder result = new StringBuilder();
+
+    int versionCode = getVersionCode(version);
+    String versionName = getVersionName(version);
     
     result.append("<div style='padding: 20px 10px 10px;'><strong>");
     if (count == 0) {
-      result.append("Release Notes:");
+      result.append("Newest version:");
     }
     else {
       int currentVersionCode = listener.getCurrentVersionCode();
@@ -168,8 +193,28 @@ public class VersionHelper {
     
     return result.toString();
   }
+  
+  private int getVersionCode(JSONObject version) {
+    int versionCode = 0;
+    try { 
+      versionCode = version.getInt("version");
+    }
+    catch (JSONException e) {
+    }
+    return versionCode;
+  }
+  
+  private String getVersionName(JSONObject version) {
+    String versionName = "";
+    try { 
+      versionName = version.getString("shortversion");
+    }
+    catch (JSONException e) {
+    }
+    return versionName;
+  }
 
-  private Object getVersionNotes(int count, JSONObject version) {
+  private String getVersionNotes(int count, JSONObject version) {
     StringBuilder result = new StringBuilder();
 
     String notes = failSafeGetStringFromJSON(version, "notes", "");

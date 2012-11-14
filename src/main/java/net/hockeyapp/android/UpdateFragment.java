@@ -142,7 +142,7 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
     WebView webView = (WebView)view.findViewById(UpdateView.WEB_VIEW_ID);
     webView.clearCache(true);
     webView.destroyDrawingCache();
-    webView.loadDataWithBaseURL(Constants.BASE_URL, versionHelper.getReleaseNotes(), "text/html", "utf-8", null);
+    webView.loadDataWithBaseURL(Constants.BASE_URL, versionHelper.getReleaseNotes(false), "text/html", "utf-8", null);
 
     return view;
   }
