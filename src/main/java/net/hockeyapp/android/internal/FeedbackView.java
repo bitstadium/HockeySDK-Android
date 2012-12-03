@@ -73,13 +73,16 @@ public class FeedbackView extends ScrollView {
 	public final static int WRAPPER_BASE_ID = 0x20011;
 	public final static int WRAPPER_LAYOUT_FEEDBACK_ID = 0x20012;
 	public final static int WRAPPER_LAYOUT_FEEDBACK_AND_MESSAGES_ID = 0x20013;
+	public final static int WRAPPER_LAYOUT_ACTUAL_MESSAGES_ID = 0x20014;
 	
 	/** Base wrapper {@link LinearLayout} */
 	private LinearLayout wrapperBase;
 	/** Wrapper {@link LinearLayout} for the input elements for sending feedback */
 	private LinearLayout wrapperLayoutFeedback;
+	/** Wrapper {@link LinearLayout} for last updated label, add response {@link Button} and list of discussions */
+	private LinearLayout wrapperLayoutFeedbackAndMessages;
 	/** Wrapper {@link LinearLayout} for list of discussions */
-	private LinearLayout wrapperLayoutFeedbackAndMessages; 
+	private LinearLayout wrapperLayoutActualMessagesList;
 	protected boolean layoutHorizontally = false;
 	protected boolean limitHeight = false;
 
@@ -124,6 +127,8 @@ public class FeedbackView extends ScrollView {
 		
 		loadLastUpdatedLabel(context);
 		loadAddResponseButton(context);
+		
+		loadWrapperLayoutActualMessages(context);
 	}
 
 	private void setLayoutHorizontally(Context context) {
@@ -189,6 +194,23 @@ public class FeedbackView extends ScrollView {
 		wrapperLayoutFeedbackAndMessages.setOrientation(LinearLayout.VERTICAL);
 		
 		wrapperBase.addView(wrapperLayoutFeedbackAndMessages);
+	}
+
+	private void loadWrapperLayoutActualMessages(Context context) {
+		wrapperLayoutActualMessagesList = new LinearLayout(context);
+		wrapperLayoutActualMessagesList.setId(WRAPPER_LAYOUT_ACTUAL_MESSAGES_ID);
+		
+		LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+		int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 10.0, 
+	    		getResources().getDisplayMetrics());
+		
+		params.gravity = Gravity.CENTER;
+		wrapperLayoutActualMessagesList.setLayoutParams(params);
+		wrapperLayoutActualMessagesList.setPadding(0, padding, 0, padding);
+		wrapperLayoutActualMessagesList.setGravity(Gravity.TOP);
+		wrapperLayoutActualMessagesList.setOrientation(LinearLayout.VERTICAL);
+		
+		wrapperLayoutFeedbackAndMessages.addView(wrapperLayoutActualMessagesList);
 	}
 	
 	private void loadNameLabel(Context context) {
@@ -369,6 +391,7 @@ public class FeedbackView extends ScrollView {
 	    
 	    params.setMargins(margin, margin, margin, 0);
 	    textView.setLayoutParams(params);
+	    textView.setPadding(margin, 0, margin, 0);
 	    textView.setEllipsize(TruncateAt.END);
 	    textView.setShadowLayer(1, 0, 1, Color.WHITE);
 	    textView.setSingleLine(true);

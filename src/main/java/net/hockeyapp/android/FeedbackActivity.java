@@ -2,6 +2,8 @@ package net.hockeyapp.android;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 
 import net.hockeyapp.android.internal.DownloadFileListener;
@@ -87,6 +89,7 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
 	private Button addResponseButton;
 	private LinearLayout wrapperLayoutFeedback;
 	private LinearLayout wrapperLayoutFeedbackAndMessages;
+	private LinearLayout wrapperLayoutActualMessages;
 	
 	/** Send feedback {@link AsyncTask} */
 	private SendFeedbackTask sendFeedbackTask;
@@ -196,6 +199,8 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
 						}
 					});
 				}
+				
+				enableDisableSendFeedbackButton(true);
 			}
 		};
 	}
@@ -207,6 +212,7 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
 	protected void configureFeedbackView(boolean haveToken) {
 		wrapperLayoutFeedback = (LinearLayout) findViewById(FeedbackView.WRAPPER_LAYOUT_FEEDBACK_ID);
 		wrapperLayoutFeedbackAndMessages = (LinearLayout) findViewById(FeedbackView.WRAPPER_LAYOUT_FEEDBACK_AND_MESSAGES_ID);
+		wrapperLayoutActualMessages = (LinearLayout) findViewById(FeedbackView.WRAPPER_LAYOUT_ACTUAL_MESSAGES_ID);
 		if (haveToken) {
 			/** If a token exists, the list of messages should be displayed*/
 			wrapperLayoutFeedbackAndMessages.setVisibility(View.VISIBLE);
@@ -224,6 +230,12 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
 			emailInput = (EditText) findViewById(FeedbackView.EMAIL_EDIT_TEXT_ID);
 			subjectInput = (EditText) findViewById(FeedbackView.SUBJECT_EDIT_TEXT_ID);
 			textInput = (EditText) findViewById(FeedbackView.TEXT_EDIT_TEXT_ID);
+			
+			/** Reset all fields if previously populated */
+			nameInput.setText("");
+			emailInput.setText("");
+			subjectInput.setText("");
+			textInput.setText("");
 			
 			sendFeedbackButton = (Button) findViewById(FeedbackView.SEND_FEEDBACK_BUTTON_ID);
 			sendFeedbackButton.setOnClickListener(this);
@@ -259,11 +271,22 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
 						feedbackResponse.getFeedback().getMessages() != null && feedbackResponse.
 						getFeedback().getMessages().size() > 0) {
 					
-					/*if (wrapperLayoutFeedbackAndMessages.getChildCount() > 0) {
-						wrapperLayoutFeedbackAndMessages.removeAllViews();	
-					}*/
+					wrapperLayoutActualMessages.removeAllViews();
 					
-					for (FeedbackMessage message : feedbackResponse.getFeedback().getMessages()) {
+					ArrayList<FeedbackMessage> feedbackMessages = feedbackResponse.getFeedback().getMessages();
+					
+					/** Reverse the order of the feedback messages list, so we show the latest one first */
+					Collections.reverse(feedbackMessages);
+					
+					/** Set the lastUpdatedTextView text as the date of the latest feedback message */
+					try {
+						date = format.parse(feedbackMessages.get(0).getCreatedAt());
+						lastUpdatedTextView.setText(String.format("Last Updated: %s", formatNew.format(date)));
+					} catch (ParseException e1) {
+						e1.printStackTrace();
+					}
+					
+					for (FeedbackMessage message : feedbackMessages) {
 						feedbackMessageView = new FeedbackMessageView(context);
 						feedbackMessageView.setMessageLabelText(message.getText());
 						
@@ -274,7 +297,7 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
 							e.printStackTrace();
 						}
 						
-						wrapperLayoutFeedbackAndMessages.addView(feedbackMessageView);
+						wrapperLayoutActualMessages.addView(feedbackMessageView);
 					}
 				}
 			}
@@ -303,6 +326,7 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
 	
 	@SuppressWarnings("deprecation")
 	private void sendFeedback() {
+		enableDisableSendFeedbackButton(false);
 		if (nameInput.getText().toString().trim().length() <= 0 || emailInput.getText().toString().
 				trim().length() <= 0 || subjectInput.getText().toString().trim().length() <= 0 || 
 				textInput.getText().toString().trim().length() <= 0) {
@@ -312,6 +336,7 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
 			error.setMessage("Please provide all details");
 			
 			showDialog(DIALOG_ERROR_ID);
+			enableDisableSendFeedbackButton(true);
 		} else {
 			sendFetchFeedback(url, nameInput.getText().toString(), emailInput.getText().toString(), 
 					subjectInput.getText().toString(), textInput.getText().toString(), PrefsUtil.getInstance().
@@ -337,11 +362,11 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
 	}
 
 	/**
-	 * Enables the Send Feedback button.
+	 * Enables/Disables the Send Feedback button.
 	 */
-	public void enableSendFeedbackButton() {
+	public void enableDisableSendFeedbackButton(boolean isEnable) {
 		if (sendFeedbackButton != null) {
-			sendFeedbackButton.setEnabled(true);
+			sendFeedbackButton.setEnabled(isEnable);
 		}
 	}
 
@@ -370,7 +395,6 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
 		switch (v.getId()) {
 			case FeedbackView.SEND_FEEDBACK_BUTTON_ID:
 				sendFeedback();
-				v.setEnabled(false);
 				
 				break;
 				
