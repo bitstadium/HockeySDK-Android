@@ -232,23 +232,33 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
 			textInput = (EditText) findViewById(FeedbackView.TEXT_EDIT_TEXT_ID);
 			
 			/** Check to see if the Name and Email are saved in {@link SharedPreferences} */
-			String nameEmail = PrefsUtil.getInstance().getNameEmailFromPrefs(context);
-			if (nameEmail != null) {
+			String nameEmailSubject = PrefsUtil.getInstance().getNameEmailFromPrefs(context);
+			if (nameEmailSubject != null) {
 				/** We have Name and Email. Prepopulate the appropriate fields */
-				String[] nameEmailArray = nameEmail.split("\\|");
-				if (nameEmailArray != null && nameEmailArray.length == 2) {
-					nameInput.setText(nameEmailArray[0]);
-					emailInput.setText(nameEmailArray[1]);
+				String[] nameEmailSubjectArray = nameEmailSubject.split("\\|");
+				if (nameEmailSubjectArray != null && nameEmailSubjectArray.length == 3) {
+					nameInput.setText(nameEmailSubjectArray[0]);
+					emailInput.setText(nameEmailSubjectArray[1]);
+					subjectInput.setText(nameEmailSubjectArray[2]);
 				}
 			} else {
 				/** We dont have Name and Email. Reset those fields */
 				nameInput.setText("");
 				emailInput.setText("");
+				subjectInput.setText("");
 			}
 			
 			/** Reset the remaining fields if previously populated */
-			subjectInput.setText("");
 			textInput.setText("");
+			
+			/** Check to see if the Feedback Token is availabe */
+			if (PrefsUtil.getInstance().getFeedbackTokenFromPrefs(context) != null) {
+				/** If Feedback Token is available, hide the Subject Input field */
+				subjectInput.setVisibility(View.GONE);
+			} else {
+				/** If Feedback Token is not available, display the Subject Input field */
+				subjectInput.setVisibility(View.VISIBLE);
+			}
 			
 			sendFeedbackButton = (Button) findViewById(FeedbackView.SEND_FEEDBACK_BUTTON_ID);
 			sendFeedbackButton.setOnClickListener(this);
@@ -340,6 +350,7 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
 	@SuppressWarnings("deprecation")
 	private void sendFeedback() {
 		enableDisableSendFeedbackButton(false);
+		
 		if (nameInput.getText().toString().trim().length() <= 0 || emailInput.getText().toString().
 				trim().length() <= 0 || subjectInput.getText().toString().trim().length() <= 0 || 
 				textInput.getText().toString().trim().length() <= 0) {
@@ -352,7 +363,8 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
 			enableDisableSendFeedbackButton(true);
 		} else {
 			/** Save Name and Email to {@link SharedPreferences} */
-			PrefsUtil.getInstance().saveNameEmailToPrefs(context, nameInput.getText().toString(), emailInput.getText().toString());
+			PrefsUtil.getInstance().saveNameEmailSubjectToPrefs(context, nameInput.getText().toString(), emailInput.getText().
+					toString(), subjectInput.getText().toString());
 			
 			/** Start the Send Feedback {@link AsyncTask} */
 			sendFetchFeedback(url, nameInput.getText().toString(), emailInput.getText().toString(), 

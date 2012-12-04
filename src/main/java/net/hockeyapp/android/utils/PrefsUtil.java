@@ -11,8 +11,8 @@ import android.content.SharedPreferences;
 public class PrefsUtil {
 	private SharedPreferences feedbackTokenPrefs;
 	private SharedPreferences.Editor feedbackTokenPrefsEditor;
-	private SharedPreferences nameEmailPrefs;
-	private SharedPreferences.Editor nameEmailPrefsEditor;
+	private SharedPreferences nameEmailSubjectPrefs;
+	private SharedPreferences.Editor nameEmailSubjectPrefsEditor;
 	
 	/** Private constructor prevents instantiation from other classes */
 	private PrefsUtil() { 
@@ -69,19 +69,21 @@ public class PrefsUtil {
      * @param context	{@link Context} object
      * @param name		Name
      * @param email		Email
+     * @param subject	Subject
      */
-    public void saveNameEmailToPrefs(Context context, String name, String email) {
+    public void saveNameEmailSubjectToPrefs(Context context, String name, String email, String subject) {
     	if (context != null) {
-    		nameEmailPrefs = context.getSharedPreferences(Util.PREFS_NAME_EMAIL, 0);
-    		if (nameEmailPrefs != null) {
-    			nameEmailPrefsEditor = nameEmailPrefs.edit();
-    			if (name == null || email == null) {
-    				nameEmailPrefsEditor.putString(Util.PREFS_KEY_NAME_EMAIL, null);	
+    		nameEmailSubjectPrefs = context.getSharedPreferences(Util.PREFS_NAME_EMAIL_SUBJECT, 0);
+    		if (nameEmailSubjectPrefs != null) {
+    			nameEmailSubjectPrefsEditor = nameEmailSubjectPrefs.edit();
+    			if (name == null || email == null || subject == null) {
+    				nameEmailSubjectPrefsEditor.putString(Util.PREFS_KEY_NAME_EMAIL_SUBJECT, null);	
     			} else {
-    				nameEmailPrefsEditor.putString(Util.PREFS_KEY_NAME_EMAIL, String.format("%s|%s", name, email));
+    				nameEmailSubjectPrefsEditor.putString(Util.PREFS_KEY_NAME_EMAIL_SUBJECT, String.format("%s|%s|%s", 
+    						name, email, subject));
     			}
     			
-    			nameEmailPrefsEditor.commit();
+    			nameEmailSubjectPrefsEditor.commit();
     		}
     	}
     }
@@ -96,11 +98,11 @@ public class PrefsUtil {
     		return null;
     	}
     	
-    	nameEmailPrefs = context.getSharedPreferences(Util.PREFS_NAME_EMAIL, 0);
-    	if (nameEmailPrefs == null) {
+    	nameEmailSubjectPrefs = context.getSharedPreferences(Util.PREFS_NAME_EMAIL_SUBJECT, 0);
+    	if (nameEmailSubjectPrefs == null) {
     		return null;
     	}
     	
-    	return nameEmailPrefs.getString(Util.PREFS_KEY_NAME_EMAIL, null);
+    	return nameEmailSubjectPrefs.getString(Util.PREFS_KEY_NAME_EMAIL_SUBJECT, null);
     }
 }
