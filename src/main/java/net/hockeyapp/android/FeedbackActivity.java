@@ -231,9 +231,22 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
 			subjectInput = (EditText) findViewById(FeedbackView.SUBJECT_EDIT_TEXT_ID);
 			textInput = (EditText) findViewById(FeedbackView.TEXT_EDIT_TEXT_ID);
 			
-			/** Reset all fields if previously populated */
-			nameInput.setText("");
-			emailInput.setText("");
+			/** Check to see if the Name and Email are saved in {@link SharedPreferences} */
+			String nameEmail = PrefsUtil.getInstance().getNameEmailFromPrefs(context);
+			if (nameEmail != null) {
+				/** We have Name and Email. Prepopulate the appropriate fields */
+				String[] nameEmailArray = nameEmail.split("\\|");
+				if (nameEmailArray != null && nameEmailArray.length == 2) {
+					nameInput.setText(nameEmailArray[0]);
+					emailInput.setText(nameEmailArray[1]);
+				}
+			} else {
+				/** We dont have Name and Email. Reset those fields */
+				nameInput.setText("");
+				emailInput.setText("");
+			}
+			
+			/** Reset the remaining fields if previously populated */
 			subjectInput.setText("");
 			textInput.setText("");
 			
@@ -338,6 +351,10 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
 			showDialog(DIALOG_ERROR_ID);
 			enableDisableSendFeedbackButton(true);
 		} else {
+			/** Save Name and Email to {@link SharedPreferences} */
+			PrefsUtil.getInstance().saveNameEmailToPrefs(context, nameInput.getText().toString(), emailInput.getText().toString());
+			
+			/** Start the Send Feedback {@link AsyncTask} */
 			sendFetchFeedback(url, nameInput.getText().toString(), emailInput.getText().toString(), 
 					subjectInput.getText().toString(), textInput.getText().toString(), PrefsUtil.getInstance().
 					getFeedbackTokenFromPrefs(context), feedbackHandler, false);

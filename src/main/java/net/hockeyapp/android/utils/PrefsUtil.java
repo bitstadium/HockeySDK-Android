@@ -11,6 +11,8 @@ import android.content.SharedPreferences;
 public class PrefsUtil {
 	private SharedPreferences feedbackTokenPrefs;
 	private SharedPreferences.Editor feedbackTokenPrefsEditor;
+	private SharedPreferences nameEmailPrefs;
+	private SharedPreferences.Editor nameEmailPrefsEditor;
 	
 	/** Private constructor prevents instantiation from other classes */
 	private PrefsUtil() { 
@@ -60,5 +62,45 @@ public class PrefsUtil {
     	}
     	
     	return feedbackTokenPrefs.getString(Util.PREFS_KEY_FEEDBACK_TOKEN, null);
+    }
+
+    /**
+     * Save name and email to {@link SharedPreferences}
+     * @param context	{@link Context} object
+     * @param name		Name
+     * @param email		Email
+     */
+    public void saveNameEmailToPrefs(Context context, String name, String email) {
+    	if (context != null) {
+    		nameEmailPrefs = context.getSharedPreferences(Util.PREFS_NAME_EMAIL, 0);
+    		if (nameEmailPrefs != null) {
+    			nameEmailPrefsEditor = nameEmailPrefs.edit();
+    			if (name == null || email == null) {
+    				nameEmailPrefsEditor.putString(Util.PREFS_KEY_NAME_EMAIL, null);	
+    			} else {
+    				nameEmailPrefsEditor.putString(Util.PREFS_KEY_NAME_EMAIL, String.format("%s|%s", name, email));
+    			}
+    			
+    			nameEmailPrefsEditor.commit();
+    		}
+    	}
+    }
+    
+    /**
+     * Retrieves the name and email from {@link SharedPreferences}
+     * @param context	{@link Context} object
+     * @return
+     */
+    public String getNameEmailFromPrefs(Context context) {
+    	if (context == null) {
+    		return null;
+    	}
+    	
+    	nameEmailPrefs = context.getSharedPreferences(Util.PREFS_NAME_EMAIL, 0);
+    	if (nameEmailPrefs == null) {
+    		return null;
+    	}
+    	
+    	return nameEmailPrefs.getString(Util.PREFS_KEY_NAME_EMAIL, null);
     }
 }
