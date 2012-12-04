@@ -60,13 +60,13 @@ import android.widget.LinearLayout.LayoutParams;
  **/
 public class FeedbackView extends ScrollView {
 	public final static int LAST_UPDATED_TEXT_VIEW_ID = 0x2000;
-	public final static int NAME_TEXT_VIEW_ID = 0x2001;
+	//public final static int NAME_TEXT_VIEW_ID = 0x2001;
 	public final static int NAME_EDIT_TEXT_ID = 0x2002;
-	public final static int EMAIL_TEXT_VIEW_ID = 0x2003;
+	//public final static int EMAIL_TEXT_VIEW_ID = 0x2003;
 	public final static int EMAIL_EDIT_TEXT_ID = 0x2004;
-	public final static int SUBJECT_TEXT_VIEW_ID = 0x2005;
+	//public final static int SUBJECT_TEXT_VIEW_ID = 0x2005;
 	public final static int SUBJECT_EDIT_TEXT_ID = 0x2006;
-	public final static int TEXT_TEXT_VIEW_ID = 0x2007;
+	//public final static int TEXT_TEXT_VIEW_ID = 0x2007;
 	public final static int TEXT_EDIT_TEXT_ID = 0x2008;
 	public final static int SEND_FEEDBACK_BUTTON_ID = 0x2009;
 	public final static int ADD_RESPONSE_BUTTON_ID = 0x20010;
@@ -115,13 +115,13 @@ public class FeedbackView extends ScrollView {
 		loadWrapperLayoutFeedback(context);
 		loadWrapperLayoutFeedbackAndMessages(context);
 		
-		loadNameLabel(context);
+		//loadNameLabel(context);
 		loadNameInput(context);
-		loadEmailLabel(context);
+		//loadEmailLabel(context);
 		loadEmailInput(context);
-		loadSubjectLabel(context);
+		//loadSubjectLabel(context);
 		loadSubjectInput(context);
-		loadTextLabel(context);
+		//loadTextLabel(context);
 		loadTextInput(context);
 		loadSendFeedbackButton(context);
 		
@@ -213,7 +213,7 @@ public class FeedbackView extends ScrollView {
 		wrapperLayoutFeedbackAndMessages.addView(wrapperLayoutActualMessagesList);
 	}
 	
-	private void loadNameLabel(Context context) {
+	/*private void loadNameLabel(Context context) {
 		TextView textView = new TextView(context);
 	    textView.setId(NAME_TEXT_VIEW_ID);
 
@@ -232,7 +232,7 @@ public class FeedbackView extends ScrollView {
 	    textView.setTypeface(null, Typeface.BOLD);
 	    
 	    wrapperLayoutFeedback.addView(textView);
-	}
+	}*/
 	
 	private void loadNameInput(Context context) {
 		EditText editText = new EditText(context);
@@ -250,11 +250,13 @@ public class FeedbackView extends ScrollView {
 	    editText.setTextColor(Color.GRAY);
 	    editText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
 	    editText.setTypeface(null, Typeface.NORMAL);
+	    editText.setHint("Name");
+	    editText.setHintTextColor(Color.LTGRAY);
 	    
 	    wrapperLayoutFeedback.addView(editText);
 	}
 
-	private void loadEmailLabel(Context context) {
+	/*private void loadEmailLabel(Context context) {
 		TextView textView = new TextView(context);
 	    textView.setId(EMAIL_TEXT_VIEW_ID);
 
@@ -273,7 +275,7 @@ public class FeedbackView extends ScrollView {
 	    textView.setTypeface(null, Typeface.BOLD);
 	    
 	    wrapperLayoutFeedback.addView(textView);
-	}
+	}*/
 
 	private void loadEmailInput(Context context) {
 		EditText editText = new EditText(context);
@@ -291,11 +293,13 @@ public class FeedbackView extends ScrollView {
 	    editText.setTextColor(Color.GRAY);
 	    editText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
 	    editText.setTypeface(null, Typeface.NORMAL);
+	    editText.setHint("Email");
+	    editText.setHintTextColor(Color.LTGRAY);
 	    
 	    wrapperLayoutFeedback.addView(editText);
 	}
 
-	private void loadSubjectLabel(Context context) {
+	/*private void loadSubjectLabel(Context context) {
 		TextView textView = new TextView(context);
 	    textView.setId(SUBJECT_TEXT_VIEW_ID);
 
@@ -314,7 +318,7 @@ public class FeedbackView extends ScrollView {
 	    textView.setTypeface(null, Typeface.BOLD);
 	    
 	    wrapperLayoutFeedback.addView(textView);
-	}
+	}*/
 
 	private void loadSubjectInput(Context context) {
 		EditText editText = new EditText(context);
@@ -332,11 +336,13 @@ public class FeedbackView extends ScrollView {
 	    editText.setTextColor(Color.GRAY);
 	    editText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
 	    editText.setTypeface(null, Typeface.NORMAL);
+	    editText.setHint("Subject");
+	    editText.setHintTextColor(Color.LTGRAY);
 	    
 	    wrapperLayoutFeedback.addView(editText);
 	}
 
-	private void loadTextLabel(Context context) {
+	/*private void loadTextLabel(Context context) {
 		TextView textView = new TextView(context);
 	    textView.setId(TEXT_TEXT_VIEW_ID);
 
@@ -355,7 +361,7 @@ public class FeedbackView extends ScrollView {
 	    textView.setTypeface(null, Typeface.BOLD);
 	    
 	    wrapperLayoutFeedback.addView(textView);
-	}
+	}*/
 
 	private void loadTextInput(Context context) {
 		EditText editText = new EditText(context);
@@ -377,6 +383,8 @@ public class FeedbackView extends ScrollView {
 	    editText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
 	    editText.setTypeface(null, Typeface.NORMAL);
 	    editText.setMinimumHeight(minEditTextHeight);
+	    editText.setHint("Message");
+	    editText.setHintTextColor(Color.LTGRAY);
 	    
 	    wrapperLayoutFeedback.addView(editText);
 	}
