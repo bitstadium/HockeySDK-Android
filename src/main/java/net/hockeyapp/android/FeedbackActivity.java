@@ -44,6 +44,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 /**
@@ -90,7 +91,8 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
 	private EditText textInput;
 	private Button sendFeedbackButton;
 	private Button addResponseButton;
-	private LinearLayout wrapperLayoutFeedback;
+	//private LinearLayout wrapperLayoutFeedback;
+	private ScrollView feedbackScrollView;
 	private LinearLayout wrapperLayoutFeedbackAndMessages;
 	//private LinearLayout wrapperLayoutActualMessages;
 	private ListView messagesListView;
@@ -215,14 +217,14 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
 	 * and the listener for the Send Feedback {@link Button} 
 	 */
 	protected void configureFeedbackView(boolean haveToken) {
-		wrapperLayoutFeedback = (LinearLayout) findViewById(FeedbackView.WRAPPER_LAYOUT_FEEDBACK_ID);
+		feedbackScrollView = (ScrollView) findViewById(FeedbackView.FEEDBACK_SCROLLVIEW_ID);
 		wrapperLayoutFeedbackAndMessages = (LinearLayout) findViewById(FeedbackView.WRAPPER_LAYOUT_FEEDBACK_AND_MESSAGES_ID);
 		//wrapperLayoutActualMessages = (LinearLayout) findViewById(FeedbackView.WRAPPER_LAYOUT_ACTUAL_MESSAGES_ID);
 		messagesListView = (ListView) findViewById(FeedbackView.MESSAGES_LISTVIEW_ID);
 		if (haveToken) {
 			/** If a token exists, the list of messages should be displayed*/
 			wrapperLayoutFeedbackAndMessages.setVisibility(View.VISIBLE);
-			wrapperLayoutFeedback.setVisibility(View.GONE);
+			feedbackScrollView.setVisibility(View.GONE);
 			
 			lastUpdatedTextView = (TextView) findViewById(FeedbackView.LAST_UPDATED_TEXT_VIEW_ID);
 			addResponseButton = (Button) findViewById(FeedbackView.ADD_RESPONSE_BUTTON_ID);
@@ -230,7 +232,7 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
 		} else {
 			/** if the token doesn't exist, the feedback details inputs to be sent need to be displayed */ 
 			wrapperLayoutFeedbackAndMessages.setVisibility(View.GONE);
-			wrapperLayoutFeedback.setVisibility(View.VISIBLE);
+			feedbackScrollView.setVisibility(View.VISIBLE);
 			
 			nameInput = (EditText) findViewById(FeedbackView.NAME_EDIT_TEXT_ID);
 			emailInput = (EditText) findViewById(FeedbackView.EMAIL_EDIT_TEXT_ID);

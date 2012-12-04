@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 /**
@@ -66,15 +67,23 @@ public class FeedbackView extends LinearLayout {
 	public final static int WRAPPER_LAYOUT_FEEDBACK_ID = 0x20012;
 	public final static int WRAPPER_LAYOUT_FEEDBACK_AND_MESSAGES_ID = 0x20013;
 	public final static int MESSAGES_LISTVIEW_ID = 0x20015;
+	public final static int FEEDBACK_SCROLLVIEW_ID = 0x20014;
 	
 	/** Base wrapper {@link LinearLayout} */
 	private LinearLayout wrapperBase;
+	
+	/** {@link ScrollView} that holds the {@link LinearLayout} with the actual feedback elements */
+	private ScrollView feedbackScrollView;
+	
 	/** Wrapper {@link LinearLayout} for the input elements for sending feedback */
 	private LinearLayout wrapperLayoutFeedback;
+	
 	/** Wrapper {@link LinearLayout} for last updated label, add response {@link Button} and list of discussions */
 	private LinearLayout wrapperLayoutFeedbackAndMessages;
+	
 	/** {@link ListView} for list of discussions */
 	private ListView messagesListView;
+	
 	protected boolean layoutHorizontally = false;
 	protected boolean limitHeight = false;
 
@@ -104,6 +113,7 @@ public class FeedbackView extends LinearLayout {
 		loadLayoutParams(context);
 		
 		loadWrapperBase(context);
+		loadFeedbackScrollView(context);
 		loadWrapperLayoutFeedback(context);
 		loadWrapperLayoutFeedbackAndMessages(context);
 		
@@ -150,6 +160,21 @@ public class FeedbackView extends LinearLayout {
 		addView(wrapperBase);
 	}
 	
+	private void loadFeedbackScrollView(Context context) {
+		feedbackScrollView = new ScrollView(context);
+		feedbackScrollView.setId(FEEDBACK_SCROLLVIEW_ID);
+		
+		LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+		int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 10.0, 
+	    		getResources().getDisplayMetrics());
+		
+		params.gravity = Gravity.CENTER;
+		feedbackScrollView.setLayoutParams(params);
+		feedbackScrollView.setPadding(padding, padding, padding, padding);
+		
+		wrapperBase.addView(feedbackScrollView);
+	}
+	
 	private void loadWrapperLayoutFeedback(Context context) {
 		wrapperLayoutFeedback = new LinearLayout(context);
 		wrapperLayoutFeedback.setId(WRAPPER_LAYOUT_FEEDBACK_ID);
@@ -164,7 +189,7 @@ public class FeedbackView extends LinearLayout {
 		wrapperLayoutFeedback.setGravity(Gravity.TOP);
 		wrapperLayoutFeedback.setOrientation(LinearLayout.VERTICAL);
 		
-		wrapperBase.addView(wrapperLayoutFeedback);
+		feedbackScrollView.addView(wrapperLayoutFeedback);
 	}
 
 	private void loadWrapperLayoutFeedbackAndMessages(Context context) {
