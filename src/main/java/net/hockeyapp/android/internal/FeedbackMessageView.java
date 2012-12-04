@@ -10,6 +10,7 @@ import android.graphics.drawable.StateListDrawable;
 import android.text.InputType;
 import android.text.TextUtils.TruncateAt;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.inputmethod.EditorInfo;
@@ -117,6 +118,12 @@ public class FeedbackMessageView extends LinearLayout {
 		}
 	}
 	
+	private void setAuthorLaberColor(int color) {
+		if (authorTextView != null) {
+			authorTextView.setTextColor(color);
+		}
+	}
+	
 	private void loadDateLabel(Context context) {
 		dateTextView = new TextView(context);
 		dateTextView.setId(DATE_TEXT_VIEW_ID);
@@ -146,6 +153,12 @@ public class FeedbackMessageView extends LinearLayout {
 		}
 	}
 
+	private void setDateLaberColor(int color) {
+		if (dateTextView != null) {
+			dateTextView.setTextColor(color);
+		}
+	}
+
 	private void loadMessageLabel(Context context) {
 		messageTextView = new TextView(context);
 		messageTextView.setId(MESSAGE_TEXT_VIEW_ID);
@@ -169,5 +182,31 @@ public class FeedbackMessageView extends LinearLayout {
 		if (messageTextView != null && text != null) {
 			messageTextView.setText(text);
 		}
+	}
+
+	private void setMessageLaberColor(int color) {
+		if (messageTextView != null) {
+			messageTextView.setTextColor(color);
+		}
+	}
+	
+	/**
+	 * Sets the background for the entire {@link FeedbackMessageView} and for the text colors used
+	 * @param decisionValue		Integer value (0 or 1). If value is 0, then the background will be dark
+	 * 							and text color light. If the value is 1, the background will be light and the 
+	 * 							text color dark
+	 */
+	public void setFeedbackMessageViewBgAndTextColor(int decisionValue) {
+		if (decisionValue == 0) {
+			setBackgroundColor(Color.LTGRAY);
+			setAuthorLaberColor(Color.WHITE);
+			setDateLaberColor(Color.WHITE);
+		} else if (decisionValue == 1) {
+			setBackgroundColor(Color.WHITE);
+			setAuthorLaberColor(Color.LTGRAY);
+			setDateLaberColor(Color.LTGRAY);
+		}
+		
+		setMessageLaberColor(Color.BLACK);
 	}
 }

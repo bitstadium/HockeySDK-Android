@@ -29,6 +29,7 @@ import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -320,6 +321,9 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
 						} catch (ParseException e) {
 							e.printStackTrace();
 						}
+						
+						feedbackMessageView.setFeedbackMessageViewBgAndTextColor(feedbackMessages.indexOf(message) % 2 == 0 ? 
+								0 : 1);
 						
 						wrapperLayoutActualMessages.addView(feedbackMessageView);
 					}
