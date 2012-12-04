@@ -312,6 +312,7 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
 					for (FeedbackMessage message : feedbackMessages) {
 						feedbackMessageView = new FeedbackMessageView(context);
 						feedbackMessageView.setMessageLabelText(message.getText());
+						feedbackMessageView.setAuthorLabelText(message.getName());
 						
 						try {
 							date = format.parse(message.getCreatedAt());

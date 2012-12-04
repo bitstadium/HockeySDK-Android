@@ -57,9 +57,11 @@ import android.widget.LinearLayout.LayoutParams;
  * @author Bogdan Nistor
  **/
 public class FeedbackMessageView extends LinearLayout {
-	public final static int DATE_TEXT_VIEW_ID = 0x3001;
-	public final static int MESSAGE_TEXT_VIEW_ID = 0x3002;
+	public final static int AUTHOR_TEXT_VIEW_ID = 0x3001;
+	public final static int DATE_TEXT_VIEW_ID = 0x3002;
+	public final static int MESSAGE_TEXT_VIEW_ID = 0x3003;
 	
+	private TextView authorTextView;
 	private TextView dateTextView;
 	private TextView messageTextView;
 	private boolean ownMessage;
@@ -73,6 +75,7 @@ public class FeedbackMessageView extends LinearLayout {
 		
 		this.ownMessage = ownMessage;
 		loadLayoutParams(context);
+		loadAuthorLabel(context);
 		loadDateLabel(context);
 		loadMessageLabel(context);
 	}
@@ -84,6 +87,35 @@ public class FeedbackMessageView extends LinearLayout {
 	    setLayoutParams(params);
 	    setOrientation(LinearLayout.VERTICAL);
 	}
+
+	private void loadAuthorLabel(Context context) {
+		authorTextView = new TextView(context);
+		authorTextView.setId(AUTHOR_TEXT_VIEW_ID);
+
+	    LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+	    int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 20.0, 
+	    		getResources().getDisplayMetrics());
+	    
+	    params.setMargins(margin, margin, margin, 0);
+	    authorTextView.setLayoutParams(params);
+	    authorTextView.setShadowLayer(1, 0, 1, Color.WHITE);
+	    authorTextView.setSingleLine(true);
+	    authorTextView.setTextColor(Color.GRAY);
+	    authorTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
+	    authorTextView.setTypeface(null, Typeface.NORMAL);
+	    
+	    addView(authorTextView);
+	}
+	
+	/**
+	 * Sets the author name for the Author {@link TextView}
+	 * @param name	Author name string
+	 */
+	public void setAuthorLabelText(String name) {
+		if (authorTextView != null && name != null) {
+			authorTextView.setText(name);
+		}
+	}
 	
 	private void loadDateLabel(Context context) {
 		dateTextView = new TextView(context);
@@ -93,13 +125,13 @@ public class FeedbackMessageView extends LinearLayout {
 	    int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 20.0, 
 	    		getResources().getDisplayMetrics());
 	    
-	    params.setMargins(margin, margin, margin, 0);
+	    params.setMargins(margin, 0, margin, 0);
 	    dateTextView.setLayoutParams(params);
 	    dateTextView.setShadowLayer(1, 0, 1, Color.WHITE);
 	    dateTextView.setSingleLine(true);
 	    dateTextView.setTextColor(Color.GRAY);
 	    dateTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
-	    dateTextView.setTypeface(null, Typeface.NORMAL);
+	    dateTextView.setTypeface(null, Typeface.ITALIC);
 	    
 	    addView(dateTextView);
 	}
