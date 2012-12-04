@@ -228,7 +228,7 @@ public class FeedbackView extends ScrollView {
 	    textView.setSingleLine(true);
 	    textView.setText("Name");
 	    textView.setTextColor(Color.BLACK);
-	    textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+	    textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
 	    textView.setTypeface(null, Typeface.BOLD);
 	    
 	    wrapperLayoutFeedback.addView(textView);
@@ -248,7 +248,7 @@ public class FeedbackView extends ScrollView {
 	    editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
 	    editText.setSingleLine(true);
 	    editText.setTextColor(Color.GRAY);
-	    editText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 25);
+	    editText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
 	    editText.setTypeface(null, Typeface.NORMAL);
 	    
 	    wrapperLayoutFeedback.addView(editText);
@@ -269,7 +269,7 @@ public class FeedbackView extends ScrollView {
 	    textView.setSingleLine(true);
 	    textView.setText("Email");
 	    textView.setTextColor(Color.BLACK);
-	    textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+	    textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
 	    textView.setTypeface(null, Typeface.BOLD);
 	    
 	    wrapperLayoutFeedback.addView(textView);
@@ -289,7 +289,7 @@ public class FeedbackView extends ScrollView {
 	    editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
 	    editText.setSingleLine(true);
 	    editText.setTextColor(Color.GRAY);
-	    editText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 25);
+	    editText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
 	    editText.setTypeface(null, Typeface.NORMAL);
 	    
 	    wrapperLayoutFeedback.addView(editText);
@@ -310,7 +310,7 @@ public class FeedbackView extends ScrollView {
 	    textView.setSingleLine(true);
 	    textView.setText("Subject");
 	    textView.setTextColor(Color.BLACK);
-	    textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+	    textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
 	    textView.setTypeface(null, Typeface.BOLD);
 	    
 	    wrapperLayoutFeedback.addView(textView);
@@ -330,7 +330,7 @@ public class FeedbackView extends ScrollView {
 	    editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_SUBJECT);
 	    editText.setSingleLine(true);
 	    editText.setTextColor(Color.GRAY);
-	    editText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 25);
+	    editText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
 	    editText.setTypeface(null, Typeface.NORMAL);
 	    
 	    wrapperLayoutFeedback.addView(editText);
@@ -351,7 +351,7 @@ public class FeedbackView extends ScrollView {
 	    textView.setSingleLine(true);
 	    textView.setText("Text");
 	    textView.setTextColor(Color.BLACK);
-	    textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+	    textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
 	    textView.setTypeface(null, Typeface.BOLD);
 	    
 	    wrapperLayoutFeedback.addView(textView);
@@ -374,7 +374,7 @@ public class FeedbackView extends ScrollView {
 	    editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
 	    editText.setSingleLine(false);
 	    editText.setTextColor(Color.GRAY);
-	    editText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 25);
+	    editText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
 	    editText.setTypeface(null, Typeface.NORMAL);
 	    editText.setMinimumHeight(minEditTextHeight);
 	    
@@ -397,7 +397,7 @@ public class FeedbackView extends ScrollView {
 	    textView.setSingleLine(true);
 	    textView.setText("Last Updated: ");
 	    textView.setTextColor(Color.GRAY);
-	    textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
+	    textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
 	    textView.setTypeface(null, Typeface.NORMAL);
 	    
 	    wrapperLayoutFeedbackAndMessages.addView(textView);
@@ -428,7 +428,7 @@ public class FeedbackView extends ScrollView {
 	    button.setPadding(paddingLeftRight, paddingTopBottom, paddingLeftRight, paddingTopBottom);
 	    button.setText("Send feedback");
 	    button.setTextColor(Color.WHITE);
-	    button.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+	    button.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
 	    
 	    wrapperLayoutFeedback.addView(button);
 	}
@@ -458,7 +458,7 @@ public class FeedbackView extends ScrollView {
 	    button.setPadding(paddingLeftRight, paddingTopBottom, paddingLeftRight, paddingTopBottom);
 	    button.setText("Add a Response");
 	    button.setTextColor(Color.WHITE);
-	    button.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+	    button.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
 	    
 	    wrapperLayoutFeedbackAndMessages.addView(button);
 	}
