@@ -303,6 +303,17 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
 						getFeedback().getMessages().size() > 0) {
 					
 					ArrayList<FeedbackMessage> feedbackMessages = feedbackResponse.getFeedback().getMessages();
+					/** Reverse the order of the feedback messages list, so we show the latest one first */
+					Collections.reverse(feedbackMessages);
+					
+					/** Set the lastUpdatedTextView text as the date of the latest feedback message */
+					try {
+						date = format.parse(feedbackMessages.get(0).getCreatedAt());
+						lastUpdatedTextView.setText(String.format("Last Updated: %s", formatNew.format(date)));
+					} catch (ParseException e1) {
+						e1.printStackTrace();
+					}
+					
 					//if (messagesAdapter == null) {
 						messagesAdapter = new MessagesAdapter(context, feedbackMessages);
 					/*} else {
