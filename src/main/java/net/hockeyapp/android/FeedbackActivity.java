@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 
+import net.hockeyapp.android.adapters.MessagesAdapter;
 import net.hockeyapp.android.internal.DownloadFileListener;
 import net.hockeyapp.android.internal.DownloadFileTask;
 import net.hockeyapp.android.internal.FeedbackMessageView;
@@ -42,6 +43,7 @@ import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 /**
@@ -90,7 +92,8 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
 	private Button addResponseButton;
 	private LinearLayout wrapperLayoutFeedback;
 	private LinearLayout wrapperLayoutFeedbackAndMessages;
-	private LinearLayout wrapperLayoutActualMessages;
+	//private LinearLayout wrapperLayoutActualMessages;
+	private ListView messagesListView;
 	
 	/** Send feedback {@link AsyncTask} */
 	private SendFeedbackTask sendFeedbackTask;
@@ -101,6 +104,7 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
 	private ErrorObject error;
 	private SendFeedbackListener sendFeedbackListener;
 	private String url;
+	private MessagesAdapter messagesAdapter;
 	
 	/**
 	 * Called when the activity is starting. Sets the title and content view
@@ -213,7 +217,8 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
 	protected void configureFeedbackView(boolean haveToken) {
 		wrapperLayoutFeedback = (LinearLayout) findViewById(FeedbackView.WRAPPER_LAYOUT_FEEDBACK_ID);
 		wrapperLayoutFeedbackAndMessages = (LinearLayout) findViewById(FeedbackView.WRAPPER_LAYOUT_FEEDBACK_AND_MESSAGES_ID);
-		wrapperLayoutActualMessages = (LinearLayout) findViewById(FeedbackView.WRAPPER_LAYOUT_ACTUAL_MESSAGES_ID);
+		//wrapperLayoutActualMessages = (LinearLayout) findViewById(FeedbackView.WRAPPER_LAYOUT_ACTUAL_MESSAGES_ID);
+		messagesListView = (ListView) findViewById(FeedbackView.MESSAGES_LISTVIEW_ID);
 		if (haveToken) {
 			/** If a token exists, the list of messages should be displayed*/
 			wrapperLayoutFeedbackAndMessages.setVisibility(View.VISIBLE);
@@ -295,14 +300,29 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
 						feedbackResponse.getFeedback().getMessages() != null && feedbackResponse.
 						getFeedback().getMessages().size() > 0) {
 					
-					wrapperLayoutActualMessages.removeAllViews();
+					ArrayList<FeedbackMessage> feedbackMessages = feedbackResponse.getFeedback().getMessages();
+					//if (messagesAdapter == null) {
+						messagesAdapter = new MessagesAdapter(context, feedbackMessages);
+					/*} else {
+						messagesAdapter.clear();
+						
+						for (FeedbackMessage message : feedbackMessages) {
+							messagesAdapter.add(message);
+						}
+						
+						messagesAdapter.notifyDataSetChanged();
+					}*/
+					
+					messagesListView.setAdapter(messagesAdapter);
+					
+					/*wrapperLayoutActualMessages.removeAllViews();
 					
 					ArrayList<FeedbackMessage> feedbackMessages = feedbackResponse.getFeedback().getMessages();
 					
-					/** Reverse the order of the feedback messages list, so we show the latest one first */
+					*//** Reverse the order of the feedback messages list, so we show the latest one first *//*
 					Collections.reverse(feedbackMessages);
 					
-					/** Set the lastUpdatedTextView text as the date of the latest feedback message */
+					*//** Set the lastUpdatedTextView text as the date of the latest feedback message *//*
 					try {
 						date = format.parse(feedbackMessages.get(0).getCreatedAt());
 						lastUpdatedTextView.setText(String.format("Last Updated: %s", formatNew.format(date)));
@@ -326,7 +346,7 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
 								0 : 1);
 						
 						wrapperLayoutActualMessages.addView(feedbackMessageView);
-					}
+					}*/
 				}
 			}
 		});

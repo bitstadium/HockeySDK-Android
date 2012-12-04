@@ -1,27 +1,12 @@
 package net.hockeyapp.android.internal;
 
 import android.content.Context;
-import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.StateListDrawable;
-import android.text.InputType;
-import android.text.TextUtils.TruncateAt;
-import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
-import android.view.inputmethod.EditorInfo;
-import android.webkit.WebView;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.LinearLayout.LayoutParams;
 
 /**
  * <h4>Description</h4>
@@ -82,11 +67,15 @@ public class FeedbackMessageView extends LinearLayout {
 	}
 
 	private void loadLayoutParams(Context context) {
-		LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+		/*LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 		params.gravity = Gravity.LEFT;
 	    setBackgroundColor(Color.LTGRAY);
 	    setLayoutParams(params);
-	    setOrientation(LinearLayout.VERTICAL);
+	    setOrientation(LinearLayout.VERTICAL);*/
+		
+		setOrientation(LinearLayout.VERTICAL);
+		setGravity(Gravity.LEFT);
+		setBackgroundColor(Color.LTGRAY);
 	}
 
 	private void loadAuthorLabel(Context context) {

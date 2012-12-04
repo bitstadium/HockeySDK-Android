@@ -13,15 +13,11 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.inputmethod.EditorInfo;
-import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.ScrollView;
+import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.LinearLayout.LayoutParams;
 
 /**
  * <h4>Description</h4>
@@ -58,22 +54,18 @@ import android.widget.LinearLayout.LayoutParams;
  *
  * @author Bogdan Nistor
  **/
-public class FeedbackView extends ScrollView {
+public class FeedbackView extends LinearLayout {
 	public final static int LAST_UPDATED_TEXT_VIEW_ID = 0x2000;
-	//public final static int NAME_TEXT_VIEW_ID = 0x2001;
 	public final static int NAME_EDIT_TEXT_ID = 0x2002;
-	//public final static int EMAIL_TEXT_VIEW_ID = 0x2003;
 	public final static int EMAIL_EDIT_TEXT_ID = 0x2004;
-	//public final static int SUBJECT_TEXT_VIEW_ID = 0x2005;
 	public final static int SUBJECT_EDIT_TEXT_ID = 0x2006;
-	//public final static int TEXT_TEXT_VIEW_ID = 0x2007;
 	public final static int TEXT_EDIT_TEXT_ID = 0x2008;
 	public final static int SEND_FEEDBACK_BUTTON_ID = 0x2009;
 	public final static int ADD_RESPONSE_BUTTON_ID = 0x20010;
 	public final static int WRAPPER_BASE_ID = 0x20011;
 	public final static int WRAPPER_LAYOUT_FEEDBACK_ID = 0x20012;
 	public final static int WRAPPER_LAYOUT_FEEDBACK_AND_MESSAGES_ID = 0x20013;
-	public final static int WRAPPER_LAYOUT_ACTUAL_MESSAGES_ID = 0x20014;
+	public final static int MESSAGES_LISTVIEW_ID = 0x20015;
 	
 	/** Base wrapper {@link LinearLayout} */
 	private LinearLayout wrapperBase;
@@ -81,8 +73,8 @@ public class FeedbackView extends ScrollView {
 	private LinearLayout wrapperLayoutFeedback;
 	/** Wrapper {@link LinearLayout} for last updated label, add response {@link Button} and list of discussions */
 	private LinearLayout wrapperLayoutFeedbackAndMessages;
-	/** Wrapper {@link LinearLayout} for list of discussions */
-	private LinearLayout wrapperLayoutActualMessagesList;
+	/** {@link ListView} for list of discussions */
+	private ListView messagesListView;
 	protected boolean layoutHorizontally = false;
 	protected boolean limitHeight = false;
 
@@ -115,20 +107,16 @@ public class FeedbackView extends ScrollView {
 		loadWrapperLayoutFeedback(context);
 		loadWrapperLayoutFeedbackAndMessages(context);
 		
-		//loadNameLabel(context);
 		loadNameInput(context);
-		//loadEmailLabel(context);
 		loadEmailInput(context);
-		//loadSubjectLabel(context);
 		loadSubjectInput(context);
-		//loadTextLabel(context);
 		loadTextInput(context);
 		loadSendFeedbackButton(context);
 		
 		loadLastUpdatedLabel(context);
 		loadAddResponseButton(context);
 		
-		loadWrapperLayoutActualMessages(context);
+		loadMessagesListView(context);
 	}
 
 	private void setLayoutHorizontally(Context context) {
@@ -183,7 +171,9 @@ public class FeedbackView extends ScrollView {
 		wrapperLayoutFeedbackAndMessages = new LinearLayout(context);
 		wrapperLayoutFeedbackAndMessages.setId(WRAPPER_LAYOUT_FEEDBACK_AND_MESSAGES_ID);
 		
-		LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+		LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, 
+				LayoutParams.MATCH_PARENT);
+		
 		int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 10.0, 
 	    		getResources().getDisplayMetrics());
 		
@@ -195,44 +185,22 @@ public class FeedbackView extends ScrollView {
 		
 		wrapperBase.addView(wrapperLayoutFeedbackAndMessages);
 	}
-
-	private void loadWrapperLayoutActualMessages(Context context) {
-		wrapperLayoutActualMessagesList = new LinearLayout(context);
-		wrapperLayoutActualMessagesList.setId(WRAPPER_LAYOUT_ACTUAL_MESSAGES_ID);
+	
+	private void loadMessagesListView(Context context) {
+		messagesListView = new ListView(context);
+		messagesListView.setId(MESSAGES_LISTVIEW_ID);
 		
-		LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+		LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, 
+				LayoutParams.MATCH_PARENT);
+		
 		int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 10.0, 
 	    		getResources().getDisplayMetrics());
 		
-		params.gravity = Gravity.CENTER;
-		wrapperLayoutActualMessagesList.setLayoutParams(params);
-		wrapperLayoutActualMessagesList.setPadding(0, padding, 0, padding);
-		wrapperLayoutActualMessagesList.setGravity(Gravity.TOP);
-		wrapperLayoutActualMessagesList.setOrientation(LinearLayout.VERTICAL);
+		messagesListView.setLayoutParams(params);
+		messagesListView.setPadding(0, padding, 0, padding);
 		
-		wrapperLayoutFeedbackAndMessages.addView(wrapperLayoutActualMessagesList);
+		wrapperLayoutFeedbackAndMessages.addView(messagesListView);
 	}
-	
-	/*private void loadNameLabel(Context context) {
-		TextView textView = new TextView(context);
-	    textView.setId(NAME_TEXT_VIEW_ID);
-
-	    LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-	    int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 20.0, 
-	    		getResources().getDisplayMetrics());
-	    
-	    params.setMargins(margin, margin, margin, 0);
-	    textView.setLayoutParams(params);
-	    textView.setEllipsize(TruncateAt.END);
-	    textView.setShadowLayer(1, 0, 1, Color.WHITE);
-	    textView.setSingleLine(true);
-	    textView.setText("Name");
-	    textView.setTextColor(Color.BLACK);
-	    textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
-	    textView.setTypeface(null, Typeface.BOLD);
-	    
-	    wrapperLayoutFeedback.addView(textView);
-	}*/
 	
 	private void loadNameInput(Context context) {
 		EditText editText = new EditText(context);
@@ -256,27 +224,6 @@ public class FeedbackView extends ScrollView {
 	    wrapperLayoutFeedback.addView(editText);
 	}
 
-	/*private void loadEmailLabel(Context context) {
-		TextView textView = new TextView(context);
-	    textView.setId(EMAIL_TEXT_VIEW_ID);
-
-	    LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-	    int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 20.0, 
-	    		getResources().getDisplayMetrics());
-	    
-	    params.setMargins(margin, margin, margin, 0);
-	    textView.setLayoutParams(params);
-	    textView.setEllipsize(TruncateAt.END);
-	    textView.setShadowLayer(1, 0, 1, Color.WHITE);
-	    textView.setSingleLine(true);
-	    textView.setText("Email");
-	    textView.setTextColor(Color.BLACK);
-	    textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
-	    textView.setTypeface(null, Typeface.BOLD);
-	    
-	    wrapperLayoutFeedback.addView(textView);
-	}*/
-
 	private void loadEmailInput(Context context) {
 		EditText editText = new EditText(context);
 		editText.setId(EMAIL_EDIT_TEXT_ID);
@@ -299,27 +246,6 @@ public class FeedbackView extends ScrollView {
 	    wrapperLayoutFeedback.addView(editText);
 	}
 
-	/*private void loadSubjectLabel(Context context) {
-		TextView textView = new TextView(context);
-	    textView.setId(SUBJECT_TEXT_VIEW_ID);
-
-	    LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-	    int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 20.0, 
-	    		getResources().getDisplayMetrics());
-	    
-	    params.setMargins(margin, margin, margin, 0);
-	    textView.setLayoutParams(params);
-	    textView.setEllipsize(TruncateAt.END);
-	    textView.setShadowLayer(1, 0, 1, Color.WHITE);
-	    textView.setSingleLine(true);
-	    textView.setText("Subject");
-	    textView.setTextColor(Color.BLACK);
-	    textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
-	    textView.setTypeface(null, Typeface.BOLD);
-	    
-	    wrapperLayoutFeedback.addView(textView);
-	}*/
-
 	private void loadSubjectInput(Context context) {
 		EditText editText = new EditText(context);
 		editText.setId(SUBJECT_EDIT_TEXT_ID);
@@ -341,27 +267,6 @@ public class FeedbackView extends ScrollView {
 	    
 	    wrapperLayoutFeedback.addView(editText);
 	}
-
-	/*private void loadTextLabel(Context context) {
-		TextView textView = new TextView(context);
-	    textView.setId(TEXT_TEXT_VIEW_ID);
-
-	    LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-	    int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 20.0, 
-	    		getResources().getDisplayMetrics());
-	    
-	    params.setMargins(margin, margin, margin, 0);
-	    textView.setLayoutParams(params);
-	    textView.setEllipsize(TruncateAt.END);
-	    textView.setShadowLayer(1, 0, 1, Color.WHITE);
-	    textView.setSingleLine(true);
-	    textView.setText("Text");
-	    textView.setTextColor(Color.BLACK);
-	    textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
-	    textView.setTypeface(null, Typeface.BOLD);
-	    
-	    wrapperLayoutFeedback.addView(textView);
-	}*/
 
 	private void loadTextInput(Context context) {
 		EditText editText = new EditText(context);
