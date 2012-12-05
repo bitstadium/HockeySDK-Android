@@ -11,6 +11,8 @@ import net.hockeyapp.android.internal.DownloadFileListener;
 import net.hockeyapp.android.internal.DownloadFileTask;
 import net.hockeyapp.android.internal.FeedbackMessageView;
 import net.hockeyapp.android.internal.FeedbackView;
+import net.hockeyapp.android.internal.PullToRefreshListView;
+import net.hockeyapp.android.internal.PullToRefreshListView.OnRefreshListener;
 import net.hockeyapp.android.internal.SendFeedbackListener;
 import net.hockeyapp.android.internal.UpdateView;
 import net.hockeyapp.android.internal.VersionHelper;
@@ -95,7 +97,7 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
 	private ScrollView feedbackScrollView;
 	private LinearLayout wrapperLayoutFeedbackAndMessages;
 	//private LinearLayout wrapperLayoutActualMessages;
-	private ListView messagesListView;
+	private PullToRefreshListView messagesListView;
 	
 	/** Send feedback {@link AsyncTask} */
 	private SendFeedbackTask sendFeedbackTask;
@@ -107,6 +109,7 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
 	private SendFeedbackListener sendFeedbackListener;
 	private String url;
 	private MessagesAdapter messagesAdapter;
+	private ArrayList<FeedbackMessage> feedbackMessages;
 	
 	/**
 	 * Called when the activity is starting. Sets the title and content view
@@ -220,7 +223,17 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
 		feedbackScrollView = (ScrollView) findViewById(FeedbackView.FEEDBACK_SCROLLVIEW_ID);
 		wrapperLayoutFeedbackAndMessages = (LinearLayout) findViewById(FeedbackView.WRAPPER_LAYOUT_FEEDBACK_AND_MESSAGES_ID);
 		//wrapperLayoutActualMessages = (LinearLayout) findViewById(FeedbackView.WRAPPER_LAYOUT_ACTUAL_MESSAGES_ID);
-		messagesListView = (ListView) findViewById(FeedbackView.MESSAGES_LISTVIEW_ID);
+		messagesListView = (PullToRefreshListView) findViewById(FeedbackView.MESSAGES_LISTVIEW_ID);
+		messagesListView.setOnRefreshListener(new OnRefreshListener() {
+			
+			@Override
+			public void onRefresh() {
+				// TODO Auto-generated method stub
+				//new GetDataTask().execute();
+				sendFetchFeedback(url, null, null, null, null, PrefsUtil.getInstance().getFeedbackTokenFromPrefs(context), feedbackHandler, true);
+			}
+		});
+		
 		if (haveToken) {
 			/** If a token exists, the list of messages should be displayed*/
 			wrapperLayoutFeedbackAndMessages.setVisibility(View.VISIBLE);
@@ -272,6 +285,39 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
 			sendFeedbackButton.setOnClickListener(this);
 		}
 	}
+	
+	// TODO ------------------------------------------------------------------------------------------------------------
+	private class GetDataTask extends AsyncTask<Void, Void, ArrayList<FeedbackMessage>> {
+
+        @Override
+        protected ArrayList<FeedbackMessage> doInBackground(Void... params) {
+            // Simulates a background job.
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                ;
+            }
+            
+            return feedbackMessages;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<FeedbackMessage> result) {
+        	FeedbackMessage newFeedbackMessage = new FeedbackMessage();
+        	newFeedbackMessage.setName("Test");
+        	newFeedbackMessage.setCreatedAt("2012-12-05'T'10:58:30'Z'");
+        	newFeedbackMessage.setText("Test DYNAMIC message");
+        	
+        	feedbackMessages.add(0, newFeedbackMessage);
+        	messagesAdapter.notifyDataSetChanged();
+
+            // Call onRefreshComplete when the list has been refreshed.
+            messagesListView.onRefreshComplete();
+
+            super.onPostExecute(result);
+        }
+    }
+	// TODO ------------------------------------------------------------------------------------------------------------
   
 	/**
 	 * Creates and returns a new instance of {@link FeedbackView}
@@ -302,7 +348,7 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
 						feedbackResponse.getFeedback().getMessages() != null && feedbackResponse.
 						getFeedback().getMessages().size() > 0) {
 					
-					ArrayList<FeedbackMessage> feedbackMessages = feedbackResponse.getFeedback().getMessages();
+					feedbackMessages = feedbackResponse.getFeedback().getMessages();
 					/** Reverse the order of the feedback messages list, so we show the latest one first */
 					Collections.reverse(feedbackMessages);
 					
@@ -314,52 +360,23 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
 						e1.printStackTrace();
 					}
 					
-					//if (messagesAdapter == null) {
+					if (messagesAdapter == null) {
+						Log.v("FeedbackActivity", "HERE 1: " + feedbackMessages.size());
 						messagesAdapter = new MessagesAdapter(context, feedbackMessages);
-					/*} else {
+					} else {
+						Log.v("FeedbackActivity", "HERE 2: " + feedbackMessages.size());
 						messagesAdapter.clear();
-						
 						for (FeedbackMessage message : feedbackMessages) {
 							messagesAdapter.add(message);
 						}
 						
 						messagesAdapter.notifyDataSetChanged();
-					}*/
-					
-					messagesListView.setAdapter(messagesAdapter);
-					
-					/*wrapperLayoutActualMessages.removeAllViews();
-					
-					ArrayList<FeedbackMessage> feedbackMessages = feedbackResponse.getFeedback().getMessages();
-					
-					*//** Reverse the order of the feedback messages list, so we show the latest one first *//*
-					Collections.reverse(feedbackMessages);
-					
-					*//** Set the lastUpdatedTextView text as the date of the latest feedback message *//*
-					try {
-						date = format.parse(feedbackMessages.get(0).getCreatedAt());
-						lastUpdatedTextView.setText(String.format("Last Updated: %s", formatNew.format(date)));
-					} catch (ParseException e1) {
-						e1.printStackTrace();
+
+			            // Call onRefreshComplete when the list has been refreshed.
+			            messagesListView.onRefreshComplete();
 					}
 					
-					for (FeedbackMessage message : feedbackMessages) {
-						feedbackMessageView = new FeedbackMessageView(context);
-						feedbackMessageView.setMessageLabelText(message.getText());
-						feedbackMessageView.setAuthorLabelText(message.getName());
-						
-						try {
-							date = format.parse(message.getCreatedAt());
-							feedbackMessageView.setDateLabelText(formatNew.format(date));
-						} catch (ParseException e) {
-							e.printStackTrace();
-						}
-						
-						feedbackMessageView.setFeedbackMessageViewBgAndTextColor(feedbackMessages.indexOf(message) % 2 == 0 ? 
-								0 : 1);
-						
-						wrapperLayoutActualMessages.addView(feedbackMessageView);
-					}*/
+					messagesListView.setAdapter(messagesAdapter);
 				}
 			}
 		});

@@ -82,7 +82,7 @@ public class FeedbackView extends LinearLayout {
 	private LinearLayout wrapperLayoutFeedbackAndMessages;
 	
 	/** {@link ListView} for list of discussions */
-	private ListView messagesListView;
+	private PullToRefreshListView messagesListView;
 	
 	protected boolean layoutHorizontally = false;
 	protected boolean limitHeight = false;
@@ -212,7 +212,7 @@ public class FeedbackView extends LinearLayout {
 	}
 	
 	private void loadMessagesListView(Context context) {
-		messagesListView = new ListView(context);
+		messagesListView = new PullToRefreshListView(context);
 		messagesListView.setId(MESSAGES_LISTVIEW_ID);
 		
 		LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, 

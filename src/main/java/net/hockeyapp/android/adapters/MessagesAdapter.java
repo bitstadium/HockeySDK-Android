@@ -85,4 +85,16 @@ public class MessagesAdapter extends BaseAdapter {
 	public long getItemId(int position) {
 		return position;
 	}
+	
+	public void clear() {
+		if (messagesList != null) {
+			messagesList.clear();
+		}
+	}
+	
+	public void add(FeedbackMessage message) {
+		if (message != null && messagesList != null) {
+			messagesList.add(message);
+		}
+	}
 }
