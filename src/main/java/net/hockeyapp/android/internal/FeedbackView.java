@@ -235,7 +235,7 @@ public class FeedbackView extends LinearLayout {
 	    int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 20.0, 
 	    		getResources().getDisplayMetrics());
 	    
-	    params.setMargins(margin, 0, margin, margin);
+	    params.setMargins(0, 0, 0, margin);
 	    editText.setLayoutParams(params);
 	    editText.setImeOptions(EditorInfo.IME_ACTION_NEXT);
 	    editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
@@ -257,7 +257,7 @@ public class FeedbackView extends LinearLayout {
 	    int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 20.0, 
 	    		getResources().getDisplayMetrics());
 	    
-	    params.setMargins(margin, 0, margin, margin);
+	    params.setMargins(0, 0, 0, margin);
 	    editText.setLayoutParams(params);
 	    editText.setImeOptions(EditorInfo.IME_ACTION_NEXT);
 	    editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
@@ -279,7 +279,7 @@ public class FeedbackView extends LinearLayout {
 	    int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 20.0, 
 	    		getResources().getDisplayMetrics());
 	    
-	    params.setMargins(margin, 0, margin, margin);
+	    params.setMargins(0, 0, 0, margin);
 	    editText.setLayoutParams(params);
 	    editText.setImeOptions(EditorInfo.IME_ACTION_NEXT);
 	    editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_SUBJECT);
@@ -304,7 +304,7 @@ public class FeedbackView extends LinearLayout {
 	    int minEditTextHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 100.0, 
 	    		getResources().getDisplayMetrics());
 	    
-	    params.setMargins(margin, 0, margin, margin);
+	    params.setMargins(0, 0, 0, margin);
 	    editText.setLayoutParams(params);
 	    editText.setImeOptions(EditorInfo.IME_ACTION_NEXT);
 	    editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
