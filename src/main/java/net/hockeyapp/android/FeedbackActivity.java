@@ -84,33 +84,31 @@ import android.widget.TextView;
  * @author Bogdan Nistor
  **/
 public class FeedbackActivity extends Activity implements FeedbackActivityInterface, OnClickListener {
-	private final int DIALOG_ERROR_ID = 0;
-	private Context context;
-	private TextView lastUpdatedTextView;
-	private EditText nameInput;
-	private EditText emailInput;
-	private EditText subjectInput;
-	private EditText textInput;
-	private Button sendFeedbackButton;
-	private Button addResponseButton;
-	//private LinearLayout wrapperLayoutFeedback;
-	private ScrollView feedbackScrollView;
-	private LinearLayout wrapperLayoutFeedbackAndMessages;
-	//private LinearLayout wrapperLayoutActualMessages;
-	private PullToRefreshListView messagesListView;
+  private final int DIALOG_ERROR_ID = 0;
+  private Context context;
+  private TextView lastUpdatedTextView;
+  private EditText nameInput;
+  private EditText emailInput;
+  private EditText subjectInput;
+  private EditText textInput;
+  private Button sendFeedbackButton;
+  private Button addResponseButton;
+  private ScrollView feedbackScrollView;
+  private LinearLayout wrapperLayoutFeedbackAndMessages;
+  private PullToRefreshListView messagesListView;
 	
-	/** Send feedback {@link AsyncTask} */
-	private SendFeedbackTask sendFeedbackTask;
-	/** Parse feedback {@link AsyncTask} */
-	private ParseFeedbackTask parseFeedbackTask;
-	private Handler feedbackHandler;
-	private Handler parseFeedbackHandler;
-	private ErrorObject error;
-	private SendFeedbackListener sendFeedbackListener;
-	private String url;
-	private MessagesAdapter messagesAdapter;
-	private ArrayList<FeedbackMessage> feedbackMessages;
-	
+  /** Send feedback {@link AsyncTask} */
+  private SendFeedbackTask sendFeedbackTask;
+  /** Parse feedback {@link AsyncTask} */
+  private ParseFeedbackTask parseFeedbackTask;
+  private Handler feedbackHandler;
+  private Handler parseFeedbackHandler;
+  private ErrorObject error;
+  private SendFeedbackListener sendFeedbackListener;
+  private String url;
+  private MessagesAdapter messagesAdapter;
+  private ArrayList<FeedbackMessage> feedbackMessages;
+  	
 	/**
 	 * Called when the activity is starting. Sets the title and content view
 	 * 
@@ -144,389 +142,389 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
 			sendFetchFeedback(url, null, null, null, null, token, feedbackHandler, true);
 		}
 	}
-	
-	/**
-	 * Initializes the Feedback response {@link Handler}
-	 */
-	private void initFeedbackHandler() {
-		feedbackHandler = new Handler() {
-			
-			@Override
-			public void handleMessage(Message msg) {
-				if (msg != null && msg.getData() != null) {
-					Bundle bundle = msg.getData();
-					String feedbackResponseString = bundle.getString("feedback_response");
-					if (feedbackResponseString != null) {
-						startParseFeedbackTask(feedbackResponseString);
-					}
-				}
-			}
-		};
-	}
-
-	/**
-	 * Initialize the Feedback response parse result {@link Handler}
-	 */
-	private void initParseFeedbackHandler() {
-		parseFeedbackHandler = new Handler() {
-			
-			@Override
-			public void handleMessage(Message msg) {
-				boolean success = false;
-				if (msg != null && msg.getData() != null) {
-					Bundle bundle = msg.getData();
-					FeedbackResponse feedbackResponse = (FeedbackResponse) bundle.getSerializable("parse_feedback_response");
-					if (feedbackResponse != null) {
-						if (feedbackResponse.getStatus().equalsIgnoreCase("success")) {
-							/** We have a valid result from JSON parsing */
-							success = true;	
-							
-							if (feedbackResponse.getToken() != null) {
-								/** Save the Token to SharedPreferences */
-								PrefsUtil.getInstance().saveFeedbackTokenToPrefs(context, feedbackResponse.getToken());
-								/** Load the existing feedback messages */
-								loadFeedbackMessages(feedbackResponse);
-							}
-						} else {
-							success = false;
-							error = new ErrorObject();
-							error.setMessage("");
-						}
-					} else {
-						success = false;
-					}
-				} else {
-					success = false;
-				}
-				
-				/** Something went wrong, so display an error dialog */
-				if (!success) {
-					runOnUiThread(new Runnable() {
-						
-						@Override
-						public void run() {
-							showDialog(DIALOG_ERROR_ID);
-						}
-					});
-				}
-				
-				enableDisableSendFeedbackButton(true);
-			}
-		};
-	}
+  	
+  	/**
+  	 * Initializes the Feedback response {@link Handler}
+  	 */
+  	private void initFeedbackHandler() {
+  		feedbackHandler = new Handler() {
+  			
+  			@Override
+  			public void handleMessage(Message msg) {
+  				if (msg != null && msg.getData() != null) {
+  					Bundle bundle = msg.getData();
+  					String feedbackResponseString = bundle.getString("feedback_response");
+  					if (feedbackResponseString != null) {
+  						startParseFeedbackTask(feedbackResponseString);
+  					}
+  				}
+  			}
+  		};
+  	}
   
-	/**
-	 * Configures the content view by initializing the input {@link EditText}s 
-	 * and the listener for the Send Feedback {@link Button} 
-	 */
-	protected void configureFeedbackView(boolean haveToken) {
-		feedbackScrollView = (ScrollView) findViewById(FeedbackView.FEEDBACK_SCROLLVIEW_ID);
-		wrapperLayoutFeedbackAndMessages = (LinearLayout) findViewById(FeedbackView.WRAPPER_LAYOUT_FEEDBACK_AND_MESSAGES_ID);
-		//wrapperLayoutActualMessages = (LinearLayout) findViewById(FeedbackView.WRAPPER_LAYOUT_ACTUAL_MESSAGES_ID);
-		messagesListView = (PullToRefreshListView) findViewById(FeedbackView.MESSAGES_LISTVIEW_ID);
-		messagesListView.setOnRefreshListener(new OnRefreshListener() {
-			
-			@Override
-			public void onRefresh() {
-				// TODO Auto-generated method stub
-				//new GetDataTask().execute();
-				sendFetchFeedback(url, null, null, null, null, PrefsUtil.getInstance().getFeedbackTokenFromPrefs(context), feedbackHandler, true);
-			}
-		});
-		
-		if (haveToken) {
-			/** If a token exists, the list of messages should be displayed*/
-			wrapperLayoutFeedbackAndMessages.setVisibility(View.VISIBLE);
-			feedbackScrollView.setVisibility(View.GONE);
-			
-			lastUpdatedTextView = (TextView) findViewById(FeedbackView.LAST_UPDATED_TEXT_VIEW_ID);
-			addResponseButton = (Button) findViewById(FeedbackView.ADD_RESPONSE_BUTTON_ID);
-			addResponseButton.setOnClickListener(this);
-		} else {
-			/** if the token doesn't exist, the feedback details inputs to be sent need to be displayed */ 
-			wrapperLayoutFeedbackAndMessages.setVisibility(View.GONE);
-			feedbackScrollView.setVisibility(View.VISIBLE);
-			
-			nameInput = (EditText) findViewById(FeedbackView.NAME_EDIT_TEXT_ID);
-			emailInput = (EditText) findViewById(FeedbackView.EMAIL_EDIT_TEXT_ID);
-			subjectInput = (EditText) findViewById(FeedbackView.SUBJECT_EDIT_TEXT_ID);
-			textInput = (EditText) findViewById(FeedbackView.TEXT_EDIT_TEXT_ID);
-			
-			/** Check to see if the Name and Email are saved in {@link SharedPreferences} */
-			String nameEmailSubject = PrefsUtil.getInstance().getNameEmailFromPrefs(context);
-			if (nameEmailSubject != null) {
-				/** We have Name and Email. Prepopulate the appropriate fields */
-				String[] nameEmailSubjectArray = nameEmailSubject.split("\\|");
-				if (nameEmailSubjectArray != null && nameEmailSubjectArray.length == 3) {
-					nameInput.setText(nameEmailSubjectArray[0]);
-					emailInput.setText(nameEmailSubjectArray[1]);
-					subjectInput.setText(nameEmailSubjectArray[2]);
-				}
-			} else {
-				/** We dont have Name and Email. Reset those fields */
-				nameInput.setText("");
-				emailInput.setText("");
-				subjectInput.setText("");
-			}
-			
-			/** Reset the remaining fields if previously populated */
-			textInput.setText("");
-			
-			/** Check to see if the Feedback Token is availabe */
-			if (PrefsUtil.getInstance().getFeedbackTokenFromPrefs(context) != null) {
-				/** If Feedback Token is available, hide the Subject Input field */
-				subjectInput.setVisibility(View.GONE);
-			} else {
-				/** If Feedback Token is not available, display the Subject Input field */
-				subjectInput.setVisibility(View.VISIBLE);
-			}
-			
-			sendFeedbackButton = (Button) findViewById(FeedbackView.SEND_FEEDBACK_BUTTON_ID);
-			sendFeedbackButton.setOnClickListener(this);
-		}
-	}
-	
-	// TODO ------------------------------------------------------------------------------------------------------------
-	private class GetDataTask extends AsyncTask<Void, Void, ArrayList<FeedbackMessage>> {
-
-        @Override
-        protected ArrayList<FeedbackMessage> doInBackground(Void... params) {
-            // Simulates a background job.
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                ;
-            }
-            
-            return feedbackMessages;
-        }
-
-        @Override
-        protected void onPostExecute(ArrayList<FeedbackMessage> result) {
-        	FeedbackMessage newFeedbackMessage = new FeedbackMessage();
-        	newFeedbackMessage.setName("Test");
-        	newFeedbackMessage.setCreatedAt("2012-12-05'T'10:58:30'Z'");
-        	newFeedbackMessage.setText("Test DYNAMIC message");
-        	
-        	feedbackMessages.add(0, newFeedbackMessage);
-        	messagesAdapter.notifyDataSetChanged();
-
-            // Call onRefreshComplete when the list has been refreshed.
-            messagesListView.onRefreshComplete();
-
-            super.onPostExecute(result);
-        }
-    }
-	// TODO ------------------------------------------------------------------------------------------------------------
+  	/**
+  	 * Initialize the Feedback response parse result {@link Handler}
+  	 */
+  	private void initParseFeedbackHandler() {
+  		parseFeedbackHandler = new Handler() {
+  			
+  			@Override
+  			public void handleMessage(Message msg) {
+  				boolean success = false;
+  				if (msg != null && msg.getData() != null) {
+  					Bundle bundle = msg.getData();
+  					FeedbackResponse feedbackResponse = (FeedbackResponse) bundle.getSerializable("parse_feedback_response");
+  					if (feedbackResponse != null) {
+  						if (feedbackResponse.getStatus().equalsIgnoreCase("success")) {
+  							/** We have a valid result from JSON parsing */
+  							success = true;	
+  							
+  							if (feedbackResponse.getToken() != null) {
+  								/** Save the Token to SharedPreferences */
+  								PrefsUtil.getInstance().saveFeedbackTokenToPrefs(context, feedbackResponse.getToken());
+  								/** Load the existing feedback messages */
+  								loadFeedbackMessages(feedbackResponse);
+  							}
+  						} else {
+  							success = false;
+  							error = new ErrorObject();
+  							error.setMessage("");
+  						}
+  					} else {
+  						success = false;
+  					}
+  				} else {
+  					success = false;
+  				}
+  				
+  				/** Something went wrong, so display an error dialog */
+  				if (!success) {
+  					runOnUiThread(new Runnable() {
+  						
+  						@Override
+  						public void run() {
+  							showDialog(DIALOG_ERROR_ID);
+  						}
+  					});
+  				}
+  				
+  				enableDisableSendFeedbackButton(true);
+  			}
+  		};
+  	}
+    
+  	/**
+  	 * Configures the content view by initializing the input {@link EditText}s 
+  	 * and the listener for the Send Feedback {@link Button} 
+  	 */
+  	protected void configureFeedbackView(boolean haveToken) {
+  		feedbackScrollView = (ScrollView) findViewById(FeedbackView.FEEDBACK_SCROLLVIEW_ID);
+  		wrapperLayoutFeedbackAndMessages = (LinearLayout) findViewById(FeedbackView.WRAPPER_LAYOUT_FEEDBACK_AND_MESSAGES_ID);
+  		//wrapperLayoutActualMessages = (LinearLayout) findViewById(FeedbackView.WRAPPER_LAYOUT_ACTUAL_MESSAGES_ID);
+  		messagesListView = (PullToRefreshListView) findViewById(FeedbackView.MESSAGES_LISTVIEW_ID);
+  		messagesListView.setOnRefreshListener(new OnRefreshListener() {
+  			
+  			@Override
+  			public void onRefresh() {
+  				// TODO Auto-generated method stub
+  				//new GetDataTask().execute();
+  				sendFetchFeedback(url, null, null, null, null, PrefsUtil.getInstance().getFeedbackTokenFromPrefs(context), feedbackHandler, true);
+  			}
+  		});
+  		
+  		if (haveToken) {
+  			/** If a token exists, the list of messages should be displayed*/
+  			wrapperLayoutFeedbackAndMessages.setVisibility(View.VISIBLE);
+  			feedbackScrollView.setVisibility(View.GONE);
+  			
+  			lastUpdatedTextView = (TextView) findViewById(FeedbackView.LAST_UPDATED_TEXT_VIEW_ID);
+  			addResponseButton = (Button) findViewById(FeedbackView.ADD_RESPONSE_BUTTON_ID);
+  			addResponseButton.setOnClickListener(this);
+  		} else {
+  			/** if the token doesn't exist, the feedback details inputs to be sent need to be displayed */ 
+  			wrapperLayoutFeedbackAndMessages.setVisibility(View.GONE);
+  			feedbackScrollView.setVisibility(View.VISIBLE);
+  			
+  			nameInput = (EditText) findViewById(FeedbackView.NAME_EDIT_TEXT_ID);
+  			emailInput = (EditText) findViewById(FeedbackView.EMAIL_EDIT_TEXT_ID);
+  			subjectInput = (EditText) findViewById(FeedbackView.SUBJECT_EDIT_TEXT_ID);
+  			textInput = (EditText) findViewById(FeedbackView.TEXT_EDIT_TEXT_ID);
+  			
+  			/** Check to see if the Name and Email are saved in {@link SharedPreferences} */
+  			String nameEmailSubject = PrefsUtil.getInstance().getNameEmailFromPrefs(context);
+  			if (nameEmailSubject != null) {
+  				/** We have Name and Email. Prepopulate the appropriate fields */
+  				String[] nameEmailSubjectArray = nameEmailSubject.split("\\|");
+  				if (nameEmailSubjectArray != null && nameEmailSubjectArray.length == 3) {
+  					nameInput.setText(nameEmailSubjectArray[0]);
+  					emailInput.setText(nameEmailSubjectArray[1]);
+  					subjectInput.setText(nameEmailSubjectArray[2]);
+  				}
+  			} else {
+  				/** We dont have Name and Email. Reset those fields */
+  				nameInput.setText("");
+  				emailInput.setText("");
+  				subjectInput.setText("");
+  			}
+  			
+  			/** Reset the remaining fields if previously populated */
+  			textInput.setText("");
+  			
+  			/** Check to see if the Feedback Token is availabe */
+  			if (PrefsUtil.getInstance().getFeedbackTokenFromPrefs(context) != null) {
+  				/** If Feedback Token is available, hide the Subject Input field */
+  				subjectInput.setVisibility(View.GONE);
+  			} else {
+  				/** If Feedback Token is not available, display the Subject Input field */
+  				subjectInput.setVisibility(View.VISIBLE);
+  			}
+  			
+  			sendFeedbackButton = (Button) findViewById(FeedbackView.SEND_FEEDBACK_BUTTON_ID);
+  			sendFeedbackButton.setOnClickListener(this);
+  		}
+  	}
+  	
+  	// TODO ------------------------------------------------------------------------------------------------------------
+  	private class GetDataTask extends AsyncTask<Void, Void, ArrayList<FeedbackMessage>> {
   
-	/**
-	 * Creates and returns a new instance of {@link FeedbackView}
-	 * 
-	 * @return Instance of {@link FeedbackView}
-	 */
-	public ViewGroup getLayoutView() {
-		return new FeedbackView(this);
-	}
-	
-	/**
-	 * Load the feedback messages fetched from server
-	 * @param feedbackResponse	{@link FeedbackResponse} object
-	 */
-	private void loadFeedbackMessages(final FeedbackResponse feedbackResponse) {
-		runOnUiThread(new Runnable() {
-			
-			@Override
-			public void run() {
-				configureFeedbackView(true);
-				
-				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-				SimpleDateFormat formatNew = new SimpleDateFormat("d MMM h:mm a");
-				
-				FeedbackMessageView feedbackMessageView = null;
-				Date date = null;
-				if (feedbackResponse != null && feedbackResponse.getFeedback() != null && 
-						feedbackResponse.getFeedback().getMessages() != null && feedbackResponse.
-						getFeedback().getMessages().size() > 0) {
-					
-					feedbackMessages = feedbackResponse.getFeedback().getMessages();
-					/** Reverse the order of the feedback messages list, so we show the latest one first */
-					Collections.reverse(feedbackMessages);
-					
-					/** Set the lastUpdatedTextView text as the date of the latest feedback message */
-					try {
-						date = format.parse(feedbackMessages.get(0).getCreatedAt());
-						lastUpdatedTextView.setText(String.format("Last Updated: %s", formatNew.format(date)));
-					} catch (ParseException e1) {
-						e1.printStackTrace();
-					}
-					
-					if (messagesAdapter == null) {
-						Log.v("FeedbackActivity", "HERE 1: " + feedbackMessages.size());
-						messagesAdapter = new MessagesAdapter(context, feedbackMessages);
-					} else {
-						Log.v("FeedbackActivity", "HERE 2: " + feedbackMessages.size());
-						messagesAdapter.clear();
-						for (FeedbackMessage message : feedbackMessages) {
-							messagesAdapter.add(message);
-						}
-						
-						messagesAdapter.notifyDataSetChanged();
-
-			            // Call onRefreshComplete when the list has been refreshed.
-			            messagesListView.onRefreshComplete();
-					}
-					
-					messagesListView.setAdapter(messagesAdapter);
-				}
-			}
-		});
-	}
-	
-	/**
-	 * Initialize the {@link SendFeedbackTask}
-	 * @param url
-	 * @param name
-	 * @param email
-	 * @param subject
-	 * @param text
-	 * @param token
-	 * @param feedbackHandler
-	 * @param isFetchMessages
-	 */
-	private void sendFetchFeedback(String url, String name, String email, String subject, String text, 
-			String token, Handler feedbackHandler, boolean isFetchMessages) {
-		
-		sendFeedbackTask = new SendFeedbackTask(context, url, name, email, subject, text, token, 
-				feedbackHandler, isFetchMessages);
-		
-		sendFeedbackTask.execute();
-	}
-	
-	@SuppressWarnings("deprecation")
-	private void sendFeedback() {
-		enableDisableSendFeedbackButton(false);
-		
-		if (nameInput.getText().toString().trim().length() <= 0 || emailInput.getText().toString().
-				trim().length() <= 0 || subjectInput.getText().toString().trim().length() <= 0 || 
-				textInput.getText().toString().trim().length() <= 0) {
-			
-			/** Not all details were submitted, we're going to display an error dialog */
-			error = new ErrorObject();
-			error.setMessage("Please provide all details");
-			
-			showDialog(DIALOG_ERROR_ID);
-			enableDisableSendFeedbackButton(true);
-		} else {
-			/** Save Name and Email to {@link SharedPreferences} */
-			PrefsUtil.getInstance().saveNameEmailSubjectToPrefs(context, nameInput.getText().toString(), emailInput.getText().
-					toString(), subjectInput.getText().toString());
-			
-			/** Start the Send Feedback {@link AsyncTask} */
-			sendFetchFeedback(url, nameInput.getText().toString(), emailInput.getText().toString(), 
-					subjectInput.getText().toString(), textInput.getText().toString(), PrefsUtil.getInstance().
-					getFeedbackTokenFromPrefs(context), feedbackHandler, false);
-		}
-	}
-	
-	/**
-	 * Creates and starts execution of the {@link ParseFeedbackTask}
-	 * @param feedbackResponseString	JSON string response
-	 */
-	private void startParseFeedbackTask(String feedbackResponseString) {
-		createParseFeedbackTask(feedbackResponseString);
-		parseFeedbackTask.execute();
-	}
-	
-	/**
-	 * Initializes the {@link ParseFeedbackTask}
-	 * @param feedbackResponseString	JSON string response
-	 */
-	private void createParseFeedbackTask(String feedbackResponseString) {
-		parseFeedbackTask = new ParseFeedbackTask(this, feedbackResponseString, parseFeedbackHandler);
-	}
-
-	/**
-	 * Enables/Disables the Send Feedback button.
-	 */
-	public void enableDisableSendFeedbackButton(boolean isEnable) {
-		if (sendFeedbackButton != null) {
-			sendFeedbackButton.setEnabled(isEnable);
-		}
-	}
-
-	/**
-	 * Detaches the activity from the send feedback task and returns the task
-	 * as last instance. This way the task is restored when the activity
-	 * is immediately re-created.
-	 * 
-	 * @return The download task if present.
-	 */
-	@Override
-	public Object onRetainNonConfigurationInstance() {
-		if (sendFeedbackTask != null) {
-			sendFeedbackTask.detach();
-		}
-		
-		return sendFeedbackTask;
-	}
-
-	/**
-	 * Called when the Send Feedback {@link Button} is tapped. Sends the feedback and disables 
-	 * the button to avoid multiple taps.
-	 */
-	@Override
-	public void onClick(View v) {
-		switch (v.getId()) {
-			case FeedbackView.SEND_FEEDBACK_BUTTON_ID:
-				sendFeedback();
-				
-				break;
-				
-			case FeedbackView.ADD_RESPONSE_BUTTON_ID:
-				configureFeedbackView(false);
-				
-				break;
-	
-			default:
-				break;
-		}
-	}
-
+          @Override
+          protected ArrayList<FeedbackMessage> doInBackground(Void... params) {
+              // Simulates a background job.
+          try {
+              Thread.sleep(2000);
+          } catch (InterruptedException e) {
+              ;
+          }
+          
+          return feedbackMessages;
+      }
+  
+      @Override
+      protected void onPostExecute(ArrayList<FeedbackMessage> result) {
+      	FeedbackMessage newFeedbackMessage = new FeedbackMessage();
+      	newFeedbackMessage.setName("Test");
+      	newFeedbackMessage.setCreatedAt("2012-12-05'T'10:58:30'Z'");
+      	newFeedbackMessage.setText("Test DYNAMIC message");
+      	
+      	feedbackMessages.add(0, newFeedbackMessage);
+      	messagesAdapter.notifyDataSetChanged();
+  
+          // Call onRefreshComplete when the list has been refreshed.
+              messagesListView.onRefreshComplete();
+  
+              super.onPostExecute(result);
+          }
+      }
+  	// TODO ------------------------------------------------------------------------------------------------------------
+    
+  	/**
+  	 * Creates and returns a new instance of {@link FeedbackView}
+  	 * 
+  	 * @return Instance of {@link FeedbackView}
+  	 */
+  	public ViewGroup getLayoutView() {
+  		return new FeedbackView(this);
+  	}
+  	
+  	/**
+  	 * Load the feedback messages fetched from server
+  	 * @param feedbackResponse	{@link FeedbackResponse} object
+  	 */
+  	private void loadFeedbackMessages(final FeedbackResponse feedbackResponse) {
+  		runOnUiThread(new Runnable() {
+  			
+  			@Override
+  			public void run() {
+  				configureFeedbackView(true);
+  				
+  				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+  				SimpleDateFormat formatNew = new SimpleDateFormat("d MMM h:mm a");
+  				
+  				FeedbackMessageView feedbackMessageView = null;
+  				Date date = null;
+  				if (feedbackResponse != null && feedbackResponse.getFeedback() != null && 
+  						feedbackResponse.getFeedback().getMessages() != null && feedbackResponse.
+  						getFeedback().getMessages().size() > 0) {
+  					
+  					feedbackMessages = feedbackResponse.getFeedback().getMessages();
+  					/** Reverse the order of the feedback messages list, so we show the latest one first */
+  					Collections.reverse(feedbackMessages);
+  					
+  					/** Set the lastUpdatedTextView text as the date of the latest feedback message */
+  					try {
+  						date = format.parse(feedbackMessages.get(0).getCreatedAt());
+  						lastUpdatedTextView.setText(String.format("Last Updated: %s", formatNew.format(date)));
+  					} catch (ParseException e1) {
+  						e1.printStackTrace();
+  					}
+  					
+  					if (messagesAdapter == null) {
+  						Log.v("FeedbackActivity", "HERE 1: " + feedbackMessages.size());
+  						messagesAdapter = new MessagesAdapter(context, feedbackMessages);
+  					} else {
+  						Log.v("FeedbackActivity", "HERE 2: " + feedbackMessages.size());
+  						messagesAdapter.clear();
+  						for (FeedbackMessage message : feedbackMessages) {
+  							messagesAdapter.add(message);
+  						}
+  						
+  						messagesAdapter.notifyDataSetChanged();
+  
+  			            // Call onRefreshComplete when the list has been refreshed.
+  			            messagesListView.onRefreshComplete();
+  					}
+  					
+  					messagesListView.setAdapter(messagesAdapter);
+  				}
+  			}
+  		});
+  	}
+  	
+  	/**
+  	 * Initialize the {@link SendFeedbackTask}
+  	 * @param url
+  	 * @param name
+  	 * @param email
+  	 * @param subject
+  	 * @param text
+  	 * @param token
+  	 * @param feedbackHandler
+  	 * @param isFetchMessages
+  	 */
+  	private void sendFetchFeedback(String url, String name, String email, String subject, String text, 
+  			String token, Handler feedbackHandler, boolean isFetchMessages) {
+  		
+  		sendFeedbackTask = new SendFeedbackTask(context, url, name, email, subject, text, token, 
+  				feedbackHandler, isFetchMessages);
+  		
+  		sendFeedbackTask.execute();
+  	}
+  	
+  	@SuppressWarnings("deprecation")
+  	private void sendFeedback() {
+  		enableDisableSendFeedbackButton(false);
+  		
+  		if (nameInput.getText().toString().trim().length() <= 0 || emailInput.getText().toString().
+  				trim().length() <= 0 || subjectInput.getText().toString().trim().length() <= 0 || 
+  				textInput.getText().toString().trim().length() <= 0) {
+  			
+  			/** Not all details were submitted, we're going to display an error dialog */
+  			error = new ErrorObject();
+  			error.setMessage("Please provide all details");
+  			
+  			showDialog(DIALOG_ERROR_ID);
+  			enableDisableSendFeedbackButton(true);
+  		} else {
+  			/** Save Name and Email to {@link SharedPreferences} */
+  			PrefsUtil.getInstance().saveNameEmailSubjectToPrefs(context, nameInput.getText().toString(), emailInput.getText().
+  					toString(), subjectInput.getText().toString());
+  			
+  			/** Start the Send Feedback {@link AsyncTask} */
+  			sendFetchFeedback(url, nameInput.getText().toString(), emailInput.getText().toString(), 
+  					subjectInput.getText().toString(), textInput.getText().toString(), PrefsUtil.getInstance().
+  					getFeedbackTokenFromPrefs(context), feedbackHandler, false);
+  		}
+  	}
+  	
+  	/**
+  	 * Creates and starts execution of the {@link ParseFeedbackTask}
+  	 * @param feedbackResponseString	JSON string response
+  	 */
+  	private void startParseFeedbackTask(String feedbackResponseString) {
+  		createParseFeedbackTask(feedbackResponseString);
+  		parseFeedbackTask.execute();
+  	}
+  	
+  	/**
+  	 * Initializes the {@link ParseFeedbackTask}
+  	 * @param feedbackResponseString	JSON string response
+  	 */
+  	private void createParseFeedbackTask(String feedbackResponseString) {
+  		parseFeedbackTask = new ParseFeedbackTask(this, feedbackResponseString, parseFeedbackHandler);
+  	}
+  
+  	/**
+  	 * Enables/Disables the Send Feedback button.
+  	 */
+  	public void enableDisableSendFeedbackButton(boolean isEnable) {
+  		if (sendFeedbackButton != null) {
+  			sendFeedbackButton.setEnabled(isEnable);
+  		}
+  	}
+  
+  	/**
+  	 * Detaches the activity from the send feedback task and returns the task
+  	 * as last instance. This way the task is restored when the activity
+  	 * is immediately re-created.
+  	 * 
+  	 * @return The download task if present.
+  	 */
+  	@Override
+  	public Object onRetainNonConfigurationInstance() {
+  		if (sendFeedbackTask != null) {
+  			sendFeedbackTask.detach();
+  		}
+  		
+  		return sendFeedbackTask;
+  	}
+  
+  	/**
+  	 * Called when the Send Feedback {@link Button} is tapped. Sends the feedback and disables 
+  	 * the button to avoid multiple taps.
+  	 */
+  	@Override
+  	public void onClick(View v) {
+  		switch (v.getId()) {
+  			case FeedbackView.SEND_FEEDBACK_BUTTON_ID:
+  				sendFeedback();
+  				
+  				break;
+  				
+  			case FeedbackView.ADD_RESPONSE_BUTTON_ID:
+  				configureFeedbackView(false);
+  				
+  				break;
+  	
+  			default:
+  				break;
+  		}
+  	}
+  
     @Override
     protected Dialog onCreateDialog(int id) {
         switch(id) {
             case DIALOG_ERROR_ID:
                 return new AlertDialog.Builder(this)
                 	.setMessage("An error has occured")
-                	.setCancelable(false)
-                	.setTitle("Error")
-                	.setIcon(android.R.drawable.ic_dialog_alert)
-                	.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                		public void onClick(DialogInterface dialog, int id) {
-                			error = null;
-                			dialog.cancel();
-                		}
-                	}).create();
-
-        }
-
-        return null;
+            	.setCancelable(false)
+            	.setTitle("Error")
+            	.setIcon(android.R.drawable.ic_dialog_alert)
+            	.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            		public void onClick(DialogInterface dialog, int id) {
+            			error = null;
+            			dialog.cancel();
+            		}
+            	}).create();
+    
     }
-
-    @Override
-    protected void onPrepareDialog(int id, Dialog dialog) {
-        switch(id) {
-            case DIALOG_ERROR_ID:
-                AlertDialog messageDialogError = (AlertDialog) dialog;
-                if (error != null) {
-                	/** If the ErrorObject is not null, display the ErrorObject message */
-                    messageDialogError.setMessage(error.getMessage());
-                } else {
-                	/** If the ErrorObject is null, display the general error message */
-                    messageDialogError.setMessage("An error has occured");
-                }
-
-                break;
-        }
-    }
+    
+    return null;
+  }
+  
+  @Override
+  protected void onPrepareDialog(int id, Dialog dialog) {
+      switch(id) {
+          case DIALOG_ERROR_ID:
+              AlertDialog messageDialogError = (AlertDialog) dialog;
+              if (error != null) {
+              	/** If the ErrorObject is not null, display the ErrorObject message */
+                  messageDialogError.setMessage(error.getMessage());
+              } else {
+              	/** If the ErrorObject is null, display the general error message */
+                  messageDialogError.setMessage("An error has occured");
+              }
+  
+              break;
+      }
+  }
 }
