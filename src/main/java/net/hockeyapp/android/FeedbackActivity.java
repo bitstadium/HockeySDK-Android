@@ -38,6 +38,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -108,6 +109,8 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
   private String url;
   private MessagesAdapter messagesAdapter;
   private ArrayList<FeedbackMessage> feedbackMessages;
+  private boolean inSendFeedback;
+  private String token;
   	
 	/**
 	 * Called when the activity is starting. Sets the title and content view
@@ -122,6 +125,7 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
 		setContentView(getLayoutView());
 		setTitle("Feedback");
 		context = this;
+		inSendFeedback = false;
 		
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
@@ -130,17 +134,20 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
 		
 		initFeedbackHandler();
 		initParseFeedbackHandler();
-
-		/** Try to retrieve the Feedback Token from {@link SharedPreferences} */
-		String token = PrefsUtil.getInstance().getFeedbackTokenFromPrefs(this);
-		if (token == null) {
-			/** If Feedback Token is NULL, show the usual {@link FeedbackView} */
-			configureFeedbackView(false);			
-		} else {
-			/** If Feedback Token is NOT NULL, show the Add Response Button and fetch the feedback messages */
-			configureFeedbackView(true);
-			sendFetchFeedback(url, null, null, null, null, token, feedbackHandler, true);
-		}
+		configureAppropriateView();
+	}
+	
+	private void configureAppropriateView() {
+	  /** Try to retrieve the Feedback Token from {@link SharedPreferences} */
+	  token = PrefsUtil.getInstance().getFeedbackTokenFromPrefs(this);
+      if (token == null) {
+        /** If Feedback Token is NULL, show the usual {@link FeedbackView} */
+        configureFeedbackView(false);           
+      } else {
+        /** If Feedback Token is NOT NULL, show the Add Response Button and fetch the feedback messages */
+        configureFeedbackView(true);
+        sendFetchFeedback(url, null, null, null, null, token, feedbackHandler, true);
+      }
 	}
   	
   	/**
@@ -184,6 +191,7 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
   								PrefsUtil.getInstance().saveFeedbackTokenToPrefs(context, feedbackResponse.getToken());
   								/** Load the existing feedback messages */
   								loadFeedbackMessages(feedbackResponse);
+  								inSendFeedback = false;
   							}
   						} else {
   							success = false;
@@ -280,39 +288,6 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
   			sendFeedbackButton.setOnClickListener(this);
   		}
   	}
-  	
-  	// TODO ------------------------------------------------------------------------------------------------------------
-  	private class GetDataTask extends AsyncTask<Void, Void, ArrayList<FeedbackMessage>> {
-  
-          @Override
-          protected ArrayList<FeedbackMessage> doInBackground(Void... params) {
-              // Simulates a background job.
-          try {
-              Thread.sleep(2000);
-          } catch (InterruptedException e) {
-              ;
-          }
-          
-          return feedbackMessages;
-      }
-  
-      @Override
-      protected void onPostExecute(ArrayList<FeedbackMessage> result) {
-      	FeedbackMessage newFeedbackMessage = new FeedbackMessage();
-      	newFeedbackMessage.setName("Test");
-      	newFeedbackMessage.setCreatedAt("2012-12-05'T'10:58:30'Z'");
-      	newFeedbackMessage.setText("Test DYNAMIC message");
-      	
-      	feedbackMessages.add(0, newFeedbackMessage);
-      	messagesAdapter.notifyDataSetChanged();
-  
-          // Call onRefreshComplete when the list has been refreshed.
-              messagesListView.onRefreshComplete();
-  
-              super.onPostExecute(result);
-          }
-      }
-  	// TODO ------------------------------------------------------------------------------------------------------------
     
   	/**
   	 * Creates and returns a new instance of {@link FeedbackView}
@@ -481,6 +456,7 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
   				
   			case FeedbackView.ADD_RESPONSE_BUTTON_ID:
   				configureFeedbackView(false);
+  				inSendFeedback = true;
   				
   				break;
   	
@@ -526,4 +502,21 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
               break;
       }
   }
+  
+  @Override
+  public boolean onKeyDown(int keyCode, KeyEvent event)  {
+    if (keyCode == KeyEvent.KEYCODE_BACK) {
+      if (inSendFeedback) {
+        inSendFeedback = false;
+        configureAppropriateView();
+      } else {
+        finish();        
+      }
+
+      return true;
+    }
+
+    return super.onKeyDown(keyCode, event);
+  }
+
 }
