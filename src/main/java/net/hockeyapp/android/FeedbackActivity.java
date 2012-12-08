@@ -220,17 +220,14 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
   	protected void configureFeedbackView(boolean haveToken) {
   		feedbackScrollView = (ScrollView) findViewById(FeedbackView.FEEDBACK_SCROLLVIEW_ID);
   		wrapperLayoutFeedbackAndMessages = (LinearLayout) findViewById(FeedbackView.WRAPPER_LAYOUT_FEEDBACK_AND_MESSAGES_ID);
-  		//wrapperLayoutActualMessages = (LinearLayout) findViewById(FeedbackView.WRAPPER_LAYOUT_ACTUAL_MESSAGES_ID);
   		messagesListView = (PullToRefreshListView) findViewById(FeedbackView.MESSAGES_LISTVIEW_ID);
   		messagesListView.setOnRefreshListener(new OnRefreshListener() {
-  			
-  			@Override
-  			public void onRefresh() {
-  				// TODO Auto-generated method stub
-  				//new GetDataTask().execute();
-  				sendFetchFeedback(url, null, null, null, null, PrefsUtil.getInstance().getFeedbackTokenFromPrefs(context), feedbackHandler, true);
-  			}
-  		});
+          
+          @Override
+          public void onRefresh() {
+            sendFetchFeedback(url, null, null, null, null, PrefsUtil.getInstance().getFeedbackTokenFromPrefs(context), feedbackHandler, true);
+          }
+        });
   		
   		if (haveToken) {
   			/** If a token exists, the list of messages should be displayed*/
@@ -378,6 +375,8 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
   				}
   			}
   		});
+  		
+  		messagesListView.onRefreshComplete();
   	}
   	
   	/**
