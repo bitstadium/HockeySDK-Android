@@ -7,6 +7,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -66,6 +67,8 @@ import android.util.Log;
  * @author Thomas Dohmke
  **/
 public class CrashManager {
+  private Context context;
+  
   /**
    * App identifier from HockeyApp.
    */
@@ -75,6 +78,12 @@ public class CrashManager {
    * URL of HockeyApp service.
    */
   private static String urlString = null;
+  
+  public CrashManager(WeakReference<Context> weakContext) {
+    if (weakContext != null) {
+      context = weakContext.get();
+    }
+  }
 
   /**
    * Registers new crash manager and handles existing crash logs.
@@ -82,8 +91,8 @@ public class CrashManager {
    * @param context The context to use. Usually your Activity object.
    * @param appIdentifier App ID of your app on HockeyApp.
    */
-  public static void register(Context context, String appIdentifier) {
-    register(context, Constants.BASE_URL, appIdentifier, null);
+  public void register(String appIdentifier) {
+    register(Constants.BASE_URL, appIdentifier, null);
   }
 
   /**
@@ -93,8 +102,8 @@ public class CrashManager {
    * @param appIdentifier App ID of your app on HockeyApp.
    * @param listener Implement for callback functions.
    */
-  public static void register(Context context, String appIdentifier, CrashManagerListener listener) {
-    register(context, Constants.BASE_URL, appIdentifier, listener);
+  public void register(String appIdentifier, CrashManagerListener listener) {
+    register(Constants.BASE_URL, appIdentifier, listener);
   }
 
   /**
@@ -105,9 +114,9 @@ public class CrashManager {
    * @param appIdentifier App ID of your app on HockeyApp.
    * @param listener Implement for callback functions.
    */
-  public static void register(Context context, String urlString, String appIdentifier, CrashManagerListener listener) {
-    initialize(context, urlString, appIdentifier, listener, false);
-    execute(context, listener);
+  public void register(String urlString, String appIdentifier, CrashManagerListener listener) {
+    initialize(urlString, appIdentifier, listener, false);
+    execute(listener);
   }
 
   /**
@@ -120,8 +129,8 @@ public class CrashManager {
    * @param appIdentifier App ID of your app on HockeyApp.
    * @param listener Implement for callback functions.
    */
-  public static void initialize(Context context, String appIdentifier, CrashManagerListener listener) {
-    initialize(context, Constants.BASE_URL, appIdentifier, listener, true);
+  public void initialize(String appIdentifier, CrashManagerListener listener) {
+    initialize(Constants.BASE_URL, appIdentifier, listener, true);
   }
 
   /**
@@ -135,8 +144,8 @@ public class CrashManager {
    * @param appIdentifier App ID of your app on HockeyApp.
    * @param listener Implement for callback functions.
    */
-  public static void initialize(Context context, String urlString, String appIdentifier, CrashManagerListener listener) {
-    initialize(context, urlString, appIdentifier, listener, true);
+  public void initialize(String urlString, String appIdentifier, CrashManagerListener listener) {
+    initialize(urlString, appIdentifier, listener, true);
   }
 
   /**
@@ -146,7 +155,7 @@ public class CrashManager {
    * @param context The context to use. Usually your Activity object.
    * @param listener Implement for callback functions.
    */
-  public static void execute(Context context, CrashManagerListener listener) {
+  public void execute(CrashManagerListener listener) {
     Boolean ignoreDefaultHandler = (listener != null) && (listener.ignoreDefaultHandler());
     
     int foundOrSend = hasStackTraces(context);
@@ -157,17 +166,17 @@ public class CrashManager {
       }
       
       if (!autoSend) {
-        showDialog(context, listener, ignoreDefaultHandler);
+        showDialog(listener, ignoreDefaultHandler);
       }
       else {
-        sendCrashes(context, listener, ignoreDefaultHandler);
+        sendCrashes(listener, ignoreDefaultHandler);
       }
     }
     else if (foundOrSend == 2) {
-      sendCrashes(context, listener, ignoreDefaultHandler);
+      sendCrashes(listener, ignoreDefaultHandler);
     }
     else {
-      registerHandler(context, listener, ignoreDefaultHandler);
+      registerHandler(listener, ignoreDefaultHandler);
     }
   }
   
@@ -179,7 +188,7 @@ public class CrashManager {
    *         1 if there are any new stack traces, 
    *         2 if there are confirmed stack traces
    */
-  public static int hasStackTraces(Context context) {
+  public int hasStackTraces(Context context) {
     String[] filenames = searchForStackTraces();
     List<String> confirmedFilenames = null;
     int result = 0;
@@ -216,7 +225,7 @@ public class CrashManager {
    * @param context The context to use. Usually your Activity object.
    * @param listener Implement for callback functions.
    */
-  public static void submitStackTraces(Context context, CrashManagerListener listener) {
+  public void submitStackTraces(CrashManagerListener listener) {
     Log.d(Constants.TAG, "Looking for exceptions in: " + Constants.FILES_PATH);
     String[] list = searchForStackTraces();
     Boolean successful = false;
@@ -228,7 +237,7 @@ public class CrashManager {
         try {
           // Read contents of stack trace
           String filename = list[index];
-          String stacktrace = contentsOfFile(context, filename);
+          String stacktrace = contentsOfFile(filename);
           if (stacktrace.length() > 0) {
             // Transmit stack trace with POST request
             Log.d(Constants.TAG, "Transmitting crash data: \n" + stacktrace);
@@ -237,9 +246,9 @@ public class CrashManager {
             
             List <NameValuePair> parameters = new ArrayList <NameValuePair>(); 
             parameters.add(new BasicNameValuePair("raw", stacktrace));
-            parameters.add(new BasicNameValuePair("userID", contentsOfFile(context, filename.replace(".stacktrace", ".user"))));
-            parameters.add(new BasicNameValuePair("contact", contentsOfFile(context, filename.replace(".stacktrace", ".contact"))));
-            parameters.add(new BasicNameValuePair("description", contentsOfFile(context, filename.replace(".stacktrace", ".description"))));
+            parameters.add(new BasicNameValuePair("userID", contentsOfFile(filename.replace(".stacktrace", ".user"))));
+            parameters.add(new BasicNameValuePair("contact", contentsOfFile(filename.replace(".stacktrace", ".contact"))));
+            parameters.add(new BasicNameValuePair("description", contentsOfFile(filename.replace(".stacktrace", ".description"))));
             parameters.add(new BasicNameValuePair("sdk", Constants.SDK_NAME));
             parameters.add(new BasicNameValuePair("sdk_version", Constants.SDK_VERSION));
             
@@ -254,7 +263,7 @@ public class CrashManager {
         } 
         finally {
           if (successful) {
-            deleteStackTrace(context, list[index]);
+            deleteStackTrace(list[index]);
 
             if (listener != null) {
               listener.onCrashesSent();
@@ -275,7 +284,7 @@ public class CrashManager {
    * 
    * @param context The context to use. Usually your Activity object.
    */
-  public static void deleteStackTraces(Context context) {
+  public void deleteStackTraces(Context context) {
     Log.d(Constants.TAG, "Looking for exceptions in: " + Constants.FILES_PATH);
     String[] list = searchForStackTraces();
 
@@ -285,7 +294,7 @@ public class CrashManager {
       for (int index = 0; index < list.length; index++) {
         try {
           Log.d(Constants.TAG, "Delete stacktrace " + list[index] + ".");
-          deleteStackTrace(context, list[index]);
+          deleteStackTrace(list[index]);
           context.deleteFile(list[index]);
         } 
         catch (Exception e) {
@@ -300,7 +309,7 @@ public class CrashManager {
    * additional parameter to decide whether to register the exception handler
    * at the end or not.
    */
-  private static void initialize(Context context, String urlString, String appIdentifier, CrashManagerListener listener, boolean registerHandler) {
+  private void initialize(String urlString, String appIdentifier, CrashManagerListener listener, boolean registerHandler) {
     CrashManager.urlString = urlString;
     CrashManager.identifier = appIdentifier;
 
@@ -312,7 +321,7 @@ public class CrashManager {
     
     if (registerHandler) {
       Boolean ignoreDefaultHandler = (listener != null) && (listener.ignoreDefaultHandler());
-      registerHandler(context, listener, ignoreDefaultHandler);
+      registerHandler(listener, ignoreDefaultHandler);
     }
   }
 
@@ -320,7 +329,7 @@ public class CrashManager {
    * Shows a dialog to ask the user whether he wants to send crash reports to 
    * HockeyApp or delete them.
    */
-  private static void showDialog(final Context context, final CrashManagerListener listener, final boolean ignoreDefaultHandler) {
+  private void showDialog(final CrashManagerListener listener, final boolean ignoreDefaultHandler) {
     if (context == null) {
       return;
     }
@@ -336,13 +345,13 @@ public class CrashManager {
         }
         
         deleteStackTraces(context);
-        registerHandler(context, listener, ignoreDefaultHandler);
+        registerHandler(listener, ignoreDefaultHandler);
       } 
     });
 
     builder.setPositiveButton(Strings.get(listener, Strings.CRASH_DIALOG_POSITIVE_BUTTON_ID), new DialogInterface.OnClickListener() {
       public void onClick(DialogInterface dialog, int which) {
-        sendCrashes(context, listener, ignoreDefaultHandler);
+        sendCrashes(listener, ignoreDefaultHandler);
       } 
     });
 
@@ -353,14 +362,14 @@ public class CrashManager {
    * Starts thread to send crashes to HockeyApp, then registers the exception 
    * handler. 
    */
-  private static void sendCrashes(final Context context, final CrashManagerListener listener, final boolean ignoreDefaultHandler) {
+  private void sendCrashes(final CrashManagerListener listener, final boolean ignoreDefaultHandler) {
     saveConfirmedStackTraces(context);
     
     new Thread() {
       @Override
       public void run() {
-        submitStackTraces(context, listener);
-        registerHandler(context, listener, ignoreDefaultHandler);
+        submitStackTraces(listener);
+        registerHandler(listener, ignoreDefaultHandler);
       }
     }.start();
   }
@@ -368,7 +377,7 @@ public class CrashManager {
   /**
    * Registers the exception handler. 
    */
-  private static void registerHandler(Context context, CrashManagerListener listener, boolean ignoreDefaultHandler) {
+  private void registerHandler(CrashManagerListener listener, boolean ignoreDefaultHandler) {
     if ((Constants.APP_VERSION != null) && (Constants.APP_PACKAGE != null)) {
       // Get current handler
       UncaughtExceptionHandler currentHandler = Thread.getDefaultUncaughtExceptionHandler();
@@ -389,7 +398,7 @@ public class CrashManager {
   /**
    * Returns the complete URL for the HockeyApp API. 
    */
-  private static String getURLString() {
+  private String getURLString() {
     return urlString + "api/2/apps/" + identifier + "/crashes/";      
   }
   
@@ -397,7 +406,7 @@ public class CrashManager {
    * Deletes the give filename and all corresponding files (same name, 
    * different extension).
    */
-  private static void deleteStackTrace(Context context, String filename) {
+  private void deleteStackTrace(String filename) {
     context.deleteFile(filename);
     
     String user = filename.replace(".stacktrace", ".user");
@@ -413,7 +422,7 @@ public class CrashManager {
   /**
    * Returns the content of a file as a string. 
    */
-  private static String contentsOfFile(Context context, String filename) {
+  private String contentsOfFile(String filename) {
     StringBuilder contents = new StringBuilder();
     BufferedReader reader = null;
     try {
@@ -445,7 +454,7 @@ public class CrashManager {
   /**
    * Saves the list of the stack traces' file names in shared preferences.  
    */
-  private static void saveConfirmedStackTraces(Context context) {
+  private void saveConfirmedStackTraces(Context context) {
     try {
       String[] filenames = searchForStackTraces();
       SharedPreferences preferences = context.getSharedPreferences("HockeySDK", Context.MODE_PRIVATE);
@@ -462,7 +471,7 @@ public class CrashManager {
    * Returns a string created by each element of the array, separated by 
    * delimiter. 
    */
-  private static String joinArray(String[] array, String delimiter) {
+  private String joinArray(String[] array, String delimiter) {
     StringBuffer buffer = new StringBuffer();
     for (int index = 0; index < array.length; index++) {
       buffer.append(array[index]);
@@ -476,7 +485,7 @@ public class CrashManager {
   /**
    * Searches .stacktrace files and returns then as array. 
    */
-  private static String[] searchForStackTraces() {
+  private String[] searchForStackTraces() {
     // Try to create the files folder if it doesn't exist
     File dir = new File(Constants.FILES_PATH + "/");
     boolean created = dir.mkdir();
