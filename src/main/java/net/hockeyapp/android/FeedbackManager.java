@@ -43,126 +43,126 @@ import android.content.res.Configuration;
  * @author Bogdan Nistor
  **/
 public class FeedbackManager {
-	private final static String TAG = "FeedbackManager >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>";
-	private static String appIdentifier;
-	
-	/**
-	 * Last listener instance.
-	 */
-	private static FeedbackManagerListener lastListener = null;
+  private final static String TAG = "FeedbackManager >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>";
+  private static String appIdentifier;
+  
+  /**
+   * Last listener instance.
+   */
+  private static FeedbackManagerListener lastListener = null;
 
-	/**
-	 * Registers new Feedback manager.
-	 * 
-	 * @param activity Parent activity.
-	 * @param appIdentifier App ID of your app on HockeyApp.
-	 */
-	public static void register(WeakReference<Context> weakContext, String appIdentifier) {
-		register(weakContext, appIdentifier, null);
-	}
+  /**
+   * Registers new Feedback manager.
+   * 
+   * @param activity Parent activity.
+   * @param appIdentifier App ID of your app on HockeyApp.
+   */
+  public static void register(WeakReference<Context> weakContext, String appIdentifier) {
+    register(weakContext, appIdentifier, null);
+  }
   
-	/**
-	 * Registers new Feedback manager.
-	 * 
-	 * @param activity Parent activity.
-	 * @param appIdentifier App ID of your app on HockeyApp.
-	 * @param listener Implement for callback functions.
-	 */
-	public static void register(WeakReference<Context> weakContext, String appIdentifier, FeedbackManagerListener listener) {
-		register(weakContext, Constants.BASE_URL, appIdentifier, listener);
-	}
+  /**
+   * Registers new Feedback manager.
+   * 
+   * @param activity Parent activity.
+   * @param appIdentifier App ID of your app on HockeyApp.
+   * @param listener Implement for callback functions.
+   */
+  public static void register(WeakReference<Context> weakContext, String appIdentifier, FeedbackManagerListener listener) {
+    register(weakContext, Constants.BASE_URL, appIdentifier, listener);
+  }
   
-	/**
-	 * Registers new Feedback manager.
-	 *
-	 * @param activity Parent activity.
-	 * @param urlString URL of the HockeyApp server.
-	 * @param appIdentifier App ID of your app on HockeyApp.
-	 * @param listener Implement for callback functions.
-	 */
-	public static void register(WeakReference<Context> weakContext, String urlString, String appIdentifier, FeedbackManagerListener listener) {
-		lastListener = listener;
-		FeedbackManager.appIdentifier = appIdentifier;
+  /**
+   * Registers new Feedback manager.
+   *
+   * @param activity Parent activity.
+   * @param urlString URL of the HockeyApp server.
+   * @param appIdentifier App ID of your app on HockeyApp.
+   * @param listener Implement for callback functions.
+   */
+  public static void register(WeakReference<Context> weakContext, String urlString, String appIdentifier, FeedbackManagerListener listener) {
+    lastListener = listener;
+    FeedbackManager.appIdentifier = appIdentifier;
     
-		if (fragmentsSupported()) {
-			return;
-		}
-	}
+    if (fragmentsSupported()) {
+      return;
+    }
+  }
 
-	/**
-	 * Unregisters the update manager
-	 */
-	public static void unregister() {
-		lastListener = null;
-	}
-	
-	/**
-	 * Starts the {@link FeedbackActivity}
-	 * @param context	{@link Context} object
-	 */
-	public static void showFeedbackActivity(Context context) {
-		if (context != null) {
-			Class<?> activityClass = FeedbackActivity.class;
-			if (lastListener != null) {
-				activityClass = lastListener.getFeedbackActivityClass();
-			}
-			
-			Intent intent = new Intent();
-		    intent.setClass(context, activityClass);
-		    intent.putExtra("url", getURLString(context));
-		    context.startActivity(intent);
-		}
-	}
+  /**
+   * Unregisters the update manager
+   */
+  public static void unregister() {
+    lastListener = null;
+  }
+  
+  /**
+   * Starts the {@link FeedbackActivity}
+   * @param context {@link Context} object
+   */
+  public static void showFeedbackActivity(Context context) {
+    if (context != null) {
+      Class<?> activityClass = FeedbackActivity.class;
+      if (lastListener != null) {
+        activityClass = lastListener.getFeedbackActivityClass();
+      }
+      
+      Intent intent = new Intent();
+      intent.setClass(context, activityClass);
+      intent.putExtra("url", getURLString(context));
+      context.startActivity(intent);
+    }
+  }
 
-	/**
-	 * Populates the URL String with the appIdentifier
-	 * @param context	{@link Context} object
-	 * @return
-	 */
-	private static String getURLString(Context context) {
-		Constants.loadFromContext(context);
-		
-		StringBuilder builder = new StringBuilder();
-		builder.append(String.format(Util.URL_FEEDBACK, appIdentifier));
-	    
-		return builder.toString();
-	}
+  /**
+   * Populates the URL String with the appIdentifier
+   * @param context {@link Context} object
+   * @return
+   */
+  private static String getURLString(Context context) {
+    Constants.loadFromContext(context);
+    
+    StringBuilder builder = new StringBuilder();
+    builder.append(String.format(Util.URL_FEEDBACK, appIdentifier));
+      
+    return builder.toString();
+  }
 
-	/**
-	 * Returns true if the Fragment API is supported (should be on Android 3.0+).
-	 */
-	@SuppressLint("NewApi")
-	public static Boolean fragmentsSupported() {
-		try {
-			return (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) && 
-					(android.app.Fragment.class != null);
-		} catch (NoClassDefFoundError e) {
-			return false;
-		}
-	}
+  /**
+   * Returns true if the Fragment API is supported (should be on Android 3.0+).
+   */
+  @SuppressLint("NewApi")
+  public static Boolean fragmentsSupported() {
+    try {
+      return (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) && 
+          (android.app.Fragment.class != null);
+    } catch (NoClassDefFoundError e) {
+      return false;
+    }
+  }
 
-	/**
-	 * Returns true if the app runs on large or very large screens (i.e. tablets). 
-	 */
-	public static Boolean runsOnTablet(WeakReference<Context> weakContext) {
-	  if (weakContext != null) {
-	    Context context = weakContext.get();
-	    if (context != null) {
-	      Configuration configuration = context.getResources().getConfiguration();
-	      
-	      return (((configuration.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.
-	          SCREENLAYOUT_SIZE_LARGE) || ((configuration.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == 
-	          Configuration.SCREENLAYOUT_SIZE_XLARGE));	      
-	    }
-	  }
-	  
-	  return false;
-	}
+  /**
+   * Returns true if the app runs on large or very large screens (i.e. tablets). 
+   */
+  public static Boolean runsOnTablet(WeakReference<Context> weakContext) {
+    if (weakContext != null) {
+      Context context = weakContext.get();
+      if (context != null) {
+        Configuration configuration = context.getResources().getConfiguration();
+        
+        return (((configuration.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.
+            SCREENLAYOUT_SIZE_LARGE) || ((configuration.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == 
+            Configuration.SCREENLAYOUT_SIZE_XLARGE));       
+      }
+    }
+    
+    return false;
+  }
 
-	/**
-	 * Returns the last listener which has been registered with any Feedback manager.
-	 */
-	public static FeedbackManagerListener getLastListener() {
-		return lastListener;
-	}
+  /**
+   * Returns the last listener which has been registered with any Feedback manager.
+   */
+  public static FeedbackManagerListener getLastListener() {
+    return lastListener;
+  }
 }

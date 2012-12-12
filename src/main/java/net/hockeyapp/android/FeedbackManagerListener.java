@@ -37,11 +37,11 @@ import java.util.Date;
  * @author Bogdan Nistor
  **/
 public abstract class FeedbackManagerListener extends StringListener {
-	/**
-	 * Return your own subclass of FeedbackActivity for customization. 
-	 */
-	public Class<? extends FeedbackActivity> getFeedbackActivityClass() {
-		return FeedbackActivity.class;
-	}
+  /**
+   * Return your own subclass of FeedbackActivity for customization. 
+   */
+  public Class<? extends FeedbackActivity> getFeedbackActivityClass() {
+    return FeedbackActivity.class;
+  }
 }
   

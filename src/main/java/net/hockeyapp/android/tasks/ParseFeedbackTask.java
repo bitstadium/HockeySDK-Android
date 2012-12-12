@@ -15,47 +15,47 @@ import android.os.Message;
  *
  */
 public class ParseFeedbackTask extends AsyncTask<Void, Void, FeedbackResponse> {
-	private Context context;
-	private String feedbackResponse;
-	private Handler handler;
-	private ProgressDialog progressDialog;
-	
-	public ParseFeedbackTask(Context context, String feedbackResponse, Handler handler) {
-		this.context = context;
-		this.feedbackResponse = feedbackResponse;
-		this.handler = handler;
-	}
-	
-	@Override
-	protected void onPreExecute() {
-		if (context != null && (progressDialog == null || !progressDialog.isShowing())) {
-			progressDialog = ProgressDialog.show(context, "", "Loading responses...", true, false);
-		}
-	}
+  private Context context;
+  private String feedbackResponse;
+  private Handler handler;
+  private ProgressDialog progressDialog;
+  
+  public ParseFeedbackTask(Context context, String feedbackResponse, Handler handler) {
+    this.context = context;
+    this.feedbackResponse = feedbackResponse;
+    this.handler = handler;
+  }
+  
+  @Override
+  protected void onPreExecute() {
+    if (context != null && (progressDialog == null || !progressDialog.isShowing())) {
+      progressDialog = ProgressDialog.show(context, "", "Loading responses...", true, false);
+    }
+  }
 
-	@Override
-	protected FeedbackResponse doInBackground(Void... params) {
-		if (context != null && feedbackResponse != null) {
-			return FeedbackParser.getInstance().parseFeedbackResponse(feedbackResponse);
-		}
-		
-		return null;
-	}
-	
-	@Override
-	protected void onPostExecute(FeedbackResponse result) {
-		if (progressDialog != null && progressDialog.isShowing()) {
-			progressDialog.dismiss();
-		}
-		
-		if (result != null && handler != null) {
-			Message msg = new Message();
-			Bundle bundle = new Bundle();
-			
-			bundle.putSerializable("parse_feedback_response", result);
-			msg.setData(bundle);
-			
-			handler.sendMessage(msg);
-		}
-	}
+  @Override
+  protected FeedbackResponse doInBackground(Void... params) {
+    if (context != null && feedbackResponse != null) {
+      return FeedbackParser.getInstance().parseFeedbackResponse(feedbackResponse);
+    }
+    
+    return null;
+  }
+  
+  @Override
+  protected void onPostExecute(FeedbackResponse result) {
+    if (progressDialog != null && progressDialog.isShowing()) {
+      progressDialog.dismiss();
+    }
+    
+    if (result != null && handler != null) {
+      Message msg = new Message();
+      Bundle bundle = new Bundle();
+      
+      bundle.putSerializable("parse_feedback_response", result);
+      msg.setData(bundle);
+      
+      handler.sendMessage(msg);
+    }
+  }
 }

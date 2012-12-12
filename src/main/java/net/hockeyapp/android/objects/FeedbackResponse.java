@@ -8,31 +8,31 @@ import java.io.Serializable;
  *
  */
 public class FeedbackResponse implements Serializable {
-	private String status;
-	private Feedback feedback;
-	private String token;
-	
-	public String getStatus() {
-		return status;
-	}
-	
-	public void setStatus(String status) {
-		this.status = status;
-	}
-	
-	public Feedback getFeedback() {
-		return feedback;
-	}
-	
-	public void setFeedback(Feedback feedback) {
-		this.feedback = feedback;
-	}
+  private String status;
+  private Feedback feedback;
+  private String token;
+  
+  public String getStatus() {
+    return status;
+  }
+  
+  public void setStatus(String status) {
+    this.status = status;
+  }
+  
+  public Feedback getFeedback() {
+    return feedback;
+  }
+  
+  public void setFeedback(Feedback feedback) {
+    this.feedback = feedback;
+  }
 
-	public String getToken() {
-		return token;
-	}
+  public String getToken() {
+    return token;
+  }
 
-	public void setToken(String token) {
-		this.token = token;
-	}
+  public void setToken(String token) {
+    this.token = token;
+  }
 }

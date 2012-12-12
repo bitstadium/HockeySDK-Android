@@ -18,40 +18,40 @@ import org.apache.http.params.HttpProtocolParams;
  *
  */
 public class ConnectionManager {
-	private HttpClient httpClient;
-	
-	/** Private constructor prevents instantiation from other classes */
-	private ConnectionManager() {
-		//sets up parameters
-        HttpParams params = new BasicHttpParams();
-        HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
-        HttpProtocolParams.setContentCharset(params, "utf-8");
-        params.setBooleanParameter("http.protocol.expect-continue", false);
+  private HttpClient httpClient;
+  
+  /** Private constructor prevents instantiation from other classes */
+  private ConnectionManager() {
+    /** Sets up parameters */
+    HttpParams params = new BasicHttpParams();
+    HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
+    HttpProtocolParams.setContentCharset(params, "utf-8");
+    params.setBooleanParameter("http.protocol.expect-continue", false);
+  
+    //registers schemes for both http and https
+    SchemeRegistry registry = new SchemeRegistry();
+    registry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
+    final SSLSocketFactory sslSocketFactory = SSLSocketFactory.getSocketFactory();
+    sslSocketFactory.setHostnameVerifier(SSLSocketFactory.BROWSER_COMPATIBLE_HOSTNAME_VERIFIER);
+    registry.register(new Scheme("https", sslSocketFactory, 443));
+  
+    ThreadSafeClientConnManager manager = new ThreadSafeClientConnManager(params, registry);
+    httpClient = new DefaultHttpClient(manager, params);
+  }
 
-        //registers schemes for both http and https
-        SchemeRegistry registry = new SchemeRegistry();
-        registry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
-        final SSLSocketFactory sslSocketFactory = SSLSocketFactory.getSocketFactory();
-        sslSocketFactory.setHostnameVerifier(SSLSocketFactory.BROWSER_COMPATIBLE_HOSTNAME_VERIFIER);
-        registry.register(new Scheme("https", sslSocketFactory, 443));
+  /**
+  * ConnectionManagerHolder is loaded on the first execution of ConnectionManager.getInstance() 
+  * or the first access to ConnectionManagerHolder.INSTANCE, not before.
+  */
+  private static class ConnectionManagerHolder { 
+    public static final ConnectionManager INSTANCE = new ConnectionManager();
+  }
 
-        ThreadSafeClientConnManager manager = new ThreadSafeClientConnManager(params, registry);
-        httpClient = new DefaultHttpClient(manager, params);
-	}
+  public static ConnectionManager getInstance() {
+    return ConnectionManagerHolder.INSTANCE;
+  }
 
-    /**
-    * ConnectionManagerHolder is loaded on the first execution of ConnectionManager.getInstance() 
-    * or the first access to ConnectionManagerHolder.INSTANCE, not before.
-    */
-	private static class ConnectionManagerHolder { 
-		public static final ConnectionManager INSTANCE = new ConnectionManager();
-	}
-
-    public static ConnectionManager getInstance() {
-    	return ConnectionManagerHolder.INSTANCE;
-    }
-
-	public HttpClient getHttpClient() {
-		return httpClient;
-	}
+  public HttpClient getHttpClient() {
+    return httpClient;
+  }
 }

@@ -1,19 +1,9 @@
 package net.hockeyapp.android.tasks;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -24,31 +14,22 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
 import net.hockeyapp.android.Constants;
-import net.hockeyapp.android.Strings;
 import net.hockeyapp.android.connectionUtils.ConnectionManager;
-import net.hockeyapp.android.internal.SendFeedbackListener;
 import net.hockeyapp.android.utils.Util;
 
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 
 /**
  * <h4>Description</h4>
@@ -85,215 +66,193 @@ import android.util.Log;
  * @author Bogdan Nistor
  **/
 public class SendFeedbackTask extends AsyncTask<Void, Void, String> {
-	private final String TAG = "SendFeedbackTask >>>>>>>>>>>>>>>>>>>";
-	private Context context;
-	private Handler handler;
-	private String urlString;
-	private String name;
-	private String email;
-	private String subject;
-	private String text;
-	private String token;
-	private boolean isFetchMessages;
-	private ProgressDialog progressDialog;
+  private final String TAG = "SendFeedbackTask >>>>>>>>>>>>>>>>>>>";
+  private Context context;
+  private Handler handler;
+  private String urlString;
+  private String name;
+  private String email;
+  private String subject;
+  private String text;
+  private String token;
+  private boolean isFetchMessages;
+  private ProgressDialog progressDialog;
 
-	/**
-	 * Send feedback {@link AsyncTask}.
-	 * If the class is intended to send a simple feedback message, the a POST is made with the specific data
-	 * If the class is intended to fetch the messages by providing a token, a GET is made
-	 * 
-	 * @param context			{@link Context} object
-	 * @param urlString			URL for sending feedback/fetching messages
-	 * @param name				Name of the feedback sender
-	 * @param email				Email of the feedback sender
-	 * @param subject			Message subject
-	 * @param text				Feedback message
-	 * @param token				Token received after sending the first feedback. This should be stored in {@link SharedPreferences}
-	 * @param handler			Handler object to send data back to the activity
-	 * @param isFetchMessages	If TRUE, the {@link AsyncTask} will perform a GET, fetching the messages. 
-	 * 							If FALSE, the {@link AsyncTask} will perform a POST, sending the feedback message
-	 */
-	public SendFeedbackTask(Context context, String urlString, String name, String email, String subject, 
-			String text, String token, Handler handler, boolean isFetchMessages) {
-	  
-		this.context = context;
-		this.urlString = urlString;
-		this.name = name;
-		this.email = email;
-		this.subject = subject;
-		this.text = text;
-		this.token = token;
-		this.handler = handler;
-		this.isFetchMessages = isFetchMessages;
-		
-		if (context != null) {
-			Constants.loadFromContext(context);
-		}
-	}
+  /**
+   * Send feedback {@link AsyncTask}.
+   * If the class is intended to send a simple feedback message, the a POST is made with the specific data
+   * If the class is intended to fetch the messages by providing a token, a GET is made
+   * 
+   * @param context     {@link Context} object
+   * @param urlString     URL for sending feedback/fetching messages
+   * @param name        Name of the feedback sender
+   * @param email       Email of the feedback sender
+   * @param subject     Message subject
+   * @param text        Feedback message
+   * @param token       Token received after sending the first feedback. This should be stored in {@link SharedPreferences}
+   * @param handler     Handler object to send data back to the activity
+   * @param isFetchMessages If TRUE, the {@link AsyncTask} will perform a GET, fetching the messages. 
+   *              If FALSE, the {@link AsyncTask} will perform a POST, sending the feedback message
+   */
+  public SendFeedbackTask(Context context, String urlString, String name, String email, String subject, 
+      String text, String token, Handler handler, boolean isFetchMessages) {
+    
+    this.context = context;
+    this.urlString = urlString;
+    this.name = name;
+    this.email = email;
+    this.subject = subject;
+    this.text = text;
+    this.token = token;
+    this.handler = handler;
+    this.isFetchMessages = isFetchMessages;
+    
+    if (context != null) {
+      Constants.loadFromContext(context);
+    }
+  }
 
-	public void attach(Context context) {
-		this.context = context;
-	}
+  public void attach(Context context) {
+    this.context = context;
+  }
 
-	public void detach() {
-		context = null;
-		progressDialog = null;
-	}
-	
-	@Override
-	protected void onPreExecute() {
-		String loadingMessage = "Sending feedback..";
-		if (isFetchMessages) {
-			loadingMessage = "Retrieving discussions...";
-		}
-		
-		if (progressDialog == null || !progressDialog.isShowing()) {
-			progressDialog = ProgressDialog.show(context, "", loadingMessage, true, false);
-		}
-	}
-	
-	@Override
-	protected String doInBackground(Void... args) {
-		HttpClient httpclient = ConnectionManager.getInstance().getHttpClient();  
+  public void detach() {
+    context = null;
+    progressDialog = null;
+  }
+  
+  @Override
+  protected void onPreExecute() {
+    String loadingMessage = "Sending feedback..";
+    if (isFetchMessages) {
+      loadingMessage = "Retrieving discussions...";
+    }
+    
+    if (progressDialog == null || !progressDialog.isShowing()) {
+      progressDialog = ProgressDialog.show(context, "", loadingMessage, true, false);
+    }
+  }
+  
+  @Override
+  protected String doInBackground(Void... args) {
+    HttpClient httpclient = ConnectionManager.getInstance().getHttpClient();  
 
-		if (isFetchMessages && token != null) {
-			/** If we are fetching messages then do a GET */
-			return doGet(httpclient);
-		} else if (!isFetchMessages) {
-			/** 
-			 * If we are sending a feedback do POST, and if we are sending a feedback 
-			 * to an existing discussion do PUT
-			 */
-			return doPostPut(httpclient);			
-		}
-		
-		return null;
-	}
+    if (isFetchMessages && token != null) {
+      /** If we are fetching messages then do a GET */
+      return doGet(httpclient);
+    } else if (!isFetchMessages) {
+      /** 
+       * If we are sending a feedback do POST, and if we are sending a feedback 
+       * to an existing discussion do PUT
+       */
+      return doPostPut(httpclient);     
+    }
+    
+    return null;
+  }
 
-	@Override
-	protected void onPostExecute(String result) {
-		if (progressDialog != null) {
-			try {
-				progressDialog.dismiss();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		
-		/** If the Handler object is not NULL, send a message to the Activity with the result */
-		if (handler != null) {
-			Message msg = new Message();
-			Bundle bundle = new Bundle();
-			
-			bundle.putString("feedback_response", result);
-			msg.setData(bundle);
-			
-			handler.sendMessage(msg);
-		}
-	}
-	
-	/**
-	 * POST/PUT
-	 * @param httpClient
-	 * @return
-	 */
-	private String doPostPut(HttpClient httpClient) {
-		UrlEncodedFormEntity form;
-		try {
-			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-			nameValuePairs.add(new BasicNameValuePair("name", name));
-			nameValuePairs.add(new BasicNameValuePair("email", email));
-			nameValuePairs.add(new BasicNameValuePair("subject", subject));
-            nameValuePairs.add(new BasicNameValuePair("text", text));
-			
-		    form = new UrlEncodedFormEntity(nameValuePairs);
-		    form.setContentEncoding(HTTP.UTF_8);
-		    
-		    HttpPost httpPost = null;
-		    HttpPut httpPut = null;
-		    if (token != null) {
-		    	urlString += token + "/";
-		    	httpPut = new HttpPut(urlString);
-		    } else {
-		    	httpPost = new HttpPost(urlString);
-		    }
-		
-		    HttpResponse response = null;
-		    if (httpPut != null) {
-		    	httpPut.setEntity(form);
-		    	response = (HttpResponse) httpClient.execute(httpPut);
-		    } else if (httpPost != null) {
-		    	httpPost.setEntity(form);
-		    	response = (HttpResponse) httpClient.execute(httpPost);
-		    }
-		
-		    if (response != null) {
-		    	HttpEntity resEntity = response.getEntity();  
-			    String resp = EntityUtils.toString(resEntity);
-			    Log.v(TAG, "---------------------------------------------------------------------------");
-			    Log.v(TAG, "Feedback POST response: " + resp + "");
-			    Log.v(TAG, "For request made on URL: " + urlString);
-			    Log.v(TAG, "---------------------------------------------------------------------------");
-			    
-			    return resp;
-		    }
-		    
-		    return null;
-		} catch (UnsupportedEncodingException e) {
-		    e.printStackTrace();
-		} catch (ClientProtocolException e) {
-		    e.printStackTrace();
-		} catch (IOException e) {
-		    e.printStackTrace();
-		}
-		
-		return null;
-	}
-	
-	/**
-	 * GET
-	 * @param httpClient
-	 * @return
-	 */
-	private String doGet(HttpClient httpClient) {
-		Log.v(TAG, "Feedback GET URL 1: " + urlString);
-		StringBuilder sb = new StringBuilder();
-		sb.append(urlString + Util.encodeParam(token));
-		/*sb.append("&os_version=" + Util.encodeParam(Constants.ANDROID_VERSION));
-		sb.append("&device=" + Util.encodeParam(Constants.PHONE_MODEL));
-		sb.append("&oem=" + Util.encodeParam(Constants.PHONE_MANUFACTURER));
-		sb.append("&app_version=" + Util.encodeParam(Constants.APP_VERSION));
-		
-		if (name != null && email != null && subject != null && text != null) {
-			sb.append("&name=" + Util.encodeParam(name));
-			sb.append("&email=" + Util.encodeParam(email));
-			sb.append("&=subject" + Util.encodeParam(subject));
-			sb.append("&=text" + Util.encodeParam(text));
-		}*/
-		
-		Log.v(TAG, "Feedback GET URL 2: " + sb.toString());
-		HttpGet httpGet = new HttpGet(sb.toString());
+  @Override
+  protected void onPostExecute(String result) {
+    if (progressDialog != null) {
+      try {
+        progressDialog.dismiss();
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+    
+    /** If the Handler object is not NULL, send a message to the Activity with the result */
+    if (handler != null) {
+      Message msg = new Message();
+      Bundle bundle = new Bundle();
+      
+      bundle.putString("feedback_response", result);
+      msg.setData(bundle);
+      
+      handler.sendMessage(msg);
+    }
+  }
+  
+  /**
+   * POST/PUT
+   * @param httpClient
+   * @return
+   */
+  private String doPostPut(HttpClient httpClient) {
+    UrlEncodedFormEntity form;
+    try {
+      List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+      nameValuePairs.add(new BasicNameValuePair("name", name));
+      nameValuePairs.add(new BasicNameValuePair("email", email));
+      nameValuePairs.add(new BasicNameValuePair("subject", subject));
+      nameValuePairs.add(new BasicNameValuePair("text", text));
+      
+      form = new UrlEncodedFormEntity(nameValuePairs);
+      form.setContentEncoding(HTTP.UTF_8);
+      
+      HttpPost httpPost = null;
+      HttpPut httpPut = null;
+      if (token != null) {
+        urlString += token + "/";
+        httpPut = new HttpPut(urlString);
+      } else {
+        httpPost = new HttpPost(urlString);
+      }
+      
+      HttpResponse response = null;
+      if (httpPut != null) {
+        httpPut.setEntity(form);
+        response = (HttpResponse) httpClient.execute(httpPut);
+      } else if (httpPost != null) {
+        httpPost.setEntity(form);
+        response = (HttpResponse) httpClient.execute(httpPost);
+      }
+      
+      if (response != null) {
+        HttpEntity resEntity = response.getEntity();  
+        String resp = EntityUtils.toString(resEntity);
+        
+        return resp;
+      }
+      
+      return null;
+    } catch (UnsupportedEncodingException e) {
+      e.printStackTrace();
+    } catch (ClientProtocolException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    
+    return null;
+  }
+  
+  /**
+   * GET
+   * @param httpClient
+   * @return
+   */
+  private String doGet(HttpClient httpClient) {
+    StringBuilder sb = new StringBuilder();
+    sb.append(urlString + Util.encodeParam(token));
+    
+    HttpGet httpGet = new HttpGet(sb.toString());
 
-        // Execute HTTP Post Request
-        try {
-			HttpResponse response = (HttpResponse) httpClient.execute(httpGet);
-			Log.v(TAG, "---------------------------------------------------------------------------");
-			Log.v(TAG, "Feedback GET response 1: " + response);
-			HttpEntity responseEntity = response.getEntity();
-			String message = EntityUtils.toString(responseEntity);
-			Log.v(TAG, "Feedback GET response 2: " + message);
-			Log.v(TAG, "For request made on URL: " + sb.toString());
-			Log.v(TAG, "---------------------------------------------------------------------------");
-			
-			return message;
-		} catch (ClientProtocolException e) {
-			e.printStackTrace();
-		} catch (IllegalStateException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		return null;
-	}
+    /** Execute HTTP Post Request */
+    try {
+      HttpResponse response = (HttpResponse) httpClient.execute(httpGet);
+      HttpEntity responseEntity = response.getEntity();
+      String message = EntityUtils.toString(responseEntity);
+      
+      return message;
+    } catch (ClientProtocolException e) {
+      e.printStackTrace();
+    } catch (IllegalStateException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    
+    return null;
+  }
 }
