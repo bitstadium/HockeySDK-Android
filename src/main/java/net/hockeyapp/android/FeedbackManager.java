@@ -1,14 +1,12 @@
 package net.hockeyapp.android;
 
-import net.hockeyapp.android.utils.PrefsUtil;
+import java.lang.ref.WeakReference;
+
 import net.hockeyapp.android.utils.Util;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.provider.Settings;
-import android.util.Log;
 
 /**
  * <h4>Description</h4>
@@ -59,8 +57,8 @@ public class FeedbackManager {
 	 * @param activity Parent activity.
 	 * @param appIdentifier App ID of your app on HockeyApp.
 	 */
-	public static void register(Activity activity, String appIdentifier) {
-		register(activity, appIdentifier, null);
+	public static void register(WeakReference<Context> weakContext, String appIdentifier) {
+		register(weakContext, appIdentifier, null);
 	}
   
 	/**
@@ -70,8 +68,8 @@ public class FeedbackManager {
 	 * @param appIdentifier App ID of your app on HockeyApp.
 	 * @param listener Implement for callback functions.
 	 */
-	public static void register(Activity activity, String appIdentifier, FeedbackManagerListener listener) {
-		register(activity, Constants.BASE_URL, appIdentifier, listener);
+	public static void register(WeakReference<Context> weakContext, String appIdentifier, FeedbackManagerListener listener) {
+		register(weakContext, Constants.BASE_URL, appIdentifier, listener);
 	}
   
 	/**
@@ -82,7 +80,7 @@ public class FeedbackManager {
 	 * @param appIdentifier App ID of your app on HockeyApp.
 	 * @param listener Implement for callback functions.
 	 */
-	public static void register(Activity activity, String urlString, String appIdentifier, FeedbackManagerListener listener) {
+	public static void register(WeakReference<Context> weakContext, String urlString, String appIdentifier, FeedbackManagerListener listener) {
 		lastListener = listener;
 		FeedbackManager.appIdentifier = appIdentifier;
     
@@ -146,11 +144,19 @@ public class FeedbackManager {
 	/**
 	 * Returns true if the app runs on large or very large screens (i.e. tablets). 
 	 */
-	public static Boolean runsOnTablet(Activity activity) {
-		Configuration configuration = activity.getResources().getConfiguration();
-		return (((configuration.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.
-				SCREENLAYOUT_SIZE_LARGE) || ((configuration.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == 
-				Configuration.SCREENLAYOUT_SIZE_XLARGE));
+	public static Boolean runsOnTablet(WeakReference<Context> weakContext) {
+	  if (weakContext != null) {
+	    Context context = weakContext.get();
+	    if (context != null) {
+	      Configuration configuration = context.getResources().getConfiguration();
+	      
+	      return (((configuration.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.
+	          SCREENLAYOUT_SIZE_LARGE) || ((configuration.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == 
+	          Configuration.SCREENLAYOUT_SIZE_XLARGE));	      
+	    }
+	  }
+	  
+	  return false;
 	}
 
 	/**

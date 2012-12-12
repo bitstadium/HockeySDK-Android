@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLConnection;
@@ -23,6 +24,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DialogFragment;
@@ -33,6 +35,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.provider.Settings;
 import android.util.Log;
 import android.widget.Toast;
@@ -83,38 +86,57 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
   private UpdateManagerListener listener;
   private long usageTime = 0;
   
-  public CheckUpdateTask(Activity activity, String urlString) {
+  public CheckUpdateTask(WeakReference<Activity> weakActivity, String urlString) {
     this.appIdentifier = null;
-    this.activity = activity;
     this.urlString = urlString;
-    this.usageTime = Tracking.getUsageTime(activity);
     
-    Constants.loadFromContext(activity);
+    if (weakActivity != null) {
+      activity = weakActivity.get();
+    }
+    
+    if (activity != null) {
+      this.usageTime = Tracking.getUsageTime(activity);
+      Constants.loadFromContext(activity);
+    }
   }
   
-  public CheckUpdateTask(Activity activity, String urlString, String appIdentifier) {
+  public CheckUpdateTask(WeakReference<Activity> weakActivity, String urlString, String appIdentifier) {
     this.appIdentifier = appIdentifier;
-    this.activity = activity;
     this.urlString = urlString;
-    this.usageTime = Tracking.getUsageTime(activity);
 
-    Constants.loadFromContext(activity);
+    if (weakActivity != null) {
+      activity = weakActivity.get();
+    }
+    
+    if (activity != null) {
+      this.usageTime = Tracking.getUsageTime(activity);
+      Constants.loadFromContext(activity);
+    }
   }
   
-  public CheckUpdateTask(Activity activity, String urlString, String appIdentifier, UpdateManagerListener listener) {
+  public CheckUpdateTask(WeakReference<Activity> weakActivity, String urlString, String appIdentifier, UpdateManagerListener listener) {
     this.appIdentifier = appIdentifier;
-    this.activity = activity;
     this.urlString = urlString;
     this.listener = listener;
-    this.usageTime = Tracking.getUsageTime(activity);
 
-    Constants.loadFromContext(activity);
+    if (weakActivity != null) {
+      activity = weakActivity.get();
+    }
+    
+    if (activity != null) {
+      this.usageTime = Tracking.getUsageTime(activity);
+      Constants.loadFromContext(activity);
+    }
   }
 
-  public void attach(Activity activity) {
-    this.activity = activity;
-
-    Constants.loadFromContext(activity);
+  public void attach(WeakReference<Activity> weakActivity) {
+    if (weakActivity != null) {
+      activity = weakActivity.get();
+    }
+    
+    if (activity != null) {
+      Constants.loadFromContext(activity);
+    }
   }
   
   public void detach() {
@@ -122,12 +144,16 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
   }
 
   protected int getVersionCode() {
-    try {
-      return activity.getPackageManager().getPackageInfo(activity.getPackageName(), PackageManager.GET_META_DATA).versionCode;
+    if (activity != null) {
+      try {
+        return activity.getPackageManager().getPackageInfo(activity.getPackageName(), PackageManager.GET_META_DATA).versionCode;
+      }
+      catch (NameNotFoundException e) {
+        return 0;
+      }
     }
-    catch (NameNotFoundException e) {
-      return 0;
-    }
+    
+    return 0;
   }
   
   @Override
@@ -255,6 +281,7 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
     }
   }
   
+  @TargetApi(Build.VERSION_CODES.HONEYCOMB)
   private void showDialog(final JSONArray updateInfo) {
     if (getCachingEnabled()) {
       VersionCache.setVersionInfo(activity, updateInfo.toString());
@@ -282,7 +309,8 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
             VersionCache.setVersionInfo(activity, "[]");
           }
           
-          if ((UpdateManager.fragmentsSupported()) && (UpdateManager.runsOnTablet(activity))) {
+          WeakReference<Activity> weakActivity = new WeakReference<Activity>(activity);
+          if ((UpdateManager.fragmentsSupported()) && (UpdateManager.runsOnTablet(weakActivity))) {
             showUpdateFragment(updateInfo);
           }
           else {
@@ -299,6 +327,7 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
     }
   }
   
+  @TargetApi(Build.VERSION_CODES.HONEYCOMB)
   private void startUpdateIntent(final JSONArray updateInfo, Boolean finish) {
     Class<?> activityClass = UpdateActivity.class;
     if (listener != null) {
@@ -318,32 +347,35 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
     cleanUp();
   }
 
+  @TargetApi(Build.VERSION_CODES.HONEYCOMB)
   private void showUpdateFragment(final JSONArray updateInfo) {
-    FragmentTransaction fragmentTransaction = activity.getFragmentManager().beginTransaction();
-    fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-    
-    Fragment existingFragment = activity.getFragmentManager().findFragmentByTag("hockey_update_dialog");
-    if (existingFragment != null) {
-      fragmentTransaction.remove(existingFragment);
-    }
-    fragmentTransaction.addToBackStack(null);
-
-    // Create and show the dialog
-    Class<? extends UpdateFragment> fragmentClass = UpdateFragment.class;
-    if (listener != null) {
-      fragmentClass = listener.getUpdateFragmentClass();
-    }
-    
-    try {
-      Method method = fragmentClass.getMethod("newInstance", JSONArray.class, String.class);
-      DialogFragment updateFragment = (DialogFragment)method.invoke(null, updateInfo, getURLString("apk"));
-      updateFragment.show(fragmentTransaction, "hockey_update_dialog");
-    }
-    catch (Exception e) {
-      Log.d(Constants.TAG, "An exception happened while showing the update fragment:");
-      e.printStackTrace();
-      Log.d(Constants.TAG, "Showing update activity instead.");
-      startUpdateIntent(updateInfo, false);
+    if (activity != null) {
+      FragmentTransaction fragmentTransaction = activity.getFragmentManager().beginTransaction();
+      fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+      
+      Fragment existingFragment = activity.getFragmentManager().findFragmentByTag("hockey_update_dialog");
+      if (existingFragment != null) {
+        fragmentTransaction.remove(existingFragment);
+      }
+      fragmentTransaction.addToBackStack(null);
+  
+      // Create and show the dialog
+      Class<? extends UpdateFragment> fragmentClass = UpdateFragment.class;
+      if (listener != null) {
+        fragmentClass = listener.getUpdateFragmentClass();
+      }
+      
+      try {
+        Method method = fragmentClass.getMethod("newInstance", JSONArray.class, String.class);
+        DialogFragment updateFragment = (DialogFragment)method.invoke(null, updateInfo, getURLString("apk"));
+        updateFragment.show(fragmentTransaction, "hockey_update_dialog");
+      }
+      catch (Exception e) {
+        Log.d(Constants.TAG, "An exception happened while showing the update fragment:");
+        e.printStackTrace();
+        Log.d(Constants.TAG, "Showing update activity instead.");
+        startUpdateIntent(updateInfo, false);
+      }
     }
   }
   
