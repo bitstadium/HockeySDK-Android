@@ -204,7 +204,7 @@ public class FeedbackView extends LinearLayout {
     
     params.gravity = Gravity.CENTER;
     wrapperLayoutFeedbackAndMessages.setLayoutParams(params);
-    wrapperLayoutFeedbackAndMessages.setPadding(0, padding, 0, padding);
+    wrapperLayoutFeedbackAndMessages.setPadding(padding, padding, padding, padding);
     wrapperLayoutFeedbackAndMessages.setGravity(Gravity.TOP);
     wrapperLayoutFeedbackAndMessages.setOrientation(LinearLayout.VERTICAL);
     
@@ -327,9 +327,9 @@ public class FeedbackView extends LinearLayout {
     int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 10.0, 
         getResources().getDisplayMetrics());
     
-    params.setMargins(margin, margin, margin, 0);
+    params.setMargins(0, 0, 0, 0);
     textView.setLayoutParams(params);
-    textView.setPadding(margin, 0, margin, 0);
+    textView.setPadding(0, margin, 0, margin);
     textView.setEllipsize(TruncateAt.END);
     textView.setShadowLayer(1, 0, 1, Color.WHITE);
     textView.setSingleLine(true);
@@ -359,8 +359,10 @@ public class FeedbackView extends LinearLayout {
     
     android.widget.LinearLayout.LayoutParams params = new android.widget.LinearLayout.LayoutParams(
         android.widget.LinearLayout.LayoutParams.MATCH_PARENT, android.widget.LinearLayout.LayoutParams.WRAP_CONTENT);
-    params.setMargins(margin, margin, margin, margin);
+    
+    params.setMargins(0, 0, 0, margin);
     params.gravity = Gravity.CENTER_HORIZONTAL;
+    
     button.setLayoutParams(params);
     button.setBackgroundDrawable(getButtonSelector());
     button.setPadding(paddingLeftRight, paddingTopBottom, paddingLeftRight, paddingTopBottom);
@@ -389,8 +391,10 @@ public class FeedbackView extends LinearLayout {
     
     android.widget.LinearLayout.LayoutParams params = new android.widget.LinearLayout.LayoutParams(
         android.widget.LinearLayout.LayoutParams.MATCH_PARENT, android.widget.LinearLayout.LayoutParams.WRAP_CONTENT);
-    params.setMargins(margin, margin, margin, margin);
+    
+    params.setMargins(0, 0, 0, margin);
     params.gravity = Gravity.CENTER_HORIZONTAL;
+    
     button.setLayoutParams(params);
     button.setBackgroundDrawable(getButtonSelector());
     button.setPadding(paddingLeftRight, paddingTopBottom, paddingLeftRight, paddingTopBottom);
