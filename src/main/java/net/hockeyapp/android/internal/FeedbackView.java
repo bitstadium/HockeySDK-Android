@@ -418,15 +418,16 @@ public class FeedbackView extends LinearLayout {
         getResources().getDisplayMetrics());
     
     android.widget.LinearLayout.LayoutParams params = new android.widget.LinearLayout.LayoutParams(
-        android.widget.LinearLayout.LayoutParams.WRAP_CONTENT, android.widget.LinearLayout.LayoutParams.WRAP_CONTENT);
+        android.widget.LinearLayout.LayoutParams.MATCH_PARENT, android.widget.LinearLayout.LayoutParams.WRAP_CONTENT);
     
     params.setMargins(0, 0, marginRight, margin);
     params.gravity = Gravity.CENTER_HORIZONTAL;
+    params.weight = 1.0f;
     
     button.setLayoutParams(params);
     button.setBackgroundDrawable(getButtonSelector());
-    button.setPadding(paddingLeftRight, paddingTopBottom, paddingLeftRight, paddingTopBottom);
-    button.setGravity(Gravity.LEFT);
+    button.setPadding(0, paddingTopBottom, 0, paddingTopBottom);
+    button.setGravity(Gravity.CENTER);
     button.setText("Add a Response");
     button.setTextColor(Color.WHITE);
     button.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
@@ -454,18 +455,19 @@ public class FeedbackView extends LinearLayout {
         getResources().getDisplayMetrics());
     
     android.widget.LinearLayout.LayoutParams params = new android.widget.LinearLayout.LayoutParams(
-        android.widget.LinearLayout.LayoutParams.WRAP_CONTENT, android.widget.LinearLayout.LayoutParams.WRAP_CONTENT);
+        android.widget.LinearLayout.LayoutParams.MATCH_PARENT, android.widget.LinearLayout.LayoutParams.WRAP_CONTENT);
     
     params.setMargins(marginLeft, 0, 0, margin);
     params.gravity = Gravity.CENTER_HORIZONTAL;
     
     button.setLayoutParams(params);
     button.setBackgroundDrawable(getButtonSelector());
-    button.setPadding(paddingLeftRight, paddingTopBottom, paddingLeftRight, paddingTopBottom);
-    button.setGravity(Gravity.RIGHT);
+    button.setPadding(0, paddingTopBottom, 0, paddingTopBottom);
+    button.setGravity(Gravity.CENTER);
     button.setText("Refresh");
     button.setTextColor(Color.WHITE);
     button.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
+    params.weight = 1.0f;
     
     wrapperLayoutButtons.addView(button);
   }
