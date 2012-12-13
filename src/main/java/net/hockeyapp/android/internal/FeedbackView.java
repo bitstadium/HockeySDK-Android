@@ -63,11 +63,13 @@ public class FeedbackView extends LinearLayout {
   public final static int TEXT_EDIT_TEXT_ID = 0x2008;
   public final static int SEND_FEEDBACK_BUTTON_ID = 0x2009;
   public final static int ADD_RESPONSE_BUTTON_ID = 0x20010;
-  public final static int WRAPPER_BASE_ID = 0x20011;
-  public final static int WRAPPER_LAYOUT_FEEDBACK_ID = 0x20012;
-  public final static int WRAPPER_LAYOUT_FEEDBACK_AND_MESSAGES_ID = 0x20013;
-  public final static int MESSAGES_LISTVIEW_ID = 0x20015;
-  public final static int FEEDBACK_SCROLLVIEW_ID = 0x20014;
+  public final static int REFRESH_BUTTON_ID = 0x20011;
+  public final static int WRAPPER_BASE_ID = 0x20012;
+  public final static int WRAPPER_LAYOUT_FEEDBACK_ID = 0x20013;
+  public final static int WRAPPER_LAYOUT_BUTTONS_ID = 0x20014;
+  public final static int WRAPPER_LAYOUT_FEEDBACK_AND_MESSAGES_ID = 0x20015;
+  public final static int MESSAGES_LISTVIEW_ID = 0x20016;
+  public final static int FEEDBACK_SCROLLVIEW_ID = 0x20017;
   
   /** Base wrapper {@link LinearLayout} */
   private LinearLayout wrapperBase;
@@ -81,8 +83,11 @@ public class FeedbackView extends LinearLayout {
   /** Wrapper {@link LinearLayout} for last updated label, add response {@link Button} and list of discussions */
   private LinearLayout wrapperLayoutFeedbackAndMessages;
   
+  /** Wrapper {@link LinearLayout} for Add a Response and Refresh {@link Button}s */
+  private LinearLayout wrapperLayoutButtons;
+  
   /** {@link ListView} for list of discussions */
-  private PullToRefreshListView messagesListView;
+  private ListView messagesListView;
   
   protected boolean layoutHorizontally = false;
   protected boolean limitHeight = false;
@@ -124,7 +129,10 @@ public class FeedbackView extends LinearLayout {
     loadSendFeedbackButton(context);
     
     loadLastUpdatedLabel(context);
+    
+    loadWrapperLayoutButtons(context);
     loadAddResponseButton(context);
+    loadRefreshButton(context);
     
     loadMessagesListView(context);
   }
@@ -210,9 +218,26 @@ public class FeedbackView extends LinearLayout {
     
     wrapperBase.addView(wrapperLayoutFeedbackAndMessages);
   }
+
+  private void loadWrapperLayoutButtons(Context context) {
+    wrapperLayoutButtons = new LinearLayout(context);
+    wrapperLayoutButtons.setId(WRAPPER_LAYOUT_BUTTONS_ID);
+    
+    LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+    int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 10.0, 
+          getResources().getDisplayMetrics());
+    
+    params.gravity = Gravity.LEFT;
+    wrapperLayoutButtons.setLayoutParams(params);
+    wrapperLayoutButtons.setPadding(0, padding, 0, padding);
+    wrapperLayoutButtons.setGravity(Gravity.TOP);
+    wrapperLayoutButtons.setOrientation(LinearLayout.HORIZONTAL);
+    
+    wrapperLayoutFeedbackAndMessages.addView(wrapperLayoutButtons);
+  }
   
   private void loadMessagesListView(Context context) {
-    messagesListView = new PullToRefreshListView(context);
+    messagesListView = new ListView(context);
     messagesListView.setId(MESSAGES_LISTVIEW_ID);
     
     LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, 
@@ -385,24 +410,64 @@ public class FeedbackView extends LinearLayout {
     
     int margin = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 10.0, 
         getResources().getDisplayMetrics());
+
+    int marginRight = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 5.0, 
+        getResources().getDisplayMetrics());
     
     int width = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 120.0, 
         getResources().getDisplayMetrics());
     
     android.widget.LinearLayout.LayoutParams params = new android.widget.LinearLayout.LayoutParams(
-        android.widget.LinearLayout.LayoutParams.MATCH_PARENT, android.widget.LinearLayout.LayoutParams.WRAP_CONTENT);
+        android.widget.LinearLayout.LayoutParams.WRAP_CONTENT, android.widget.LinearLayout.LayoutParams.WRAP_CONTENT);
     
-    params.setMargins(0, 0, 0, margin);
+    params.setMargins(0, 0, marginRight, margin);
     params.gravity = Gravity.CENTER_HORIZONTAL;
     
     button.setLayoutParams(params);
     button.setBackgroundDrawable(getButtonSelector());
     button.setPadding(paddingLeftRight, paddingTopBottom, paddingLeftRight, paddingTopBottom);
+    button.setGravity(Gravity.LEFT);
     button.setText("Add a Response");
     button.setTextColor(Color.WHITE);
     button.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
     
-    wrapperLayoutFeedbackAndMessages.addView(button);
+    wrapperLayoutButtons.addView(button);
+  }
+  
+  private void loadRefreshButton(Context context) {
+    Button button = new Button(context);
+    button.setId(REFRESH_BUTTON_ID);
+  
+    int paddingTopBottom = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 10.0, 
+        getResources().getDisplayMetrics());
+  
+    int paddingLeftRight = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 30.0, 
+        getResources().getDisplayMetrics());
+    
+    int margin = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 10.0, 
+        getResources().getDisplayMetrics());
+
+    int marginLeft = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 5.0, 
+        getResources().getDisplayMetrics());
+    
+    int width = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 120.0, 
+        getResources().getDisplayMetrics());
+    
+    android.widget.LinearLayout.LayoutParams params = new android.widget.LinearLayout.LayoutParams(
+        android.widget.LinearLayout.LayoutParams.WRAP_CONTENT, android.widget.LinearLayout.LayoutParams.WRAP_CONTENT);
+    
+    params.setMargins(marginLeft, 0, 0, margin);
+    params.gravity = Gravity.CENTER_HORIZONTAL;
+    
+    button.setLayoutParams(params);
+    button.setBackgroundDrawable(getButtonSelector());
+    button.setPadding(paddingLeftRight, paddingTopBottom, paddingLeftRight, paddingTopBottom);
+    button.setGravity(Gravity.RIGHT);
+    button.setText("Refresh");
+    button.setTextColor(Color.WHITE);
+    button.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
+    
+    wrapperLayoutButtons.addView(button);
   }
 
   private Drawable getButtonSelector() {

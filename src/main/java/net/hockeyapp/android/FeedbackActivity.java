@@ -9,8 +9,6 @@ import java.util.Date;
 import net.hockeyapp.android.adapters.MessagesAdapter;
 import net.hockeyapp.android.internal.FeedbackMessageView;
 import net.hockeyapp.android.internal.FeedbackView;
-import net.hockeyapp.android.internal.PullToRefreshListView;
-import net.hockeyapp.android.internal.PullToRefreshListView.OnRefreshListener;
 import net.hockeyapp.android.internal.SendFeedbackListener;
 import net.hockeyapp.android.objects.ErrorObject;
 import net.hockeyapp.android.objects.FeedbackMessage;
@@ -35,6 +33,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -82,9 +81,10 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
   private EditText textInput;
   private Button sendFeedbackButton;
   private Button addResponseButton;
+  private Button refreshButton;
   private ScrollView feedbackScrollView;
   private LinearLayout wrapperLayoutFeedbackAndMessages;
-  private PullToRefreshListView messagesListView;
+  private ListView messagesListView;
 	
   /** Send feedback {@link AsyncTask} */
   private SendFeedbackTask sendFeedbackTask;
@@ -217,14 +217,7 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
   protected void configureFeedbackView(boolean haveToken) {
     feedbackScrollView = (ScrollView) findViewById(FeedbackView.FEEDBACK_SCROLLVIEW_ID);
     wrapperLayoutFeedbackAndMessages = (LinearLayout) findViewById(FeedbackView.WRAPPER_LAYOUT_FEEDBACK_AND_MESSAGES_ID);
-    messagesListView = (PullToRefreshListView) findViewById(FeedbackView.MESSAGES_LISTVIEW_ID);
-    messagesListView.setOnRefreshListener(new OnRefreshListener() {
-          
-      @Override
-      public void onRefresh() {
-        sendFetchFeedback(url, null, null, null, null, PrefsUtil.getInstance().getFeedbackTokenFromPrefs(context), feedbackHandler, true);
-      }
-    });
+    messagesListView = (ListView) findViewById(FeedbackView.MESSAGES_LISTVIEW_ID);
   		
     if (haveToken) {
       /** If a token exists, the list of messages should be displayed*/
@@ -232,49 +225,53 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
       feedbackScrollView.setVisibility(View.GONE);
 		
       lastUpdatedTextView = (TextView) findViewById(FeedbackView.LAST_UPDATED_TEXT_VIEW_ID);
+      
       addResponseButton = (Button) findViewById(FeedbackView.ADD_RESPONSE_BUTTON_ID);
       addResponseButton.setOnClickListener(this);
+
+      refreshButton = (Button) findViewById(FeedbackView.REFRESH_BUTTON_ID);
+      refreshButton.setOnClickListener(this);
     } else {
       /** if the token doesn't exist, the feedback details inputs to be sent need to be displayed */ 
       wrapperLayoutFeedbackAndMessages.setVisibility(View.GONE);
-  		feedbackScrollView.setVisibility(View.VISIBLE);
-  		
-  		nameInput = (EditText) findViewById(FeedbackView.NAME_EDIT_TEXT_ID);
-  		emailInput = (EditText) findViewById(FeedbackView.EMAIL_EDIT_TEXT_ID);
-  		subjectInput = (EditText) findViewById(FeedbackView.SUBJECT_EDIT_TEXT_ID);
-  		textInput = (EditText) findViewById(FeedbackView.TEXT_EDIT_TEXT_ID);
-  		
-  		/** Check to see if the Name and Email are saved in {@link SharedPreferences} */
-  		String nameEmailSubject = PrefsUtil.getInstance().getNameEmailFromPrefs(context);
-  		if (nameEmailSubject != null) {
-  			/** We have Name and Email. Prepopulate the appropriate fields */
-  			String[] nameEmailSubjectArray = nameEmailSubject.split("\\|");
-  			if (nameEmailSubjectArray != null && nameEmailSubjectArray.length == 3) {
-  				nameInput.setText(nameEmailSubjectArray[0]);
-  				emailInput.setText(nameEmailSubjectArray[1]);
-  				subjectInput.setText(nameEmailSubjectArray[2]);
-  			}
-  		} else {
-  			/** We dont have Name and Email. Reset those fields */
-  			nameInput.setText("");
-  			emailInput.setText("");
-  			subjectInput.setText("");
-  		}
-  		
-  		/** Reset the remaining fields if previously populated */
-  		textInput.setText("");
-  		
-  		/** Check to see if the Feedback Token is availabe */
-  		if (PrefsUtil.getInstance().getFeedbackTokenFromPrefs(context) != null) {
-  			/** If Feedback Token is available, hide the Subject Input field */
-  			subjectInput.setVisibility(View.GONE);
-  		} else {
-  			/** If Feedback Token is not available, display the Subject Input field */
-  			subjectInput.setVisibility(View.VISIBLE);
-  		}
-  		
-  		sendFeedbackButton = (Button) findViewById(FeedbackView.SEND_FEEDBACK_BUTTON_ID);
-  		sendFeedbackButton.setOnClickListener(this);
+      feedbackScrollView.setVisibility(View.VISIBLE);
+		
+      nameInput = (EditText) findViewById(FeedbackView.NAME_EDIT_TEXT_ID);
+      emailInput = (EditText) findViewById(FeedbackView.EMAIL_EDIT_TEXT_ID);
+      subjectInput = (EditText) findViewById(FeedbackView.SUBJECT_EDIT_TEXT_ID);
+      textInput = (EditText) findViewById(FeedbackView.TEXT_EDIT_TEXT_ID);
+		
+      /** Check to see if the Name and Email are saved in {@link SharedPreferences} */
+      String nameEmailSubject = PrefsUtil.getInstance().getNameEmailFromPrefs(context);
+      if (nameEmailSubject != null) {
+        /** We have Name and Email. Prepopulate the appropriate fields */
+        String[] nameEmailSubjectArray = nameEmailSubject.split("\\|");
+        if (nameEmailSubjectArray != null && nameEmailSubjectArray.length == 3) {
+          nameInput.setText(nameEmailSubjectArray[0]);
+          emailInput.setText(nameEmailSubjectArray[1]);
+          subjectInput.setText(nameEmailSubjectArray[2]);
+        }
+      } else {
+        /** We dont have Name and Email. Reset those fields */
+        nameInput.setText("");
+        emailInput.setText("");
+        subjectInput.setText("");
+      }
+		
+      /** Reset the remaining fields if previously populated */
+      textInput.setText("");
+		
+      /** Check to see if the Feedback Token is availabe */
+      if (PrefsUtil.getInstance().getFeedbackTokenFromPrefs(context) != null) {
+        /** If Feedback Token is available, hide the Subject Input field */
+        subjectInput.setVisibility(View.GONE);
+      } else {
+        /** If Feedback Token is not available, display the Subject Input field */
+        subjectInput.setVisibility(View.VISIBLE);
+      }
+		
+      sendFeedbackButton = (Button) findViewById(FeedbackView.SEND_FEEDBACK_BUTTON_ID);
+      sendFeedbackButton.setOnClickListener(this);
   	}
   }
     
@@ -332,7 +329,7 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
     				messagesAdapter.notifyDataSetChanged();
     
     	            // Call onRefreshComplete when the list has been refreshed.
-    	            messagesListView.onRefreshComplete();
+    	            //messagesListView.onRefreshComplete();
     			}
     			
     			messagesListView.setAdapter(messagesAdapter);
@@ -340,7 +337,7 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
     	}
     });
   		
-    messagesListView.onRefreshComplete();
+    //messagesListView.onRefreshComplete();
   }
   	
   /**
@@ -438,19 +435,25 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
   @Override
   public void onClick(View v) {
   	switch (v.getId()) {
-  		case FeedbackView.SEND_FEEDBACK_BUTTON_ID:
-  			sendFeedback();
+  	  case FeedbackView.SEND_FEEDBACK_BUTTON_ID:
+  	    sendFeedback();
   			
-  			break;
+  	    break;
   			
-  		case FeedbackView.ADD_RESPONSE_BUTTON_ID:
-  			configureFeedbackView(false);
-  			inSendFeedback = true;
+  	  case FeedbackView.ADD_RESPONSE_BUTTON_ID:
+  	    configureFeedbackView(false);
+  	    inSendFeedback = true;
   			
-  			break;
+  	    break;
+  			
+  	  case FeedbackView.REFRESH_BUTTON_ID:
+  	    sendFetchFeedback(url, null, null, null, null, PrefsUtil.getInstance().getFeedbackTokenFromPrefs(context), 
+  	        feedbackHandler, true);
+  	    
+  	    break;
   
-  		default:
-  			break;
+  	  default:
+  	    break;
   	}
   }
   
