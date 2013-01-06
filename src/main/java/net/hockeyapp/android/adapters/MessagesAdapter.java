@@ -8,14 +8,12 @@ import java.util.Date;
 import net.hockeyapp.android.objects.FeedbackMessage;
 import net.hockeyapp.android.views.FeedbackMessageView;
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 public class MessagesAdapter extends BaseAdapter {
-  private final String TAG = "MessagesAdapter >>>>>>>>>>>>>>>>>>";
   private Context context;
   private ArrayList<FeedbackMessage> messagesList;
   private SimpleDateFormat format;
@@ -44,12 +42,12 @@ public class MessagesAdapter extends BaseAdapter {
   
     if (convertView == null) {
       view = new FeedbackMessageView(context);
-    } else {
+    } 
+    else {
       view = (FeedbackMessageView) convertView;
     }
   
     if (feedbackMessage != null) {
-      Log.v(TAG, feedbackMessage.getText());
       authorTextView = (TextView) view.findViewById(FeedbackMessageView.AUTHOR_TEXT_VIEW_ID);
       dateTextView = (TextView) view.findViewById(FeedbackMessageView.DATE_TEXT_VIEW_ID);
       messageTextView = (TextView) view.findViewById(FeedbackMessageView.MESSAGE_TEXT_VIEW_ID);

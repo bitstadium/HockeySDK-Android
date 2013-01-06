@@ -23,7 +23,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -321,28 +320,21 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
     			}
     			
     			if (messagesAdapter == null) {
-    				Log.v("FeedbackActivity", "HERE 1: " + feedbackMessages.size());
     				messagesAdapter = new MessagesAdapter(context, feedbackMessages);
     			} 
     			else {
-    				Log.v("FeedbackActivity", "HERE 2: " + feedbackMessages.size());
     				messagesAdapter.clear();
     				for (FeedbackMessage message : feedbackMessages) {
     					messagesAdapter.add(message);
     				}
     				
     				messagesAdapter.notifyDataSetChanged();
-    
-    	            // Call onRefreshComplete when the list has been refreshed.
-    	            //messagesListView.onRefreshComplete();
     			}
     			
     			messagesListView.setAdapter(messagesAdapter);
     		}
     	}
     });
-  		
-    //messagesListView.onRefreshComplete();
   }
   	
   /**
