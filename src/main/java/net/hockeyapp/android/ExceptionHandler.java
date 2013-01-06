@@ -1,4 +1,4 @@
-package net.hockeyapp.android.internal;
+package net.hockeyapp.android;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -9,15 +9,13 @@ import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.Date;
 import java.util.UUID;
 
-import net.hockeyapp.android.Constants;
-import net.hockeyapp.android.CrashManagerListener;
 
 import android.util.Log;
 
 /**
  * <h4>Description</h4>
  * 
- * Internal helper class to catch exceptions. Saves the stack trace
+ * Helper class to catch exceptions. Saves the stack trace
  * as a file and executes callback methods to ask the app for 
  * additional information and meta data (see CrashManagerListener). 
  * 

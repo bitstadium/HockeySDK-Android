@@ -19,7 +19,7 @@ import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
 import net.hockeyapp.android.Constants;
-import net.hockeyapp.android.connectionUtils.ConnectionManager;
+import net.hockeyapp.android.utils.ConnectionManager;
 import net.hockeyapp.android.utils.Util;
 
 
@@ -66,7 +66,6 @@ import android.os.Message;
  * @author Bogdan Nistor
  **/
 public class SendFeedbackTask extends AsyncTask<Void, Void, String> {
-  private final String TAG = "SendFeedbackTask >>>>>>>>>>>>>>>>>>>";
   private Context context;
   private Handler handler;
   private String urlString;

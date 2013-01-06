@@ -7,15 +7,13 @@ import java.util.Collections;
 import java.util.Date;
 
 import net.hockeyapp.android.adapters.MessagesAdapter;
-import net.hockeyapp.android.internal.FeedbackMessageView;
-import net.hockeyapp.android.internal.FeedbackView;
-import net.hockeyapp.android.internal.SendFeedbackListener;
 import net.hockeyapp.android.objects.ErrorObject;
 import net.hockeyapp.android.objects.FeedbackMessage;
 import net.hockeyapp.android.objects.FeedbackResponse;
 import net.hockeyapp.android.tasks.ParseFeedbackTask;
 import net.hockeyapp.android.tasks.SendFeedbackTask;
 import net.hockeyapp.android.utils.PrefsUtil;
+import net.hockeyapp.android.views.FeedbackView;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -94,7 +92,6 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
   private Handler feedbackHandler;
   private Handler parseFeedbackHandler;
   private ErrorObject error;
-  private SendFeedbackListener sendFeedbackListener;
   private String url;
   private MessagesAdapter messagesAdapter;
   private ArrayList<FeedbackMessage> feedbackMessages;
@@ -107,7 +104,6 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
    * @param savedInstanceState Data it most recently supplied in 
    *                           onSaveInstanceState(Bundle)
    */
-  @SuppressWarnings("deprecation")
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
@@ -132,7 +128,8 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
     if (token == null) {
       /** If Feedback Token is NULL, show the usual {@link FeedbackView} */
       configureFeedbackView(false);           
-    } else {
+    } 
+    else {
       /** If Feedback Token is NOT NULL, show the Add Response Button and fetch the feedback messages */
       configureFeedbackView(true);
       sendFetchFeedback(url, null, null, null, null, token, feedbackHandler, true);
@@ -182,15 +179,18 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
                 loadFeedbackMessages(feedbackResponse);
                 inSendFeedback = false;
               }
-            } else {
+            } 
+            else {
               success = false;
               error = new ErrorObject();
               error.setMessage("");
             }
-          } else {
+          } 
+          else {
             success = false;
           }
-        } else {
+        } 
+        else {
           success = false;
         }
   				
@@ -231,7 +231,8 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
 
       refreshButton = (Button) findViewById(FeedbackView.REFRESH_BUTTON_ID);
       refreshButton.setOnClickListener(this);
-    } else {
+    } 
+    else {
       /** if the token doesn't exist, the feedback details inputs to be sent need to be displayed */ 
       wrapperLayoutFeedbackAndMessages.setVisibility(View.GONE);
       feedbackScrollView.setVisibility(View.VISIBLE);
@@ -251,7 +252,8 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
           emailInput.setText(nameEmailSubjectArray[1]);
           subjectInput.setText(nameEmailSubjectArray[2]);
         }
-      } else {
+      } 
+      else {
         /** We dont have Name and Email. Reset those fields */
         nameInput.setText("");
         emailInput.setText("");
@@ -265,7 +267,8 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
       if (PrefsUtil.getInstance().getFeedbackTokenFromPrefs(context) != null) {
         /** If Feedback Token is available, hide the Subject Input field */
         subjectInput.setVisibility(View.GONE);
-      } else {
+      } 
+      else {
         /** If Feedback Token is not available, display the Subject Input field */
         subjectInput.setVisibility(View.VISIBLE);
       }
@@ -298,7 +301,6 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
     		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
     		SimpleDateFormat formatNew = new SimpleDateFormat("d MMM h:mm a");
     		
-    		FeedbackMessageView feedbackMessageView = null;
     		Date date = null;
     		if (feedbackResponse != null && feedbackResponse.getFeedback() != null && 
     				feedbackResponse.getFeedback().getMessages() != null && feedbackResponse.
@@ -312,14 +314,16 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
     			try {
     				date = format.parse(feedbackMessages.get(0).getCreatedAt());
     				lastUpdatedTextView.setText(String.format("Last Updated: %s", formatNew.format(date)));
-    			} catch (ParseException e1) {
+    			} 
+    			catch (ParseException e1) {
     				e1.printStackTrace();
     			}
     			
     			if (messagesAdapter == null) {
     				Log.v("FeedbackActivity", "HERE 1: " + feedbackMessages.size());
     				messagesAdapter = new MessagesAdapter(context, feedbackMessages);
-    			} else {
+    			} 
+    			else {
     				Log.v("FeedbackActivity", "HERE 2: " + feedbackMessages.size());
     				messagesAdapter.clear();
     				for (FeedbackMessage message : feedbackMessages) {

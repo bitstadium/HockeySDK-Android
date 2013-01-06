@@ -1,4 +1,4 @@
-package net.hockeyapp.android.connectionUtils;
+package net.hockeyapp.android.utils;
 
 import org.apache.http.HttpVersion;
 import org.apache.http.client.HttpClient;

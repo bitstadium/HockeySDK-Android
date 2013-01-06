@@ -5,14 +5,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import net.hockeyapp.android.internal.FeedbackMessageView;
 import net.hockeyapp.android.objects.FeedbackMessage;
+import net.hockeyapp.android.views.FeedbackMessageView;
 import android.content.Context;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
@@ -20,7 +18,6 @@ public class MessagesAdapter extends BaseAdapter {
   private final String TAG = "MessagesAdapter >>>>>>>>>>>>>>>>>>";
   private Context context;
   private ArrayList<FeedbackMessage> messagesList;
-  private LayoutInflater vi;
   private SimpleDateFormat format;
   private SimpleDateFormat formatNew;
   private Date date;
@@ -31,8 +28,6 @@ public class MessagesAdapter extends BaseAdapter {
   public MessagesAdapter(Context context, ArrayList<FeedbackMessage> messagesList) {
     this.context = context;
     this.messagesList = messagesList;
-    
-    vi = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     
     format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
     formatNew = new SimpleDateFormat("d MMM h:mm a");

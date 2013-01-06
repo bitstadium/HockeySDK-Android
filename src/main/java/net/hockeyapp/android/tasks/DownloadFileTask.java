@@ -1,4 +1,4 @@
-package net.hockeyapp.android.internal;
+package net.hockeyapp.android.tasks;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -11,6 +11,7 @@ import java.net.URLConnection;
 import java.util.UUID;
 
 import net.hockeyapp.android.Strings;
+import net.hockeyapp.android.listeners.DownloadFileListener;
 
 
 import android.app.AlertDialog;

@@ -1,4 +1,4 @@
-package net.hockeyapp.android.internal;
+package net.hockeyapp.android.views;
 
 import android.content.Context;
 import android.content.res.Configuration;
@@ -109,7 +109,8 @@ public class FeedbackView extends LinearLayout {
       
     if (allowHorizontalLayout) {
       setLayoutHorizontally(context);
-    } else {
+    } 
+    else {
       layoutHorizontally = false;
     }
     
@@ -141,7 +142,8 @@ public class FeedbackView extends LinearLayout {
     int orientation = getResources().getConfiguration().orientation;
     if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
       layoutHorizontally = true;
-    } else {
+    } 
+    else {
       layoutHorizontally = false;
     }
   }
@@ -157,10 +159,9 @@ public class FeedbackView extends LinearLayout {
     wrapperBase.setId(WRAPPER_BASE_ID);
     
     LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-    int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 10.0, 
-          getResources().getDisplayMetrics());
-    
+    int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 10.0, getResources().getDisplayMetrics());
     params.gravity = Gravity.CENTER | Gravity.TOP;
+    
     wrapperBase.setLayoutParams(params);
     wrapperBase.setPadding(0, padding, 0, padding);
     wrapperBase.setOrientation(LinearLayout.VERTICAL);
@@ -173,10 +174,9 @@ public class FeedbackView extends LinearLayout {
     feedbackScrollView.setId(FEEDBACK_SCROLLVIEW_ID);
     
     LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-    int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 10.0, 
-          getResources().getDisplayMetrics());
-    
+    int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 10.0, getResources().getDisplayMetrics());
     params.gravity = Gravity.CENTER;
+    
     feedbackScrollView.setLayoutParams(params);
     feedbackScrollView.setPadding(padding, padding, padding, padding);
     
@@ -188,10 +188,9 @@ public class FeedbackView extends LinearLayout {
     wrapperLayoutFeedback.setId(WRAPPER_LAYOUT_FEEDBACK_ID);
     
     LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-    int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 10.0, 
-          getResources().getDisplayMetrics());
-    
+    int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 10.0, getResources().getDisplayMetrics());
     params.gravity = Gravity.LEFT;
+    
     wrapperLayoutFeedback.setLayoutParams(params);
     wrapperLayoutFeedback.setPadding(padding, padding, padding, padding);
     wrapperLayoutFeedback.setGravity(Gravity.TOP);
@@ -204,13 +203,10 @@ public class FeedbackView extends LinearLayout {
     wrapperLayoutFeedbackAndMessages = new LinearLayout(context);
     wrapperLayoutFeedbackAndMessages.setId(WRAPPER_LAYOUT_FEEDBACK_AND_MESSAGES_ID);
     
-    LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, 
-        LayoutParams.MATCH_PARENT);
-    
-    int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 10.0, 
-          getResources().getDisplayMetrics());
-    
+    LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+    int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 10.0, getResources().getDisplayMetrics());
     params.gravity = Gravity.CENTER;
+    
     wrapperLayoutFeedbackAndMessages.setLayoutParams(params);
     wrapperLayoutFeedbackAndMessages.setPadding(padding, padding, padding, padding);
     wrapperLayoutFeedbackAndMessages.setGravity(Gravity.TOP);
@@ -224,10 +220,9 @@ public class FeedbackView extends LinearLayout {
     wrapperLayoutButtons.setId(WRAPPER_LAYOUT_BUTTONS_ID);
     
     LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-    int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 10.0, 
-          getResources().getDisplayMetrics());
-    
+    int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 10.0, getResources().getDisplayMetrics());
     params.gravity = Gravity.LEFT;
+    
     wrapperLayoutButtons.setLayoutParams(params);
     wrapperLayoutButtons.setPadding(0, padding, 0, padding);
     wrapperLayoutButtons.setGravity(Gravity.TOP);
@@ -240,11 +235,9 @@ public class FeedbackView extends LinearLayout {
     messagesListView = new ListView(context);
     messagesListView.setId(MESSAGES_LISTVIEW_ID);
     
-    LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, 
-        LayoutParams.MATCH_PARENT);
+    LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
     
-    int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 10.0, 
-          getResources().getDisplayMetrics());
+    int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 10.0, getResources().getDisplayMetrics());
     
     messagesListView.setLayoutParams(params);
     messagesListView.setPadding(0, padding, 0, padding);
@@ -257,10 +250,9 @@ public class FeedbackView extends LinearLayout {
     editText.setId(NAME_EDIT_TEXT_ID);
     
     LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-    int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 20.0, 
-        getResources().getDisplayMetrics());
-    
+    int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 20.0, getResources().getDisplayMetrics());
     params.setMargins(0, 0, 0, margin);
+
     editText.setLayoutParams(params);
     editText.setImeOptions(EditorInfo.IME_ACTION_NEXT);
     editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
@@ -279,10 +271,9 @@ public class FeedbackView extends LinearLayout {
     editText.setId(EMAIL_EDIT_TEXT_ID);
     
     LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-    int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 20.0, 
-        getResources().getDisplayMetrics());
-    
+    int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 20.0, getResources().getDisplayMetrics());
     params.setMargins(0, 0, 0, margin);
+
     editText.setLayoutParams(params);
     editText.setImeOptions(EditorInfo.IME_ACTION_NEXT);
     editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
@@ -301,10 +292,9 @@ public class FeedbackView extends LinearLayout {
     editText.setId(SUBJECT_EDIT_TEXT_ID);
     
     LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-    int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 20.0, 
-        getResources().getDisplayMetrics());
-    
+    int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 20.0, getResources().getDisplayMetrics());
     params.setMargins(0, 0, 0, margin);
+
     editText.setLayoutParams(params);
     editText.setImeOptions(EditorInfo.IME_ACTION_NEXT);
     editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_SUBJECT);
@@ -323,13 +313,11 @@ public class FeedbackView extends LinearLayout {
     editText.setId(TEXT_EDIT_TEXT_ID);
     
     LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-    int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 20.0, 
-        getResources().getDisplayMetrics());
     
-    int minEditTextHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 100.0, 
-        getResources().getDisplayMetrics());
-    
+    int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 20.0, getResources().getDisplayMetrics());
+    int minEditTextHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 100.0, getResources().getDisplayMetrics());
     params.setMargins(0, 0, 0, margin);
+    
     editText.setLayoutParams(params);
     editText.setImeOptions(EditorInfo.IME_ACTION_NEXT);
     editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
@@ -349,10 +337,9 @@ public class FeedbackView extends LinearLayout {
     textView.setId(LAST_UPDATED_TEXT_VIEW_ID);
   
     LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-    int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 10.0, 
-        getResources().getDisplayMetrics());
-    
+    int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 10.0, getResources().getDisplayMetrics());
     params.setMargins(0, 0, 0, 0);
+    
     textView.setLayoutParams(params);
     textView.setPadding(0, margin, 0, margin);
     textView.setEllipsize(TruncateAt.END);
@@ -370,20 +357,11 @@ public class FeedbackView extends LinearLayout {
     Button button = new Button(context);
     button.setId(SEND_FEEDBACK_BUTTON_ID);
   
-    int paddingTopBottom = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 10.0, 
-        getResources().getDisplayMetrics());
-  
-    int paddingLeftRight = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 30.0, 
-        getResources().getDisplayMetrics());
+    int paddingTopBottom = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 10.0, getResources().getDisplayMetrics());
+    int paddingLeftRight = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 30.0, getResources().getDisplayMetrics());
+    int margin = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 10.0, getResources().getDisplayMetrics());
     
-    int margin = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 10.0, 
-        getResources().getDisplayMetrics());
-    
-    int width = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 120.0, 
-        getResources().getDisplayMetrics());
-    
-    android.widget.LinearLayout.LayoutParams params = new android.widget.LinearLayout.LayoutParams(
-        android.widget.LinearLayout.LayoutParams.MATCH_PARENT, android.widget.LinearLayout.LayoutParams.WRAP_CONTENT);
+    android.widget.LinearLayout.LayoutParams params = new android.widget.LinearLayout.LayoutParams(android.widget.LinearLayout.LayoutParams.MATCH_PARENT, android.widget.LinearLayout.LayoutParams.WRAP_CONTENT);
     
     params.setMargins(0, 0, 0, margin);
     params.gravity = Gravity.CENTER_HORIZONTAL;
@@ -402,23 +380,11 @@ public class FeedbackView extends LinearLayout {
     Button button = new Button(context);
     button.setId(ADD_RESPONSE_BUTTON_ID);
   
-    int paddingTopBottom = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 10.0, 
-        getResources().getDisplayMetrics());
-  
-    int paddingLeftRight = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 30.0, 
-        getResources().getDisplayMetrics());
+    int paddingTopBottom = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 10.0, getResources().getDisplayMetrics());
+    int margin = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 10.0, getResources().getDisplayMetrics());
+    int marginRight = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 5.0, getResources().getDisplayMetrics());
     
-    int margin = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 10.0, 
-        getResources().getDisplayMetrics());
-
-    int marginRight = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 5.0, 
-        getResources().getDisplayMetrics());
-    
-    int width = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 120.0, 
-        getResources().getDisplayMetrics());
-    
-    android.widget.LinearLayout.LayoutParams params = new android.widget.LinearLayout.LayoutParams(
-        android.widget.LinearLayout.LayoutParams.MATCH_PARENT, android.widget.LinearLayout.LayoutParams.WRAP_CONTENT);
+    android.widget.LinearLayout.LayoutParams params = new android.widget.LinearLayout.LayoutParams(android.widget.LinearLayout.LayoutParams.MATCH_PARENT, android.widget.LinearLayout.LayoutParams.WRAP_CONTENT);
     
     params.setMargins(0, 0, marginRight, margin);
     params.gravity = Gravity.CENTER_HORIZONTAL;
@@ -439,23 +405,11 @@ public class FeedbackView extends LinearLayout {
     Button button = new Button(context);
     button.setId(REFRESH_BUTTON_ID);
   
-    int paddingTopBottom = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 10.0, 
-        getResources().getDisplayMetrics());
-  
-    int paddingLeftRight = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 30.0, 
-        getResources().getDisplayMetrics());
+    int paddingTopBottom = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 10.0, getResources().getDisplayMetrics());
+    int margin = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 10.0, getResources().getDisplayMetrics());
+    int marginLeft = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 5.0, getResources().getDisplayMetrics());
     
-    int margin = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 10.0, 
-        getResources().getDisplayMetrics());
-
-    int marginLeft = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 5.0, 
-        getResources().getDisplayMetrics());
-    
-    int width = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 120.0, 
-        getResources().getDisplayMetrics());
-    
-    android.widget.LinearLayout.LayoutParams params = new android.widget.LinearLayout.LayoutParams(
-        android.widget.LinearLayout.LayoutParams.MATCH_PARENT, android.widget.LinearLayout.LayoutParams.WRAP_CONTENT);
+    android.widget.LinearLayout.LayoutParams params = new android.widget.LinearLayout.LayoutParams(android.widget.LinearLayout.LayoutParams.MATCH_PARENT, android.widget.LinearLayout.LayoutParams.WRAP_CONTENT);
     
     params.setMargins(marginLeft, 0, 0, margin);
     params.gravity = Gravity.CENTER_HORIZONTAL;
@@ -475,11 +429,8 @@ public class FeedbackView extends LinearLayout {
   private Drawable getButtonSelector() {
     StateListDrawable drawable = new StateListDrawable();
     drawable.addState(new int[] {-android.R.attr.state_pressed}, new ColorDrawable(Color.BLACK));
-    drawable.addState(new int[] {-android.R.attr.state_pressed, android.R.attr.state_focused}, 
-        new ColorDrawable(Color.DKGRAY));
-    
+    drawable.addState(new int[] {-android.R.attr.state_pressed, android.R.attr.state_focused}, new ColorDrawable(Color.DKGRAY));
     drawable.addState(new int[] {android.R.attr.state_pressed}, new ColorDrawable(Color.GRAY));
-    
     return drawable;
   }
 }

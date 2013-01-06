@@ -1,6 +1,7 @@
-package net.hockeyapp.android.internal;
+package net.hockeyapp.android.listeners;
 
 import net.hockeyapp.android.StringListener;
+import net.hockeyapp.android.tasks.DownloadFileTask;
 
 /**
  * <h4>Description</h4>

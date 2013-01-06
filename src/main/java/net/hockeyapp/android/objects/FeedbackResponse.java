@@ -8,6 +8,8 @@ import java.io.Serializable;
  *
  */
 public class FeedbackResponse implements Serializable {
+  private static final long serialVersionUID = -1093570359639034766L;
+  
   private String status;
   private Feedback feedback;
   private String token;

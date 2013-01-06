@@ -1,5 +1,6 @@
-package net.hockeyapp.android.internal;
+package net.hockeyapp.android.views;
 
+import net.hockeyapp.android.utils.ViewHelper;
 import android.content.Context;
 import android.graphics.Color;
 import android.util.TypedValue;

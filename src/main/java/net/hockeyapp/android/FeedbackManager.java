@@ -43,7 +43,6 @@ import android.content.res.Configuration;
  * @author Bogdan Nistor
  **/
 public class FeedbackManager {
-  private final static String TAG = "FeedbackManager >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>";
   private static String appIdentifier;
   
   /**

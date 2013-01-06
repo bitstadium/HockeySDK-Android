@@ -1,4 +1,4 @@
-package net.hockeyapp.android.internal;
+package net.hockeyapp.android.utils;
 
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;

@@ -3,7 +3,7 @@ package net.hockeyapp.android;
 import java.lang.ref.WeakReference;
 import java.util.Date;
 
-import net.hockeyapp.android.internal.CheckUpdateTask;
+import net.hockeyapp.android.tasks.CheckUpdateTask;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;

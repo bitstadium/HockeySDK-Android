@@ -1,6 +1,6 @@
 package net.hockeyapp.android;
 
-import net.hockeyapp.android.internal.ExpiryInfoView;
+import net.hockeyapp.android.views.ExpiryInfoView;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;

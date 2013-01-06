@@ -7,7 +7,7 @@
 
         <activity android:name=".UpdateActivity"/>
         <activity 
-            android:name=".FeedbackActivity"
+            android:name="net.hockeyapp.android.FeedbackActivity"
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan"/>
 
     </application>

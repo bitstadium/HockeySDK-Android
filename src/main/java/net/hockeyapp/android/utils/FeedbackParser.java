@@ -1,4 +1,4 @@
-package net.hockeyapp.android.jsonParseUtils;
+package net.hockeyapp.android.utils;
 
 import java.util.ArrayList;
 

@@ -9,6 +9,8 @@ import java.util.ArrayList;
  *
  */
 public class Feedback implements Serializable {
+  private static final long serialVersionUID = 2590172806951065320L;
+  
   private String name;
   private String email;
   private int id;

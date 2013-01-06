@@ -1,4 +1,4 @@
-package net.hockeyapp.android.internal;
+package net.hockeyapp.android.views;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -60,6 +60,7 @@ public class FeedbackMessageView extends LinearLayout {
     super(context);
     
     this.ownMessage = ownMessage;
+    
     loadLayoutParams(context);
     loadAuthorLabel(context);
     loadDateLabel(context);

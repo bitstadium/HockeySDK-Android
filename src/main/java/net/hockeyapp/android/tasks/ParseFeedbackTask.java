@@ -1,7 +1,7 @@
 package net.hockeyapp.android.tasks;
 
-import net.hockeyapp.android.jsonParseUtils.FeedbackParser;
 import net.hockeyapp.android.objects.FeedbackResponse;
+import net.hockeyapp.android.utils.FeedbackParser;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;

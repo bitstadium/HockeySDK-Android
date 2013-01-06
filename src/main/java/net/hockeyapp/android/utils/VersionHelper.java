@@ -1,4 +1,4 @@
-package net.hockeyapp.android.internal;
+package net.hockeyapp.android.utils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

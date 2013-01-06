@@ -8,7 +8,9 @@ import java.io.Serializable;
  *
  */
 public class FeedbackMessage implements Serializable {
-  private String subjec;
+  private static final long serialVersionUID = -8773015828853994624L;
+  
+  private String subject;
   private String text;
   private String oem;
   private String model;
@@ -23,11 +25,11 @@ public class FeedbackMessage implements Serializable {
   private String appId;
   
   public String getSubjec() {
-    return subjec;
+    return subject;
   }
   
   public void setSubjec(String subjec) {
-    this.subjec = subjec;
+    this.subject = subjec;
   }
   
   public String getText() {

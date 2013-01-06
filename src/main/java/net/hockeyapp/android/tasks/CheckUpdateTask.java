@@ -1,4 +1,4 @@
-package net.hockeyapp.android.internal;
+package net.hockeyapp.android.tasks;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -19,6 +19,7 @@ import net.hockeyapp.android.UpdateActivity;
 import net.hockeyapp.android.UpdateFragment;
 import net.hockeyapp.android.UpdateManager;
 import net.hockeyapp.android.UpdateManagerListener;
+import net.hockeyapp.android.utils.VersionCache;
 
 import org.json.JSONArray;
 import org.json.JSONException;

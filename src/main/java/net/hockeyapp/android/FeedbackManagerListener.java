@@ -1,7 +1,5 @@
 package net.hockeyapp.android;
 
-import java.util.Date;
-
 /**
  * <h4>Description</h4>
  * 
