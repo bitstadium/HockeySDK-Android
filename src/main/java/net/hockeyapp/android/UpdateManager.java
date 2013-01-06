@@ -64,8 +64,8 @@ public class UpdateManager {
    * @param activity Parent activity.
    * @param appIdentifier App ID of your app on HockeyApp.
    */
-  public static void register(WeakReference<Activity> weakActivity, String appIdentifier) {
-    register(weakActivity, appIdentifier, null);
+  public static void register(Activity activity, String appIdentifier) {
+    register(activity, appIdentifier, null);
   }
   
   /**
@@ -75,8 +75,8 @@ public class UpdateManager {
    * @param appIdentifier App ID of your app on HockeyApp.
    * @param listener Implement for callback functions.
    */
-  public static void register(WeakReference<Activity> weakActivity, String appIdentifier, UpdateManagerListener listener) {
-    register(weakActivity, Constants.BASE_URL, appIdentifier, listener);
+  public static void register(Activity activity, String appIdentifier, UpdateManagerListener listener) {
+    register(activity, Constants.BASE_URL, appIdentifier, listener);
   }
   
   /**
@@ -87,9 +87,10 @@ public class UpdateManager {
    * @param appIdentifier App ID of your app on HockeyApp.
    * @param listener Implement for callback functions.
    */
-  public static void register(WeakReference<Activity> weakActivity, String urlString, String appIdentifier, UpdateManagerListener listener) {
+  public static void register(Activity activity, String urlString, String appIdentifier, UpdateManagerListener listener) {
     lastListener = listener;
     
+    WeakReference<Activity> weakActivity = new WeakReference<Activity>(activity);
     if ((fragmentsSupported()) && (dialogShown(weakActivity))) {
       return;
     }

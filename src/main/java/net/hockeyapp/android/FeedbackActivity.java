@@ -198,6 +198,7 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
         if (!success) {
           runOnUiThread(new Runnable() {
   						
+            @SuppressWarnings("deprecation")
             @Override
             public void run() {
               showDialog(DIALOG_ERROR_ID);
@@ -220,7 +221,7 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
     messagesListView = (ListView) findViewById(FeedbackView.MESSAGES_LISTVIEW_ID);
   		
     if (haveToken) {
-      /** If a token exists, the list of messages should be displayed*/
+      /** If a token exists, the list of messages should be displayed */
       wrapperLayoutFeedbackAndMessages.setVisibility(View.VISIBLE);
       feedbackScrollView.setVisibility(View.GONE);
 		

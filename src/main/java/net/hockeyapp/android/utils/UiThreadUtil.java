@@ -31,6 +31,7 @@ public class UiThreadUtil {
       if (activity != null) {
         activity.runOnUiThread(new Runnable() {
           
+          @SuppressWarnings("deprecation")
           @Override
           public void run() {
             if (progressDialog != null && progressDialog.isShowing()) {

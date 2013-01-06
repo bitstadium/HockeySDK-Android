@@ -50,6 +50,8 @@ public class FeedbackMessageView extends LinearLayout {
   private TextView authorTextView;
   private TextView dateTextView;
   private TextView messageTextView;
+  
+  @SuppressWarnings("unused")
   private boolean ownMessage;
 
   public FeedbackMessageView(Context context) {

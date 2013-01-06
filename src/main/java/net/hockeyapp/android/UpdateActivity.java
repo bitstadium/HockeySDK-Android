@@ -263,6 +263,7 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
       
       runOnUiThread(new Runnable() {
         
+        @SuppressWarnings("deprecation")
         @Override
         public void run() {
           showDialog(DIALOG_ERROR_ID);
@@ -278,6 +279,7 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
       
       runOnUiThread(new Runnable() {
         
+        @SuppressWarnings("deprecation")
         @Override
         public void run() {
           showDialog(DIALOG_ERROR_ID);

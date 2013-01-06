@@ -82,8 +82,8 @@ public class CrashManager {
    * @param context The context to use. Usually your Activity object.
    * @param appIdentifier App ID of your app on HockeyApp.
    */
-  public static void register(WeakReference<Context> weakContext, String appIdentifier) {
-    register(weakContext, Constants.BASE_URL, appIdentifier, null);
+  public static void register(Context context, String appIdentifier) {
+    register(context, Constants.BASE_URL, appIdentifier, null);
   }
 
   /**
@@ -93,8 +93,8 @@ public class CrashManager {
    * @param appIdentifier App ID of your app on HockeyApp.
    * @param listener Implement for callback functions.
    */
-  public static void register(WeakReference<Context> weakContext, String appIdentifier, CrashManagerListener listener) {
-    register(weakContext, Constants.BASE_URL, appIdentifier, listener);
+  public static void register(Context context, String appIdentifier, CrashManagerListener listener) {
+    register(context, Constants.BASE_URL, appIdentifier, listener);
   }
 
   /**
@@ -105,9 +105,9 @@ public class CrashManager {
    * @param appIdentifier App ID of your app on HockeyApp.
    * @param listener Implement for callback functions.
    */
-  public static void register(WeakReference<Context> weakContext, String urlString, String appIdentifier, CrashManagerListener listener) {
-    initialize(weakContext, urlString, appIdentifier, listener, false);
-    execute(weakContext, listener);
+  public static void register(Context context, String urlString, String appIdentifier, CrashManagerListener listener) {
+    initialize(context, urlString, appIdentifier, listener, false);
+    execute(context, listener);
   }
 
   /**
@@ -120,8 +120,8 @@ public class CrashManager {
    * @param appIdentifier App ID of your app on HockeyApp.
    * @param listener Implement for callback functions.
    */
-  public static void initialize(WeakReference<Context> weakContext, String appIdentifier, CrashManagerListener listener) {
-    initialize(weakContext, Constants.BASE_URL, appIdentifier, listener, true);
+  public static void initialize(Context context, String appIdentifier, CrashManagerListener listener) {
+    initialize(context, Constants.BASE_URL, appIdentifier, listener, true);
   }
 
   /**
@@ -135,8 +135,8 @@ public class CrashManager {
    * @param appIdentifier App ID of your app on HockeyApp.
    * @param listener Implement for callback functions.
    */
-  public static void initialize(WeakReference<Context> weakContext, String urlString, String appIdentifier, CrashManagerListener listener) {
-    initialize(weakContext, urlString, appIdentifier, listener, true);
+  public static void initialize(Context context, String urlString, String appIdentifier, CrashManagerListener listener) {
+    initialize(context, urlString, appIdentifier, listener, true);
   }
 
   /**
@@ -146,8 +146,9 @@ public class CrashManager {
    * @param context The context to use. Usually your Activity object.
    * @param listener Implement for callback functions.
    */
-  public static void execute(WeakReference<Context> weakContext, CrashManagerListener listener) {
+  public static void execute(Context context, CrashManagerListener listener) {
     Boolean ignoreDefaultHandler = (listener != null) && (listener.ignoreDefaultHandler());
+    WeakReference<Context> weakContext = new WeakReference<Context>(context);
     
     int foundOrSend = hasStackTraces(weakContext);
     if (foundOrSend == 1) {
@@ -314,26 +315,21 @@ public class CrashManager {
    * additional parameter to decide whether to register the exception handler
    * at the end or not.
    */
-  private static void initialize(WeakReference<Context> weakContext, String urlString, String appIdentifier, CrashManagerListener listener, 
-      boolean registerHandler) {
-    
-    Context context = null;
-    if (weakContext != null) {
-      context = weakContext.get();
-      if (context != null) {
-        CrashManager.urlString = urlString;
-        CrashManager.identifier = appIdentifier;
-    
-        Constants.loadFromContext(context);
-        
-        if (CrashManager.identifier == null) {
-          CrashManager.identifier = Constants.APP_PACKAGE;
-        }
-        
-        if (registerHandler) {
-          Boolean ignoreDefaultHandler = (listener != null) && (listener.ignoreDefaultHandler());
-          registerHandler(weakContext, listener, ignoreDefaultHandler);
-        }
+  private static void initialize(Context context, String urlString, String appIdentifier, CrashManagerListener listener, boolean registerHandler) {
+    if (context != null) {
+      CrashManager.urlString = urlString;
+      CrashManager.identifier = appIdentifier;
+  
+      Constants.loadFromContext(context);
+      
+      if (CrashManager.identifier == null) {
+        CrashManager.identifier = Constants.APP_PACKAGE;
+      }
+      
+      if (registerHandler) {
+        Boolean ignoreDefaultHandler = (listener != null) && (listener.ignoreDefaultHandler());
+        WeakReference<Context> weakContext = new WeakReference<Context>(context); 
+        registerHandler(weakContext, listener, ignoreDefaultHandler);
       }
     }
   }

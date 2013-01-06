@@ -1,17 +1,13 @@
 package net.hockeyapp.android;
 
-import java.lang.ref.WeakReference;
-
 import net.hockeyapp.android.utils.Util;
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
 
 /**
  * <h4>Description</h4>
  * 
- * The FeedbackManager displays the Feedback Activity
+ * The FeedbackManager displays the feedback activity.
  * 
  * <h4>License</h4>
  * 
@@ -53,39 +49,35 @@ public class FeedbackManager {
   /**
    * Registers new Feedback manager.
    * 
-   * @param activity Parent activity.
+   * @param context The context to use. Usually your Activity object.
    * @param appIdentifier App ID of your app on HockeyApp.
    */
-  public static void register(WeakReference<Context> weakContext, String appIdentifier) {
-    register(weakContext, appIdentifier, null);
+  public static void register(Context context, String appIdentifier) {
+    register(context, appIdentifier, null);
   }
   
   /**
    * Registers new Feedback manager.
    * 
-   * @param activity Parent activity.
+   * @param context The context to use. Usually your Activity object.
    * @param appIdentifier App ID of your app on HockeyApp.
    * @param listener Implement for callback functions.
    */
-  public static void register(WeakReference<Context> weakContext, String appIdentifier, FeedbackManagerListener listener) {
-    register(weakContext, Constants.BASE_URL, appIdentifier, listener);
+  public static void register(Context context, String appIdentifier, FeedbackManagerListener listener) {
+    register(context, Constants.BASE_URL, appIdentifier, listener);
   }
   
   /**
    * Registers new Feedback manager.
    *
-   * @param activity Parent activity.
+   * @param context The context to use. Usually your Activity object.
    * @param urlString URL of the HockeyApp server.
    * @param appIdentifier App ID of your app on HockeyApp.
    * @param listener Implement for callback functions.
    */
-  public static void register(WeakReference<Context> weakContext, String urlString, String appIdentifier, FeedbackManagerListener listener) {
+  public static void register(Context context, String urlString, String appIdentifier, FeedbackManagerListener listener) {
     lastListener = listener;
     FeedbackManager.appIdentifier = appIdentifier;
-    
-    if (fragmentsSupported()) {
-      return;
-    }
   }
 
   /**
@@ -125,37 +117,6 @@ public class FeedbackManager {
     builder.append(String.format(Util.URL_FEEDBACK, appIdentifier));
       
     return builder.toString();
-  }
-
-  /**
-   * Returns true if the Fragment API is supported (should be on Android 3.0+).
-   */
-  @SuppressLint("NewApi")
-  public static Boolean fragmentsSupported() {
-    try {
-      return (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) && 
-          (android.app.Fragment.class != null);
-    } catch (NoClassDefFoundError e) {
-      return false;
-    }
-  }
-
-  /**
-   * Returns true if the app runs on large or very large screens (i.e. tablets). 
-   */
-  public static Boolean runsOnTablet(WeakReference<Context> weakContext) {
-    if (weakContext != null) {
-      Context context = weakContext.get();
-      if (context != null) {
-        Configuration configuration = context.getResources().getConfiguration();
-        
-        return (((configuration.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.
-            SCREENLAYOUT_SIZE_LARGE) || ((configuration.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == 
-            Configuration.SCREENLAYOUT_SIZE_XLARGE));       
-      }
-    }
-    
-    return false;
   }
 
   /**
