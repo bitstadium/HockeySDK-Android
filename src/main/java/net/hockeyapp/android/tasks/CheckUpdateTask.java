@@ -11,6 +11,7 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.util.Locale;
 
 import net.hockeyapp.android.Constants;
 import net.hockeyapp.android.Strings;
@@ -267,6 +268,7 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
     builder.append("&app_version=" + encodeParam(Constants.APP_VERSION));
     builder.append("&sdk=" + encodeParam(Constants.SDK_NAME));
     builder.append("&sdk_version=" + encodeParam(Constants.SDK_VERSION));
+    builder.append("&lang=" + encodeParam(Locale.getDefault().getLanguage()));
     builder.append("&usage_time=" + usageTime);
     
     return builder.toString();
