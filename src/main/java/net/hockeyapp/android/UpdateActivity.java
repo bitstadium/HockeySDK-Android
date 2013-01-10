@@ -259,10 +259,9 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
   public void onClick(View v) {
     if (!isWriteExternalStorageSet(context)) {
       error = new ErrorObject();
-      error.setMessage("Write external storage permission not set");
+      error.setMessage("The permission to access the external storage permission is not set. Please contact the developer.");
       
       runOnUiThread(new Runnable() {
-        
         @SuppressWarnings("deprecation")
         @Override
         public void run() {
@@ -275,10 +274,9 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
     
     if (!isUnknownSourcesChecked()) {
       error = new ErrorObject();
-      error.setMessage("Unknown sources is not checked in Settings");
+      error.setMessage("The installation from unknown sources is not enabled. Please check the device settings.");
       
       runOnUiThread(new Runnable() {
-        
         @SuppressWarnings("deprecation")
         @Override
         public void run() {
@@ -321,9 +319,10 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
         if (error != null) {
           /** If the ErrorObject is not null, display the ErrorObject message */
           messageDialogError.setMessage(error.getMessage());
-        } else {
+        } 
+        else {
           /** If the ErrorObject is null, display the general error message */
-          messageDialogError.setMessage("An error has occured");
+          messageDialogError.setMessage("An unknown error has occured.");
         }
   
         break;
