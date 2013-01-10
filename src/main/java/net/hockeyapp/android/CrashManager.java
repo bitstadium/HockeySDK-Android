@@ -399,8 +399,11 @@ public class CrashManager {
         Log.d(Constants.TAG, "Current handler class = " + currentHandler.getClass().getName());
       }
   
-      // Register if not already registered
-      if (!(currentHandler instanceof ExceptionHandler)) {
+      // Update listener if already registered, otherwise set new handler 
+      if (currentHandler instanceof ExceptionHandler) {
+        ((ExceptionHandler)currentHandler).setListener(listener);
+      }
+      else {
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(currentHandler, listener, ignoreDefaultHandler));
       }
     }

@@ -63,6 +63,10 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
     this.ignoreDefaultHandler = ignoreDefaultHandler;
     this.listener = listener;
   }
+
+  public void setListener(CrashManagerListener listener) {
+    this.listener = listener;
+  }
   
   public static void saveException(Throwable exception, CrashManagerListener listener) {
     final Date now = new Date();
