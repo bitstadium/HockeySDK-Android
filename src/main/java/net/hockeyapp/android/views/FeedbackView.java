@@ -255,7 +255,7 @@ public class FeedbackView extends LinearLayout {
 
     editText.setLayoutParams(params);
     editText.setImeOptions(EditorInfo.IME_ACTION_NEXT);
-    editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
+    editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
     editText.setSingleLine(true);
     editText.setTextColor(Color.GRAY);
     editText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
@@ -297,7 +297,7 @@ public class FeedbackView extends LinearLayout {
 
     editText.setLayoutParams(params);
     editText.setImeOptions(EditorInfo.IME_ACTION_NEXT);
-    editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_SUBJECT);
+    editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_SUBJECT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
     editText.setSingleLine(true);
     editText.setTextColor(Color.GRAY);
     editText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
@@ -320,7 +320,7 @@ public class FeedbackView extends LinearLayout {
     
     editText.setLayoutParams(params);
     editText.setImeOptions(EditorInfo.IME_ACTION_NEXT);
-    editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
+    editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
     editText.setSingleLine(false);
     editText.setTextColor(Color.GRAY);
     editText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
