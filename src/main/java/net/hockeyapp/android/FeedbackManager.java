@@ -113,10 +113,7 @@ public class FeedbackManager {
   private static String getURLString(Context context) {
     Constants.loadFromContext(context);
     
-    StringBuilder builder = new StringBuilder();
-    builder.append(String.format(Util.URL_FEEDBACK, appIdentifier));
-      
-    return builder.toString();
+    return String.format(Util.URL_FEEDBACK, appIdentifier);
   }
 
   /**
