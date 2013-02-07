@@ -186,7 +186,7 @@ public class SendFeedbackTask extends AsyncTask<Void, Void, String> {
       nameValuePairs.add(new BasicNameValuePair("subject", subject));
       nameValuePairs.add(new BasicNameValuePair("text", text));
       
-      form = new UrlEncodedFormEntity(nameValuePairs);
+      form = new UrlEncodedFormEntity(nameValuePairs, "UTF-8");
       form.setContentEncoding(HTTP.UTF_8);
       
       HttpPost httpPost = null;
