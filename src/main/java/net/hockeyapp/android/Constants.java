@@ -1,5 +1,7 @@
 package net.hockeyapp.android;
 
+import java.io.File;
+
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -97,7 +99,7 @@ public class Constants {
 
   /**
    * Initializes constants from the given context. The context is used to set 
-   * the package name, version code, and the files dir.  
+   * the package name, version code, and the files path.
    *
    * @param context The context to use. Usually your Activity object.
    */
@@ -105,17 +107,53 @@ public class Constants {
     Constants.ANDROID_VERSION = android.os.Build.VERSION.RELEASE;
     Constants.PHONE_MODEL = android.os.Build.MODEL;
     Constants.PHONE_MANUFACTURER = android.os.Build.MANUFACTURER;
-    Constants.FILES_PATH = context.getFilesDir().getAbsolutePath();
 
-    PackageManager packageManager = context.getPackageManager();
-    try {
-      PackageInfo packageInfo = packageManager.getPackageInfo(context.getPackageName(), 0);
-      Constants.APP_VERSION = "" + packageInfo.versionCode;
-      Constants.APP_PACKAGE = packageInfo.packageName;
-    } 
-    catch (Exception e) {
-      Log.e(TAG, "Exception thrown when accessing the package info:");
-      e.printStackTrace();
+    loadFilesPath(context);
+    loadPackageDate(context);
+  }
+
+  /**
+   * Helper method to set the files path. If an exception occurs, the files 
+   * path will be null! 
+   * 
+   * @param context The context to use. Usually your Activity object.
+   */
+  private static void loadFilesPath(Context context) {
+    if (context != null) {
+      try {
+        File file = context.getFilesDir();
+
+        // The file shouldn't be null, but apparently it still can happen, see
+        // http://code.google.com/p/android/issues/detail?id=8886
+        if (file != null) {
+          Constants.FILES_PATH = file.getAbsolutePath();
+        }
+      } 
+      catch (Exception e) {
+        Log.e(TAG, "Exception thrown when accessing the files dir:");
+        e.printStackTrace();
+      }
+    }
+  }
+  
+  /**
+   * Helper method to set the package name and version code. If an exception 
+   * occurs, these values will be null! 
+   * 
+   * @param context The context to use. Usually your Activity object.
+   */
+  private static void loadPackageDate(Context context) {
+    if (context != null) {
+      try {
+        PackageManager packageManager = context.getPackageManager();
+        PackageInfo packageInfo = packageManager.getPackageInfo(context.getPackageName(), 0);
+        Constants.APP_VERSION = "" + packageInfo.versionCode;
+        Constants.APP_PACKAGE = packageInfo.packageName;
+      } 
+      catch (Exception e) {
+        Log.e(TAG, "Exception thrown when accessing the package info:");
+        e.printStackTrace();
+      }
     }
   }
 }

@@ -184,7 +184,7 @@ public class CrashManager {
     String[] filenames = searchForStackTraces();
     List<String> confirmedFilenames = null;
     int result = 0;
-    if (filenames.length > 0) {
+    if ((filenames != null) && (filenames.length > 0)) {
       try {
         Context context = null;
         if (weakContext != null) {
@@ -225,7 +225,6 @@ public class CrashManager {
    * @param listener Implement for callback functions.
    */
   public static void submitStackTraces(WeakReference<Context> weakContext, CrashManagerListener listener) {
-    Log.d(Constants.TAG, "Looking for exceptions in: " + Constants.FILES_PATH);
     String[] list = searchForStackTraces();
     Boolean successful = false;
 
@@ -284,7 +283,6 @@ public class CrashManager {
    * @param context The context to use. Usually your Activity object.
    */
   public static void deleteStackTraces(WeakReference<Context> weakContext) {
-    Log.d(Constants.TAG, "Looking for exceptions in: " + Constants.FILES_PATH);
     String[] list = searchForStackTraces();
 
     if ((list != null) && (list.length > 0)) {
@@ -523,19 +521,27 @@ public class CrashManager {
    * Searches .stacktrace files and returns then as array. 
    */
   private static String[] searchForStackTraces() {
-    // Try to create the files folder if it doesn't exist
-    File dir = new File(Constants.FILES_PATH + "/");
-    boolean created = dir.mkdir();
-    if (!created && !dir.exists()) {
-      return new String[0];
+    if (Constants.FILES_PATH != null) {
+      Log.d(Constants.TAG, "Looking for exceptions in: " + Constants.FILES_PATH);
+  
+      // Try to create the files folder if it doesn't exist
+      File dir = new File(Constants.FILES_PATH + "/");
+      boolean created = dir.mkdir();
+      if (!created && !dir.exists()) {
+        return new String[0];
+      }
+  
+      // Filter for ".stacktrace" files
+      FilenameFilter filter = new FilenameFilter() { 
+        public boolean accept(File dir, String name) {
+          return name.endsWith(".stacktrace"); 
+        } 
+      }; 
+      return dir.list(filter);
     }
-
-    // Filter for ".stacktrace" files
-    FilenameFilter filter = new FilenameFilter() { 
-      public boolean accept(File dir, String name) {
-        return name.endsWith(".stacktrace"); 
-      } 
-    }; 
-    return dir.list(filter); 
+    else {
+      Log.d(Constants.TAG, "Can't search for exception as file path is null.");
+      return null;
+    }
   }
 }

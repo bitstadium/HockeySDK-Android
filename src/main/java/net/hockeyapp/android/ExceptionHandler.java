@@ -99,7 +99,6 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
         writeValueToFile(limitedString(listener.getContact()), filename + ".contact");
         writeValueToFile(listener.getDescription(), filename + ".description");
       }
-      
     } 
     catch (Exception another) {
       Log.e(Constants.TAG, "Error saving exception stacktrace!\n", another);
@@ -107,14 +106,21 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
   }
   
   public void uncaughtException(Thread thread, Throwable exception) {
-    saveException(exception, listener);
-
-    if (!ignoreDefaultHandler) {
+    if (Constants.FILES_PATH == null) {
+      // If the files path is null, the exception can't be stored
+      // Always call the default handler instead
       defaultExceptionHandler.uncaughtException(thread, exception);
     }
     else {
-      android.os.Process.killProcess(android.os.Process.myPid());
-      System.exit(10);
+      saveException(exception, listener);
+
+      if (!ignoreDefaultHandler) {
+        defaultExceptionHandler.uncaughtException(thread, exception);
+      }
+      else {
+        android.os.Process.killProcess(android.os.Process.myPid());
+        System.exit(10);
+      }
     }
   }
 
