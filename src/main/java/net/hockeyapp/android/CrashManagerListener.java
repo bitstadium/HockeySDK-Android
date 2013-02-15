@@ -44,6 +44,15 @@ public abstract class CrashManagerListener extends StringListener {
   }
 
   /**
+   * Return false to remove the device data (OS version, manufacturer, model)
+   * from the crash log, e.g. if some of your testers are using unreleased
+   * devices.
+   */
+  public Boolean includeDeviceData() {
+    return true;
+  }
+
+  /**
    * Return contact data or similar; note that this has privacy implications,
    * so you might want to return nil for release builds! The string will be
    * limited to 255 characters.

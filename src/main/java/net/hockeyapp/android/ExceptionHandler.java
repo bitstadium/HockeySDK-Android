@@ -85,9 +85,11 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
       BufferedWriter write = new BufferedWriter(new FileWriter(path));
       write.write("Package: " + Constants.APP_PACKAGE + "\n");
       write.write("Version: " + Constants.APP_VERSION + "\n");
-      write.write("Android: " + Constants.ANDROID_VERSION + "\n");
-      write.write("Manufacturer: " + Constants.PHONE_MANUFACTURER + "\n");
-      write.write("Model: " + Constants.PHONE_MODEL + "\n");
+      if ((listener == null) || (listener.includeDeviceData())) {
+        write.write("Android: " + Constants.ANDROID_VERSION + "\n");
+        write.write("Manufacturer: " + Constants.PHONE_MANUFACTURER + "\n");
+        write.write("Model: " + Constants.PHONE_MODEL + "\n");
+      }
       write.write("Date: " + now + "\n");
       write.write("\n");
       write.write(result.toString());
