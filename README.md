@@ -74,6 +74,7 @@ The reason for the two different entry points is that the update check causes ne
 
 5. If it still does not work, please [contact us](http://support.hockeyapp.net/discussion/new).
 
+<a id="nightly"></a>
 ## Nightly Builds
 
 You can download nightly builds of the develop branch from [cisimple.com](https://www.cisimple.com/jobs/y85047ekwdj8jdjry). Builds are triggered at midnight (UTC) if we push commits to our repository in the past 24 hours.
