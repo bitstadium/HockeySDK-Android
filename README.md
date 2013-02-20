@@ -76,6 +76,6 @@ The reason for the two different entry points is that the update check causes ne
 
 ## <a name="nightly">Nightly Builds</a>
 
-You can download nightly builds of the develop branch from [cisimple.com](https://www.cisimple.com/jobs/y85047ekwdj8jdjry). Builds are triggered at midnight (UTC) if we push commits to our repository in the past 24 hours.
+You can download nightly builds of the develop branch from [cisimple.com](https://www.cisimple.com/jobs/y85047ekwdj8jdjry). Builds are triggered at midnight (UTC) if we had pushed commits to our repository in the past 24 hours.
 
 <a href="https://www.cisimple.com/jobs/y85047ekwdj8jdjry"><img src='https://www.cisimple.com/jobs/y85047ekwdj8jdjry/build_status.png'/></a>
