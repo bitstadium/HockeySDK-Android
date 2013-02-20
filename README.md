@@ -8,7 +8,7 @@ The SDK runs on devices with Android 2.1 or higher, but you need Android SDK 3.0
 
 ### Download the Library
 
-* Download the latest release from [here](https://github.com/bitstadium/HockeySDK-Android/downloads).
+* Download the latest release from [here](https://github.com/bitstadium/HockeySDK-Android/downloads). We also offer [nightly builds](#nightly) from our develop branch.
 * Unzip the file.
 * Copy the file libs/HockeySDK.jar to the libs folder of your Android project.
 * If you use ADT 16 or older, then add the .jar file to your classpath. With ADT 17 or newer, this is done automatically.
@@ -73,3 +73,9 @@ The reason for the two different entry points is that the update check causes ne
 3. If your app crashes and you start it again, is the dialog shown which asks the user to send the crash report? If not, please crash your app again, then connect the debugger and set a break point in CrashManager.java, method [register](https://github.com/TheRealKerni/HockeyKit/blob/develop/client/Android/src/net/hockeyapp/android/CrashManager.java#L27) to see why the dialog is not shown.
 
 5. If it still does not work, please [contact us](http://support.hockeyapp.net/discussion/new).
+
+## Nightly Builds
+
+You can download nightly builds of the develop branch from [cisimple.com](https://www.cisimple.com/jobs/y85047ekwdj8jdjry). Builds are triggered at midnight (UTC) if we push commits to our repository in the past 24 hours.
+
+<a href="https://www.cisimple.com/jobs/y85047ekwdj8jdjry"><img src='https://www.cisimple.com/jobs/y85047ekwdj8jdjry/build_status.png'/></a>
