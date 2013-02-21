@@ -15,7 +15,6 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
@@ -239,14 +238,21 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
    * @return
    */
   private boolean isUnknownSourcesChecked() {
-    Uri settingsUri = Settings.Secure.CONTENT_URI;
     String[] projection = new String[] {Settings.System.VALUE};
     String selection = Settings.Secure.NAME + " = ? AND " + Settings.Secure.VALUE + " = ?";
-    String[] selectionArgs = {Settings.Secure.INSTALL_NON_MARKET_APPS, String.valueOf(1)};
-    
-    Cursor query = getContentResolver().query(settingsUri, projection, selection, selectionArgs, null);
+
+    Cursor query = null;
+    if (android.os.Build.VERSION.SDK_INT >= 17) { 
+      String[] selectionArgs = {Settings.Global.INSTALL_NON_MARKET_APPS, String.valueOf(1)};
+      query = getContentResolver().query(Settings.Global.CONTENT_URI, projection, selection, selectionArgs, null);
+    }
+    else {
+      @SuppressWarnings("deprecation")
+      String[] selectionArgs = {Settings.Secure.INSTALL_NON_MARKET_APPS, String.valueOf(1)};
+      query = getContentResolver().query(Settings.Secure.CONTENT_URI, projection, selection, selectionArgs, null);
+    }
     if (query.getCount() == 1) {
-        return true;
+      return true;
     }
     
     return false;
