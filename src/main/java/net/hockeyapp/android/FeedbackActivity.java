@@ -134,21 +134,60 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
       sendFetchFeedback(url, null, null, null, null, token, feedbackHandler, true);
     }
   }
+  
+  private void resetFeedbackView() {
+    runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+        PrefsUtil.getInstance().saveFeedbackTokenToPrefs(FeedbackActivity.this, null);
+        configureFeedbackView(false);
+      }
+    });
+  }
   	
   /**
    * Initializes the Feedback response {@link Handler}
    */
   private void initFeedbackHandler() {
     feedbackHandler = new Handler() {
-			
       @Override
       public void handleMessage(Message msg) {
+        boolean success = false;
+        error = new ErrorObject();
+        
         if (msg != null && msg.getData() != null) {
           Bundle bundle = msg.getData();
-          String feedbackResponseString = bundle.getString("feedback_response");
-          if (feedbackResponseString != null) {
-            startParseFeedbackTask(feedbackResponseString);
+          String responseString = bundle.getString("feedback_response");
+          String statusCode = bundle.getString("feedback_status");
+          String requestType = bundle.getString("request_type");
+          if ((requestType.equals("send") && ((responseString == null) || (Integer.parseInt(statusCode) != 201)))) {
+            // Send feedback went wrong if response is empty or status code != 201
+            error.setMessage("Message couldn't be posted. Please check your input values and try again.");
           }
+          else if ((requestType.equals("fetch") && ((Integer.parseInt(statusCode) == 404) || (Integer.parseInt(statusCode) == 422)))) {
+            // Fetch feedback went wrong if status code is 404 or 422
+            resetFeedbackView();
+            success = true;
+          }
+          else {
+            startParseFeedbackTask(responseString);
+            success = true;
+          }
+        }
+        else {
+          error.setMessage("Message couldn't be posted. Please check your input values and try again.");
+        }
+
+        if (!success) {
+          runOnUiThread(new Runnable() {
+            
+            @SuppressWarnings("deprecation")
+            @Override
+            public void run() {
+              enableDisableSendFeedbackButton(true);
+              showDialog(DIALOG_ERROR_ID);
+            }
+          });
         }
       }
     };
@@ -159,10 +198,11 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
    */
   private void initParseFeedbackHandler() {
     parseFeedbackHandler = new Handler() {
-  			
       @Override
       public void handleMessage(Message msg) {
         boolean success = false;
+        error = new ErrorObject();
+        
         if (msg != null && msg.getData() != null) {
           Bundle bundle = msg.getData();
           FeedbackResponse feedbackResponse = (FeedbackResponse) bundle.getSerializable("parse_feedback_response");
@@ -181,17 +221,9 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
             } 
             else {
               success = false;
-              error = new ErrorObject();
-              error.setMessage("");
             }
           } 
-          else {
-            success = false;
-          }
         } 
-        else {
-          success = false;
-        }
   				
         /** Something went wrong, so display an error dialog */
         if (!success) {

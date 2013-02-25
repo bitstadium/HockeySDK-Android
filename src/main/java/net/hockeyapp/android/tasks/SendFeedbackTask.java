@@ -3,6 +3,7 @@ package net.hockeyapp.android.tasks;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.http.HttpEntity;
@@ -65,7 +66,7 @@ import android.os.Message;
  *
  * @author Bogdan Nistor
  **/
-public class SendFeedbackTask extends AsyncTask<Void, Void, String> {
+public class SendFeedbackTask extends AsyncTask<Void, Void, HashMap<String, String>> {
   private Context context;
   private Handler handler;
   private String urlString;
@@ -133,13 +134,14 @@ public class SendFeedbackTask extends AsyncTask<Void, Void, String> {
   }
   
   @Override
-  protected String doInBackground(Void... args) {
+  protected HashMap<String, String> doInBackground(Void... args) {
     HttpClient httpclient = ConnectionManager.getInstance().getHttpClient();  
 
     if (isFetchMessages && token != null) {
       /** If we are fetching messages then do a GET */
       return doGet(httpclient);
-    } else if (!isFetchMessages) {
+    } 
+    else if (!isFetchMessages) {
       /** 
        * If we are sending a feedback do POST, and if we are sending a feedback 
        * to an existing discussion do PUT
@@ -151,11 +153,12 @@ public class SendFeedbackTask extends AsyncTask<Void, Void, String> {
   }
 
   @Override
-  protected void onPostExecute(String result) {
+  protected void onPostExecute(HashMap<String, String> result) {
     if (progressDialog != null) {
       try {
         progressDialog.dismiss();
-      } catch (Exception e) {
+      } 
+      catch (Exception e) {
         e.printStackTrace();
       }
     }
@@ -165,7 +168,9 @@ public class SendFeedbackTask extends AsyncTask<Void, Void, String> {
       Message msg = new Message();
       Bundle bundle = new Bundle();
       
-      bundle.putString("feedback_response", result);
+      bundle.putString("request_type", (String)result.get("type"));
+      bundle.putString("feedback_response", (String)result.get("reponse"));
+      bundle.putString("feedback_status", (String)result.get("status"));
       msg.setData(bundle);
       
       handler.sendMessage(msg);
@@ -177,7 +182,7 @@ public class SendFeedbackTask extends AsyncTask<Void, Void, String> {
    * @param httpClient
    * @return
    */
-  private String doPostPut(HttpClient httpClient) {
+  private HashMap<String, String> doPostPut(HttpClient httpClient) {
     UrlEncodedFormEntity form;
     try {
       List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
@@ -194,7 +199,8 @@ public class SendFeedbackTask extends AsyncTask<Void, Void, String> {
       if (token != null) {
         urlString += token + "/";
         httpPut = new HttpPut(urlString);
-      } else {
+      } 
+      else {
         httpPost = new HttpPost(urlString);
       }
       
@@ -202,24 +208,32 @@ public class SendFeedbackTask extends AsyncTask<Void, Void, String> {
       if (httpPut != null) {
         httpPut.setEntity(form);
         response = (HttpResponse) httpClient.execute(httpPut);
-      } else if (httpPost != null) {
+      } 
+      else if (httpPost != null) {
         httpPost.setEntity(form);
         response = (HttpResponse) httpClient.execute(httpPost);
       }
       
       if (response != null) {
         HttpEntity resEntity = response.getEntity();  
-        String resp = EntityUtils.toString(resEntity);
         
-        return resp;
+        HashMap<String, String> result = new HashMap<String, String>();
+        result.put("type", "send");
+        result.put("response", EntityUtils.toString(resEntity));
+        result.put("status", "" + response.getStatusLine().getStatusCode());
+        
+        return result;
       }
       
       return null;
-    } catch (UnsupportedEncodingException e) {
+    } 
+    catch (UnsupportedEncodingException e) {
       e.printStackTrace();
-    } catch (ClientProtocolException e) {
+    } 
+    catch (ClientProtocolException e) {
       e.printStackTrace();
-    } catch (IOException e) {
+    } 
+    catch (IOException e) {
       e.printStackTrace();
     }
     
@@ -231,7 +245,7 @@ public class SendFeedbackTask extends AsyncTask<Void, Void, String> {
    * @param httpClient
    * @return
    */
-  private String doGet(HttpClient httpClient) {
+  private HashMap<String, String> doGet(HttpClient httpClient) {
     StringBuilder sb = new StringBuilder();
     sb.append(urlString + Util.encodeParam(token));
     
@@ -241,14 +255,21 @@ public class SendFeedbackTask extends AsyncTask<Void, Void, String> {
     try {
       HttpResponse response = (HttpResponse) httpClient.execute(httpGet);
       HttpEntity responseEntity = response.getEntity();
-      String message = EntityUtils.toString(responseEntity);
       
-      return message;
-    } catch (ClientProtocolException e) {
+      HashMap<String, String> result = new HashMap<String, String>();
+      result.put("type", "fetch");
+      result.put("response", EntityUtils.toString(responseEntity));
+      result.put("status", "" + response.getStatusLine().getStatusCode());
+      
+      return result;
+    } 
+    catch (ClientProtocolException e) {
       e.printStackTrace();
-    } catch (IllegalStateException e) {
+    } 
+    catch (IllegalStateException e) {
       e.printStackTrace();
-    } catch (IOException e) {
+    } 
+    catch (IOException e) {
       e.printStackTrace();
     }
     
