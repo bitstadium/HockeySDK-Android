@@ -9,9 +9,6 @@ import java.net.URLEncoder;
  *
  */
 public class Util {
-  
-  public static final String URL_FEEDBACK = "https://rink.hockeyapp.net/api/2/apps/%s/feedback/";
-
   public static final String PREFS_FEEDBACK_TOKEN = "net.hockeyapp.android.prefs_feedback_token";
   public static final String PREFS_KEY_FEEDBACK_TOKEN = "net.hockeyapp.android.prefs_key_feedback_token";
 

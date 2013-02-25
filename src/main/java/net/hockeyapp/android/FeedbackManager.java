@@ -1,6 +1,5 @@
 package net.hockeyapp.android;
 
-import net.hockeyapp.android.utils.Util;
 import android.content.Context;
 import android.content.Intent;
 
@@ -39,7 +38,15 @@ import android.content.Intent;
  * @author Bogdan Nistor
  **/
 public class FeedbackManager {
-  private static String appIdentifier;
+  /**
+   * App identifier from HockeyApp.
+   */
+  private static String identifier = null;
+  
+  /**
+   * URL of HockeyApp service.
+   */
+  private static String urlString = null;
   
   /**
    * Last listener instance.
@@ -76,8 +83,13 @@ public class FeedbackManager {
    * @param listener Implement for callback functions.
    */
   public static void register(Context context, String urlString, String appIdentifier, FeedbackManagerListener listener) {
-    lastListener = listener;
-    FeedbackManager.appIdentifier = appIdentifier;
+    if (context != null) {
+      FeedbackManager.identifier = appIdentifier;
+      FeedbackManager.urlString = urlString;
+      FeedbackManager.lastListener = listener;
+    
+      Constants.loadFromContext(context);
+    }
   }
 
   /**
@@ -111,9 +123,7 @@ public class FeedbackManager {
    * @return
    */
   private static String getURLString(Context context) {
-    Constants.loadFromContext(context);
-    
-    return String.format(Util.URL_FEEDBACK, appIdentifier);
+    return urlString + "api/2/apps/" + identifier + "/feedback/";      
   }
 
   /**
