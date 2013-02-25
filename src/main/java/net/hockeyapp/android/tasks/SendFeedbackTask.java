@@ -169,7 +169,7 @@ public class SendFeedbackTask extends AsyncTask<Void, Void, HashMap<String, Stri
       Bundle bundle = new Bundle();
       
       bundle.putString("request_type", (String)result.get("type"));
-      bundle.putString("feedback_response", (String)result.get("reponse"));
+      bundle.putString("feedback_response", (String)result.get("response"));
       bundle.putString("feedback_status", (String)result.get("status"));
       msg.setData(bundle);
       
