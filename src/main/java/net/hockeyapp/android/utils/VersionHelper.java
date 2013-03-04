@@ -76,7 +76,9 @@ public class VersionHelper {
         sortedVersions.add(entry);
       }
     }
-    catch (JSONException e) {
+    catch (JSONException je) {
+    }
+    catch (NullPointerException ne) {
     }
   }
 
