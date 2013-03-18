@@ -146,16 +146,7 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
   }
 
   protected int getVersionCode() {
-    if (activity != null) {
-      try {
-        return activity.getPackageManager().getPackageInfo(activity.getPackageName(), PackageManager.GET_META_DATA).versionCode;
-      }
-      catch (NameNotFoundException e) {
-        return 0;
-      }
-    }
-    
-    return 0;
+    return Integer.parseInt(Constants.APP_VERSION);
   }
   
   @Override

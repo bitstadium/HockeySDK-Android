@@ -1,5 +1,6 @@
 package net.hockeyapp.android.utils;
 
+import net.hockeyapp.android.Constants;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -33,18 +34,7 @@ public class DeviceUtils {
    * @return The version code as integer.
    */
   public int getCurrentVersionCode(Context context) {
-    if (context == null) {
-      return -1;
-    }
-      
-    try {
-      return context.getPackageManager().getPackageInfo(context.getPackageName(), 
-          PackageManager.GET_META_DATA).versionCode;
-    } catch (NameNotFoundException e) {
-      e.printStackTrace();
-    }
-    
-    return -1;
+    return Integer.parseInt(Constants.APP_VERSION);
   }
 
   /**

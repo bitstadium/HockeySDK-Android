@@ -3,8 +3,10 @@ package net.hockeyapp.android;
 import java.io.File;
 
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.util.Log;
 
 /**
@@ -109,7 +111,7 @@ public class Constants {
     Constants.PHONE_MANUFACTURER = android.os.Build.MANUFACTURER;
 
     loadFilesPath(context);
-    loadPackageDate(context);
+    loadPackageData(context);
   }
 
   /**
@@ -142,18 +144,39 @@ public class Constants {
    * 
    * @param context The context to use. Usually your Activity object.
    */
-  private static void loadPackageDate(Context context) {
+  private static void loadPackageData(Context context) {
     if (context != null) {
       try {
         PackageManager packageManager = context.getPackageManager();
         PackageInfo packageInfo = packageManager.getPackageInfo(context.getPackageName(), 0);
-        Constants.APP_VERSION = "" + packageInfo.versionCode;
         Constants.APP_PACKAGE = packageInfo.packageName;
+        Constants.APP_VERSION = "" + packageInfo.versionCode;
+        
+        int buildNumber = loadBuildNumber(context, packageManager);
+        if ((buildNumber != 0) && (buildNumber > packageInfo.versionCode)) {
+          Constants.APP_VERSION = "" + buildNumber;
+        }
       } 
       catch (Exception e) {
         Log.e(TAG, "Exception thrown when accessing the package info:");
         e.printStackTrace();
       }
     }
+  }
+
+  private static int loadBuildNumber(Context context, PackageManager packageManager) {
+    try {
+      ApplicationInfo appInfo = packageManager.getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
+      Bundle metaData = appInfo.metaData;
+      if (metaData != null) {
+        return metaData.getInt("buildNumber", 0);
+      }
+    } 
+    catch (Exception e) {
+      Log.e(TAG, "Exception thrown when accessing the application info:");
+      e.printStackTrace();
+    }
+    
+    return 0;
   }
 }
