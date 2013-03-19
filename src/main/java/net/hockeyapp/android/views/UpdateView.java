@@ -171,6 +171,7 @@ public class UpdateView extends RelativeLayout {
     headerView.addView(textView);
   }
 
+  @SuppressWarnings("deprecation")
   private void loadUpdateButton(RelativeLayout headerView, Context context) {
     Button button = new Button(context);
     button.setId(UPDATE_BUTTON_ID);
@@ -199,6 +200,7 @@ public class UpdateView extends RelativeLayout {
     return drawable;
   }
 
+  @SuppressWarnings("deprecation")
   private void loadShadow(RelativeLayout headerView, Context context) {
     int height = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float)3.0, getResources().getDisplayMetrics());
     LayoutParams params = null;

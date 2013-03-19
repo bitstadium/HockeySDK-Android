@@ -353,6 +353,7 @@ public class FeedbackView extends LinearLayout {
     wrapperLayoutFeedbackAndMessages.addView(textView);
   }
   
+  @SuppressWarnings("deprecation")
   private void loadSendFeedbackButton(Context context) {
     Button button = new Button(context);
     button.setId(SEND_FEEDBACK_BUTTON_ID);
@@ -376,6 +377,7 @@ public class FeedbackView extends LinearLayout {
     wrapperLayoutFeedback.addView(button);
   }
 
+  @SuppressWarnings("deprecation")
   private void loadAddResponseButton(Context context) {
     Button button = new Button(context);
     button.setId(ADD_RESPONSE_BUTTON_ID);
@@ -401,6 +403,7 @@ public class FeedbackView extends LinearLayout {
     wrapperLayoutButtons.addView(button);
   }
   
+  @SuppressWarnings("deprecation")
   private void loadRefreshButton(Context context) {
     Button button = new Button(context);
     button.setId(REFRESH_BUTTON_ID);

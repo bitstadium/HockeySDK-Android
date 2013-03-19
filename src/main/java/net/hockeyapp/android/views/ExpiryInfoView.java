@@ -62,6 +62,7 @@ public class ExpiryInfoView extends RelativeLayout {
     setLayoutParams(params);
   }
 
+  @SuppressWarnings("deprecation")
   private void loadShadowView(Context context) {
     int height = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float)3.0, getResources().getDisplayMetrics());
     LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, height);
