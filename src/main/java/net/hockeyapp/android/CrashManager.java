@@ -146,6 +146,7 @@ public class CrashManager {
    * @param context The context to use. Usually your Activity object.
    * @param listener Implement for callback functions.
    */
+  @SuppressWarnings("deprecation")
   public static void execute(Context context, CrashManagerListener listener) {
     Boolean ignoreDefaultHandler = (listener != null) && (listener.ignoreDefaultHandler());
     WeakReference<Context> weakContext = new WeakReference<Context>(context);
@@ -154,7 +155,10 @@ public class CrashManager {
     if (foundOrSend == 1) {
       Boolean autoSend = false;
       if (listener != null) {
-        autoSend = listener.onCrashesFound();
+        autoSend |= listener.shouldAutoUploadCrashes();
+        autoSend |= listener.onCrashesFound();
+        
+        listener.onNewCrashesFound();
       }
       
       if (!autoSend) {
@@ -165,6 +169,10 @@ public class CrashManager {
       }
     }
     else if (foundOrSend == 2) {
+      if (listener != null) {
+        listener.onConfirmedCrashesFound();
+      }
+      
       sendCrashes(weakContext, listener, ignoreDefaultHandler);
     }
     else {

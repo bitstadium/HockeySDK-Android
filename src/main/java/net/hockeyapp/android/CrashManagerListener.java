@@ -39,7 +39,7 @@ public abstract class CrashManagerListener extends StringListener {
    * Return true to ignore the default exception handler, i.e. the user will not
    * get the alert dialog with the "Force Close" button.
    */
-  public Boolean ignoreDefaultHandler() {
+  public boolean ignoreDefaultHandler() {
     return false;
   }
 
@@ -48,7 +48,7 @@ public abstract class CrashManagerListener extends StringListener {
    * from the crash log, e.g. if some of your testers are using unreleased
    * devices.
    */
-  public Boolean includeDeviceData() {
+  public boolean includeDeviceData() {
     return true;
   }
 
@@ -81,9 +81,34 @@ public abstract class CrashManagerListener extends StringListener {
   /**
    * Called when the crash manager found one or more crashes. Return true 
    * if you want to auto-send crashes (i.e. not ask the user)
+   * 
+   * @deprecated Replace this method with onNewCrashesFound, 
+   *             onConfirmedCrashesFound, and shouldAutoUploadCrashReport.
    */
-  public Boolean onCrashesFound() {
+  public boolean onCrashesFound() {
     return false;
+  }
+  
+  /**
+   * Return true if you want to auto-send crashes. Note that this method
+   * is only called if new crashes were found. 
+   */
+  public boolean shouldAutoUploadCrashes() {
+    return false;
+  }
+
+  /**
+   * Called when the crash manager has found new crash logs. 
+   */
+  public void onNewCrashesFound() {
+  }
+
+  /**
+   * Called when the crash manager has found crash logs that were already
+   * confirmed by the user or should have been auto uploaded, but the upload
+   * failed, e.g. in case of a network failure. 
+   */
+  public void onConfirmedCrashesFound() {
   }
 
   /**
