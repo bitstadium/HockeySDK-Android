@@ -119,12 +119,12 @@ public class Strings {
   /**
    * Resource ID for the title of the Feedback Failed info view.
    */
-  public final static int FEEDBACK_FAILED_TITLE_ID                       = 0x0f;
+  public final static int FEEDBACK_FAILED_TITLE_ID                  = 0x0f;
 
   /**
    * Resource ID for the text of the Feedback Failed info view.
    */
-  public final static int FEEDBACK_FAILED_TEXT_ID                       = 16;
+  public final static int FEEDBACK_FAILED_TEXT_ID                   = 0x10;
 
 
   /**
@@ -151,7 +151,7 @@ public class Strings {
       "Build Expired",
       "This has build has expired. Please check HockeyApp for any updates.",
       
-      "Feedback failed",
+      "Feedback Failed",
       "Would you like to send your feedback again?"
   };
   
