@@ -1,15 +1,18 @@
 package net.hockeyapp.android.views;
 
 import android.content.Context;
-import android.content.res.Configuration;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Paint.Style;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
+import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.StateListDrawable;
+import android.graphics.drawable.shapes.RectShape;
 import android.text.InputType;
 import android.text.TextUtils.TruncateAt;
-import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.inputmethod.EditorInfo;
@@ -88,33 +91,9 @@ public class FeedbackView extends LinearLayout {
   
   /** {@link ListView} for list of discussions */
   private ListView messagesListView;
-  
-  protected boolean layoutHorizontally = false;
-  protected boolean limitHeight = false;
 
   public FeedbackView(Context context) {
-    this(context, true);
-  }
-
-  public FeedbackView(Context context, AttributeSet attrs) {
-    this(context, true, false);
-  }
-
-  public FeedbackView(Context context, boolean allowHorizontalLayout) {
-    this(context, true, false);
-  }
-
-  public FeedbackView(Context context, boolean allowHorizontalLayout, boolean limitHeight) {
     super(context);
-      
-    if (allowHorizontalLayout) {
-      setLayoutHorizontally(context);
-    } 
-    else {
-      layoutHorizontally = false;
-    }
-    
-    this.limitHeight = limitHeight;
       
     loadLayoutParams(context);
     
@@ -136,16 +115,6 @@ public class FeedbackView extends LinearLayout {
     loadRefreshButton(context);
     
     loadMessagesListView(context);
-  }
-
-  private void setLayoutHorizontally(Context context) {
-    int orientation = getResources().getConfiguration().orientation;
-    if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-      layoutHorizontally = true;
-    } 
-    else {
-      layoutHorizontally = false;
-    }
   }
 
   private void loadLayoutParams(Context context) {
@@ -262,6 +231,7 @@ public class FeedbackView extends LinearLayout {
     editText.setTypeface(null, Typeface.NORMAL);
     editText.setHint("Name");
     editText.setHintTextColor(Color.LTGRAY);
+    setEditTextBackground(context, editText);
     
     wrapperLayoutFeedback.addView(editText);
   }
@@ -283,6 +253,7 @@ public class FeedbackView extends LinearLayout {
     editText.setTypeface(null, Typeface.NORMAL);
     editText.setHint("Email");
     editText.setHintTextColor(Color.LTGRAY);
+    setEditTextBackground(context, editText);
     
     wrapperLayoutFeedback.addView(editText);
   }
@@ -304,6 +275,7 @@ public class FeedbackView extends LinearLayout {
     editText.setTypeface(null, Typeface.NORMAL);
     editText.setHint("Subject");
     editText.setHintTextColor(Color.LTGRAY);
+    setEditTextBackground(context, editText);
     
     wrapperLayoutFeedback.addView(editText);
   }
@@ -328,6 +300,7 @@ public class FeedbackView extends LinearLayout {
     editText.setMinimumHeight(minEditTextHeight);
     editText.setHint("Message");
     editText.setHintTextColor(Color.LTGRAY);
+    setEditTextBackground(context, editText);
     
     wrapperLayoutFeedback.addView(editText);
   }
@@ -435,5 +408,36 @@ public class FeedbackView extends LinearLayout {
     drawable.addState(new int[] {-android.R.attr.state_pressed, android.R.attr.state_focused}, new ColorDrawable(Color.DKGRAY));
     drawable.addState(new int[] {android.R.attr.state_pressed}, new ColorDrawable(Color.GRAY));
     return drawable;
+  }
+
+  @SuppressWarnings("deprecation")
+  private void setEditTextBackground(Context context, EditText editText) {
+    if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.HONEYCOMB) {
+      // On devices > 3.0, we set a background drawable
+      editText.setBackgroundDrawable(getEditTextBackground(context));
+    }
+    else {
+      // ON devices >= 3.0, we just use the default style
+    }
+  }
+ 
+  private Drawable getEditTextBackground(Context context) {
+    int outerPadding = (int)(context.getResources().getDisplayMetrics().density * 10);
+    ShapeDrawable outerShape = new ShapeDrawable(new RectShape());
+    Paint outerPaint = outerShape.getPaint();
+    outerPaint.setColor(Color.WHITE);
+    outerPaint.setStyle(Style.FILL_AND_STROKE);
+    outerPaint.setStrokeWidth(1.0f);
+    outerShape.setPadding(outerPadding, outerPadding, outerPadding, outerPadding); 
+
+    int innerPadding = (int)(context.getResources().getDisplayMetrics().density * 1.5);
+    ShapeDrawable innerShape = new ShapeDrawable(new RectShape());
+    Paint innerPaint = innerShape.getPaint();
+    innerPaint.setColor(Color.DKGRAY);
+    innerPaint.setStyle(Style.FILL_AND_STROKE);
+    innerPaint.setStrokeWidth(1.0f);
+    innerShape.setPadding(0, 0, 0, innerPadding);
+
+    return new LayerDrawable(new Drawable[] { innerShape, outerShape });
   }
 }
