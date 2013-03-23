@@ -83,16 +83,16 @@ public class SendFeedbackTask extends AsyncTask<Void, Void, HashMap<String, Stri
    * If the class is intended to send a simple feedback message, the a POST is made with the specific data
    * If the class is intended to fetch the messages by providing a token, a GET is made
    * 
-   * @param context     {@link Context} object
-   * @param urlString     URL for sending feedback/fetching messages
-   * @param name        Name of the feedback sender
-   * @param email       Email of the feedback sender
-   * @param subject     Message subject
-   * @param text        Feedback message
-   * @param token       Token received after sending the first feedback. This should be stored in {@link SharedPreferences}
-   * @param handler     Handler object to send data back to the activity
-   * @param isFetchMessages If TRUE, the {@link AsyncTask} will perform a GET, fetching the messages. 
-   *              If FALSE, the {@link AsyncTask} will perform a POST, sending the feedback message
+   * @param context         {@link Context} object
+   * @param urlString       URL for sending feedback/fetching messages
+   * @param name            Name of the feedback sender
+   * @param email           Email of the feedback sender
+   * @param subject         Message subject
+   * @param text            The message
+   * @param token           Token received after sending the first feedback. This should be stored in {@link SharedPreferences}
+   * @param handler         Handler object to send data back to the activity
+   * @param isFetchMessages If true, the {@link AsyncTask} will perform a GET, fetching the messages. 
+   *                        If false, the {@link AsyncTask} will perform a POST, sending the feedback message
    */
   public SendFeedbackTask(Context context, String urlString, String name, String email, String subject, 
       String text, String token, Handler handler, boolean isFetchMessages) {

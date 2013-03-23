@@ -69,8 +69,13 @@ import android.widget.TextView;
  * @author Bogdan Nistor
  **/
 public class FeedbackActivity extends Activity implements FeedbackActivityInterface, OnClickListener {
+  /** ID of error dialog **/
   private final int DIALOG_ERROR_ID = 0;
+  
+  /** Reference to this **/
   private Context context;
+  
+  /** Widgets and layout **/
   private TextView lastUpdatedTextView;
   private EditText nameInput;
   private EditText emailInput;
@@ -85,16 +90,26 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
 	
   /** Send feedback {@link AsyncTask} */
   private SendFeedbackTask sendFeedbackTask;
+  private Handler feedbackHandler;
+  
   /** Parse feedback {@link AsyncTask} */
   private ParseFeedbackTask parseFeedbackTask;
-  
-  private Handler feedbackHandler;
   private Handler parseFeedbackHandler;
-  private ErrorObject error;
+
+  /** URL for HockeyApp API **/
   private String url;
+  
+  /** Current error for alert dialog **/
+  private ErrorObject error;
+  
+  /** Message data source **/ 
   private MessagesAdapter messagesAdapter;
   private ArrayList<FeedbackMessage> feedbackMessages;
+  
+  /** True when a message is posted **/
   private boolean inSendFeedback;
+  
+  /** Unique token of the message feed **/
   private String token;
   	
   /**
@@ -370,49 +385,46 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
   }
   	
   /**
-   * Initialize the {@link SendFeedbackTask}
-   * @param url
-   * @param name
-   * @param email
-   * @param subject
-   * @param text
-   * @param token
-   * @param feedbackHandler
-   * @param isFetchMessages
+   * Send feedback to HockeyApp.
    */
-  private void sendFetchFeedback(String url, String name, String email, String subject, String text, 
-      String token, Handler feedbackHandler, boolean isFetchMessages) {
-  	
-    sendFeedbackTask = new SendFeedbackTask(context, url, name, email, subject, text, token, 
-        feedbackHandler, isFetchMessages);
-  	
-    sendFeedbackTask.execute();
-  }
-  	
   @SuppressWarnings("deprecation")
   private void sendFeedback() {
   	enableDisableSendFeedbackButton(false);
   	
-  	if (nameInput.getText().toString().trim().length() <= 0 || emailInput.getText().toString().
-  			trim().length() <= 0 || subjectInput.getText().toString().trim().length() <= 0 || 
-  			textInput.getText().toString().trim().length() <= 0) {
-  		
+  	if ((nameInput.getText().toString().trim().length() <= 0) || 
+  	    (emailInput.getText().toString().trim().length() <= 0) || 
+  	    (subjectInput.getText().toString().trim().length() <= 0) || 
+  			(textInput.getText().toString().trim().length() <= 0)) {
   		/** Not all details were submitted, we're going to display an error dialog */
   		error = new ErrorObject();
   		error.setMessage("Please provide all details");
   		
   		showDialog(DIALOG_ERROR_ID);
   		enableDisableSendFeedbackButton(true);
-  	} else {
+  	} 
+  	else {
   		/** Save Name and Email to {@link SharedPreferences} */
-  		PrefsUtil.getInstance().saveNameEmailSubjectToPrefs(context, nameInput.getText().toString(), emailInput.getText().
-  				toString(), subjectInput.getText().toString());
+  		PrefsUtil.getInstance().saveNameEmailSubjectToPrefs(context, nameInput.getText().toString(), emailInput.getText().toString(), subjectInput.getText().toString());
   		
   		/** Start the Send Feedback {@link AsyncTask} */
-  		sendFetchFeedback(url, nameInput.getText().toString(), emailInput.getText().toString(), 
-  				subjectInput.getText().toString(), textInput.getText().toString(), PrefsUtil.getInstance().
-  				getFeedbackTokenFromPrefs(context), feedbackHandler, false);
+  		sendFetchFeedback(url, nameInput.getText().toString(), emailInput.getText().toString(), subjectInput.getText().toString(), textInput.getText().toString(), PrefsUtil.getInstance().getFeedbackTokenFromPrefs(context), feedbackHandler, false);
   	}
+  }
+
+  /**
+   * Initialize the {@link SendFeedbackTask}
+   * @param url             URL to HockeyApp API
+   * @param name            Name of the feedback sender
+   * @param email           Email of the feedback sender
+   * @param subject         Message subject
+   * @param text            The message
+   * @param token           Token for message feed
+   * @param feedbackHandler Handler to handle the response
+   * @param isFetchMessages Set true to fetch messages, false to send one
+   */
+  private void sendFetchFeedback(String url, String name, String email, String subject, String text, String token, Handler feedbackHandler, boolean isFetchMessages) {
+    sendFeedbackTask = new SendFeedbackTask(context, url, name, email, subject, text, token, feedbackHandler, isFetchMessages);
+    sendFeedbackTask.execute();
   }
   	
   /**
@@ -466,19 +478,15 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
   	switch (v.getId()) {
   	  case FeedbackView.SEND_FEEDBACK_BUTTON_ID:
   	    sendFeedback();
-  			
   	    break;
   			
   	  case FeedbackView.ADD_RESPONSE_BUTTON_ID:
   	    configureFeedbackView(false);
   	    inSendFeedback = true;
-  			
   	    break;
   			
   	  case FeedbackView.REFRESH_BUTTON_ID:
-  	    sendFetchFeedback(url, null, null, null, null, PrefsUtil.getInstance().getFeedbackTokenFromPrefs(context), 
-  	        feedbackHandler, true);
-  	    
+  	    sendFetchFeedback(url, null, null, null, null, PrefsUtil.getInstance().getFeedbackTokenFromPrefs(context), feedbackHandler, true);
   	    break;
   
   	  default:
@@ -509,17 +517,17 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
   @Override
   protected void onPrepareDialog(int id, Dialog dialog) {
     switch(id) {
-      case DIALOG_ERROR_ID:
-        AlertDialog messageDialogError = (AlertDialog) dialog;
-          if (error != null) {
-            /** If the ErrorObject is not null, display the ErrorObject message */
-            messageDialogError.setMessage(error.getMessage());
-          } else {
-            /** If the ErrorObject is null, display the general error message */
-            messageDialogError.setMessage("An error has occured");
-          }
-  
-          break;
+    case DIALOG_ERROR_ID:
+      AlertDialog messageDialogError = (AlertDialog) dialog;
+      if (error != null) {
+        /** If the ErrorObject is not null, display the ErrorObject message */
+        messageDialogError.setMessage(error.getMessage());
+      } else {
+        /** If the ErrorObject is null, display the general error message */
+        messageDialogError.setMessage("An error has occured");
+      }
+
+      break;
     }
   }
   
