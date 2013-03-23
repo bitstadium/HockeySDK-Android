@@ -95,7 +95,7 @@ public class UpdateManager {
       return;
     }
     
-    if (!checkExpiryDate(weakActivity, listener)) {
+    if ((!checkExpiryDate(weakActivity, listener)) && (!installedFromMarket(weakActivity))) {
       startUpdateTask(weakActivity, urlString, appIdentifier, listener);
     }
   }
@@ -131,6 +131,25 @@ public class UpdateManager {
     
     if ((result) && (handle)) {
       startExpiryInfoIntent(weakActivity);
+    }
+    
+    return result;
+  }
+  
+  /**
+   * Returns true if the build was installed through a market.
+   */
+  private static boolean installedFromMarket(WeakReference<Activity> weakActivity) {
+    boolean result = false;
+    
+    Activity activity = weakActivity.get();
+    if (activity != null) {
+      try {
+        String installer = activity.getPackageManager().getInstallerPackageName(activity.getPackageName());
+        result = ((installer != null) && (!installer.isEmpty()));
+      }
+      catch (Exception e) {
+      }
     }
     
     return result;
