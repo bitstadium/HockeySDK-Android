@@ -12,8 +12,6 @@ import java.util.UUID;
 
 import net.hockeyapp.android.Strings;
 import net.hockeyapp.android.listeners.DownloadFileListener;
-
-
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -193,6 +191,6 @@ public class DownloadFileTask extends AsyncTask<String, Integer, Boolean>{
   }
 
   private String getURLString() {
-    return urlString + "&type=apk";      
+    return urlString;      
   }
 }
