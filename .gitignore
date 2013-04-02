@@ -7,3 +7,4 @@ BuildConfig.java
 # OS X Noise
 .DS_Store
 *.swp
+.settings
