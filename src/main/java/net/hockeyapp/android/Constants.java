@@ -58,6 +58,11 @@ public class Constants {
    * The app's version code.
    */
   public static String APP_VERSION = null;
+  
+  /**
+   * The app's version name.
+   */
+  public static String APP_VERSION_NAME = null;
 
   /**
    * The app's package name.
@@ -151,6 +156,7 @@ public class Constants {
         PackageInfo packageInfo = packageManager.getPackageInfo(context.getPackageName(), 0);
         Constants.APP_PACKAGE = packageInfo.packageName;
         Constants.APP_VERSION = "" + packageInfo.versionCode;
+        Constants.APP_VERSION_NAME = packageInfo.versionName;
         
         int buildNumber = loadBuildNumber(context, packageManager);
         if ((buildNumber != 0) && (buildNumber > packageInfo.versionCode)) {

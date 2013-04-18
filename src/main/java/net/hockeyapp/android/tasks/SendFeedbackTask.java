@@ -190,6 +190,12 @@ public class SendFeedbackTask extends AsyncTask<Void, Void, HashMap<String, Stri
       nameValuePairs.add(new BasicNameValuePair("email", email));
       nameValuePairs.add(new BasicNameValuePair("subject", subject));
       nameValuePairs.add(new BasicNameValuePair("text", text));
+      nameValuePairs.add(new BasicNameValuePair("bundle_identifier", Constants.APP_PACKAGE));
+      nameValuePairs.add(new BasicNameValuePair("bundle_short_version", Constants.APP_VERSION_NAME));
+      nameValuePairs.add(new BasicNameValuePair("bundle_version", Constants.APP_VERSION));
+      nameValuePairs.add(new BasicNameValuePair("os_version", Constants.ANDROID_VERSION));
+      nameValuePairs.add(new BasicNameValuePair("oem", Constants.PHONE_MANUFACTURER));
+      nameValuePairs.add(new BasicNameValuePair("model", Constants.PHONE_MODEL));
       
       form = new UrlEncodedFormEntity(nameValuePairs, "UTF-8");
       form.setContentEncoding(HTTP.UTF_8);
