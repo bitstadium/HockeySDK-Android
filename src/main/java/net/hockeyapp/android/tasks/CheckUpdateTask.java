@@ -329,14 +329,16 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
       activityClass = listener.getUpdateActivityClass();
     }
     
-    Intent intent = new Intent();
-    intent.setClass(activity, activityClass);
-    intent.putExtra("json", updateInfo.toString());
-    intent.putExtra("url", getURLString("apk"));
-    activity.startActivity(intent);
-    
-    if (finish) {
-      activity.finish();
+    if (activity != null) {
+      Intent intent = new Intent();
+      intent.setClass(activity, activityClass);
+      intent.putExtra("json", updateInfo.toString());
+      intent.putExtra("url", getURLString("apk"));
+      activity.startActivity(intent);
+      
+      if (finish) {
+        activity.finish();
+      }
     }
     
     cleanUp();
