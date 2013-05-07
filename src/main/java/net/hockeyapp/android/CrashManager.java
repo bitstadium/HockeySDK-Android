@@ -13,6 +13,8 @@ import java.util.Arrays;
 import java.util.List;
 
 
+import net.hockeyapp.android.utils.PrefsUtil;
+
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
@@ -501,7 +503,7 @@ public class CrashManager {
           SharedPreferences preferences = context.getSharedPreferences("HockeySDK", Context.MODE_PRIVATE);
           Editor editor = preferences.edit();
           editor.putString("ConfirmedFilenames", joinArray(filenames, "|"));
-          editor.commit();
+          PrefsUtil.applyChanges(editor);
         }
         catch (Exception e) {
           // Just in case, we catch all exceptions here

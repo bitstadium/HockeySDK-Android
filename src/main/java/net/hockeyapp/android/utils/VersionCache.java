@@ -45,7 +45,7 @@ public class VersionCache {
       SharedPreferences preferences = context.getSharedPreferences("HockeyApp", Context.MODE_PRIVATE);
       SharedPreferences.Editor editor = preferences.edit();
       editor.putString(VERSION_INFO_KEY, json);
-      editor.commit();
+      PrefsUtil.applyChanges(editor);
     }
   }
   

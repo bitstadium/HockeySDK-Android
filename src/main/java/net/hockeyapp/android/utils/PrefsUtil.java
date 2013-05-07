@@ -2,6 +2,7 @@ package net.hockeyapp.android.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 
 /**
  * {@link SharedPreferences} helper class
@@ -26,14 +27,16 @@ public class PrefsUtil {
     public static final PrefsUtil INSTANCE = new PrefsUtil();
   }
 
+  /**
+   * Return the singleton.
+   * @return
+   */
   public static PrefsUtil getInstance() {
     return PrefsUtilHolder.INSTANCE;
   }
     
   /**
    * Save feedback token to {@link SharedPreferences}
-   * @param context {@link Context} object
-   * @param token   Feedback token
    */
   public void saveFeedbackTokenToPrefs(Context context, String token) {
     if (context != null) {
@@ -41,15 +44,13 @@ public class PrefsUtil {
       if (feedbackTokenPrefs != null) {
         feedbackTokenPrefsEditor = feedbackTokenPrefs.edit();
         feedbackTokenPrefsEditor.putString(Util.PREFS_KEY_FEEDBACK_TOKEN, token);
-        feedbackTokenPrefsEditor.commit();
+        applyChanges(feedbackTokenPrefsEditor);
       }
     }
   }
     
   /**
    * Retrieves the feedback token from {@link SharedPreferences}
-   * @param context {@link Context} object
-   * @return
    */
   public String getFeedbackTokenFromPrefs(Context context) {
     if (context == null) {
@@ -66,10 +67,6 @@ public class PrefsUtil {
 
   /**
    * Save name and email to {@link SharedPreferences}
-   * @param context {@link Context} object
-   * @param name    Name
-   * @param email   Email
-   * @param subject Subject
    */
   public void saveNameEmailSubjectToPrefs(Context context, String name, String email, String subject) {
     if (context != null) {
@@ -83,15 +80,13 @@ public class PrefsUtil {
               name, email, subject));
         }
         
-        nameEmailSubjectPrefsEditor.commit();
+        applyChanges(nameEmailSubjectPrefsEditor);
       }
     }
   }
   
   /**
    * Retrieves the name and email from {@link SharedPreferences}
-   * @param context {@link Context} object
-   * @return
    */
   public String getNameEmailFromPrefs(Context context) {
     if (context == null) {
@@ -104,5 +99,30 @@ public class PrefsUtil {
     }
     
     return nameEmailSubjectPrefs.getString(Util.PREFS_KEY_NAME_EMAIL_SUBJECT, null);
+  }
+  
+  /**
+   * Apply SharedPreferences.Editor changes. If the code runs on API level 9 or higher,
+   * the asynchronous method apply is used, otherwise commit. 
+   */
+  public static void applyChanges(Editor editor) {
+    if (applySupported()) {
+      editor.apply();
+    }
+    else {
+      editor.commit();
+    }
+  }
+  
+  /**
+   * Returns true if SharedPreferences.Editor.apply is supported.
+   */
+  public static Boolean applySupported() {
+    try {
+      return (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.GINGERBREAD);
+    }
+    catch (NoClassDefFoundError e) {
+      return false;
+    }
   }
 }

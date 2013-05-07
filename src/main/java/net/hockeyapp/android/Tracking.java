@@ -1,5 +1,6 @@
 package net.hockeyapp.android;
 
+import net.hockeyapp.android.utils.PrefsUtil;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -64,7 +65,7 @@ public class Tracking {
     
     SharedPreferences.Editor editor = getPreferences(activity).edit();
     editor.putLong(START_TIME_KEY + activity.hashCode(), now);
-    editor.commit();
+    PrefsUtil.applyChanges(editor);
   }
 
   /**
@@ -95,7 +96,7 @@ public class Tracking {
       
       SharedPreferences.Editor editor = preferences.edit();
       editor.putLong(USAGE_TIME_KEY + Constants.APP_VERSION, sum + duration);
-      editor.commit();
+      PrefsUtil.applyChanges(editor);
     }
   }
 
