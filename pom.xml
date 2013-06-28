@@ -15,16 +15,16 @@
 
   <dependencies>
     <dependency>
-      <groupId>com.google.android</groupId>
+      <groupId>android</groupId>
       <artifactId>android</artifactId>
-      <version>4.1.1.4</version>
+      <version>4.2.2_r2</version>
       <scope>provided</scope>
     </dependency>
 
     <dependency>
-      <groupId>com.google.android</groupId>
+      <groupId>com.google.android.annotations</groupId>
       <artifactId>annotations</artifactId>
-      <version>4.1.1.4</version>
+      <version>22.0.1</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
