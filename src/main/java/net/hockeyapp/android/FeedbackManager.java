@@ -105,9 +105,12 @@ public class FeedbackManager {
    */
   public static void showFeedbackActivity(Context context) {
     if (context != null) {
-      Class<?> activityClass = FeedbackActivity.class;
+      Class<?> activityClass = null;
       if (lastListener != null) {
         activityClass = lastListener.getFeedbackActivityClass();
+      }
+      if (activityClass == null) {
+        activityClass = FeedbackActivity.class;
       }
       
       Intent intent = new Intent();

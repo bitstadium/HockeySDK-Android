@@ -324,9 +324,12 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
   
   @TargetApi(Build.VERSION_CODES.HONEYCOMB)
   private void startUpdateIntent(final JSONArray updateInfo, Boolean finish) {
-    Class<?> activityClass = UpdateActivity.class;
+    Class<?> activityClass = null;
     if (listener != null) {
       activityClass = listener.getUpdateActivityClass();
+    }
+    if (activityClass == null) {
+      activityClass = UpdateActivity.class;
     }
     
     if (activity != null) {
