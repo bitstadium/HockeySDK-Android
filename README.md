@@ -2,7 +2,7 @@ This README describes on how to integrate HockeyApp into you Android apps. The c
 
 ## Requirements
 
-The SDK runs on devices with Android 2.1 or higher, but you need Android SDK 3.0 (Level 11) or higher to build the library.
+The SDK runs on devices with Android 2.1 or higher, but you need to build your app with Android SDK 3.0 (Level 11) or higher for the integration with HockeySDK.
 
 ## Integration Into Your Own App
 
