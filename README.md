@@ -1,4 +1,4 @@
-This README describes on how to integrate HockeyApp into you Android apps. The client allows testers to update your app to another beta version right from within the application. It will notify the tester if a new update is available. It also allows to send crash reports right from within the application. If a crash has occured, it will ask the tester on the next resume of the main activity whether he wants to send information about the crash to the server. The latter feature works for both beta apps and apps for the Android Market.
+This README describes on how to integrate HockeyApp into you Android apps. The client allows testers to update your app to another beta version right from within the application. It will notify the tester if a new update is available. It also allows to send feedback and crash reports right from within the application. If a crash has occured, it will ask the tester on the next resume of the main activity whether he wants to send information about the crash to the server. The latter feature works for both beta apps and apps for the Android Market.
 
 ## Requirements
 
