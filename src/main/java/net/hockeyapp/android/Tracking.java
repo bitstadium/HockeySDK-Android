@@ -1,5 +1,6 @@
 package net.hockeyapp.android;
 
+import net.hockeyapp.android.utils.PrefsUtil;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -12,7 +13,7 @@ import android.content.SharedPreferences;
  * <h4>License</h4>
  * 
  * <pre>
- * Copyright (c) 2012 Codenauts UG
+ * Copyright (c) 2011-2013 Bit Stadium GmbH
  * 
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -64,7 +65,7 @@ public class Tracking {
     
     SharedPreferences.Editor editor = getPreferences(activity).edit();
     editor.putLong(START_TIME_KEY + activity.hashCode(), now);
-    editor.commit();
+    PrefsUtil.applyChanges(editor);
   }
 
   /**
@@ -95,7 +96,7 @@ public class Tracking {
       
       SharedPreferences.Editor editor = preferences.edit();
       editor.putLong(USAGE_TIME_KEY + Constants.APP_VERSION, sum + duration);
-      editor.commit();
+      PrefsUtil.applyChanges(editor);
     }
   }
 

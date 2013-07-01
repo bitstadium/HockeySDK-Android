@@ -8,7 +8,7 @@ package net.hockeyapp.android;
  * <h4>License</h4>
  * 
  * <pre>
- * Copyright (c) 2012 Codenauts UG
+ * Copyright (c) 2011-2013 Bit Stadium GmbH
  * 
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -117,6 +117,17 @@ public class Strings {
   public final static int EXPIRY_INFO_TEXT_ID                       = 0x0e;
 
   /**
+   * Resource ID for the title of the Feedback Failed info view.
+   */
+  public final static int FEEDBACK_FAILED_TITLE_ID                  = 0x0f;
+
+  /**
+   * Resource ID for the text of the Feedback Failed info view.
+   */
+  public final static int FEEDBACK_FAILED_TEXT_ID                   = 0x10;
+
+
+  /**
    * Default strings.
    */
   public final static String[] ENGLISH = new String[] {
@@ -138,7 +149,10 @@ public class Strings {
       "Show",
       
       "Build Expired",
-      "This has build has expired. Please check HockeyApp for any updates."
+      "This has build has expired. Please check HockeyApp for any updates.",
+      
+      "Feedback Failed",
+      "Would you like to send your feedback again?"
   };
   
   /**

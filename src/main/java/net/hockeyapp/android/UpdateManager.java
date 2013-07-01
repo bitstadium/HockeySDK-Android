@@ -1,8 +1,9 @@
 package net.hockeyapp.android;
 
+import java.lang.ref.WeakReference;
 import java.util.Date;
 
-import net.hockeyapp.android.internal.CheckUpdateTask;
+import net.hockeyapp.android.tasks.CheckUpdateTask;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -20,7 +21,7 @@ import android.os.AsyncTask.Status;
  * <h4>License</h4>
  * 
  * <pre>
- * Copyright (c) 2012 Codenauts UG
+ * Copyright (c) 2011-2013 Bit Stadium GmbH
  * 
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -89,12 +90,13 @@ public class UpdateManager {
   public static void register(Activity activity, String urlString, String appIdentifier, UpdateManagerListener listener) {
     lastListener = listener;
     
-    if ((fragmentsSupported()) && (dialogShown(activity))) {
+    WeakReference<Activity> weakActivity = new WeakReference<Activity>(activity);
+    if ((fragmentsSupported()) && (dialogShown(weakActivity))) {
       return;
     }
     
-    if (!checkExpiryDate(activity, listener)) {
-      startUpdateTask(activity, urlString, appIdentifier, listener);
+    if ((!checkExpiryDate(weakActivity, listener)) && (!installedFromMarket(weakActivity))) {
+      startUpdateTask(weakActivity, urlString, appIdentifier, listener);
     }
   }
 
@@ -115,7 +117,7 @@ public class UpdateManager {
    * Returns true if the build is expired and starts an activity if not
    * handled by the owner of the UpdateManager.  
    */
-  private static boolean checkExpiryDate(Activity activity, UpdateManagerListener listener) {
+  private static boolean checkExpiryDate(WeakReference<Activity> weakActivity, UpdateManagerListener listener) {
     boolean result = false;
     boolean handle = false;
     
@@ -128,7 +130,26 @@ public class UpdateManager {
     }
     
     if ((result) && (handle)) {
-      startExpiryInfoIntent(activity);
+      startExpiryInfoIntent(weakActivity);
+    }
+    
+    return result;
+  }
+  
+  /**
+   * Returns true if the build was installed through a market.
+   */
+  private static boolean installedFromMarket(WeakReference<Activity> weakActivity) {
+    boolean result = false;
+    
+    Activity activity = weakActivity.get();
+    if (activity != null) {
+      try {
+        String installer = activity.getPackageManager().getInstallerPackageName(activity.getPackageName());
+        result = ((installer != null) && (!installer.isEmpty()));
+      }
+      catch (Exception e) {
+      }
     }
     
     return result;
@@ -138,25 +159,30 @@ public class UpdateManager {
    * Starts the ExpiryInfoActivity as a new task and finished the current 
    * activity. 
    */
-  private static void startExpiryInfoIntent(Activity activity) {
-    activity.finish();
-    
-    Intent intent = new Intent(activity, ExpiryInfoActivity.class);
-    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-    activity.startActivity(intent);
+  private static void startExpiryInfoIntent(WeakReference<Activity> weakActivity) {
+    if (weakActivity != null) {
+      Activity activity = weakActivity.get();
+      if (activity != null) {
+        activity.finish();
+        
+        Intent intent = new Intent(activity, ExpiryInfoActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        activity.startActivity(intent);        
+      }
+    }
   }
 
   /**
    * Starts the UpdateTask if not already running. Otherwise attaches the
    * activity to it. 
    */
-  private static void startUpdateTask(Activity activity, String urlString, String appIdentifier, UpdateManagerListener listener) {
+  private static void startUpdateTask(WeakReference<Activity> weakActivity, String urlString, String appIdentifier, UpdateManagerListener listener) {
     if ((updateTask == null) || (updateTask.getStatus() == Status.FINISHED)) {
-      updateTask = new CheckUpdateTask(activity, urlString, appIdentifier, listener);
+      updateTask = new CheckUpdateTask(weakActivity, urlString, appIdentifier, listener);
       updateTask.execute();
     }
     else {
-      updateTask.attach(activity);
+      updateTask.attach(weakActivity);
     }
   }
 
@@ -164,9 +190,16 @@ public class UpdateManager {
    * Returns true if the dialog is already shown (only works on Android 3.0+). 
    */
   @TargetApi(11)
-  private static boolean dialogShown(Activity activity) {
-    Fragment existingFragment = activity.getFragmentManager().findFragmentByTag("hockey_update_dialog");
-    return (existingFragment != null);
+  private static boolean dialogShown(WeakReference<Activity> weakActivity) {
+    if (weakActivity != null) {
+      Activity activity = weakActivity.get();
+      if (activity != null) {
+        Fragment existingFragment = activity.getFragmentManager().findFragmentByTag("hockey_update_dialog");
+        return (existingFragment != null);
+      }
+    }
+    
+    return false;
   }
 
   /**
@@ -185,9 +218,19 @@ public class UpdateManager {
   /**
    * Returns true if the app runs on large or very large screens (i.e. tablets). 
    */
-  public static Boolean runsOnTablet(Activity activity) {
-    Configuration configuration = activity.getResources().getConfiguration();
-    return (((configuration.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE) || ((configuration.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_XLARGE));
+  public static Boolean runsOnTablet(WeakReference<Activity> weakActivity) {
+    if (weakActivity != null) {
+      Activity activity = weakActivity.get();
+      if (activity != null) {
+        Configuration configuration = activity.getResources().getConfiguration();
+        
+        return (((configuration.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.
+            SCREENLAYOUT_SIZE_LARGE) || ((configuration.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == 
+            Configuration.SCREENLAYOUT_SIZE_XLARGE));
+      }
+    }
+    
+    return false;
   }
 
   /**

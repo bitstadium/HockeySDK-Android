@@ -8,7 +8,7 @@ package net.hockeyapp.android;
  * <h4>License</h4>
  * 
  * <pre>
- * Copyright (c) 2012 Codenauts UG
+ * Copyright (c) 2011-2013 Bit Stadium GmbH
  * 
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -39,8 +39,17 @@ public abstract class CrashManagerListener extends StringListener {
    * Return true to ignore the default exception handler, i.e. the user will not
    * get the alert dialog with the "Force Close" button.
    */
-  public Boolean ignoreDefaultHandler() {
+  public boolean ignoreDefaultHandler() {
     return false;
+  }
+
+  /**
+   * Return false to remove the device data (OS version, manufacturer, model)
+   * from the crash log, e.g. if some of your testers are using unreleased
+   * devices.
+   */
+  public boolean includeDeviceData() {
+    return true;
   }
 
   /**
@@ -72,9 +81,34 @@ public abstract class CrashManagerListener extends StringListener {
   /**
    * Called when the crash manager found one or more crashes. Return true 
    * if you want to auto-send crashes (i.e. not ask the user)
+   * 
+   * @deprecated Replace this method with onNewCrashesFound, 
+   *             onConfirmedCrashesFound, and shouldAutoUploadCrashReport.
    */
-  public Boolean onCrashesFound() {
+  public boolean onCrashesFound() {
     return false;
+  }
+  
+  /**
+   * Return true if you want to auto-send crashes. Note that this method
+   * is only called if new crashes were found. 
+   */
+  public boolean shouldAutoUploadCrashes() {
+    return false;
+  }
+
+  /**
+   * Called when the crash manager has found new crash logs. 
+   */
+  public void onNewCrashesFound() {
+  }
+
+  /**
+   * Called when the crash manager has found crash logs that were already
+   * confirmed by the user or should have been auto uploaded, but the upload
+   * failed, e.g. in case of a network failure. 
+   */
+  public void onConfirmedCrashesFound() {
   }
 
   /**
@@ -88,5 +122,11 @@ public abstract class CrashManagerListener extends StringListener {
    * because the device has no network connections.
    */
   public void onCrashesNotSent() {
+  }
+  
+  /**
+   * Called when the user denied to send crashes to HockeyApp.
+   */
+  public void onUserDeniedCrashes() {
   }
 }

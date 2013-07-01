@@ -1,8 +1,12 @@
 package net.hockeyapp.android;
 
+import java.io.File;
+
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.util.Log;
 
 /**
@@ -14,7 +18,7 @@ import android.util.Log;
  * 
  * <pre>
  * Copyright (c) 2009 nullwire aps
- * Copyright (c) 2012 Codenauts UG
+ * Copyright (c) 2011-2013 Bit Stadium GmbH
  * 
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -54,6 +58,11 @@ public class Constants {
    * The app's version code.
    */
   public static String APP_VERSION = null;
+  
+  /**
+   * The app's version name.
+   */
+  public static String APP_VERSION_NAME = null;
 
   /**
    * The app's package name.
@@ -93,11 +102,11 @@ public class Constants {
   /**
    * Version of this SDK.
    */
-  public static final String SDK_VERSION = "2.2.0";
+  public static final String SDK_VERSION = "3.0.0";
 
   /**
    * Initializes constants from the given context. The context is used to set 
-   * the package name, version code, and the files dir.  
+   * the package name, version code, and the files path.
    *
    * @param context The context to use. Usually your Activity object.
    */
@@ -105,17 +114,75 @@ public class Constants {
     Constants.ANDROID_VERSION = android.os.Build.VERSION.RELEASE;
     Constants.PHONE_MODEL = android.os.Build.MODEL;
     Constants.PHONE_MANUFACTURER = android.os.Build.MANUFACTURER;
-    Constants.FILES_PATH = context.getFilesDir().getAbsolutePath();
 
-    PackageManager packageManager = context.getPackageManager();
+    loadFilesPath(context);
+    loadPackageData(context);
+  }
+
+  /**
+   * Helper method to set the files path. If an exception occurs, the files 
+   * path will be null! 
+   * 
+   * @param context The context to use. Usually your Activity object.
+   */
+  private static void loadFilesPath(Context context) {
+    if (context != null) {
+      try {
+        File file = context.getFilesDir();
+
+        // The file shouldn't be null, but apparently it still can happen, see
+        // http://code.google.com/p/android/issues/detail?id=8886
+        if (file != null) {
+          Constants.FILES_PATH = file.getAbsolutePath();
+        }
+      } 
+      catch (Exception e) {
+        Log.e(TAG, "Exception thrown when accessing the files dir:");
+        e.printStackTrace();
+      }
+    }
+  }
+  
+  /**
+   * Helper method to set the package name and version code. If an exception 
+   * occurs, these values will be null! 
+   * 
+   * @param context The context to use. Usually your Activity object.
+   */
+  private static void loadPackageData(Context context) {
+    if (context != null) {
+      try {
+        PackageManager packageManager = context.getPackageManager();
+        PackageInfo packageInfo = packageManager.getPackageInfo(context.getPackageName(), 0);
+        Constants.APP_PACKAGE = packageInfo.packageName;
+        Constants.APP_VERSION = "" + packageInfo.versionCode;
+        Constants.APP_VERSION_NAME = packageInfo.versionName;
+        
+        int buildNumber = loadBuildNumber(context, packageManager);
+        if ((buildNumber != 0) && (buildNumber > packageInfo.versionCode)) {
+          Constants.APP_VERSION = "" + buildNumber;
+        }
+      } 
+      catch (Exception e) {
+        Log.e(TAG, "Exception thrown when accessing the package info:");
+        e.printStackTrace();
+      }
+    }
+  }
+
+  private static int loadBuildNumber(Context context, PackageManager packageManager) {
     try {
-      PackageInfo packageInfo = packageManager.getPackageInfo(context.getPackageName(), 0);
-      Constants.APP_VERSION = "" + packageInfo.versionCode;
-      Constants.APP_PACKAGE = packageInfo.packageName;
+      ApplicationInfo appInfo = packageManager.getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
+      Bundle metaData = appInfo.metaData;
+      if (metaData != null) {
+        return metaData.getInt("buildNumber", 0);
+      }
     } 
     catch (Exception e) {
-      Log.e(TAG, "Exception thrown when accessing the package info:");
+      Log.e(TAG, "Exception thrown when accessing the application info:");
       e.printStackTrace();
     }
+    
+    return 0;
   }
 }

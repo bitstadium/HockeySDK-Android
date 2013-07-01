@@ -1,6 +1,6 @@
 package net.hockeyapp.android;
 
-import net.hockeyapp.android.internal.ExpiryInfoView;
+import net.hockeyapp.android.views.ExpiryInfoView;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
@@ -13,7 +13,7 @@ import android.view.View;
  * <h4>License</h4>
  * 
  * <pre>
- * Copyright (c) 2012 Codenauts UG
+ * Copyright (c) 2011-2013 Bit Stadium GmbH
  * 
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation

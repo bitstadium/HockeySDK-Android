@@ -1,9 +1,9 @@
 package net.hockeyapp.android;
 
-import net.hockeyapp.android.internal.DownloadFileListener;
-import net.hockeyapp.android.internal.DownloadFileTask;
-import net.hockeyapp.android.internal.UpdateView;
-import net.hockeyapp.android.internal.VersionHelper;
+import net.hockeyapp.android.listeners.DownloadFileListener;
+import net.hockeyapp.android.tasks.DownloadFileTask;
+import net.hockeyapp.android.utils.VersionHelper;
+import net.hockeyapp.android.views.UpdateView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,7 +31,7 @@ import android.widget.TextView;
  * <h4>License</h4>
  * 
  * <pre>
- * Copyright (c) 2012 Codenauts UG
+ * Copyright (c) 2011-2013 Bit Stadium GmbH
  * 
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
