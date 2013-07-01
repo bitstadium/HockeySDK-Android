@@ -64,6 +64,25 @@ The above code does two things:
 
 The reason for the two different entry points is that the update check causes network traffic and therefore potential costs for your users. In contrast, the crash manager only searches for new files in the file system, i.e. the call is pretty cheap. 
 
+## Changes for In-App Feedback
+
+Starting with HockeySDK 3.0, you can integrate a feedback view in your app:
+
+* Open your AndroidManifest.xml.
+* Add the following line as a child element of application: <pre>&lt;activity android:name="net.hockeyapp.android.FeedbackActivity" /></pre>
+* If not already present, add the permission for internet access: <pre>&lt;uses-permission android:name="android.permission.INTERNET" /></pre>
+* Save the AndroidManifest.xml.
+* Open the activity from which you want to show the feedback view.
+* Add the following method:
+
+        public void showFeedbackActivity() {
+          FeedbackManager.register(this, HOCKEYAPP_ID, null);
+          FeedbackManager.showFeedbackActivity(this);
+        }
+
+* The param APP_ID has to be replaced by your app's identifier.
+* Call the method `showFeedbackActivity` in an onClick, onMenuItemSelected, or onOptionsItemSelected listener method.
+
 ## Checklist if Crashes Do Not Appear in HockeyApp
 
 1. Check if the APP_ID matches the App ID in HockeyApp.
