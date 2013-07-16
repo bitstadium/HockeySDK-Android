@@ -21,6 +21,7 @@ import net.hockeyapp.android.UpdateFragment;
 import net.hockeyapp.android.UpdateManager;
 import net.hockeyapp.android.UpdateManagerListener;
 import net.hockeyapp.android.utils.VersionCache;
+import net.hockeyapp.android.utils.VersionHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -192,7 +193,8 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
     try {
       for (int index = 0; index < json.length(); index++) {
         JSONObject entry = json.getJSONObject(index);
-        if (entry.getInt("version") > versionCode) {
+        if ((entry.getInt("version") > versionCode) &&
+            (VersionHelper.compareVersionStrings(entry.getString("minimum_os_version"), Build.VERSION.RELEASE) <= 0)) {
           if (entry.has("mandatory")) {
             mandatory = entry.getBoolean("mandatory");
           }
