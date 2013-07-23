@@ -181,7 +181,7 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
 
   protected URLConnection createConnection(URL url) throws IOException {
     URLConnection connection = url.openConnection();
-    connection.addRequestProperty("User-Agent", "Hockey/Android");
+    connection.addRequestProperty("User-Agent", "HockeySDK/Android");
     // connection bug workaround for SDK<=2.x
     if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.GINGERBREAD) {
       connection.setRequestProperty("connection", "close");

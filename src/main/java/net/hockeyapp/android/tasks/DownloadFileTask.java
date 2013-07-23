@@ -126,7 +126,11 @@ public class DownloadFileTask extends AsyncTask<String, Integer, Boolean>{
 
   protected URLConnection createConnection(URL url) throws IOException {
     URLConnection connection = url.openConnection();
-    connection.setRequestProperty("connection", "close");
+    connection.addRequestProperty("User-Agent", "HockeySDK/Android");
+    // connection bug workaround for SDK<=2.x
+    if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.GINGERBREAD) {
+      connection.setRequestProperty("connection", "close");
+    }
     return connection;
   }
 
