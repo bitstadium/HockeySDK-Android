@@ -251,6 +251,7 @@ public class CrashManager {
             Log.d(Constants.TAG, "Transmitting crash data: \n" + stacktrace);
             DefaultHttpClient httpClient = new DefaultHttpClient(); 
             HttpPost httpPost = new HttpPost(getURLString());
+            httpPost.setHeader("User-Agent", "HockeySDK/Android");
             
             List <NameValuePair> parameters = new ArrayList <NameValuePair>(); 
             parameters.add(new BasicNameValuePair("raw", stacktrace));
