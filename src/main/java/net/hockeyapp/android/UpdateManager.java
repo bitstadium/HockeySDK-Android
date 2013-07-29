@@ -153,7 +153,7 @@ public class UpdateManager {
           result = ((installer != null) && (installer.length() > 0));
         }
       }
-      catch (Exception e) {
+      catch (Throwable e) {
       }
     }
     
