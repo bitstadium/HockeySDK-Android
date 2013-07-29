@@ -146,7 +146,12 @@ public class UpdateManager {
     if (activity != null) {
       try {
         String installer = activity.getPackageManager().getInstallerPackageName(activity.getPackageName());
-        result = ((installer != null) && (!installer.isEmpty()));
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.GINGERBREAD) {
+          result = ((installer != null) && (!installer.isEmpty()));
+        }
+        else {
+          result = ((installer != null) && (installer.length() > 0));
+        }
       }
       catch (Exception e) {
       }
