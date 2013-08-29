@@ -9,6 +9,7 @@ import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 
@@ -26,7 +27,8 @@ public class ConnectionManager {
     HttpParams params = new BasicHttpParams();
     HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
     HttpProtocolParams.setContentCharset(params, "utf-8");
-    params.setBooleanParameter("http.protocol.expect-continue", false);
+    params.setBooleanParameter(CoreProtocolPNames.USE_EXPECT_CONTINUE, false);
+    params.setParameter(CoreProtocolPNames.USER_AGENT, "HockeySDK/Android");
   
     //registers schemes for both http and https
     SchemeRegistry registry = new SchemeRegistry();
