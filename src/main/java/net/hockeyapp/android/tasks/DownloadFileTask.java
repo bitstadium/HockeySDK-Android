@@ -6,14 +6,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.UUID;
 
 import net.hockeyapp.android.Strings;
 import net.hockeyapp.android.listeners.DownloadFileListener;
-
-
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -126,8 +125,9 @@ public class DownloadFileTask extends AsyncTask<String, Integer, Boolean>{
   }
 
   protected URLConnection createConnection(URL url) throws IOException {
-    URLConnection connection = url.openConnection();
+    HttpURLConnection connection = (HttpURLConnection)url.openConnection();
     connection.addRequestProperty("User-Agent", "HockeySDK/Android");
+    connection.setInstanceFollowRedirects(true);
     // connection bug workaround for SDK<=2.x
     if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.GINGERBREAD) {
       connection.setRequestProperty("connection", "close");
