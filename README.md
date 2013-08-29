@@ -92,9 +92,3 @@ Starting with HockeySDK 3.0, you can integrate a feedback view in your app:
 3. If your app crashes and you start it again, is the dialog shown which asks the user to send the crash report? If not, please crash your app again, then connect the debugger and set a break point in CrashManager.java, method [register](https://github.com/TheRealKerni/HockeyKit/blob/develop/client/Android/src/net/hockeyapp/android/CrashManager.java#L27) to see why the dialog is not shown.
 
 5. If it still does not work, please [contact us](http://support.hockeyapp.net/discussion/new).
-
-## <a name="nightly">Nightly Builds</a>
-
-You can download nightly builds of the develop branch from [cisimple.com](https://www.cisimple.com/jobs/y85047ekwdj8jdjry). Builds are triggered at midnight (UTC) if we had pushed commits to our repository in the past 24 hours.
-
-<a href="https://www.cisimple.com/jobs/y85047ekwdj8jdjry"><img src='https://www.cisimple.com/jobs/y85047ekwdj8jdjry/build_status.png'/></a>
