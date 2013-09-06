@@ -8,7 +8,7 @@ The SDK runs on devices with Android 2.1 or higher, but you need to build your a
 
 ### Download the Library
 
-* Download the latest release from [here](http://hockeyapp.net/releases/#android). We also offer [nightly builds](#nightly) from our develop branch.
+* Download the latest release from [here](http://hockeyapp.net/releases/#android).
 * Unzip the file.
 * Copy the file libs/HockeySDK.jar to the libs folder of your Android project.
 * If you use ADT 16 or older, then add the .jar file to your classpath. With ADT 17 or newer, this is done automatically.
