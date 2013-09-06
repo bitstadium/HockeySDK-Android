@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 
 
+import net.hockeyapp.android.utils.ConnectionManager;
 import net.hockeyapp.android.utils.PrefsUtil;
 
 import org.apache.http.NameValuePair;
@@ -249,7 +250,7 @@ public class CrashManager {
           if (stacktrace.length() > 0) {
             // Transmit stack trace with POST request
             Log.d(Constants.TAG, "Transmitting crash data: \n" + stacktrace);
-            DefaultHttpClient httpClient = new DefaultHttpClient(); 
+            DefaultHttpClient httpClient = (DefaultHttpClient)ConnectionManager.getInstance().getHttpClient();
             HttpPost httpPost = new HttpPost(getURLString());
             
             List <NameValuePair> parameters = new ArrayList <NameValuePair>(); 

@@ -114,6 +114,7 @@ public class FeedbackManager {
       }
       
       Intent intent = new Intent();
+      intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
       intent.setClass(context, activityClass);
       intent.putExtra("url", getURLString(context));
       context.startActivity(intent);

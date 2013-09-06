@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Scanner;
 
 import net.hockeyapp.android.UpdateInfoListener;
 
@@ -61,10 +62,10 @@ public class VersionHelper {
   
   private void loadVersions(String infoJSON) {
     this.newest = new JSONObject();
+    this.sortedVersions = new ArrayList<JSONObject>();
 
     try {
       JSONArray versions = new JSONArray(infoJSON);
-      this.sortedVersions = new ArrayList<JSONObject>();
       
       int versionCode = listener.getCurrentVersionCode();
       for (int index = 0; index < versions.length(); index++) {
@@ -90,7 +91,9 @@ public class VersionHelper {
             return 0;
           }
         }
-        catch (JSONException e) {
+        catch (JSONException je) {
+        }
+        catch (NullPointerException ne) {
         }
 
         return 0;
@@ -230,5 +233,60 @@ public class VersionHelper {
     result.append("</div>");
 
     return result.toString();
+  }
+  
+  /**
+   * Compare two versions strings with each other by splitting at the . 
+   * and comparing the integer values. Additional string like "-update1"
+   * are ignored, i.e. "2.2" is considered equal to "2.2-update1". 
+   * 
+   * @param left A version string, e.g. "2.1".
+   * @param right A version string, e.g. "4.2.2".
+   * @return 0 if the versions are equal. 
+   *         1 if the left side is bigger.
+   *         -1 if the right side is bigger.
+   */
+  public static int compareVersionStrings(String left, String right) {
+    // If either side is null, we consider the versions equal
+    if ((left == null) || (right == null)) {
+      return 0;
+    }
+
+    try {
+      // Strip out any "-update1" stuff, then build a scanner for the strings
+      Scanner leftScanner = new Scanner(left.replaceAll("\\-.*", ""));
+      Scanner rightScanner = new Scanner(right.replaceAll("\\-.*", ""));
+      leftScanner.useDelimiter("\\.");
+      rightScanner.useDelimiter("\\.");
+
+      // Compare the parts
+      while ((leftScanner.hasNextInt()) && (rightScanner.hasNextInt())) {
+        int leftValue = leftScanner.nextInt();
+        int rightValue = rightScanner.nextInt();
+        if (leftValue < rightValue) {
+          return -1;
+        } 
+        else if (leftValue > rightValue) {
+          return 1;
+        }
+      }
+
+      // Left side has more parts, so consider it bigger
+      if (leftScanner.hasNextInt()) {
+        return 1;
+      } 
+      // Right side has more parts, so consider it bigger
+      else if (rightScanner.hasNextInt()) {
+        return -1;
+      } 
+      // Ok, they are equal
+      else {
+        return 0;
+      }
+    }
+    catch (Exception e) {
+      // If any exceptions happen, return zero
+      return 0;
+    }
   }
 }
