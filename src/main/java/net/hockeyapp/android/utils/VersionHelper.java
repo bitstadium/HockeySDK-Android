@@ -252,34 +252,40 @@ public class VersionHelper {
       return 0;
     }
 
-    // Strip out any "-update1" stuff, then build a scanner for the strings
-    Scanner leftScanner = new Scanner(left.replaceAll("\\-.*", ""));
-    Scanner rightScanner = new Scanner(right.replaceAll("\\-.*", ""));
-    leftScanner.useDelimiter("\\.");
-    rightScanner.useDelimiter("\\.");
+    try {
+      // Strip out any "-update1" stuff, then build a scanner for the strings
+      Scanner leftScanner = new Scanner(left.replaceAll("\\-.*", ""));
+      Scanner rightScanner = new Scanner(right.replaceAll("\\-.*", ""));
+      leftScanner.useDelimiter("\\.");
+      rightScanner.useDelimiter("\\.");
 
-    // Compare the parts
-    while ((leftScanner.hasNextInt()) && (rightScanner.hasNextInt())) {
-      int leftValue = leftScanner.nextInt();
-      int rightValue = rightScanner.nextInt();
-      if (leftValue < rightValue) {
+      // Compare the parts
+      while ((leftScanner.hasNextInt()) && (rightScanner.hasNextInt())) {
+        int leftValue = leftScanner.nextInt();
+        int rightValue = rightScanner.nextInt();
+        if (leftValue < rightValue) {
+          return -1;
+        } 
+        else if (leftValue > rightValue) {
+          return 1;
+        }
+      }
+
+      // Left side has more parts, so consider it bigger
+      if (leftScanner.hasNextInt()) {
+        return 1;
+      } 
+      // Right side has more parts, so consider it bigger
+      else if (rightScanner.hasNextInt()) {
         return -1;
       } 
-      else if (leftValue > rightValue) {
-        return 1;
+      // Ok, they are equal
+      else {
+        return 0;
       }
     }
-
-    // Left side has more parts, so consider it bigger
-    if (leftScanner.hasNextInt()) {
-      return 1;
-    } 
-    // Right side has more parts, so consider it bigger
-    else if (rightScanner.hasNextInt()) {
-      return -1;
-    } 
-    // Ok, they are equal
-    else {
+    catch (Exception e) {
+      // If any exceptions happen, return zero
       return 0;
     }
   }
