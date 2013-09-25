@@ -11,6 +11,7 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.AsyncTask.Status;
+import android.text.TextUtils;
 
 /**
  * <h4>Description</h4>
@@ -146,12 +147,7 @@ public class UpdateManager {
     if (activity != null) {
       try {
         String installer = activity.getPackageManager().getInstallerPackageName(activity.getPackageName());
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.GINGERBREAD) {
-          result = ((installer != null) && (!installer.isEmpty()));
-        }
-        else {
-          result = ((installer != null) && (installer.length() > 0));
-        }
+        result = !TextUtils.isEmpty(installer);
       }
       catch (Throwable e) {
       }
