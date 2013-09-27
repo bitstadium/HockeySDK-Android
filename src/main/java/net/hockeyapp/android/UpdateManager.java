@@ -65,7 +65,17 @@ public class UpdateManager {
    * @param appIdentifier App ID of your app on HockeyApp.
    */
   public static void register(Activity activity, String appIdentifier) {
-    register(activity, appIdentifier, null);
+    register(activity, appIdentifier, true);
+  }
+
+  /**
+   * Registers new update manager.
+   *
+   * @param activity Parent activity.
+   * @param appIdentifier App ID of your app on HockeyApp.
+   */
+  public static void register(Activity activity, String appIdentifier, boolean isDialogRequired) {
+    register(activity, appIdentifier, null, isDialogRequired);
   }
   
   /**
@@ -75,8 +85,8 @@ public class UpdateManager {
    * @param appIdentifier App ID of your app on HockeyApp.
    * @param listener Implement for callback functions.
    */
-  public static void register(Activity activity, String appIdentifier, UpdateManagerListener listener) {
-    register(activity, Constants.BASE_URL, appIdentifier, listener);
+  public static void register(Activity activity, String appIdentifier, UpdateManagerListener listener, boolean isDialogRequired) {
+    register(activity, Constants.BASE_URL, appIdentifier, listener, isDialogRequired);
   }
   
   /**
@@ -87,7 +97,7 @@ public class UpdateManager {
    * @param appIdentifier App ID of your app on HockeyApp.
    * @param listener Implement for callback functions.
    */
-  public static void register(Activity activity, String urlString, String appIdentifier, UpdateManagerListener listener) {
+  public static void register(Activity activity, String urlString, String appIdentifier, UpdateManagerListener listener, boolean isDialogRequired) {
     lastListener = listener;
     
     WeakReference<Activity> weakActivity = new WeakReference<Activity>(activity);
@@ -96,7 +106,7 @@ public class UpdateManager {
     }
     
     if ((!checkExpiryDate(weakActivity, listener)) && (!installedFromMarket(weakActivity))) {
-      startUpdateTask(weakActivity, urlString, appIdentifier, listener);
+      startUpdateTask(weakActivity, urlString, appIdentifier, listener, isDialogRequired);
     }
   }
 
@@ -181,9 +191,9 @@ public class UpdateManager {
    * Starts the UpdateTask if not already running. Otherwise attaches the
    * activity to it. 
    */
-  private static void startUpdateTask(WeakReference<Activity> weakActivity, String urlString, String appIdentifier, UpdateManagerListener listener) {
+  private static void startUpdateTask(WeakReference<Activity> weakActivity, String urlString, String appIdentifier, UpdateManagerListener listener, boolean isDialogRequired) {
     if ((updateTask == null) || (updateTask.getStatus() == Status.FINISHED)) {
-      updateTask = new CheckUpdateTask(weakActivity, urlString, appIdentifier, listener);
+      updateTask = new CheckUpdateTask(weakActivity, urlString, appIdentifier, listener, isDialogRequired);
       updateTask.execute();
     }
     else {

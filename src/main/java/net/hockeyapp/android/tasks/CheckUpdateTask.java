@@ -84,46 +84,32 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
   
   private Activity activity = null;
   private Boolean mandatory = false;
+  private boolean isDialogRequired = false;
   private UpdateManagerListener listener;
   private long usageTime = 0;
   
   public CheckUpdateTask(WeakReference<Activity> weakActivity, String urlString) {
-    this.appIdentifier = null;
-    this.urlString = urlString;
-    
-    if (weakActivity != null) {
-      activity = weakActivity.get();
-    }
-    
-    if (activity != null) {
-      this.usageTime = Tracking.getUsageTime(activity);
-      Constants.loadFromContext(activity);
-    }
+   this(weakActivity, urlString, null);
   }
   
   public CheckUpdateTask(WeakReference<Activity> weakActivity, String urlString, String appIdentifier) {
-    this.appIdentifier = appIdentifier;
-    this.urlString = urlString;
-
-    if (weakActivity != null) {
-      activity = weakActivity.get();
-    }
-    
-    if (activity != null) {
-      this.usageTime = Tracking.getUsageTime(activity);
-      Constants.loadFromContext(activity);
-    }
+   this(weakActivity, urlString, appIdentifier, null);
   }
   
   public CheckUpdateTask(WeakReference<Activity> weakActivity, String urlString, String appIdentifier, UpdateManagerListener listener) {
+    this(weakActivity, urlString, appIdentifier, listener, true);
+  }
+
+  public CheckUpdateTask(WeakReference<Activity> weakActivity, String urlString, String appIdentifier, UpdateManagerListener listener, boolean isDialogRequired) {
     this.appIdentifier = appIdentifier;
     this.urlString = urlString;
     this.listener = listener;
+    this.isDialogRequired = isDialogRequired;
 
     if (weakActivity != null) {
       activity = weakActivity.get();
     }
-    
+
     if (activity != null) {
       this.usageTime = Tracking.getUsageTime(activity);
       Constants.loadFromContext(activity);
@@ -228,7 +214,9 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
         listener.onUpdateAvailable();
       }
 
-      showDialog(updateInfo);
+      if (isDialogRequired) {
+        showDialog(updateInfo);
+      }
     }
     else {
       if (listener != null) {
