@@ -1,5 +1,7 @@
 package net.hockeyapp.android;
 
+import org.json.JSONArray;
+
 import java.util.Date;
 
 /**
@@ -63,6 +65,14 @@ public abstract class UpdateManagerListener extends StringListener {
    */
   public void onUpdateAvailable() {
     // Do nothing
+  }
+
+  /**
+   * Called when the update manager found an update.
+   * @param data Information about the update.
+   */
+  public void onUpdateAvailable(JSONArray data, String url){
+    onUpdateAvailable();
   }
   
   /**

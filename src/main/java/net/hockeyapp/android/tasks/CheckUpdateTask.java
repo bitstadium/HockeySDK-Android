@@ -211,7 +211,7 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
   protected void onPostExecute(JSONArray updateInfo) {
     if (updateInfo != null) {
       if (listener != null) {
-        listener.onUpdateAvailable();
+        listener.onUpdateAvailable(updateInfo, getURLString("apk"));
       }
 
       if (isDialogRequired) {
