@@ -73,6 +73,7 @@ public class UpdateManager {
    *
    * @param activity Parent activity.
    * @param appIdentifier App ID of your app on HockeyApp.
+   * @param isDialogRequired Flag to indicate if a dialog must be shown when any update is available.
    */
   public static void register(Activity activity, String appIdentifier, boolean isDialogRequired) {
     register(activity, appIdentifier, null, isDialogRequired);
@@ -84,6 +85,7 @@ public class UpdateManager {
    * @param activity Parent activity.
    * @param appIdentifier App ID of your app on HockeyApp.
    * @param listener Implement for callback functions.
+   * @param isDialogRequired Flag to indicate if a dialog must be shown when any update is available.
    */
   public static void register(Activity activity, String appIdentifier, UpdateManagerListener listener, boolean isDialogRequired) {
     register(activity, Constants.BASE_URL, appIdentifier, listener, isDialogRequired);
