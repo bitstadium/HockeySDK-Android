@@ -77,9 +77,12 @@ import android.widget.Toast;
  * @author Thomas Dohmke
  **/
 public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
-  private static final int MAX_NUMBER_OF_VERSIONS = 25;
-  
-  protected String urlString = null;
+	private static final int MAX_NUMBER_OF_VERSIONS = 25;
+	private static final String INTENT_EXTRA_URL = "url";
+	private static final String INTENT_EXTRA_JSON = "json";
+	private static final String APK = "apk";
+
+	protected String urlString = null;
   protected String appIdentifier = null;
   
   private Activity activity = null;
@@ -211,7 +214,7 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
   protected void onPostExecute(JSONArray updateInfo) {
     if (updateInfo != null) {
       if (listener != null) {
-        listener.onUpdateAvailable(updateInfo, getURLString("apk"));
+        listener.onUpdateAvailable(updateInfo, getURLString(APK));
       }
 
       if (isDialogRequired) {
@@ -325,8 +328,8 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
     if (activity != null) {
       Intent intent = new Intent();
       intent.setClass(activity, activityClass);
-      intent.putExtra("json", updateInfo.toString());
-      intent.putExtra("url", getURLString("apk"));
+      intent.putExtra(INTENT_EXTRA_JSON, updateInfo.toString());
+      intent.putExtra(INTENT_EXTRA_URL, getURLString(APK));
       activity.startActivity(intent);
       
       if (finish) {

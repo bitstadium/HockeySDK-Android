@@ -70,6 +70,7 @@ public abstract class UpdateManagerListener extends StringListener {
   /**
    * Called when the update manager found an update.
    * @param data Information about the update.
+   * @param url Link to apk file update.
    */
   public void onUpdateAvailable(JSONArray data, String url){
     onUpdateAvailable();
