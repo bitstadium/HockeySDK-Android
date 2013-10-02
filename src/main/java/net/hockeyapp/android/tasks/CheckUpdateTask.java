@@ -77,53 +77,42 @@ import android.widget.Toast;
  * @author Thomas Dohmke
  **/
 public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
-  private static final int MAX_NUMBER_OF_VERSIONS = 25;
-  
-  protected String urlString = null;
+	private static final int MAX_NUMBER_OF_VERSIONS = 25;
+	private static final String INTENT_EXTRA_URL = "url";
+	private static final String INTENT_EXTRA_JSON = "json";
+	private static final String APK = "apk";
+
+	protected String urlString = null;
   protected String appIdentifier = null;
   
   private Activity activity = null;
   private Boolean mandatory = false;
+  private boolean isDialogRequired = false;
   private UpdateManagerListener listener;
   private long usageTime = 0;
   
   public CheckUpdateTask(WeakReference<Activity> weakActivity, String urlString) {
-    this.appIdentifier = null;
-    this.urlString = urlString;
-    
-    if (weakActivity != null) {
-      activity = weakActivity.get();
-    }
-    
-    if (activity != null) {
-      this.usageTime = Tracking.getUsageTime(activity);
-      Constants.loadFromContext(activity);
-    }
+   this(weakActivity, urlString, null);
   }
   
   public CheckUpdateTask(WeakReference<Activity> weakActivity, String urlString, String appIdentifier) {
-    this.appIdentifier = appIdentifier;
-    this.urlString = urlString;
-
-    if (weakActivity != null) {
-      activity = weakActivity.get();
-    }
-    
-    if (activity != null) {
-      this.usageTime = Tracking.getUsageTime(activity);
-      Constants.loadFromContext(activity);
-    }
+   this(weakActivity, urlString, appIdentifier, null);
   }
   
   public CheckUpdateTask(WeakReference<Activity> weakActivity, String urlString, String appIdentifier, UpdateManagerListener listener) {
+    this(weakActivity, urlString, appIdentifier, listener, true);
+  }
+
+  public CheckUpdateTask(WeakReference<Activity> weakActivity, String urlString, String appIdentifier, UpdateManagerListener listener, boolean isDialogRequired) {
     this.appIdentifier = appIdentifier;
     this.urlString = urlString;
     this.listener = listener;
+    this.isDialogRequired = isDialogRequired;
 
     if (weakActivity != null) {
       activity = weakActivity.get();
     }
-    
+
     if (activity != null) {
       this.usageTime = Tracking.getUsageTime(activity);
       Constants.loadFromContext(activity);
@@ -225,10 +214,12 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
   protected void onPostExecute(JSONArray updateInfo) {
     if (updateInfo != null) {
       if (listener != null) {
-        listener.onUpdateAvailable();
+        listener.onUpdateAvailable(updateInfo, getURLString(APK));
       }
 
-      showDialog(updateInfo);
+      if (isDialogRequired) {
+        showDialog(updateInfo);
+      }
     }
     else {
       if (listener != null) {
@@ -337,8 +328,8 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
     if (activity != null) {
       Intent intent = new Intent();
       intent.setClass(activity, activityClass);
-      intent.putExtra("json", updateInfo.toString());
-      intent.putExtra("url", getURLString("apk"));
+      intent.putExtra(INTENT_EXTRA_JSON, updateInfo.toString());
+      intent.putExtra(INTENT_EXTRA_URL, getURLString(APK));
       activity.startActivity(intent);
       
       if (finish) {
