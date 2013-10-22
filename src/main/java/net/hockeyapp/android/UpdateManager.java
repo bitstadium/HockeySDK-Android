@@ -3,6 +3,7 @@ package net.hockeyapp.android;
 import java.lang.ref.WeakReference;
 import java.util.Date;
 
+import android.content.Context;
 import net.hockeyapp.android.tasks.CheckUpdateTask;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -12,6 +13,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.AsyncTask.Status;
 import android.text.TextUtils;
+import net.hockeyapp.android.tasks.CheckUpdateTaskWithUI;
 
 /**
  * <h4>Description</h4>
@@ -79,7 +81,7 @@ public class UpdateManager {
   public static void register(Activity activity, String appIdentifier, boolean isDialogRequired) {
     register(activity, appIdentifier, null, isDialogRequired);
   }
-  
+
   /**
    * Registers new update manager.
    * 
@@ -102,14 +104,43 @@ public class UpdateManager {
    */
   public static void register(Activity activity, String urlString, String appIdentifier, UpdateManagerListener listener, boolean isDialogRequired) {
     lastListener = listener;
-    
+
     WeakReference<Activity> weakActivity = new WeakReference<Activity>(activity);
     if ((fragmentsSupported()) && (dialogShown(weakActivity))) {
       return;
     }
-    
+
     if ((!checkExpiryDate(weakActivity, listener)) && (!installedFromMarket(weakActivity))) {
       startUpdateTask(weakActivity, urlString, appIdentifier, listener, isDialogRequired);
+    }
+  }
+
+  /**
+   * Registers new update manager.
+   *
+   * @param context Application context.
+   * @param appIdentifier App ID of your app on HockeyApp.
+   * @param listener Implement for callback functions.
+   */
+  public static void registerForBackground(Context context, String appIdentifier, UpdateManagerListener listener) {
+    registerForBackground(context, Constants.BASE_URL, appIdentifier, listener);
+  }
+
+  /**
+   * Registers new update manager.
+   *
+   * @param appContext Application context.
+   * @param urlString URL of the HockeyApp server.
+   * @param appIdentifier App ID of your app on HockeyApp.
+   * @param listener Implement for callback functions.
+   */
+  public static void registerForBackground(Context appContext, String urlString, String appIdentifier, UpdateManagerListener listener) {
+    lastListener = listener;
+
+    WeakReference<Context> weakContext = new WeakReference<Context>(appContext);
+
+    if ((!checkExpiryDateForBackground(weakContext, listener)) && (!installedFromMarket(weakContext))) {
+      startUpdateTaskForBackground(weakContext, urlString, appIdentifier, listener);
     }
   }
 
@@ -131,34 +162,45 @@ public class UpdateManager {
    * handled by the owner of the UpdateManager.  
    */
   private static boolean checkExpiryDate(WeakReference<Activity> weakActivity, UpdateManagerListener listener) {
-    boolean result = false;
     boolean handle = false;
-    
-    if (listener != null) {
-      Date expiryDate = listener.getExpiryDate();
-      result = ((expiryDate != null) && (new Date().compareTo(expiryDate) > 0));
-      if (result) {
-        handle = listener.onBuildExpired();
-      }
+
+    boolean hasExpired = checkExpiryDateForBackground(weakActivity, listener);
+    if(hasExpired){
+      handle = listener.onBuildExpired();
     }
-    
-    if ((result) && (handle)) {
+
+    if ((hasExpired) && (handle)) {
       startExpiryInfoIntent(weakActivity);
     }
     
+    return hasExpired;
+  }
+
+  /**
+   * Returns true if the build is expired and starts an activity if not
+   * handled by the owner of the UpdateManager.
+   */
+  private static boolean checkExpiryDateForBackground(WeakReference<? extends Context> weakContext, UpdateManagerListener listener) {
+    boolean result = false;
+
+    if (listener != null) {
+      Date expiryDate = listener.getExpiryDate();
+      result = ((expiryDate != null) && (new Date().compareTo(expiryDate) > 0));
+    }
+
     return result;
   }
-  
+
   /**
    * Returns true if the build was installed through a market.
    */
-  private static boolean installedFromMarket(WeakReference<Activity> weakActivity) {
+  private static boolean installedFromMarket(WeakReference<? extends Context> weakContext) {
     boolean result = false;
     
-    Activity activity = weakActivity.get();
-    if (activity != null) {
+    Context context = weakContext.get();
+    if (context != null) {
       try {
-        String installer = activity.getPackageManager().getInstallerPackageName(activity.getPackageName());
+        String installer = context.getPackageManager().getInstallerPackageName(context.getPackageName());
         result = !TextUtils.isEmpty(installer);
       }
       catch (Throwable e) {
@@ -191,11 +233,25 @@ public class UpdateManager {
    */
   private static void startUpdateTask(WeakReference<Activity> weakActivity, String urlString, String appIdentifier, UpdateManagerListener listener, boolean isDialogRequired) {
     if ((updateTask == null) || (updateTask.getStatus() == Status.FINISHED)) {
-      updateTask = new CheckUpdateTask(weakActivity, urlString, appIdentifier, listener, isDialogRequired);
+      updateTask = new CheckUpdateTaskWithUI(weakActivity, urlString, appIdentifier, listener, isDialogRequired);
       updateTask.execute();
     }
     else {
       updateTask.attach(weakActivity);
+    }
+  }
+
+  /**
+   * Starts the UpdateTask if not already running. Otherwise attaches the
+   * activity to it.
+   */
+  private static void startUpdateTaskForBackground(WeakReference<Context> weakContext, String urlString, String appIdentifier, UpdateManagerListener listener) {
+    if ((updateTask == null) || (updateTask.getStatus() == Status.FINISHED)) {
+      updateTask = new CheckUpdateTask(weakContext, urlString, appIdentifier, listener);
+      updateTask.execute();
+    }
+    else {
+      updateTask.attach(weakContext);
     }
   }
 
