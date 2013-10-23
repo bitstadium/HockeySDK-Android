@@ -118,12 +118,12 @@ public class UpdateManager {
   /**
    * Registers new update manager.
    *
-   * @param context Application context.
+   * @param appContext Application context.
    * @param appIdentifier App ID of your app on HockeyApp.
    * @param listener Implement for callback functions.
    */
-  public static void registerForBackground(Context context, String appIdentifier, UpdateManagerListener listener) {
-    registerForBackground(context, Constants.BASE_URL, appIdentifier, listener);
+  public static void registerForBackground(Context appContext, String appIdentifier, UpdateManagerListener listener) {
+    registerForBackground(appContext, Constants.BASE_URL, appIdentifier, listener);
   }
 
   /**
@@ -139,7 +139,7 @@ public class UpdateManager {
 
     WeakReference<Context> weakContext = new WeakReference<Context>(appContext);
 
-    if ((!checkExpiryDateForBackground(weakContext, listener)) && (!installedFromMarket(weakContext))) {
+    if ((!checkExpiryDateForBackground(listener)) && (!installedFromMarket(weakContext))) {
       startUpdateTaskForBackground(weakContext, urlString, appIdentifier, listener);
     }
   }
@@ -164,7 +164,7 @@ public class UpdateManager {
   private static boolean checkExpiryDate(WeakReference<Activity> weakActivity, UpdateManagerListener listener) {
     boolean handle = false;
 
-    boolean hasExpired = checkExpiryDateForBackground(weakActivity, listener);
+    boolean hasExpired = checkExpiryDateForBackground(listener);
     if(hasExpired){
       handle = listener.onBuildExpired();
     }
@@ -180,7 +180,7 @@ public class UpdateManager {
    * Returns true if the build is expired and starts an activity if not
    * handled by the owner of the UpdateManager.
    */
-  private static boolean checkExpiryDateForBackground(WeakReference<? extends Context> weakContext, UpdateManagerListener listener) {
+  private static boolean checkExpiryDateForBackground(UpdateManagerListener listener) {
     boolean result = false;
 
     if (listener != null) {
