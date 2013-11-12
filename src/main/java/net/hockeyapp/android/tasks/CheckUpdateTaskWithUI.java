@@ -83,7 +83,7 @@ public class CheckUpdateTaskWithUI extends CheckUpdateTask{
   @Override
   protected void onPostExecute(JSONArray updateInfo) {
     super.onPostExecute(updateInfo);
-    if(isDialogRequired){
+    if ((updateInfo != null) && (isDialogRequired)) {
       showDialog(updateInfo);
     }
   }
