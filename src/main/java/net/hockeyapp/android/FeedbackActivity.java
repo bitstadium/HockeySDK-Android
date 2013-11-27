@@ -177,20 +177,23 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
           String requestType = bundle.getString("request_type");
           if ((requestType.equals("send") && ((responseString == null) || (Integer.parseInt(statusCode) != 201)))) {
             // Send feedback went wrong if response is empty or status code != 201
-            error.setMessage("Message couldn't be posted. Please check your input values and try again.");
+            error.setMessage("Message couldn't be posted. Please check your input values and your connection, then try again.");
           }
-          else if ((requestType.equals("fetch") && ((Integer.parseInt(statusCode) == 404) || (Integer.parseInt(statusCode) == 422)))) {
+          else if ((requestType.equals("fetch") && (statusCode != null) && ((Integer.parseInt(statusCode) == 404) || (Integer.parseInt(statusCode) == 422)))) {
             // Fetch feedback went wrong if status code is 404 or 422
             resetFeedbackView();
             success = true;
           }
-          else {
+          else if (responseString != null) {
             startParseFeedbackTask(responseString);
             success = true;
           }
+          else {
+            error.setMessage("No response from server. Please check your connection, then try again.");
+          }
         }
         else {
-          error.setMessage("Message couldn't be posted. Please check your input values and try again.");
+          error.setMessage("Message couldn't be posted. Please check your input values and your connection, then try again.");
         }
 
         if (!success) {
