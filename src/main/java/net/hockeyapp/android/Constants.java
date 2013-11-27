@@ -102,7 +102,7 @@ public class Constants {
   /**
    * Version of this SDK.
    */
-  public static final String SDK_VERSION = "3.0.1";
+  public static final String SDK_VERSION = "3.0.2-SNAPSHOT";
 
   /**
    * Initializes constants from the given context. The context is used to set 

@@ -168,11 +168,17 @@ public class SendFeedbackTask extends AsyncTask<Void, Void, HashMap<String, Stri
       Message msg = new Message();
       Bundle bundle = new Bundle();
       
-      bundle.putString("request_type", (String)result.get("type"));
-      bundle.putString("feedback_response", (String)result.get("response"));
-      bundle.putString("feedback_status", (String)result.get("status"));
+      if (result != null) {
+	      bundle.putString("request_type", (String)result.get("type"));
+	      bundle.putString("feedback_response", (String)result.get("response"));
+	      bundle.putString("feedback_status", (String)result.get("status"));
+      }
+      else {
+        bundle.putString("request_type", "unknown");
+      }
+
       msg.setData(bundle);
-      
+
       handler.sendMessage(msg);
     }
   }
@@ -183,7 +189,9 @@ public class SendFeedbackTask extends AsyncTask<Void, Void, HashMap<String, Stri
    * @return
    */
   private HashMap<String, String> doPostPut(HttpClient httpClient) {
-    UrlEncodedFormEntity form;
+    HashMap<String, String> result = new HashMap<String, String>();
+    result.put("type", "send");
+
     try {
       List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
       nameValuePairs.add(new BasicNameValuePair("name", name));
@@ -197,7 +205,7 @@ public class SendFeedbackTask extends AsyncTask<Void, Void, HashMap<String, Stri
       nameValuePairs.add(new BasicNameValuePair("oem", Constants.PHONE_MANUFACTURER));
       nameValuePairs.add(new BasicNameValuePair("model", Constants.PHONE_MODEL));
       
-      form = new UrlEncodedFormEntity(nameValuePairs, "UTF-8");
+      UrlEncodedFormEntity form = new UrlEncodedFormEntity(nameValuePairs, "UTF-8");
       form.setContentEncoding(HTTP.UTF_8);
       
       HttpPost httpPost = null;
@@ -222,16 +230,9 @@ public class SendFeedbackTask extends AsyncTask<Void, Void, HashMap<String, Stri
       
       if (response != null) {
         HttpEntity resEntity = response.getEntity();  
-        
-        HashMap<String, String> result = new HashMap<String, String>();
-        result.put("type", "send");
         result.put("response", EntityUtils.toString(resEntity));
         result.put("status", "" + response.getStatusLine().getStatusCode());
-        
-        return result;
       }
-      
-      return null;
     } 
     catch (UnsupportedEncodingException e) {
       e.printStackTrace();
@@ -243,7 +244,7 @@ public class SendFeedbackTask extends AsyncTask<Void, Void, HashMap<String, Stri
       e.printStackTrace();
     }
     
-    return null;
+    return result;
   }
   
   /**
@@ -257,17 +258,16 @@ public class SendFeedbackTask extends AsyncTask<Void, Void, HashMap<String, Stri
     
     HttpGet httpGet = new HttpGet(sb.toString());
 
+    HashMap<String, String> result = new HashMap<String, String>();
+    result.put("type", "fetch");
+
     /** Execute HTTP Post Request */
     try {
       HttpResponse response = (HttpResponse) httpClient.execute(httpGet);
       HttpEntity responseEntity = response.getEntity();
       
-      HashMap<String, String> result = new HashMap<String, String>();
-      result.put("type", "fetch");
       result.put("response", EntityUtils.toString(responseEntity));
       result.put("status", "" + response.getStatusLine().getStatusCode());
-      
-      return result;
     } 
     catch (ClientProtocolException e) {
       e.printStackTrace();
@@ -279,6 +279,6 @@ public class SendFeedbackTask extends AsyncTask<Void, Void, HashMap<String, Stri
       e.printStackTrace();
     }
     
-    return null;
+    return result;
   }
 }
