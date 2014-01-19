@@ -84,7 +84,8 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
       // Write the stacktrace to disk
       BufferedWriter write = new BufferedWriter(new FileWriter(path));
       write.write("Package: " + Constants.APP_PACKAGE + "\n");
-      write.write("Version: " + Constants.APP_VERSION + "\n");
+      write.write("Version Code: " + Constants.APP_VERSION + "\n");
+      write.write("Version Name: " + Constants.APP_VERSION_NAME + "\n");
       if ((listener == null) || (listener.includeDeviceData())) {
         write.write("Android: " + Constants.ANDROID_VERSION + "\n");
         write.write("Manufacturer: " + Constants.PHONE_MANUFACTURER + "\n");
