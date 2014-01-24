@@ -166,6 +166,18 @@ public class Strings {
   }
 
   /**
+   * Sets the default string for the given resource ID.
+   *
+   * @param resourceID The ID of the string resource.
+   * @param string The new default string.
+   */
+  public static void set(int resourceID, String string) {
+    if ((string != null) && (resourceID >= 0) && (resourceID < ENGLISH.length)) {
+      ENGLISH[resourceID] = string;
+    }
+  }
+
+  /**
    * Returns a string for the given resource ID. The method first runs the 
    * callback method from the listener (if specified). If this returns null, 
    * it then uses the default string.
