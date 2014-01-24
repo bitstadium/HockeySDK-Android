@@ -52,79 +52,85 @@ public class Strings {
   public final static int CRASH_DIALOG_NEGATIVE_BUTTON_ID           = 0x02;
 
   /**
+   * Resource ID for the label on the neutral button of the dialog when a new
+   * crash was found.
+   */
+  public final static int CRASH_DIALOG_NEUTRAL_BUTTON_ID            = 0x03;
+
+  /**
    * Resource ID for the label on the positive button of the dialog when a new 
    * crash was found.
    */
-  public final static int CRASH_DIALOG_POSITIVE_BUTTON_ID           = 0x03;
+  public final static int CRASH_DIALOG_POSITIVE_BUTTON_ID           = 0x04;
 
   /**
    * Resource ID for the title of the dialog when the apk download failed.
    */
-  public final static int DOWNLOAD_FAILED_DIALOG_TITLE_ID           = 0x04;
+  public final static int DOWNLOAD_FAILED_DIALOG_TITLE_ID           = 0x05;
   
   /**
    * Resource ID for the message of the dialog when the apk download failed.
    */
-  public final static int DOWNLOAD_FAILED_DIALOG_MESSAGE_ID         = 0x05;
+  public final static int DOWNLOAD_FAILED_DIALOG_MESSAGE_ID         = 0x06;
 
   /**
    * Resource ID for the label on the negative button of the dialog when the 
    * apk download failed.
    */
-  public final static int DOWNLOAD_FAILED_DIALOG_NEGATIVE_BUTTON_ID = 0x06;
+  public final static int DOWNLOAD_FAILED_DIALOG_NEGATIVE_BUTTON_ID = 0x07;
 
   /**
    * Resource ID for the label on the positive button of the dialog when the 
    * apk download failed.
    */
-  public final static int DOWNLOAD_FAILED_DIALOG_POSITIVE_BUTTON_ID = 0x07;
+  public final static int DOWNLOAD_FAILED_DIALOG_POSITIVE_BUTTON_ID = 0x08;
 
   /**
    * Resource ID for the text of the toast when an update is mandatory.
    */
-  public final static int UPDATE_MANDATORY_TOAST_ID                 = 0x08;
+  public final static int UPDATE_MANDATORY_TOAST_ID                 = 0x09;
       
   /**
    * Resource ID for the title of the dialog when a new update was found.
    */
-  public final static int UPDATE_DIALOG_TITLE_ID                    = 0x09;
+  public final static int UPDATE_DIALOG_TITLE_ID                    = 0x0a;
   
   /**
    * Resource ID for the message of the dialog when a new update was found.
    */
-  public final static int UPDATE_DIALOG_MESSAGE_ID                  = 0x0a;
+  public final static int UPDATE_DIALOG_MESSAGE_ID                  = 0x0b;
   
   /**
    * Resource ID for the label on the negative button of the dialog when a new 
    * update was found.
    */
-  public final static int UPDATE_DIALOG_NEGATIVE_BUTTON_ID          = 0x0b;
+  public final static int UPDATE_DIALOG_NEGATIVE_BUTTON_ID          = 0x0c;
   
   /**
    * Resource ID for the label on the positive button of the dialog when a new 
    * update was found.
    */
-  public final static int UPDATE_DIALOG_POSITIVE_BUTTON_ID          = 0x0c;
+  public final static int UPDATE_DIALOG_POSITIVE_BUTTON_ID          = 0x0d;
   
   /**
    * Resource ID for the title of the expiry info view.
    */
-  public final static int EXPIRY_INFO_TITLE_ID                      = 0x0d;
+  public final static int EXPIRY_INFO_TITLE_ID                      = 0x0e;
   
   /**
    * Resource ID for the text of the expiry info view.
    */
-  public final static int EXPIRY_INFO_TEXT_ID                       = 0x0e;
+  public final static int EXPIRY_INFO_TEXT_ID                       = 0x0f;
 
   /**
    * Resource ID for the title of the Feedback Failed info view.
    */
-  public final static int FEEDBACK_FAILED_TITLE_ID                  = 0x0f;
+  public final static int FEEDBACK_FAILED_TITLE_ID                  = 0x10;
 
   /**
    * Resource ID for the text of the Feedback Failed info view.
    */
-  public final static int FEEDBACK_FAILED_TEXT_ID                   = 0x10;
+  public final static int FEEDBACK_FAILED_TEXT_ID                   = 0x11;
 
 
   /**
@@ -134,6 +140,7 @@ public class Strings {
       "Crash Data",
       "The app found information about previous crashes. Would you like to send this data to the developer?",
       "Dismiss",
+      "Always send",
       "Send",
       
       "Download Failed",

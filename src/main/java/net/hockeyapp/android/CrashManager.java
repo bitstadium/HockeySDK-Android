@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 
 
+import android.preference.PreferenceManager;
 import net.hockeyapp.android.utils.ConnectionManager;
 import net.hockeyapp.android.utils.PrefsUtil;
 
@@ -78,6 +79,11 @@ public class CrashManager {
    * URL of HockeyApp service.
    */
   private static String urlString = null;
+
+  /**
+   * Shared preferences key for always send dialog button.
+   */
+  private static final String ALWAYS_SEND_KEY = "always_send_crash_reports";
 
   /**
    * Registers new crash manager and handles existing crash logs.
@@ -157,6 +163,9 @@ public class CrashManager {
     int foundOrSend = hasStackTraces(weakContext);
     if (foundOrSend == 1) {
       Boolean autoSend = false;
+      SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+      autoSend |= prefs.getBoolean(ALWAYS_SEND_KEY, false);
+
       if (listener != null) {
         autoSend |= listener.shouldAutoUploadCrashes();
         autoSend |= listener.onCrashesFound();
@@ -370,6 +379,25 @@ public class CrashManager {
         deleteStackTraces(weakContext);
         registerHandler(weakContext, listener, ignoreDefaultHandler);
       } 
+    });
+
+    builder.setNeutralButton(Strings.get(listener, Strings.CRASH_DIALOG_NEUTRAL_BUTTON_ID), new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            Context context = null;
+            if (weakContext != null) {
+                context = weakContext.get();
+            }
+
+            if (context == null) {
+                return;
+            }
+
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            prefs.edit().putBoolean(ALWAYS_SEND_KEY, true).commit();
+
+            sendCrashes(weakContext, listener, ignoreDefaultHandler);
+        }
     });
 
     builder.setPositiveButton(Strings.get(listener, Strings.CRASH_DIALOG_POSITIVE_BUTTON_ID), new DialogInterface.OnClickListener() {
