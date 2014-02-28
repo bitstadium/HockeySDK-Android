@@ -1,17 +1,21 @@
 package net.hockeyapp.android.adapters;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-
-import net.hockeyapp.android.objects.FeedbackMessage;
-import net.hockeyapp.android.views.FeedbackMessageView;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+import net.hockeyapp.android.objects.FeedbackAttachment;
+import net.hockeyapp.android.objects.FeedbackMessage;
+import net.hockeyapp.android.tasks.AttachmentDownloader;
+import net.hockeyapp.android.views.AttachmentListView;
+import net.hockeyapp.android.views.AttachmentView;
+import net.hockeyapp.android.views.FeedbackMessageView;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 
 public class MessagesAdapter extends BaseAdapter {
   private Context context;
@@ -22,6 +26,7 @@ public class MessagesAdapter extends BaseAdapter {
   private TextView authorTextView;
   private TextView dateTextView;
   private TextView messageTextView;
+  private AttachmentListView attachmentListView;
 
   public MessagesAdapter(Context context, ArrayList<FeedbackMessage> messagesList) {
     this.context = context;
@@ -51,7 +56,8 @@ public class MessagesAdapter extends BaseAdapter {
       authorTextView = (TextView) view.findViewById(FeedbackMessageView.AUTHOR_TEXT_VIEW_ID);
       dateTextView = (TextView) view.findViewById(FeedbackMessageView.DATE_TEXT_VIEW_ID);
       messageTextView = (TextView) view.findViewById(FeedbackMessageView.MESSAGE_TEXT_VIEW_ID);
-        
+      attachmentListView = (AttachmentListView) view.findViewById(FeedbackMessageView.ATTACHMENT_LIST_VIEW_ID);
+
       try {
         date = format.parse(feedbackMessage.getCreatedAt());
         dateTextView.setText(formatNew.format(date));
@@ -61,8 +67,16 @@ public class MessagesAdapter extends BaseAdapter {
   
       authorTextView.setText(feedbackMessage.getName());
       messageTextView.setText(feedbackMessage.getText());
+
+      attachmentListView.removeAllViews();
+      for (FeedbackAttachment feedbackAttachment : feedbackMessage.getFeedbackAttachments()) {
+        AttachmentView attachmentView = new AttachmentView(context, attachmentListView, feedbackAttachment, false);
+        attachmentView.setTag(feedbackAttachment.getCacheId()); // TODO necessary?
+        AttachmentDownloader.getInstance().download(feedbackAttachment, attachmentView);
+        attachmentListView.addView(attachmentView);
+      }
     }
-      
+
     view.setFeedbackMessageViewBgAndTextColor(position % 2 == 0 ? 0 : 1);
   
     return view;

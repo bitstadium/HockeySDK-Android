@@ -1,11 +1,17 @@
 package net.hockeyapp.android.tasks;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import net.hockeyapp.android.Constants;
+import net.hockeyapp.android.utils.ConnectionManager;
+import net.hockeyapp.android.utils.SimpleMultipartEntity;
+import net.hockeyapp.android.utils.Util;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -19,18 +25,10 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
-import net.hockeyapp.android.Constants;
-import net.hockeyapp.android.utils.ConnectionManager;
-import net.hockeyapp.android.utils.Util;
-
-
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * <h4>Description</h4>
@@ -74,6 +72,7 @@ public class SendFeedbackTask extends AsyncTask<Void, Void, HashMap<String, Stri
   private String email;
   private String subject;
   private String text;
+  private List<Uri> attachmentUris;
   private String token;
   private boolean isFetchMessages;
   private ProgressDialog progressDialog;
@@ -89,13 +88,14 @@ public class SendFeedbackTask extends AsyncTask<Void, Void, HashMap<String, Stri
    * @param email           Email of the feedback sender
    * @param subject         Message subject
    * @param text            The message
+   * @param attachmentUris  List of all attached files
    * @param token           Token received after sending the first feedback. This should be stored in {@link SharedPreferences}
    * @param handler         Handler object to send data back to the activity
    * @param isFetchMessages If true, the {@link AsyncTask} will perform a GET, fetching the messages. 
    *                        If false, the {@link AsyncTask} will perform a POST, sending the feedback message
    */
   public SendFeedbackTask(Context context, String urlString, String name, String email, String subject, 
-      String text, String token, Handler handler, boolean isFetchMessages) {
+      String text, List<Uri> attachmentUris, String token, Handler handler, boolean isFetchMessages) {
     
     this.context = context;
     this.urlString = urlString;
@@ -103,6 +103,7 @@ public class SendFeedbackTask extends AsyncTask<Void, Void, HashMap<String, Stri
     this.email = email;
     this.subject = subject;
     this.text = text;
+    this.attachmentUris = attachmentUris;
     this.token = token;
     this.handler = handler;
     this.isFetchMessages = isFetchMessages;
@@ -135,7 +136,7 @@ public class SendFeedbackTask extends AsyncTask<Void, Void, HashMap<String, Stri
   
   @Override
   protected HashMap<String, String> doInBackground(Void... args) {
-    HttpClient httpclient = ConnectionManager.getInstance().getHttpClient();  
+    HttpClient httpclient = ConnectionManager.getInstance().getHttpClient();
 
     if (isFetchMessages && token != null) {
       /** If we are fetching messages then do a GET */
@@ -143,10 +144,15 @@ public class SendFeedbackTask extends AsyncTask<Void, Void, HashMap<String, Stri
     } 
     else if (!isFetchMessages) {
       /** 
-       * If we are sending a feedback do POST, and if we are sending a feedback 
+       * If we are sending a feedback do POST, and if we are sending a feedback
        * to an existing discussion do PUT
        */
-      return doPostPut(httpclient);     
+      if (attachmentUris.isEmpty()) {
+        return doPostPut(httpclient);
+
+      } else {
+        return doPostPutWithAttachments(httpclient);
+      }
     }
     
     return null;
@@ -204,10 +210,10 @@ public class SendFeedbackTask extends AsyncTask<Void, Void, HashMap<String, Stri
       nameValuePairs.add(new BasicNameValuePair("os_version", Constants.ANDROID_VERSION));
       nameValuePairs.add(new BasicNameValuePair("oem", Constants.PHONE_MANUFACTURER));
       nameValuePairs.add(new BasicNameValuePair("model", Constants.PHONE_MODEL));
-      
+
       UrlEncodedFormEntity form = new UrlEncodedFormEntity(nameValuePairs, "UTF-8");
       form.setContentEncoding(HTTP.UTF_8);
-      
+
       HttpPost httpPost = null;
       HttpPut httpPut = null;
       if (token != null) {
@@ -246,6 +252,89 @@ public class SendFeedbackTask extends AsyncTask<Void, Void, HashMap<String, Stri
     
     return result;
   }
+
+  /**
+   * POST/PUT with attachments
+   * @param httpClient
+   * @return
+   */
+  private HashMap<String, String> doPostPutWithAttachments(HttpClient httpClient) {
+    HashMap<String, String> result = new HashMap<String, String>();
+    result.put("type", "send");
+
+    try {
+      List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+      nameValuePairs.add(new BasicNameValuePair("name", name));
+      nameValuePairs.add(new BasicNameValuePair("email", email));
+      nameValuePairs.add(new BasicNameValuePair("subject", subject));
+      nameValuePairs.add(new BasicNameValuePair("text", text));
+      nameValuePairs.add(new BasicNameValuePair("bundle_identifier", Constants.APP_PACKAGE));
+      nameValuePairs.add(new BasicNameValuePair("bundle_short_version", Constants.APP_VERSION_NAME));
+      nameValuePairs.add(new BasicNameValuePair("bundle_version", Constants.APP_VERSION));
+      nameValuePairs.add(new BasicNameValuePair("os_version", Constants.ANDROID_VERSION));
+      nameValuePairs.add(new BasicNameValuePair("oem", Constants.PHONE_MANUFACTURER));
+      nameValuePairs.add(new BasicNameValuePair("model", Constants.PHONE_MODEL));
+
+      SimpleMultipartEntity entity = new SimpleMultipartEntity();
+      entity.writeFirstBoundaryIfNeeds();
+
+      /** Write form data */
+      for (NameValuePair pair : nameValuePairs) {
+        entity.addPart(pair.getName(), pair.getValue());
+      }
+
+      /** Write files */
+      for (int i = 0; i < attachmentUris.size(); i++) {
+        Uri attachmentUri = attachmentUris.get(i);
+        boolean lastFile = (i == attachmentUris.size() - 1);
+
+        InputStream input = context.getContentResolver().openInputStream(attachmentUri);
+        String filename = attachmentUri.getLastPathSegment();
+        entity.addPart("attachment" + i, filename, input, lastFile);
+      }
+      entity.writeLastBoundaryIfNeeds();
+
+      HttpPost httpPost = null;
+      HttpPut httpPut = null;
+      if (token != null) {
+        urlString += token + "/";
+        httpPut = new HttpPut(urlString);
+      }
+      else {
+        httpPost = new HttpPost(urlString);
+      }
+
+      HttpResponse response = null;
+      if (httpPut != null) {
+        httpPut.setHeader("Content-type", "multipart/form-data; boundary=" + entity.getBoundary());
+        httpPut.setEntity(entity);
+        response = (HttpResponse) httpClient.execute(httpPut);
+      }
+      else if (httpPost != null) {
+        httpPost.setHeader("Content-type", "multipart/form-data; boundary=" + entity.getBoundary());
+        httpPost.setEntity(entity);
+        response = (HttpResponse) httpClient.execute(httpPost);
+        //Log.e("pe", slurp(entity.getContent(), 100));
+      }
+
+      if (response != null) {
+        HttpEntity resEntity = response.getEntity();
+        result.put("response", EntityUtils.toString(resEntity));
+        result.put("status", "" + response.getStatusLine().getStatusCode());
+      }
+    }
+    catch (UnsupportedEncodingException e) {
+      e.printStackTrace();
+    }
+    catch (ClientProtocolException e) {
+      e.printStackTrace();
+    }
+    catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    return result;
+  }
   
   /**
    * GET
@@ -280,5 +369,36 @@ public class SendFeedbackTask extends AsyncTask<Void, Void, HashMap<String, Stri
     }
     
     return result;
+  }
+
+  /**
+   * Debug method to write InputStream into a String.
+   */
+  private static String slurp(final InputStream is, final int bufferSize)
+  {
+    final char[] buffer = new char[bufferSize];
+    final StringBuilder out = new StringBuilder();
+
+    try {
+      final Reader in = new InputStreamReader(is, "UTF-8");
+      try {
+        for (;;) {
+          int rsz = in.read(buffer, 0, buffer.length);
+          if (rsz < 0)
+            break;
+          out.append(buffer, 0, rsz);
+        }
+      }
+      finally {
+        in.close();
+      }
+    }
+    catch (UnsupportedEncodingException ex) {
+    /* ... */
+    }
+    catch (IOException ex) {
+      /* ... */
+    }
+    return out.toString();
   }
 }

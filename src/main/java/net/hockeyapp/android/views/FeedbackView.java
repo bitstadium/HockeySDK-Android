@@ -5,23 +5,14 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Typeface;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LayerDrawable;
-import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.StateListDrawable;
+import android.graphics.drawable.*;
 import android.graphics.drawable.shapes.RectShape;
 import android.text.InputType;
 import android.text.TextUtils.TruncateAt;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.ScrollView;
-import android.widget.TextView;
+import android.widget.*;
 
 /**
  * <h4>Description</h4>
@@ -65,6 +56,8 @@ public class FeedbackView extends LinearLayout {
   public final static int SUBJECT_EDIT_TEXT_ID = 0x2006;
   public final static int TEXT_EDIT_TEXT_ID = 0x2008;
   public final static int SEND_FEEDBACK_BUTTON_ID = 0x2009;
+  public final static int ADD_ATTACHMENT_BUTTON_ID = 0x2010;
+  public final static int WRAPPER_LAYOUT_ATTACHMENTS = 0x2011;
   public final static int ADD_RESPONSE_BUTTON_ID = 0x20010;
   public final static int REFRESH_BUTTON_ID = 0x20011;
   public final static int WRAPPER_BASE_ID = 0x20012;
@@ -88,13 +81,16 @@ public class FeedbackView extends LinearLayout {
   
   /** Wrapper {@link LinearLayout} for Add a Response and Refresh {@link Button}s */
   private LinearLayout wrapperLayoutButtons;
+
+  /** Wrapper {@link LinearLayout} for Attachments */
+  private LinearLayout wrapperLayoutAttachments;
   
   /** {@link ListView} for list of discussions */
   private ListView messagesListView;
 
   public FeedbackView(Context context) {
     super(context);
-      
+
     loadLayoutParams(context);
     
     loadWrapperBase(context);
@@ -106,6 +102,8 @@ public class FeedbackView extends LinearLayout {
     loadEmailInput(context);
     loadSubjectInput(context);
     loadTextInput(context);
+    loadAttachmentList(context);
+    loadAddAttachmentButton(context);
     loadSendFeedbackButton(context);
     
     loadLastUpdatedLabel(context);
@@ -324,6 +322,46 @@ public class FeedbackView extends LinearLayout {
     textView.setTypeface(null, Typeface.NORMAL);
     
     wrapperLayoutFeedbackAndMessages.addView(textView);
+  }
+
+  private void loadAttachmentList(Context context) {
+    wrapperLayoutAttachments = new AttachmentListView(context);
+    wrapperLayoutAttachments.setId(WRAPPER_LAYOUT_ATTACHMENTS);
+
+    LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+    int paddingTopBottom = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 10.0, getResources().getDisplayMetrics());
+    params.gravity = Gravity.LEFT;
+
+    wrapperLayoutAttachments.setLayoutParams(params);
+    wrapperLayoutAttachments.setPadding(0, paddingTopBottom, 0, paddingTopBottom);
+    wrapperLayoutAttachments.setGravity(Gravity.TOP);
+    wrapperLayoutAttachments.setOrientation(LinearLayout.HORIZONTAL);
+
+    wrapperLayoutFeedback.addView(wrapperLayoutAttachments);
+  }
+
+  @SuppressWarnings("deprecation")
+  private void loadAddAttachmentButton(Context context) {
+    Button button = new Button(context);
+    button.setId(ADD_ATTACHMENT_BUTTON_ID);
+
+    int paddingTopBottom = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 10.0, getResources().getDisplayMetrics());
+    int paddingLeftRight = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 30.0, getResources().getDisplayMetrics());
+    int margin = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 10.0, getResources().getDisplayMetrics());
+
+    android.widget.LinearLayout.LayoutParams params = new android.widget.LinearLayout.LayoutParams(android.widget.LinearLayout.LayoutParams.MATCH_PARENT, android.widget.LinearLayout.LayoutParams.WRAP_CONTENT);
+
+    params.setMargins(0, 0, 0, margin);
+    params.gravity = Gravity.CENTER_HORIZONTAL;
+
+    button.setLayoutParams(params);
+    button.setBackgroundDrawable(getButtonSelector());
+    button.setPadding(paddingLeftRight, paddingTopBottom, paddingLeftRight, paddingTopBottom);
+    button.setText("Add attachment");
+    button.setTextColor(Color.WHITE);
+    button.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
+
+    wrapperLayoutFeedback.addView(button);
   }
   
   @SuppressWarnings("deprecation")
