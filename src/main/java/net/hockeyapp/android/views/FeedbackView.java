@@ -11,6 +11,7 @@ import android.text.InputType;
 import android.text.TextUtils.TruncateAt;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.*;
 
@@ -83,7 +84,7 @@ public class FeedbackView extends LinearLayout {
   private LinearLayout wrapperLayoutButtons;
 
   /** Wrapper {@link LinearLayout} for Attachments */
-  private LinearLayout wrapperLayoutAttachments;
+  private ViewGroup wrapperLayoutAttachments;
   
   /** {@link ListView} for list of discussions */
   private ListView messagesListView;
@@ -333,9 +334,7 @@ public class FeedbackView extends LinearLayout {
     params.gravity = Gravity.LEFT;
 
     wrapperLayoutAttachments.setLayoutParams(params);
-    wrapperLayoutAttachments.setPadding(0, paddingTopBottom, 0, paddingTopBottom);
-    wrapperLayoutAttachments.setGravity(Gravity.TOP);
-    wrapperLayoutAttachments.setOrientation(LinearLayout.HORIZONTAL);
+    wrapperLayoutAttachments.setPadding(0, 0, 0, paddingTopBottom);
 
     wrapperLayoutFeedback.addView(wrapperLayoutAttachments);
   }

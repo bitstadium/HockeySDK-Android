@@ -183,13 +183,12 @@ public class FeedbackMessageView extends LinearLayout {
     attachmentListView = new AttachmentListView(context);
     attachmentListView.setId(ATTACHMENT_LIST_VIEW_ID);
 
-    LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+    LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
     int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 20.0,
         getResources().getDisplayMetrics());
 
     params.setMargins(margin, 0, margin, margin);
     attachmentListView.setLayoutParams(params);
-    attachmentListView.setOrientation(LinearLayout.HORIZONTAL);
 
     addView(attachmentListView);
   }

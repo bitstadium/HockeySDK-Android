@@ -146,6 +146,10 @@ public class PaintView extends ImageView {
     }
   }
 
+  public boolean isClear() {
+    return paths.empty();
+  }
+
   @Override
   protected void onDraw(Canvas canvas) {
     super.onDraw(canvas);

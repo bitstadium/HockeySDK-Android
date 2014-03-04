@@ -66,7 +66,16 @@ public class AttachmentDownloader {
       DownloadTask downloadTask = new DownloadTask(downloadJob, new Handler() {
         @Override
         public void handleMessage(Message msg) {
-          queue.poll();
+          final DownloadJob retryCandidate = queue.poll();
+          if (!retryCandidate.isSuccess() && retryCandidate.consumeRetry()) {
+            this.postDelayed(new Runnable() {
+              @Override
+              public void run() {
+                queue.add(retryCandidate);
+                downloadNext();
+              }
+            }, 2000);
+          }
           downloadRunning = false;
           downloadNext();
         }
@@ -83,10 +92,14 @@ public class AttachmentDownloader {
 
     private final FeedbackAttachment feedbackAttachment;
     private final AttachmentView attachmentView;
+    private boolean success;
+    private int remainingRetries;
 
     private DownloadJob(FeedbackAttachment feedbackAttachment, AttachmentView attachmentView) {
       this.feedbackAttachment = feedbackAttachment;
       this.attachmentView = attachmentView;
+      this.success = false;
+      this.remainingRetries = 2;
     }
 
     public FeedbackAttachment getFeedbackAttachment() {
@@ -95,6 +108,18 @@ public class AttachmentDownloader {
 
     public AttachmentView getAttachmentView() {
       return attachmentView;
+    }
+
+    public boolean isSuccess() { return success; }
+
+    public void setSuccess(boolean success) { this.success = success; }
+
+    public boolean hasRetry() {
+      return remainingRetries > 0;
+    }
+
+    public boolean consumeRetry() {
+      return --remainingRetries < 0 ? false : true;
     }
   }
 
@@ -120,7 +145,6 @@ public class AttachmentDownloader {
 
     @Override
     protected void onPreExecute() {
-      // Todo make loading downloadJob.getAttachmentView()
     }
 
     @Override
@@ -145,19 +169,21 @@ public class AttachmentDownloader {
 
     @Override
     protected void onProgressUpdate(Integer... values) {
-      // TODO update progress
     }
 
     @Override
     protected void onPostExecute(Boolean success) {
       AttachmentView attachmentView = downloadJob.getAttachmentView();
+      downloadJob.setSuccess(success);
       // TODO check if correct instance and valid
 
       if (success) {
         attachmentView.setImage(bitmap);
 
       } else {
-        attachmentView.signalImageLoadingError();
+        if (!downloadJob.hasRetry()) {
+          attachmentView.signalImageLoadingError();
+        }
       }
 
       handler.sendEmptyMessage(0);
@@ -171,6 +197,9 @@ public class AttachmentDownloader {
         int height = attachmentView.getThumbnailHeight();
 
         String filename = downloadJob.getFeedbackAttachment().getCacheId();
+
+        String p = new File(dropFolder, filename).getAbsolutePath();
+        Log.e(Constants.TAG, "Thumbnail Loading Path: " + p);
 
         Bitmap temp = BitmapFactory.decodeStream(new FileInputStream(new File(dropFolder, filename)));
         if (temp != null) {
@@ -192,6 +221,15 @@ public class AttachmentDownloader {
         connection.connect();
 
         int lengthOfFile = connection.getContentLength();
+        String status = connection.getHeaderField("Status");
+
+        if (status != null) {
+          Log.e(Constants.TAG, "Status / Response Code: " + status);
+          if (!status.startsWith("200")) {
+            /* Schedule retry */
+            return false;
+          }
+        }
 
         File file = new File(dropFolder, filename);
         InputStream input = new BufferedInputStream(connection.getInputStream());
@@ -218,7 +256,7 @@ public class AttachmentDownloader {
     }
 
     private URLConnection createConnection(URL url) throws IOException {
-      HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+      HttpURLConnection connection = (HttpURLConnection) url.openConnection();
       connection.addRequestProperty("User-Agent", "HockeySDK/Android");
       connection.setInstanceFollowRedirects(true);
       /* connection bug workaround for SDK<=2.x */

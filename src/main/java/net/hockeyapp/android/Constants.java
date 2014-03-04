@@ -5,6 +5,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 
 import java.io.File;
@@ -117,6 +118,19 @@ public class Constants {
 
     loadFilesPath(context);
     loadPackageData(context);
+  }
+
+  /**
+   * Returns a file representing the folder in which screenshots are stored.
+   *
+   * @return A file representing the screenshot folder.
+   */
+  public static File getScreenshotStorageDir() {
+    File externalStorage = Environment.getExternalStorageDirectory();
+
+    File dir = new File(externalStorage.getAbsolutePath() + "/" + Constants.TAG);
+    dir.mkdirs();
+    return dir;
   }
 
   /**

@@ -288,7 +288,7 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
       refreshButton.setOnClickListener(this);
     } 
     else {
-      /** if the token doesn't exist, the feedback details inputs to be sent need to be displayed */ 
+      /** if the token doesn't exist, the feedback details inputs to be sent need to be displayed */
       wrapperLayoutFeedbackAndMessages.setVisibility(View.GONE);
       feedbackScrollView.setVisibility(View.VISIBLE);
 		
@@ -327,6 +327,10 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
         /** If Feedback Token is not available, display the Subject Input field */
         subjectInput.setVisibility(View.VISIBLE);
       }
+
+      /** Reset the attachment list */
+      ViewGroup attachmentListView = (ViewGroup) findViewById(FeedbackView.WRAPPER_LAYOUT_ATTACHMENTS);
+      attachmentListView.removeAllViews();
 
       /** Use of context menu needs to be enabled explicitly */
       addAttachmentButton = (Button) findViewById(FeedbackView.ADD_ATTACHMENT_BUTTON_ID);
@@ -446,7 +450,6 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
 
       /** Make list for attachments file paths */
       AttachmentListView attachmentListView = (AttachmentListView) findViewById(FeedbackView.WRAPPER_LAYOUT_ATTACHMENTS);
-      // TODO clear list?
       List<Uri> attachmentUris = attachmentListView.getAttachments();
 
   		/** Start the Send Feedback {@link AsyncTask} */
@@ -528,7 +531,7 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
    */
   @Override
   protected void onRestoreInstanceState(Bundle savedInstanceState) {
-    LinearLayout attachmentList = (LinearLayout) findViewById(FeedbackView.WRAPPER_LAYOUT_ATTACHMENTS);
+    ViewGroup attachmentList = (ViewGroup) findViewById(FeedbackView.WRAPPER_LAYOUT_ATTACHMENTS);
     ArrayList<Uri> attachmentsUris = savedInstanceState.getParcelableArrayList("attachments");
 
     for (Uri attachmentUri : attachmentsUris) {
@@ -577,8 +580,10 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
       /** User picked file */
       Uri uri = data.getData();
 
-      final LinearLayout attachments = (LinearLayout) findViewById(FeedbackView.WRAPPER_LAYOUT_ATTACHMENTS);
-      attachments.addView(new AttachmentView(this, attachments, uri, true));
+      if (uri != null) {
+        final ViewGroup attachments = (ViewGroup) findViewById(FeedbackView.WRAPPER_LAYOUT_ATTACHMENTS);
+        attachments.addView(new AttachmentView(this, attachments, uri, true));
+      }
 
     } else if (requestCode == ATTACH_PICTURE) {
       /** User picked image */
@@ -594,10 +599,12 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
     } else if (requestCode == PAINT_IMAGE) {
       /** Final attachment picture received and ready to be added to list. */
       Uri uri = data.getParcelableExtra("imageUri");
-      Log.e(Constants.TAG, "Result URI: " + uri.toString());
 
-      final LinearLayout attachments = (LinearLayout) findViewById(FeedbackView.WRAPPER_LAYOUT_ATTACHMENTS);
-      attachments.addView(new AttachmentView(this, attachments, uri, true));
+      if (uri != null) {
+        Log.e(Constants.TAG, "Result URI: " + uri.toString());
+        final ViewGroup attachments = (ViewGroup) findViewById(FeedbackView.WRAPPER_LAYOUT_ATTACHMENTS);
+        attachments.addView(new AttachmentView(this, attachments, uri, true));
+      }
 
     } else return;
   }
@@ -614,8 +621,8 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
   	    break;
 
       case FeedbackView.ADD_ATTACHMENT_BUTTON_ID:
-        LinearLayout attachments = (LinearLayout) findViewById(FeedbackView.WRAPPER_LAYOUT_ATTACHMENTS);
-        if (attachments.getChildCount() >= 3) {
+        ViewGroup attachments = (ViewGroup) findViewById(FeedbackView.WRAPPER_LAYOUT_ATTACHMENTS);
+        if (attachments.getChildCount() >= 6) {
           Toast.makeText(this, "Only 3 attachments allowed.", 1000).show();
         } else {
           openContextMenu(v);

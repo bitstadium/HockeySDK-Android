@@ -1,7 +1,9 @@
 package net.hockeyapp.android;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ContentResolver;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
@@ -11,6 +13,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
@@ -115,9 +118,42 @@ public class PaintActivity extends Activity {
     return super.onOptionsItemSelected(item);
   }
 
+  @Override
+  public boolean onKeyDown(int keyCode, KeyEvent event)  {
+    if (keyCode == KeyEvent.KEYCODE_BACK) {
+      if (!paintView.isClear()) {
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+          @Override
+          public void onClick(DialogInterface dialog, int which) {
+            switch (which){
+              case DialogInterface.BUTTON_POSITIVE:
+                PaintActivity.this.finish();
+                break;
+
+              case DialogInterface.BUTTON_NEGATIVE:
+                /* No action. */
+                break;
+            }
+          }
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Discard your drawings?").setPositiveButton("Yes", dialogClickListener)
+            .setNegativeButton("No", dialogClickListener).show();
+        return true;
+      }
+    }
+
+    return super.onKeyDown(keyCode, event);
+  }
+
   private void makeResult() {
     File result = new File(getCacheDir(), imageName);
-    Log.e("pe", "Resulting image: " + result.getAbsolutePath());
+    int suffix = 1;
+    while (result.exists()) {
+      result = new File(getCacheDir(), imageName + "_" + suffix);
+      suffix++;
+    }
 
     try {
       paintView.setDrawingCacheEnabled(true);
@@ -129,6 +165,7 @@ public class PaintActivity extends Activity {
 
     } catch (Exception e) {
       e.printStackTrace();
+      Log.e(Constants.TAG, "Could not save image.", e);
     }
 
     Intent intent = new Intent();
@@ -159,7 +196,6 @@ public class PaintActivity extends Activity {
         metaCursor.close();
       }
     }
-
-    return path == null ? fallback : path;
+    return path == null ? fallback : new File(path).getName();
   }
 }

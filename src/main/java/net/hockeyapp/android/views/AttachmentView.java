@@ -46,6 +46,8 @@ public class AttachmentView extends FrameLayout {
 
   private TextView textView;
 
+  private int horizontalGap;
+
   private int width;
 
   private int height;
@@ -93,7 +95,17 @@ public class AttachmentView extends FrameLayout {
   public void remove(boolean deleteFromFileSystem) {
     parent.removeView(this);
 
-    // TODO fix left padding here
+    /* Re-adjust paddings of views */
+    for (int i = 0; i < parent.getChildCount(); i++) {
+      View view = parent.getChildAt(i);
+
+      if ((i % IMAGES_PER_ROW) != 0) {
+        view.setPadding(horizontalGap, horizontalGap, 0, 0);
+
+      } else {
+        view.setPadding(0, horizontalGap, 0, 0);
+      }
+    }
 
     if (deleteFromFileSystem) {
       //boolean success = new File(filePath).delete();
@@ -131,10 +143,13 @@ public class AttachmentView extends FrameLayout {
   private void configureView(final Context context, boolean removable) {
     setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
 
-    int paddingLeft = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 10.0, getResources().getDisplayMetrics());
+    horizontalGap = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 10.0, getResources().getDisplayMetrics());
     if ((parent.getChildCount() % IMAGES_PER_ROW) != 0) {
       /** This is not the first child in the row, therefore it needs a padding to is left neighbour. */
-      setPadding(paddingLeft, 0, 0, 0);
+      setPadding(horizontalGap, horizontalGap, 0, 0);
+
+    } else {
+      setPadding(0, horizontalGap, 0, 0);
     }
 
     LinearLayout bottomView = new LinearLayout(context);
@@ -208,6 +223,10 @@ public class AttachmentView extends FrameLayout {
     Log.e(Constants.TAG, "Thumbnail");
     imageView.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
     imageView.setAdjustViewBounds(true);
+    imageView.setMinimumHeight(height);
+    imageView.setMinimumWidth(width);
+    //imageView.setMaxHeight(height);
+    //imageView.setMaxWidth(width);
     imageView.setImageBitmap(bitmap);
     imageView.setOnClickListener(new OnClickListener() {
       @Override
@@ -231,6 +250,8 @@ public class AttachmentView extends FrameLayout {
     imageView.setBackgroundColor(Color.parseColor("#eeeeee"));
     imageView.setMinimumHeight(height);
     imageView.setMinimumWidth(width);
+    //imageView.setMaxHeight(height);
+    //imageView.setMaxWidth(width);
     imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
     imageView.setImageDrawable(getSystemIcon("ic_menu_attachment"));
     imageView.setOnClickListener(new OnClickListener() {
