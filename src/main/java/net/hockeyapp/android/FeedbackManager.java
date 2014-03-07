@@ -11,9 +11,15 @@ import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
+import net.hockeyapp.android.tasks.ParseFeedbackTask;
+import net.hockeyapp.android.tasks.SendFeedbackTask;
+import net.hockeyapp.android.utils.PrefsUtil;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -56,7 +62,7 @@ public class FeedbackManager {
   /**
    * The id of the notification to take a screenshot.
    */
-  private static final int NOTIFICATION_ID = 1;
+  private static final int SCREENSHOT_NOTIFICATION_ID = 1;
 
   /**
    * The request code for the broadcast.
@@ -167,6 +173,37 @@ public class FeedbackManager {
   }
 
   /**
+   * Checks if an answer to the feedback is available and if yes notifies the listener or
+   * creates a system notification.
+   */
+  public static void checkForAnswersAndNotify(final Context context) {
+    String token = PrefsUtil.getInstance().getFeedbackTokenFromPrefs(context);
+    if (token == null) {
+      return;
+    }
+
+    int lastMessageId = context.getSharedPreferences(ParseFeedbackTask.PREFERENCES_NAME, 0)
+        .getInt(ParseFeedbackTask.ID_LAST_MESSAGE_SEND, -1);
+
+    SendFeedbackTask sendFeedbackTask = new SendFeedbackTask(context, getURLString(context), null, null, null, null, null, token, new Handler() {
+      @Override
+      public void handleMessage(Message msg) {
+        Bundle bundle = msg.getData();
+        String responseString = bundle.getString("feedback_response");
+
+        if (responseString != null) {
+          ParseFeedbackTask task = new ParseFeedbackTask(context, responseString, null, "fetch");
+          task.setUrlString(getURLString(context));
+          task.execute();
+        }
+      }
+    }, true);
+    sendFeedbackTask.setShowProgressDialog(false);
+    sendFeedbackTask.setLastMessageId(lastMessageId);
+    sendFeedbackTask.execute();
+  }
+
+  /**
    * Returns the last listener which has been registered with any Feedback manager.
    */
   public static FeedbackManagerListener getLastListener() {
@@ -260,7 +297,7 @@ public class FeedbackManager {
     intent.setAction(BROADCAST_ACTION);
     PendingIntent pendingIntent = PendingIntent.getBroadcast(currentActivity, BROADCAST_REQUEST_CODE, intent, PendingIntent.FLAG_ONE_SHOT);
     notification.setLatestEventInfo(currentActivity, "HockeyApp Feedback", "Take a screenshot for your feedback.", pendingIntent);
-    notificationManager.notify(NOTIFICATION_ID, notification);
+    notificationManager.notify(SCREENSHOT_NOTIFICATION_ID, notification);
 
     if (receiver == null) {
       receiver = new BroadcastReceiver() {
@@ -278,7 +315,7 @@ public class FeedbackManager {
 
     currentActivity.unregisterReceiver(receiver);
     NotificationManager notificationManager = (NotificationManager) currentActivity.getSystemService(Context.NOTIFICATION_SERVICE);
-    notificationManager.cancel(NOTIFICATION_ID);
+    notificationManager.cancel(SCREENSHOT_NOTIFICATION_ID);
   }
 
   /**

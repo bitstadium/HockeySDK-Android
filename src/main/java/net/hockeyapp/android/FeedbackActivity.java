@@ -3,9 +3,11 @@ package net.hockeyapp.android;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -136,6 +138,10 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
       url = extras.getString("url");
     }
 
+    // Cancel notification
+    NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+    notificationManager.cancel(ParseFeedbackTask.NEW_ANSWER_NOTIFICATION_ID);
+
     initFeedbackHandler();
     initParseFeedbackHandler();
     configureAppropriateView();
@@ -160,6 +166,12 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
       @Override
       public void run() {
         PrefsUtil.getInstance().saveFeedbackTokenToPrefs(FeedbackActivity.this, null);
+
+        SharedPreferences preferences = getSharedPreferences(ParseFeedbackTask.PREFERENCES_NAME, 0);
+        PrefsUtil.applyChanges(preferences.edit()
+            .remove(ParseFeedbackTask.ID_LAST_MESSAGE_SEND)
+            .remove(ParseFeedbackTask.ID_LAST_MESSAGE_PROCESSED));
+
         configureFeedbackView(false);
       }
     });
@@ -190,7 +202,7 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
             success = true;
           }
           else if (responseString != null) {
-            startParseFeedbackTask(responseString);
+            startParseFeedbackTask(responseString, requestType);
             success = true;
           }
           else {
@@ -477,8 +489,8 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
    * Creates and starts execution of the {@link ParseFeedbackTask}
    * @param feedbackResponseString	JSON string response
    */
-  private void startParseFeedbackTask(String feedbackResponseString) {
-  	createParseFeedbackTask(feedbackResponseString);
+  private void startParseFeedbackTask(String feedbackResponseString, String requestType) {
+  	createParseFeedbackTask(feedbackResponseString, requestType);
   	parseFeedbackTask.execute();
   }
   
@@ -486,8 +498,8 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
    * Initializes the {@link ParseFeedbackTask}
    * @param feedbackResponseString	JSON string response
    */
-  private void createParseFeedbackTask(String feedbackResponseString) {
-  	parseFeedbackTask = new ParseFeedbackTask(this, feedbackResponseString, parseFeedbackHandler);
+  private void createParseFeedbackTask(String feedbackResponseString, String requestType) {
+  	parseFeedbackTask = new ParseFeedbackTask(this, feedbackResponseString, parseFeedbackHandler, requestType);
   }
   
   /**

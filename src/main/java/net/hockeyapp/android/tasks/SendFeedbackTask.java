@@ -33,7 +33,7 @@ import java.util.List;
 /**
  * <h4>Description</h4>
  * 
- * Internal helper class. Sends feedback to server 
+ * Internal helper class. Sends feedback to server.
  * 
  * <h4>License</h4>
  * 
@@ -76,6 +76,8 @@ public class SendFeedbackTask extends AsyncTask<Void, Void, HashMap<String, Stri
   private String token;
   private boolean isFetchMessages;
   private ProgressDialog progressDialog;
+  private boolean showProgressDialog;
+  private int lastMessageId;
 
   /**
    * Send feedback {@link AsyncTask}.
@@ -107,10 +109,20 @@ public class SendFeedbackTask extends AsyncTask<Void, Void, HashMap<String, Stri
     this.token = token;
     this.handler = handler;
     this.isFetchMessages = isFetchMessages;
-    
+    this.showProgressDialog = true;
+    this.lastMessageId = -1;
+
     if (context != null) {
       Constants.loadFromContext(context);
     }
+  }
+
+  public void setShowProgressDialog(boolean showProgressDialog) {
+    this.showProgressDialog = showProgressDialog;
+  }
+
+  public void setLastMessageId(int lastMessageId) {
+    this.lastMessageId = lastMessageId;
   }
 
   public void attach(Context context) {
@@ -129,7 +141,7 @@ public class SendFeedbackTask extends AsyncTask<Void, Void, HashMap<String, Stri
       loadingMessage = "Retrieving discussions...";
     }
     
-    if (progressDialog == null || !progressDialog.isShowing()) {
+    if ((progressDialog == null || !progressDialog.isShowing()) && showProgressDialog) {
       progressDialog = ProgressDialog.show(context, "", loadingMessage, true, false);
     }
   }
@@ -344,6 +356,10 @@ public class SendFeedbackTask extends AsyncTask<Void, Void, HashMap<String, Stri
   private HashMap<String, String> doGet(HttpClient httpClient) {
     StringBuilder sb = new StringBuilder();
     sb.append(urlString + Util.encodeParam(token));
+
+    if (lastMessageId != -1) {
+      sb.append("?last_message_id=" + lastMessageId);
+    }
     
     HttpGet httpGet = new HttpGet(sb.toString());
 

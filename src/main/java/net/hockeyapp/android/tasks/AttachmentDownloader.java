@@ -150,7 +150,6 @@ public class AttachmentDownloader {
     @Override
     protected Boolean doInBackground(Void... args) {
       FeedbackAttachment attachment = downloadJob.getFeedbackAttachment();
-      Log.e(Constants.TAG, "Loading " + attachment.getCacheId());
 
       if (attachment.isAvailableInCache()) {
         Log.e(Constants.TAG, "Cached...");
@@ -198,9 +197,6 @@ public class AttachmentDownloader {
 
         String filename = downloadJob.getFeedbackAttachment().getCacheId();
 
-        String p = new File(dropFolder, filename).getAbsolutePath();
-        Log.e(Constants.TAG, "Thumbnail Loading Path: " + p);
-
         Bitmap temp = BitmapFactory.decodeStream(new FileInputStream(new File(dropFolder, filename)));
         if (temp != null) {
           bitmap = Bitmap.createScaledBitmap(temp, width, height, false);
@@ -224,9 +220,7 @@ public class AttachmentDownloader {
         String status = connection.getHeaderField("Status");
 
         if (status != null) {
-          Log.e(Constants.TAG, "Status / Response Code: " + status);
           if (!status.startsWith("200")) {
-            /* Schedule retry */
             return false;
           }
         }

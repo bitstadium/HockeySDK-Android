@@ -9,13 +9,11 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
-import net.hockeyapp.android.Constants;
 import net.hockeyapp.android.objects.FeedbackAttachment;
 import net.hockeyapp.android.tasks.AttachmentDownloader;
 
@@ -220,7 +218,6 @@ public class AttachmentView extends FrameLayout {
   }
 
   private void configureImageViewForThumbnail(Bitmap bitmap, final boolean available) {
-    Log.e(Constants.TAG, "Thumbnail");
     imageView.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
     imageView.setAdjustViewBounds(true);
     imageView.setMinimumHeight(height);
@@ -244,7 +241,6 @@ public class AttachmentView extends FrameLayout {
   }
 
   private void configureImageViewForPlaceholder(final boolean available) {
-    Log.e(Constants.TAG, "Placeholder");
     imageView.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
     imageView.setAdjustViewBounds(false);
     imageView.setBackgroundColor(Color.parseColor("#eeeeee"));

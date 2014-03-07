@@ -1,5 +1,7 @@
 package net.hockeyapp.android;
 
+import net.hockeyapp.android.objects.FeedbackMessage;
+
 /**
  * <h4>Description</h4>
  * 
@@ -41,5 +43,13 @@ public abstract class FeedbackManagerListener extends StringListener {
   public Class<? extends FeedbackActivity> getFeedbackActivityClass() {
     return FeedbackActivity.class;
   }
+
+  /**
+   * Called when an answer to a feedback is available.
+   *
+   * @return true if this event has been properly handled by this method
+   *         and false if not and a notification should be fired.
+   * @param latestMessage
+   */
+  public abstract boolean feedbackAnswered(FeedbackMessage latestMessage);
 }
-  
