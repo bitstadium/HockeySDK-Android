@@ -34,14 +34,6 @@ public class AttachmentDownloader {
     return AttachmentDownloaderHolder.INSTANCE;
   }
 
-  public static File getAttachmentStorageDir() {
-    File externalStorage = Environment.getExternalStorageDirectory();
-
-    File targetDir = new File(externalStorage.getAbsolutePath() + "/" + Constants.TAG);
-    targetDir.mkdirs();
-    return targetDir;
-  }
-
   private Queue<DownloadJob> queue;
 
   private boolean downloadRunning;
@@ -139,7 +131,7 @@ public class AttachmentDownloader {
     public DownloadTask(DownloadJob downloadJob, Handler handler) {
       this.downloadJob = downloadJob;
       this.handler = handler;
-      this.dropFolder = AttachmentDownloader.getAttachmentStorageDir();
+      this.dropFolder = Constants.getHockeyAppStorageDir();
       this.bitmap = null;
     }
 

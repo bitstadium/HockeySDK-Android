@@ -14,8 +14,8 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
+import net.hockeyapp.android.Constants;
 import net.hockeyapp.android.objects.FeedbackAttachment;
-import net.hockeyapp.android.tasks.AttachmentDownloader;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -72,7 +72,7 @@ public class AttachmentView extends FrameLayout {
     this.context = context;
     this.parent = parent;
     this.attachment = attachment;
-    this.attachmentUri = Uri.fromFile(new File(AttachmentDownloader.getAttachmentStorageDir(), attachment.getCacheId()));
+    this.attachmentUri = Uri.fromFile(new File(Constants.getHockeyAppStorageDir(), attachment.getCacheId()));
     this.filename = attachment.getFilename();
     this.available = false;
 
@@ -90,7 +90,7 @@ public class AttachmentView extends FrameLayout {
 
   public int getThumbnailHeight() { return height; }
 
-  public void remove(boolean deleteFromFileSystem) {
+  public void remove() {
     parent.removeView(this);
 
     /* Re-adjust paddings of views */
@@ -103,10 +103,6 @@ public class AttachmentView extends FrameLayout {
       } else {
         view.setPadding(0, horizontalGap, 0, 0);
       }
-    }
-
-    if (deleteFromFileSystem) {
-      //boolean success = new File(filePath).delete();
     }
   }
 
@@ -193,7 +189,7 @@ public class AttachmentView extends FrameLayout {
       imageButton.setOnClickListener(new OnClickListener() {
         @Override
         public void onClick(View v) {
-          AttachmentView.this.remove(false);
+          AttachmentView.this.remove();
         }
       });
 

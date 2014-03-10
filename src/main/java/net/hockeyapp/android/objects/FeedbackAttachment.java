@@ -1,6 +1,6 @@
 package net.hockeyapp.android.objects;
 
-import net.hockeyapp.android.tasks.AttachmentDownloader;
+import net.hockeyapp.android.Constants;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -77,7 +77,7 @@ public class FeedbackAttachment implements Serializable {
    * @return true if available, false if not.
    */
   public boolean isAvailableInCache() {
-    File folder = AttachmentDownloader.getAttachmentStorageDir();
+    File folder = Constants.getHockeyAppStorageDir();
     if (folder.exists() && folder.isDirectory()) {
       File[] match = folder.listFiles(new FilenameFilter() {
         @Override

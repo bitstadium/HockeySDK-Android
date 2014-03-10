@@ -71,7 +71,6 @@ public class MessagesAdapter extends BaseAdapter {
       attachmentListView.removeAllViews();
       for (FeedbackAttachment feedbackAttachment : feedbackMessage.getFeedbackAttachments()) {
         AttachmentView attachmentView = new AttachmentView(context, attachmentListView, feedbackAttachment, false);
-        attachmentView.setTag(feedbackAttachment.getCacheId()); // TODO necessary?
         AttachmentDownloader.getInstance().download(feedbackAttachment, attachmentView);
         attachmentListView.addView(attachmentView);
       }

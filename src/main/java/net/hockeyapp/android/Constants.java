@@ -125,7 +125,7 @@ public class Constants {
    *
    * @return A file representing the screenshot folder.
    */
-  public static File getScreenshotStorageDir() {
+  public static File getHockeyAppStorageDir() {
     File externalStorage = Environment.getExternalStorageDirectory();
 
     File dir = new File(externalStorage.getAbsolutePath() + "/" + Constants.TAG);

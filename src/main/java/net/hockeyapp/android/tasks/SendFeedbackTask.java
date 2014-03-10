@@ -163,7 +163,18 @@ public class SendFeedbackTask extends AsyncTask<Void, Void, HashMap<String, Stri
         return doPostPut(httpclient);
 
       } else {
-        return doPostPutWithAttachments(httpclient);
+        HashMap<String, String> result = doPostPutWithAttachments(httpclient);
+
+        /** Clear temp folder */
+        String status = result.get("status");
+        if (status != null && status.startsWith("2")) {
+          File folder = context.getCacheDir();
+          for (File file : folder.listFiles()) {
+            file.delete();
+          }
+        }
+
+        return result;
       }
     }
     

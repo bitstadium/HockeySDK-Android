@@ -258,7 +258,7 @@ public class FeedbackManager {
     Bitmap bitmap = view.getDrawingCache();
 
     String filename = currentActivity.getLocalClassName();
-    File dir = Constants.getScreenshotStorageDir();
+    File dir = Constants.getHockeyAppStorageDir();
     File result = new File(dir, filename  + ".jpg");
     int suffix = 1;
     while (result.exists()) {
