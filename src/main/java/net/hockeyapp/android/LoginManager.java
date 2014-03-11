@@ -89,36 +89,42 @@ public class LoginManager {
    *
    * @param context The context to use. Usually your Activity object.
    * @param appIdentifier App ID of your app on HockeyApp.
+   * @param appSecret The App Secret of your app on HockeyApp.
    * @param mode The Login Mode.
-   * @param activity The entry activity of the app.
+   * @param activity The first activity to be started by your app.
    */
-  public static void register(final Context context, String appIdentifier, String secret, int mode, Class<?> activity) {
+  public static void register(final Context context, String appIdentifier, String appSecret, int mode, Class<?> activity) {
     if (context != null) {
       LoginManager.identifier = appIdentifier;
-      LoginManager.secret = secret;
+      LoginManager.secret = appSecret;
       LoginManager.mode = mode;
       LoginManager.mainActivity = activity;
 
-      LoginManager.validateHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-          Bundle bundle = msg.getData();
-          boolean success = bundle.getBoolean("success");
+      if (LoginManager.validateHandler == null) {
+        LoginManager.validateHandler = new Handler() {
+          @Override
+          public void handleMessage(Message msg) {
+            Bundle bundle = msg.getData();
+            boolean success = bundle.getBoolean("success");
 
-          if (!success) {
-            startLoginActivity(context);
+            if (!success) {
+              startLoginActivity(context);
+            }
           }
-        }
-      };
+        };
+      }
 
       Constants.loadFromContext(context);
     }
   }
 
   /**
-   * Starts the {@link LoginActivity}
+   * Checks the authentication status. If not authenticated at all it will start the LoginActivity,
+   * otherwise it will verify if the user is still allowed to use this app. Also exits the app if the
+   * LoginActivity is exited with the back button.
    *
-   * @param context {@link android.content.Context} object
+   * @param context The activity from which this method is called.
+   * @param intent The intent that the activity has been created with.
    */
   public static void verifyLogin(Activity context, Intent intent) {
     // Check if application needs to be exited.

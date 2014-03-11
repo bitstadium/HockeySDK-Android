@@ -9,7 +9,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 import android.util.Base64;
-import android.util.Log;
 import net.hockeyapp.android.Constants;
 import net.hockeyapp.android.LoginManager;
 import net.hockeyapp.android.utils.ConnectionManager;
@@ -135,8 +134,7 @@ public class LoginTask extends AsyncTask<Void, Void, Boolean> {
       if (response != null) {
         HttpEntity resEntity = response.getEntity();
         String responseStr = EntityUtils.toString(resEntity);
-        int status = response.getStatusLine().getStatusCode();
-        Log.e(Constants.TAG, "Status: " + status);
+        //int status = response.getStatusLine().getStatusCode();
 
         if (!TextUtils.isEmpty(responseStr)) {
           return handleResponse(responseStr);
@@ -196,7 +194,8 @@ public class LoginTask extends AsyncTask<Void, Void, Boolean> {
     else if (mode == LoginManager.LOGIN_MODE_EMAIL_PASSWORD) {
       String email = params.get("email");
       String password = params.get("password");
-      String authStr = "Basic " + Base64.encodeToString((email + ":" + password).getBytes(), Base64.NO_WRAP);
+      String authStr = "Basic " + net.hockeyapp.android.utils.Base64.encodeToString(
+          (email + ":" + password).getBytes(), Base64.NO_WRAP);
 
       HttpPost httpPost = new HttpPost(urlString);
       httpPost.setHeader("Authorization", authStr);
@@ -251,7 +250,7 @@ public class LoginTask extends AsyncTask<Void, Void, Boolean> {
         }
         else {
           PrefsUtil.applyChanges(prefs.edit().remove("iuid").remove("auid"));
-        };
+        }
       }
       else {
         throw new IllegalArgumentException("Login mode " + mode + " not supported.");

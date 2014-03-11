@@ -124,7 +124,6 @@ public class LoginView extends LinearLayout {
 
     editText.setLayoutParams(params);
     editText.setHint("Email");
-    editText.setText("info@devheads.de");
     editText.setImeOptions(EditorInfo.IME_ACTION_NEXT);
     editText.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
     editText.setTextColor(Color.GRAY);
@@ -146,7 +145,6 @@ public class LoginView extends LinearLayout {
 
     editText.setLayoutParams(params);
     editText.setHint("Password");
-    editText.setText("BR8w_wRu");
     editText.setImeOptions(EditorInfo.IME_ACTION_NEXT);
     editText.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
     editText.setTransformationMethod(PasswordTransformationMethod.getInstance());

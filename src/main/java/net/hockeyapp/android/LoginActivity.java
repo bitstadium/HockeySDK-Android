@@ -128,18 +128,6 @@ public class LoginActivity extends Activity implements View.OnClickListener {
     };
   }
 
-/*
-2. Für E-Mail + Password ist ein POST auf /api/2/apps/APP_ID/identity/authorize auszuführen. Wenn erfolgreich,
-kommt im JSON eine “auid” zurück (authorized user id).
-
-3. Für nur E-Mail ist ein POST auf /api/2/apps/APP_ID/identity/check auszuführen. Wenn erfolgreich, kommt im
-JSON eine “iuid” zurück (identifierd user id)
-
-4. Für die Prüfung, ob der User immer noch Mitglied ist, ist dann bei jedem Start oder nach einem Update ein
-GET /api/2/apps/APP_ID/identity/validate auszuführen, wobei entweder die auid oder iuid zu übergeben ist.
-Es kommt dann ein JSON mit Status zurück.
-*/
-
   private void performAuthentication() {
     String email = ((EditText) findViewById(LoginView.EMAIL_INPUT_ID)).getText().toString();
     String password = ((EditText) findViewById(LoginView.PASSWORD_INPUT_ID)).getText().toString();
