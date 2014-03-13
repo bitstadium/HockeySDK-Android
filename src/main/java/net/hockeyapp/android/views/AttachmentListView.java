@@ -50,7 +50,7 @@ public class AttachmentListView extends ViewGroup {
     for (int i = 0; i < count; i++) {
       final View child = getChildAt(i);
       AttachmentView attachmentView = (AttachmentView) child;
-      height = attachmentView.getThumbnailHeight() + attachmentView.getPaddingTop();
+      height = attachmentView.getEffectiveMaxHeight() + attachmentView.getPaddingTop();
 
       if (child.getVisibility() != GONE) {
         final LayoutParams lp = child.getLayoutParams();
@@ -110,7 +110,7 @@ public class AttachmentListView extends ViewGroup {
           yPos += line_height;
         }
         child.layout(xPos, yPos, xPos + childWidth, yPos + childHeight);
-        xPos += childWidth + lp.width;
+        xPos += childWidth + lp.width + ((AttachmentView) child).getGap();
       }
     }
   }

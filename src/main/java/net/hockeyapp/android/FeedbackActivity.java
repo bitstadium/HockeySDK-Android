@@ -13,7 +13,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.*;
 import android.view.View.OnClickListener;
 import android.widget.*;
@@ -420,7 +419,6 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
    */
   private boolean addAttachment(int request) {
     if (request == ATTACH_FILE) {
-      Log.e("pe", "ATTACH_FILE" + request);
       Intent intent = new Intent();
       intent.setType("*/*");
       intent.setAction(Intent.ACTION_GET_CONTENT);
@@ -428,7 +426,6 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
       return true;
 
     } else if (request == ATTACH_PICTURE) {
-      Log.e("pe", "ATTACH_PICTURE");
       Intent intent = new Intent();
       intent.setType("image/*");
       intent.setAction(Intent.ACTION_GET_CONTENT);
@@ -569,7 +566,6 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
    */
   @Override
   public boolean onContextItemSelected(MenuItem item) {
-    Log.e("pe", "ITEM " + item.getItemId());
     switch (item.getItemId()) {
       case ATTACH_FILE:
       case ATTACH_PICTURE:
@@ -613,7 +609,6 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
       Uri uri = data.getParcelableExtra("imageUri");
 
       if (uri != null) {
-        Log.e(Constants.TAG, "Result URI: " + uri.toString());
         final ViewGroup attachments = (ViewGroup) findViewById(FeedbackView.WRAPPER_LAYOUT_ATTACHMENTS);
         attachments.addView(new AttachmentView(this, attachments, uri, true));
       }

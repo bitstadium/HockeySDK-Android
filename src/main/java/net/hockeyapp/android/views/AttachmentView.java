@@ -3,7 +3,6 @@ package net.hockeyapp.android.views;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -16,10 +15,10 @@ import android.view.ViewGroup;
 import android.widget.*;
 import net.hockeyapp.android.Constants;
 import net.hockeyapp.android.objects.FeedbackAttachment;
+import net.hockeyapp.android.utils.ImageUtils;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.io.IOException;
 
 /**
  * The view for an attachment.
@@ -28,7 +27,9 @@ import java.io.InputStream;
  */
 public class AttachmentView extends FrameLayout {
 
-  private final static int IMAGES_PER_ROW = 3;
+  private final static int IMAGES_PER_ROW_PORTRAIT = 3;
+
+  private final static int IMAGES_PER_ROW_LANDSCAPE = 2;
 
   private final Context context;
 
@@ -44,13 +45,17 @@ public class AttachmentView extends FrameLayout {
 
   private TextView textView;
 
-  private int horizontalGap;
+  private int widthPortrait;
 
-  private int width;
+  private int maxHeightPortrait;
 
-  private int height;
+  private int widthLandscape;
 
-  private boolean available;
+  private int maxHeightLandscape;
+
+  private int gap;
+
+  private int orientation;
 
   public AttachmentView(Context context, ViewGroup parent, Uri attachmentUri, boolean removable) {
     super(context);
@@ -60,10 +65,18 @@ public class AttachmentView extends FrameLayout {
     this.attachment = null;
     this.attachmentUri = attachmentUri;
     this.filename = attachmentUri.getLastPathSegment();
-    this.available = true;
 
     calculateDimensions(20);
-    configureView(context, removable);
+    initializeView(context, removable);
+
+    textView.setText(filename);
+    Bitmap bitmap = loadImageThumbnail();
+    if (bitmap != null) {
+      configureViewForThumbnail(bitmap, false);
+
+    } else {
+      configureViewForPlaceholder(false);
+    }
   }
 
   public AttachmentView(Context context, ViewGroup parent, FeedbackAttachment attachment, boolean removable) {
@@ -74,10 +87,13 @@ public class AttachmentView extends FrameLayout {
     this.attachment = attachment;
     this.attachmentUri = Uri.fromFile(new File(Constants.getHockeyAppStorageDir(), attachment.getCacheId()));
     this.filename = attachment.getFilename();
-    this.available = false;
 
     calculateDimensions(30);
-    configureView(context, removable);
+    initializeView(context, removable);
+
+    orientation = ImageUtils.ORIENTATION_PORTRAIT;
+    textView.setText("Loading...");
+    configureViewForPlaceholder(false);
   }
 
   public FeedbackAttachment getAttachment() {
@@ -86,100 +102,80 @@ public class AttachmentView extends FrameLayout {
 
   public Uri getAttachmentUri() { return attachmentUri; }
 
-  public int getThumbnailWidth() { return width; }
+  public int getWidthPortrait() { return widthPortrait; }
 
-  public int getThumbnailHeight() { return height; }
+  public int getMaxHeightPortrait() { return maxHeightPortrait; }
+
+  public int getWidthLandscape() { return widthLandscape; }
+
+  public int getMaxHeightLandscape() { return maxHeightLandscape; }
+
+  public int getGap() { return gap; }
+
+  public int getEffectiveMaxHeight() {
+    return orientation == ImageUtils.ORIENTATION_LANDSCAPE ? maxHeightLandscape : maxHeightPortrait;
+  }
 
   public void remove() {
     parent.removeView(this);
-
-    /* Re-adjust paddings of views */
-    for (int i = 0; i < parent.getChildCount(); i++) {
-      View view = parent.getChildAt(i);
-
-      if ((i % IMAGES_PER_ROW) != 0) {
-        view.setPadding(horizontalGap, horizontalGap, 0, 0);
-
-      } else {
-        view.setPadding(0, horizontalGap, 0, 0);
-      }
-    }
   }
 
-  public void setImage(Bitmap bitmap) {
-    textView.setText(filename);
-    available = true;
+  public void setImage(Bitmap bitmap, int orientation) {
+    this.textView.setText(filename);
+    this.orientation = orientation;
 
     if (bitmap == null) {
-      configureImageViewForPlaceholder(available);
+      configureViewForPlaceholder(true);
 
     } else {
-      configureImageViewForThumbnail(bitmap, available);
+      configureViewForThumbnail(bitmap, true);
     }
   }
 
   public void signalImageLoadingError() {
     textView.setText("Error");
-    available = false;
   }
 
   private void calculateDimensions(int marginDip) {
     DisplayMetrics metrics = getResources().getDisplayMetrics();
-    int layoutMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, marginDip, metrics);
-    int imageGap     = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 10.0, metrics);
-    int displayWidth = metrics.widthPixels;
-    int parentWidth = displayWidth - (2 * layoutMargin) - (2 * imageGap);
+    this.gap = Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10.0f, metrics));
 
-    this.width =  parentWidth / IMAGES_PER_ROW;
-    this.height = (int)(width * 1.2f);
+    int layoutMargin = Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, marginDip, metrics));
+    int displayWidth = metrics.widthPixels;
+
+    int parentWidthPortrait  = displayWidth - (2 * layoutMargin) - ((IMAGES_PER_ROW_PORTRAIT  - 1) * gap);
+    int parentWidthLandscape = displayWidth - (2 * layoutMargin) - ((IMAGES_PER_ROW_LANDSCAPE - 1) * gap);
+
+    this.widthPortrait  = parentWidthPortrait / IMAGES_PER_ROW_PORTRAIT;
+    this.widthLandscape = parentWidthLandscape / IMAGES_PER_ROW_LANDSCAPE;
+
+    this.maxHeightPortrait  = widthPortrait * 2;
+    this.maxHeightLandscape = widthLandscape;
   }
 
-  private void configureView(final Context context, boolean removable) {
-    setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+  private void initializeView(Context context, boolean removable) {
+    setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, Gravity.BOTTOM));
+    setPadding(0, gap, 0, 0);
 
-    horizontalGap = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 10.0, getResources().getDisplayMetrics());
-    if ((parent.getChildCount() % IMAGES_PER_ROW) != 0) {
-      /** This is not the first child in the row, therefore it needs a padding to is left neighbour. */
-      setPadding(horizontalGap, horizontalGap, 0, 0);
+    // ImageView
+    imageView = new ImageView(context);
 
-    } else {
-      setPadding(0, horizontalGap, 0, 0);
-    }
-
+    // LinearLayout
     LinearLayout bottomView = new LinearLayout(context);
     bottomView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, Gravity.BOTTOM));
     bottomView.setGravity(Gravity.LEFT);
     bottomView.setOrientation(LinearLayout.VERTICAL);
     bottomView.setBackgroundColor(Color.parseColor("#80262626"));
 
-    /* Configure TextView */
+    // TextView
     textView = new TextView(context);
     textView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, Gravity.CENTER));
     textView.setGravity(Gravity.CENTER);
     textView.setTextColor(Color.parseColor("#FFFFFF"));
     textView.setSingleLine();
     textView.setEllipsize(TextUtils.TruncateAt.MIDDLE);
-    textView.setMaxWidth(width);
-    textView.setMinWidth(width);
 
-    /* Configure ImageView */
-    imageView = new ImageView(context);
-    if (available) {
-      textView.setText(filename);
-      Bitmap bitmap = loadImageThumbnail();
-      if (bitmap != null) {
-        configureImageViewForThumbnail(bitmap, false);
-
-      } else {
-        configureImageViewForPlaceholder(false);
-      }
-
-    } else {
-      textView.setText("Loading...");
-      configureImageViewForPlaceholder(available);
-    }
-
-    /* Configure remove button. */
+    // Remove Button
     if (removable) {
       ImageButton imageButton = new ImageButton(context);
       imageButton.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, Gravity.BOTTOM));
@@ -201,30 +197,24 @@ public class AttachmentView extends FrameLayout {
     addView(bottomView);
   }
 
-  private Bitmap loadImageThumbnail() {
-    try {
-      InputStream input = context.getContentResolver().openInputStream(attachmentUri);
-      Bitmap bitmap = BitmapFactory.decodeStream(input);
-      return bitmap == null ? null : Bitmap.createScaledBitmap(bitmap, width, height, false);
+  private void configureViewForThumbnail(Bitmap bitmap, final boolean openOnClick) {
+    int width  = orientation == ImageUtils.ORIENTATION_LANDSCAPE ? widthLandscape : widthPortrait;
+    int height = orientation == ImageUtils.ORIENTATION_LANDSCAPE ? maxHeightLandscape : maxHeightPortrait;
 
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
-      return null;
-    }
-  }
+    textView.setMaxWidth(width);
+    textView.setMinWidth(width);
 
-  private void configureImageViewForThumbnail(Bitmap bitmap, final boolean available) {
     imageView.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
     imageView.setAdjustViewBounds(true);
-    imageView.setMinimumHeight(height);
     imageView.setMinimumWidth(width);
-    //imageView.setMaxHeight(height);
-    //imageView.setMaxWidth(width);
+    imageView.setMaxWidth(width);
+    imageView.setMaxHeight(height);
+    imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
     imageView.setImageBitmap(bitmap);
     imageView.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
-        if (!available) {
+        if (!openOnClick) {
           return;
         }
 
@@ -236,20 +226,21 @@ public class AttachmentView extends FrameLayout {
     });
   }
 
-  private void configureImageViewForPlaceholder(final boolean available) {
+  private void configureViewForPlaceholder(final boolean openOnClick) {
+    textView.setMaxWidth(widthPortrait);
+    textView.setMinWidth(widthPortrait);
+
     imageView.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
     imageView.setAdjustViewBounds(false);
     imageView.setBackgroundColor(Color.parseColor("#eeeeee"));
-    imageView.setMinimumHeight(height);
-    imageView.setMinimumWidth(width);
-    //imageView.setMaxHeight(height);
-    //imageView.setMaxWidth(width);
+    imageView.setMinimumHeight((int)(widthPortrait * 1.2f));
+    imageView.setMinimumWidth(widthPortrait);
     imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
     imageView.setImageDrawable(getSystemIcon("ic_menu_attachment"));
     imageView.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
-        if (!available) {
+        if (!openOnClick) {
           return;
         }
 
@@ -259,6 +250,20 @@ public class AttachmentView extends FrameLayout {
         context.startActivity(intent);
       }
     });
+  }
+
+  private Bitmap loadImageThumbnail() {
+    try {
+      orientation = ImageUtils.determineOrientation(context, attachmentUri);
+      int width  = orientation == ImageUtils.ORIENTATION_LANDSCAPE ? widthLandscape : widthPortrait;
+      int height = orientation == ImageUtils.ORIENTATION_LANDSCAPE ? maxHeightLandscape : maxHeightPortrait;
+
+      return ImageUtils.decodeSampledBitmap(context, attachmentUri, width, height);
+    }
+    catch (IOException e) {
+      e.printStackTrace();
+      return null;
+    }
   }
 
   private Drawable getSystemIcon(String name) {

@@ -1,11 +1,14 @@
 package net.hockeyapp.android.tasks;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.*;
+import android.os.AsyncTask;
+import android.os.Build;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import net.hockeyapp.android.Constants;
 import net.hockeyapp.android.objects.FeedbackAttachment;
+import net.hockeyapp.android.utils.ImageUtils;
 import net.hockeyapp.android.views.AttachmentView;
 
 import java.io.*;
@@ -128,11 +131,14 @@ public class AttachmentDownloader {
 
     private Bitmap bitmap;
 
+    private int bitmapOrientation;
+
     public DownloadTask(DownloadJob downloadJob, Handler handler) {
       this.downloadJob = downloadJob;
       this.handler = handler;
       this.dropFolder = Constants.getHockeyAppStorageDir();
       this.bitmap = null;
+      this.bitmapOrientation = ImageUtils.ORIENTATION_PORTRAIT; // default
     }
 
     @Override
@@ -169,7 +175,7 @@ public class AttachmentDownloader {
       // TODO check if correct instance and valid
 
       if (success) {
-        attachmentView.setImage(bitmap);
+        attachmentView.setImage(bitmap, bitmapOrientation);
 
       } else {
         if (!downloadJob.hasRetry()) {
@@ -182,21 +188,18 @@ public class AttachmentDownloader {
 
     private void loadImageThumbnail() {
       try {
-        /* Create image thumbnail */
-        AttachmentView attachmentView = downloadJob.getAttachmentView();
-        int width = attachmentView.getThumbnailWidth();
-        int height = attachmentView.getThumbnailHeight();
-
         String filename = downloadJob.getFeedbackAttachment().getCacheId();
+        AttachmentView attachmentView = downloadJob.getAttachmentView();
 
-        Bitmap temp = BitmapFactory.decodeStream(new FileInputStream(new File(dropFolder, filename)));
-        if (temp != null) {
-          bitmap = Bitmap.createScaledBitmap(temp, width, height, false);
-        } else {
-          Log.e(Constants.TAG, "Could not load thumbnail. Is null.");
-        }
+        bitmapOrientation = ImageUtils.determineOrientation(new File(dropFolder, filename));
+        int width  = bitmapOrientation == ImageUtils.ORIENTATION_LANDSCAPE ?
+            attachmentView.getWidthLandscape() : attachmentView.getWidthPortrait();
+        int height = bitmapOrientation == ImageUtils.ORIENTATION_LANDSCAPE ?
+            attachmentView.getMaxHeightLandscape() : attachmentView.getMaxHeightPortrait();
 
-      } catch(FileNotFoundException e) {
+        bitmap = ImageUtils.decodeSampledBitmap(new File(dropFolder, filename), width, height);
+
+      } catch(IOException e) {
         e.printStackTrace();
         bitmap = null;
       }
