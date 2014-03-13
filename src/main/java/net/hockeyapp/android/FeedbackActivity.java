@@ -69,6 +69,9 @@ import java.util.List;
  * @author Bogdan Nistor
  **/
 public class FeedbackActivity extends Activity implements FeedbackActivityInterface, OnClickListener {
+  /** Number of attachments allowed per message. **/
+  private static final int MAX_ATTACHMENTS_PER_MSG = 3;
+
   /** ID of error dialog **/
   private final int DIALOG_ERROR_ID = 0;
   
@@ -629,8 +632,8 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
 
       case FeedbackView.ADD_ATTACHMENT_BUTTON_ID:
         ViewGroup attachments = (ViewGroup) findViewById(FeedbackView.WRAPPER_LAYOUT_ATTACHMENTS);
-        if (attachments.getChildCount() >= 6) {
-          Toast.makeText(this, "Only 3 attachments allowed.", 1000).show();
+        if (attachments.getChildCount() >= MAX_ATTACHMENTS_PER_MSG) {
+          Toast.makeText(this, "Only " + MAX_ATTACHMENTS_PER_MSG + " attachments allowed.", 1000).show();
         } else {
           openContextMenu(v);
         }
