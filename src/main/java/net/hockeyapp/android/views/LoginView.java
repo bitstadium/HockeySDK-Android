@@ -125,7 +125,7 @@ public class LoginView extends LinearLayout {
     editText.setLayoutParams(params);
     editText.setHint("Email");
     editText.setImeOptions(EditorInfo.IME_ACTION_NEXT);
-    editText.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+    editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
     editText.setTextColor(Color.GRAY);
     editText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
     editText.setTypeface(null, Typeface.NORMAL);
