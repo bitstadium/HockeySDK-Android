@@ -92,14 +92,11 @@ public class PaintView extends ImageView {
 
     /* Calculate inSampleSize */
     options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
-    Log.e("pe", "inSampleSize: " + options.inSampleSize);
 
     /* Decode bitmap with inSampleSize set */
     options.inJustDecodeBounds = false;
     InputStream inputBitmap = resolver.openInputStream(imageUri);
     Bitmap bitmap = BitmapFactory.decodeStream(inputBitmap, null, options);
-    Log.e("pe", "Result Bitmap Width: " + bitmap.getWidth());
-    Log.e("pe", "Result Bitmap Height: " + bitmap.getHeight());
 
     return bitmap;
   }

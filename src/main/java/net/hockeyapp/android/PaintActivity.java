@@ -42,7 +42,6 @@ public class PaintActivity extends Activity {
     /* Get image path. */
     Bundle extras = getIntent().getExtras();
     Uri imageUri = extras.getParcelable("imageUri");
-    Log.e("pe", "Image URI: " + imageUri.toString());
 
     imageName = determineFilename(imageUri, imageUri.getLastPathSegment());
 
@@ -148,10 +147,13 @@ public class PaintActivity extends Activity {
   }
 
   private void makeResult() {
-    File result = new File(getCacheDir(), imageName);
+    File hockeyAppCache = new File(getCacheDir(), Constants.TAG);
+    hockeyAppCache.mkdir();
+    File result = new File(hockeyAppCache, imageName);
+
     int suffix = 1;
     while (result.exists()) {
-      result = new File(getCacheDir(), imageName + "_" + suffix);
+      result = new File(hockeyAppCache, imageName + "_" + suffix);
       suffix++;
     }
 
@@ -162,8 +164,8 @@ public class PaintActivity extends Activity {
       FileOutputStream out = new FileOutputStream(result);
       bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
       out.close();
-
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       e.printStackTrace();
       Log.e(Constants.TAG, "Could not save image.", e);
     }
@@ -174,7 +176,8 @@ public class PaintActivity extends Activity {
 
     if (getParent() == null) {
       setResult(Activity.RESULT_OK, intent);
-    } else {
+    }
+    else {
       getParent().setResult(Activity.RESULT_OK, intent);
     }
     finish();
@@ -192,7 +195,8 @@ public class PaintActivity extends Activity {
         if (metaCursor.moveToFirst()) {
           path = metaCursor.getString(0);
         }
-      } finally {
+      }
+      finally {
         metaCursor.close();
       }
     }

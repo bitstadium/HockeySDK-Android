@@ -168,9 +168,11 @@ public class SendFeedbackTask extends AsyncTask<Void, Void, HashMap<String, Stri
         /** Clear temp folder */
         String status = result.get("status");
         if (status != null && status.startsWith("2")) {
-          File folder = context.getCacheDir();
-          for (File file : folder.listFiles()) {
-            file.delete();
+          File folder = new File(context.getCacheDir(), Constants.TAG);
+          if (folder.exists()) {
+            for (File file : folder.listFiles()) {
+              file.delete();
+            }
           }
         }
 

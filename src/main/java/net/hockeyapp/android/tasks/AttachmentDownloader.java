@@ -69,7 +69,7 @@ public class AttachmentDownloader {
                 queue.add(retryCandidate);
                 downloadNext();
               }
-            }, 2000);
+            }, 3000);
           }
           downloadRunning = false;
           downloadNext();
@@ -172,7 +172,6 @@ public class AttachmentDownloader {
     protected void onPostExecute(Boolean success) {
       AttachmentView attachmentView = downloadJob.getAttachmentView();
       downloadJob.setSuccess(success);
-      // TODO check if correct instance and valid
 
       if (success) {
         attachmentView.setImage(bitmap, bitmapOrientation);
