@@ -1,5 +1,8 @@
 package net.hockeyapp.android;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * <h4>Description</h4>
  * 
@@ -33,6 +36,7 @@ package net.hockeyapp.android;
  * </pre>
  *
  * @author Thomas Dohmke
+ * @author Patrick Eschenbach
  **/
 public class Strings {
   /**
@@ -132,41 +136,47 @@ public class Strings {
    */
   public final static int FEEDBACK_FAILED_TEXT_ID                   = 0x11;
 
-
   /**
    * Default strings.
    */
-  public final static String[] ENGLISH = new String[] {
-      "Crash Data",
-      "The app found information about previous crashes. Would you like to send this data to the developer?",
-      "Dismiss",
-      "Always send",
-      "Send",
-      
-      "Download Failed",
-      "The update could not be downloaded. Would you like to try again?",
-      "Cancel",
-      "Retry",
-      
-      "Please install the latest version to continue to use this app.",
-      
-      "Update Available",
-      "Show information about the new update?",
-      "Dismiss",
-      "Show",
-      
-      "Build Expired",
-      "This has build has expired. Please check HockeyApp for any updates.",
-      
-      "Feedback Failed",
-      "Would you like to send your feedback again?"
-  };
+  private final static Map<Integer, String> DEFAULT = new HashMap<Integer, String>();
+  static {
+    // Crash Dialog
+    DEFAULT.put(CRASH_DIALOG_TITLE_ID,           "Crash Data");
+    DEFAULT.put(CRASH_DIALOG_MESSAGE_ID,         "The app found information about previous crashes. Would you like to send this data to the developer?");
+    DEFAULT.put(CRASH_DIALOG_NEGATIVE_BUTTON_ID, "Dismiss");
+    DEFAULT.put(CRASH_DIALOG_NEUTRAL_BUTTON_ID,  "Always send");
+    DEFAULT.put(CRASH_DIALOG_POSITIVE_BUTTON_ID, "Send");
+
+    // Download Failed
+    DEFAULT.put(DOWNLOAD_FAILED_DIALOG_TITLE_ID,           "Download Failed");
+    DEFAULT.put(DOWNLOAD_FAILED_DIALOG_MESSAGE_ID,         "The update could not be downloaded. Would you like to try again?");
+    DEFAULT.put(DOWNLOAD_FAILED_DIALOG_NEGATIVE_BUTTON_ID, "Cancel");
+    DEFAULT.put(DOWNLOAD_FAILED_DIALOG_POSITIVE_BUTTON_ID, "Retry");
+
+    // Update Mandatory Toast
+    DEFAULT.put(UPDATE_MANDATORY_TOAST_ID, "Please install the latest version to continue to use this app.");
+
+    // Update Dialog
+    DEFAULT.put(UPDATE_DIALOG_TITLE_ID,           "Update Available");
+    DEFAULT.put(UPDATE_DIALOG_MESSAGE_ID,         "Show information about the new update?");
+    DEFAULT.put(UPDATE_DIALOG_NEGATIVE_BUTTON_ID, "Dismiss");
+    DEFAULT.put(UPDATE_DIALOG_POSITIVE_BUTTON_ID, "Show");
+
+    // Expiry Info
+    DEFAULT.put(EXPIRY_INFO_TITLE_ID, "Build Expired");
+    DEFAULT.put(EXPIRY_INFO_TEXT_ID,  "This has build has expired. Please check HockeyApp for any updates.");
+
+    // Feedback Failed
+    DEFAULT.put(FEEDBACK_FAILED_TITLE_ID, "Feedback Failed");
+    DEFAULT.put(FEEDBACK_FAILED_TEXT_ID,  "Would you like to send your feedback again?");
+  }
   
   /**
    * Returns the default string for the given resource ID.
    * 
    * @param resourceID The ID of the string resource.
-   * @return The default string.
+   * @return The default string or null if the resourceID doesn't exist.
    */
   public static String get(int resourceID) {
     return get(null, resourceID);
@@ -179,8 +189,8 @@ public class Strings {
    * @param string The new default string.
    */
   public static void set(int resourceID, String string) {
-    if ((string != null) && (resourceID >= 0) && (resourceID < ENGLISH.length)) {
-      ENGLISH[resourceID] = string;
+    if (string != null) {
+      DEFAULT.put(resourceID, string);
     }
   }
 
@@ -191,7 +201,7 @@ public class Strings {
    * 
    * @param listener An instance of StringListener.
    * @param resourceID The ID of the string resource.
-   * @return The string.
+   * @return The string or null if the resourceID doesn't exist.
    */
   public static String get(StringListener listener, int resourceID) {
     String result = null;
@@ -200,8 +210,8 @@ public class Strings {
       result = listener.getStringForResource(resourceID);
     }
     
-    if ((result == null) && (resourceID >= 0) && (resourceID <= ENGLISH.length)) {
-      result = ENGLISH[resourceID];
+    if (result == null) {
+      result = DEFAULT.get(resourceID);
     }
     
     return result;
