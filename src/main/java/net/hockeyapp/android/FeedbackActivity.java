@@ -1,11 +1,21 @@
 package net.hockeyapp.android;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.NotificationManager;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.view.*;
+import android.view.View.OnClickListener;
+import android.widget.*;
 import net.hockeyapp.android.adapters.MessagesAdapter;
 import net.hockeyapp.android.objects.ErrorObject;
 import net.hockeyapp.android.objects.FeedbackMessage;
@@ -13,26 +23,16 @@ import net.hockeyapp.android.objects.FeedbackResponse;
 import net.hockeyapp.android.tasks.ParseFeedbackTask;
 import net.hockeyapp.android.tasks.SendFeedbackTask;
 import net.hockeyapp.android.utils.PrefsUtil;
+import net.hockeyapp.android.views.AttachmentListView;
+import net.hockeyapp.android.views.AttachmentView;
 import net.hockeyapp.android.views.FeedbackView;
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.view.KeyEvent;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.ScrollView;
-import android.widget.TextView;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
 /**
  * <h4>Description</h4>
@@ -69,6 +69,9 @@ import android.widget.TextView;
  * @author Bogdan Nistor
  **/
 public class FeedbackActivity extends Activity implements FeedbackActivityInterface, OnClickListener {
+  /** Number of attachments allowed per message. **/
+  private static final int MAX_ATTACHMENTS_PER_MSG = 3;
+
   /** ID of error dialog **/
   private final int DIALOG_ERROR_ID = 0;
   
@@ -82,11 +85,17 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
   private EditText subjectInput;
   private EditText textInput;
   private Button sendFeedbackButton;
+  private Button addAttachmentButton;
   private Button addResponseButton;
   private Button refreshButton;
   private ScrollView feedbackScrollView;
   private LinearLayout wrapperLayoutFeedbackAndMessages;
   private ListView messagesListView;
+
+  /** Activity request constants for ContextMenu and Chooser Intent */
+  private final int ATTACH_PICTURE = 1;
+  private final int ATTACH_FILE = 2;
+  private final int PAINT_IMAGE = 3;
 	
   /** Send feedback {@link AsyncTask} */
   private SendFeedbackTask sendFeedbackTask;
@@ -130,7 +139,11 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
     if (extras != null) {
       url = extras.getString("url");
     }
-		
+
+    // Cancel notification
+    NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+    notificationManager.cancel(ParseFeedbackTask.NEW_ANSWER_NOTIFICATION_ID);
+
     initFeedbackHandler();
     initParseFeedbackHandler();
     configureAppropriateView();
@@ -146,7 +159,7 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
     else {
       /** If Feedback Token is NOT NULL, show the Add Response Button and fetch the feedback messages */
       configureFeedbackView(true);
-      sendFetchFeedback(url, null, null, null, null, token, feedbackHandler, true);
+      sendFetchFeedback(url, null, null, null, null, null, token, feedbackHandler, true);
     }
   }
   
@@ -155,6 +168,12 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
       @Override
       public void run() {
         PrefsUtil.getInstance().saveFeedbackTokenToPrefs(FeedbackActivity.this, null);
+
+        SharedPreferences preferences = getSharedPreferences(ParseFeedbackTask.PREFERENCES_NAME, 0);
+        PrefsUtil.applyChanges(preferences.edit()
+            .remove(ParseFeedbackTask.ID_LAST_MESSAGE_SEND)
+            .remove(ParseFeedbackTask.ID_LAST_MESSAGE_PROCESSED));
+
         configureFeedbackView(false);
       }
     });
@@ -185,7 +204,7 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
             success = true;
           }
           else if (responseString != null) {
-            startParseFeedbackTask(responseString);
+            startParseFeedbackTask(responseString, requestType);
             success = true;
           }
           else {
@@ -227,7 +246,7 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
           if (feedbackResponse != null) {
             if (feedbackResponse.getStatus().equalsIgnoreCase("success")) {
               /** We have a valid result from JSON parsing */
-              success = true;	
+              success = true;
   							
               if (feedbackResponse.getToken() != null) {
                 /** Save the Token to SharedPreferences */
@@ -283,7 +302,7 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
       refreshButton.setOnClickListener(this);
     } 
     else {
-      /** if the token doesn't exist, the feedback details inputs to be sent need to be displayed */ 
+      /** if the token doesn't exist, the feedback details inputs to be sent need to be displayed */
       wrapperLayoutFeedbackAndMessages.setVisibility(View.GONE);
       feedbackScrollView.setVisibility(View.VISIBLE);
 		
@@ -322,7 +341,16 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
         /** If Feedback Token is not available, display the Subject Input field */
         subjectInput.setVisibility(View.VISIBLE);
       }
-		
+
+      /** Reset the attachment list */
+      ViewGroup attachmentListView = (ViewGroup) findViewById(FeedbackView.WRAPPER_LAYOUT_ATTACHMENTS);
+      attachmentListView.removeAllViews();
+
+      /** Use of context menu needs to be enabled explicitly */
+      addAttachmentButton = (Button) findViewById(FeedbackView.ADD_ATTACHMENT_BUTTON_ID);
+      addAttachmentButton.setOnClickListener(this);
+      registerForContextMenu(addAttachmentButton);
+
       sendFeedbackButton = (Button) findViewById(FeedbackView.SEND_FEEDBACK_BUTTON_ID);
       sendFeedbackButton.setOnClickListener(this);
   	}
@@ -386,6 +414,29 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
     	}
     });
   }
+
+  /**
+   * Adds either file or picture attachment by intent picker.
+   *
+   * @param request Either ATTACH_FILE or ATTACH_PICTURE.
+   */
+  private boolean addAttachment(int request) {
+    if (request == ATTACH_FILE) {
+      Intent intent = new Intent();
+      intent.setType("*/*");
+      intent.setAction(Intent.ACTION_GET_CONTENT);
+      startActivityForResult(Intent.createChooser(intent, "Select File"), ATTACH_FILE);
+      return true;
+
+    } else if (request == ATTACH_PICTURE) {
+      Intent intent = new Intent();
+      intent.setType("image/*");
+      intent.setAction(Intent.ACTION_GET_CONTENT);
+      startActivityForResult(Intent.createChooser(intent, "Select Picture"), ATTACH_PICTURE);
+      return true;
+
+    } else return false;
+  }
   	
   /**
    * Send feedback to HockeyApp.
@@ -394,9 +445,9 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
   private void sendFeedback() {
   	enableDisableSendFeedbackButton(false);
   	
-  	if ((nameInput.getText().toString().trim().length() <= 0) || 
-  	    (emailInput.getText().toString().trim().length() <= 0) || 
-  	    (subjectInput.getText().toString().trim().length() <= 0) || 
+  	if ((nameInput.getText().toString().trim().length() <= 0) ||
+  	    (emailInput.getText().toString().trim().length() <= 0) ||
+  	    (subjectInput.getText().toString().trim().length() <= 0) ||
   			(textInput.getText().toString().trim().length() <= 0)) {
   		/** Not all details were submitted, we're going to display an error dialog */
   		error = new ErrorObject();
@@ -404,13 +455,17 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
   		
   		showDialog(DIALOG_ERROR_ID);
   		enableDisableSendFeedbackButton(true);
-  	} 
+  	}
   	else {
   		/** Save Name and Email to {@link SharedPreferences} */
   		PrefsUtil.getInstance().saveNameEmailSubjectToPrefs(context, nameInput.getText().toString(), emailInput.getText().toString(), subjectInput.getText().toString());
-  		
+
+      /** Make list for attachments file paths */
+      AttachmentListView attachmentListView = (AttachmentListView) findViewById(FeedbackView.WRAPPER_LAYOUT_ATTACHMENTS);
+      List<Uri> attachmentUris = attachmentListView.getAttachments();
+
   		/** Start the Send Feedback {@link AsyncTask} */
-  		sendFetchFeedback(url, nameInput.getText().toString(), emailInput.getText().toString(), subjectInput.getText().toString(), textInput.getText().toString(), PrefsUtil.getInstance().getFeedbackTokenFromPrefs(context), feedbackHandler, false);
+  		sendFetchFeedback(url, nameInput.getText().toString(), emailInput.getText().toString(), subjectInput.getText().toString(), textInput.getText().toString(), attachmentUris, PrefsUtil.getInstance().getFeedbackTokenFromPrefs(context), feedbackHandler, false);
   	}
   }
 
@@ -425,8 +480,8 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
    * @param feedbackHandler Handler to handle the response
    * @param isFetchMessages Set true to fetch messages, false to send one
    */
-  private void sendFetchFeedback(String url, String name, String email, String subject, String text, String token, Handler feedbackHandler, boolean isFetchMessages) {
-    sendFeedbackTask = new SendFeedbackTask(context, url, name, email, subject, text, token, feedbackHandler, isFetchMessages);
+  private void sendFetchFeedback(String url, String name, String email, String subject, String text, List<Uri> attachmentUris, String token, Handler feedbackHandler, boolean isFetchMessages) {
+    sendFeedbackTask = new SendFeedbackTask(context, url, name, email, subject, text, attachmentUris, token, feedbackHandler, isFetchMessages);
     sendFeedbackTask.execute();
   }
   	
@@ -434,8 +489,8 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
    * Creates and starts execution of the {@link ParseFeedbackTask}
    * @param feedbackResponseString	JSON string response
    */
-  private void startParseFeedbackTask(String feedbackResponseString) {
-  	createParseFeedbackTask(feedbackResponseString);
+  private void startParseFeedbackTask(String feedbackResponseString, String requestType) {
+  	createParseFeedbackTask(feedbackResponseString, requestType);
   	parseFeedbackTask.execute();
   }
   
@@ -443,8 +498,8 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
    * Initializes the {@link ParseFeedbackTask}
    * @param feedbackResponseString	JSON string response
    */
-  private void createParseFeedbackTask(String feedbackResponseString) {
-  	parseFeedbackTask = new ParseFeedbackTask(this, feedbackResponseString, parseFeedbackHandler);
+  private void createParseFeedbackTask(String feedbackResponseString, String requestType) {
+  	parseFeedbackTask = new ParseFeedbackTask(this, feedbackResponseString, parseFeedbackHandler, requestType);
   }
   
   /**
@@ -471,7 +526,99 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
   	
   	return sendFeedbackTask;
   }
-  
+
+  /**
+   * Save all attachments.
+   */
+  @Override
+  protected void onSaveInstanceState(Bundle outState) {
+    AttachmentListView attachmentListView = (AttachmentListView) findViewById(FeedbackView.WRAPPER_LAYOUT_ATTACHMENTS);
+
+    outState.putParcelableArrayList("attachments", attachmentListView.getAttachments());
+    super.onSaveInstanceState(outState);
+  }
+
+  /**
+   * Restore all attachments.
+   */
+  @Override
+  protected void onRestoreInstanceState(Bundle savedInstanceState) {
+    ViewGroup attachmentList = (ViewGroup) findViewById(FeedbackView.WRAPPER_LAYOUT_ATTACHMENTS);
+    ArrayList<Uri> attachmentsUris = savedInstanceState.getParcelableArrayList("attachments");
+
+    for (Uri attachmentUri : attachmentsUris) {
+      attachmentList.addView(new AttachmentView(this, attachmentList, attachmentUri, true));
+    }
+
+    super.onRestoreInstanceState(savedInstanceState);
+  }
+
+  /**
+   * Called when context menu is needed (on add attachment button).
+   */
+  @Override
+  public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+    super.onCreateContextMenu(menu, v, menuInfo);
+
+    menu.add(0, ATTACH_FILE, 0, "Attach File");
+    menu.add(0, ATTACH_PICTURE, 0, "Attach Picture");
+  }
+
+  /**
+   * Called when user clicked on context menu item.
+   */
+  @Override
+  public boolean onContextItemSelected(MenuItem item) {
+    switch (item.getItemId()) {
+      case ATTACH_FILE:
+      case ATTACH_PICTURE:
+        return addAttachment(item.getItemId());
+
+      default:
+        return super.onContextItemSelected(item);
+    }
+  }
+
+  /**
+   * Called when picture or file was chosen.
+   */
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    if (resultCode != RESULT_OK) {
+      return;
+    }
+
+    if (requestCode == ATTACH_FILE) {
+      /** User picked file */
+      Uri uri = data.getData();
+
+      if (uri != null) {
+        final ViewGroup attachments = (ViewGroup) findViewById(FeedbackView.WRAPPER_LAYOUT_ATTACHMENTS);
+        attachments.addView(new AttachmentView(this, attachments, uri, true));
+      }
+
+    } else if (requestCode == ATTACH_PICTURE) {
+      /** User picked image */
+      Uri uri = data.getData();
+
+      /** Start PaintActivity */
+      if (uri != null) {
+        Intent intent = new Intent(this, PaintActivity.class);
+        intent.putExtra("imageUri", uri);
+        startActivityForResult(intent, PAINT_IMAGE);
+      }
+
+    } else if (requestCode == PAINT_IMAGE) {
+      /** Final attachment picture received and ready to be added to list. */
+      Uri uri = data.getParcelableExtra("imageUri");
+
+      if (uri != null) {
+        final ViewGroup attachments = (ViewGroup) findViewById(FeedbackView.WRAPPER_LAYOUT_ATTACHMENTS);
+        attachments.addView(new AttachmentView(this, attachments, uri, true));
+      }
+
+    } else return;
+  }
+
   /**
    * Called when the Send Feedback {@link Button} is tapped. Sends the feedback and disables 
    * the button to avoid multiple taps.
@@ -482,14 +629,23 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
   	  case FeedbackView.SEND_FEEDBACK_BUTTON_ID:
   	    sendFeedback();
   	    break;
-  			
+
+      case FeedbackView.ADD_ATTACHMENT_BUTTON_ID:
+        ViewGroup attachments = (ViewGroup) findViewById(FeedbackView.WRAPPER_LAYOUT_ATTACHMENTS);
+        if (attachments.getChildCount() >= MAX_ATTACHMENTS_PER_MSG) {
+          Toast.makeText(this, "Only " + MAX_ATTACHMENTS_PER_MSG + " attachments allowed.", 1000).show();
+        } else {
+          openContextMenu(v);
+        }
+        break;
+
   	  case FeedbackView.ADD_RESPONSE_BUTTON_ID:
   	    configureFeedbackView(false);
   	    inSendFeedback = true;
   	    break;
   			
   	  case FeedbackView.REFRESH_BUTTON_ID:
-  	    sendFetchFeedback(url, null, null, null, null, PrefsUtil.getInstance().getFeedbackTokenFromPrefs(context), feedbackHandler, true);
+  	    sendFetchFeedback(url, null, null, null, null, null, PrefsUtil.getInstance().getFeedbackTokenFromPrefs(context), feedbackHandler, true);
   	    break;
   
   	  default:

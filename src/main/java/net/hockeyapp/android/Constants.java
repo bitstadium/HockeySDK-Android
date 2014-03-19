@@ -1,13 +1,14 @@
 package net.hockeyapp.android;
 
-import java.io.File;
-
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
+
+import java.io.File;
 
 /**
  * <h4>Description</h4>
@@ -53,7 +54,7 @@ public class Constants {
    * Path where crash logs and temporary files are stored.
    */
   public static String FILES_PATH = null;
-  
+
   /**
    * The app's version code.
    */
@@ -120,8 +121,21 @@ public class Constants {
   }
 
   /**
+   * Returns a file representing the folder in which screenshots are stored.
+   *
+   * @return A file representing the screenshot folder.
+   */
+  public static File getHockeyAppStorageDir() {
+    File externalStorage = Environment.getExternalStorageDirectory();
+
+    File dir = new File(externalStorage.getAbsolutePath() + "/" + Constants.TAG);
+    dir.mkdirs();
+    return dir;
+  }
+
+  /**
    * Helper method to set the files path. If an exception occurs, the files 
-   * path will be null! 
+   * path will be null!
    * 
    * @param context The context to use. Usually your Activity object.
    */
@@ -135,14 +149,14 @@ public class Constants {
         if (file != null) {
           Constants.FILES_PATH = file.getAbsolutePath();
         }
-      } 
+      }
       catch (Exception e) {
         Log.e(TAG, "Exception thrown when accessing the files dir:");
         e.printStackTrace();
       }
     }
   }
-  
+
   /**
    * Helper method to set the package name and version code. If an exception 
    * occurs, these values will be null! 

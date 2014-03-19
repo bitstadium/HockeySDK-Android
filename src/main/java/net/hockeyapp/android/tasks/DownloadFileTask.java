@@ -1,18 +1,5 @@
 package net.hockeyapp.android.tasks;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.UUID;
-
-import net.hockeyapp.android.Strings;
-import net.hockeyapp.android.listeners.DownloadFileListener;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -22,6 +9,14 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
+import net.hockeyapp.android.Strings;
+import net.hockeyapp.android.listeners.DownloadFileListener;
+
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.UUID;
 
 /**
  * <h4>Description</h4>

@@ -1,6 +1,7 @@
 package net.hockeyapp.android.objects;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * JSON helper object
@@ -23,6 +24,7 @@ public class FeedbackMessage implements Serializable {
   private String cleanText;
   private String name;
   private String appId;
+  private List<FeedbackAttachment> feedbackAttachments;
   
   public String getSubjec() {
     return subject;
@@ -127,4 +129,8 @@ public class FeedbackMessage implements Serializable {
   public void setAppId(String appId) {
     this.appId = appId;
   }
+
+  public List<FeedbackAttachment> getFeedbackAttachments() { return feedbackAttachments; }
+
+  public void setFeedbackAttachments(List<FeedbackAttachment> feedbackAttachments) { this.feedbackAttachments = feedbackAttachments; }
 }

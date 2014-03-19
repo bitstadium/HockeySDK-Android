@@ -1,14 +1,16 @@
 package net.hockeyapp.android.utils;
 
-import java.util.ArrayList;
-
 import net.hockeyapp.android.objects.Feedback;
+import net.hockeyapp.android.objects.FeedbackAttachment;
 import net.hockeyapp.android.objects.FeedbackMessage;
 import net.hockeyapp.android.objects.FeedbackResponse;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * JSON Parser helper class
@@ -69,7 +71,31 @@ public class FeedbackParser {
             String cleanText = messagesArray.getJSONObject(i).getString("clean_text").toString();
             String name = messagesArray.getJSONObject(i).getString("name").toString();
             String appId = messagesArray.getJSONObject(i).getString("app_id").toString();
-            
+
+            JSONArray jsonAttachments = messagesArray.getJSONObject(i).optJSONArray("attachments");
+            List<FeedbackAttachment> feedbackAttachments = Collections.emptyList();
+            if (jsonAttachments != null) {
+              feedbackAttachments = new ArrayList<FeedbackAttachment>();
+
+              for (int j = 0; j < jsonAttachments.length(); j++) {
+                int attachmentId = jsonAttachments.getJSONObject(j).getInt("id");
+                int attachmentMessageId = jsonAttachments.getJSONObject(j).getInt("feedback_message_id");
+                String filename = jsonAttachments.getJSONObject(j).getString("file_name");
+                String url = jsonAttachments.getJSONObject(j).getString("url");
+                String attachmentCreatedAt = jsonAttachments.getJSONObject(j).getString("created_at");
+                String attachmentUpdatedAt = jsonAttachments.getJSONObject(j).getString("updated_at");
+
+                FeedbackAttachment feedbackAttachment = new FeedbackAttachment();
+                feedbackAttachment.setId(attachmentId);
+                feedbackAttachment.setMessageId(attachmentMessageId);
+                feedbackAttachment.setFilename(filename);
+                feedbackAttachment.setUrl(url);
+                feedbackAttachment.setCreatedAt(attachmentCreatedAt);
+                feedbackAttachment.setUpdatedAt(attachmentUpdatedAt);
+                feedbackAttachments.add(feedbackAttachment);
+              }
+            }
+
             feedbackMessage = new FeedbackMessage();
             feedbackMessage.setAppId(appId);
             feedbackMessage.setCleanText(cleanText);
@@ -84,7 +110,7 @@ public class FeedbackParser {
             feedbackMessage.setToken(token);
             feedbackMessage.setUserString(userString);
             feedbackMessage.setVia(via);
-            
+            feedbackMessage.setFeedbackAttachments(feedbackAttachments);
             messages.add(feedbackMessage);
           }
         }
