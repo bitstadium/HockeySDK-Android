@@ -4,11 +4,12 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.5.+'
+        classpath 'com.android.tools.build:gradle:0.7.+'
     }
 }
 
-
+version '3.0.2'
+group 'net.hockeyapp.android'
 
 apply plugin: 'android-library'
 
@@ -19,8 +20,6 @@ android {
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
-            java.srcDirs = ['src']
-            resources.srcDirs = ['src']
         }
     }
 }
