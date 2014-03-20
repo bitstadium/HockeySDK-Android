@@ -151,7 +151,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
       loginTask.execute();
     }
     else {
-      Toast.makeText(this, "Please fill in the missing account credentials.", 1000).show();
+      Toast.makeText(this, Strings.get(Strings.LOGIN_MISSING_CREDENTIALS_TOAST_ID), 1000).show();
     }
   }
 
