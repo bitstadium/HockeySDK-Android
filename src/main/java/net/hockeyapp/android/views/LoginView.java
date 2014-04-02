@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import net.hockeyapp.android.Strings;
 
 /**
  * <h4>Description</h4>
@@ -106,7 +107,7 @@ public class LoginView extends LinearLayout {
     params.setMargins(0, 0, 0, margin);
 
     textView.setLayoutParams(params);
-    textView.setText("Please enter your account credentials.");
+    textView.setText(Strings.get(Strings.LOGIN_HEADLINE_TEXT_ID));
     textView.setTextColor(Color.GRAY);
     textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
     textView.setTypeface(null, Typeface.NORMAL);
@@ -123,7 +124,7 @@ public class LoginView extends LinearLayout {
     params.setMargins(0, 0, 0, margin);
 
     editText.setLayoutParams(params);
-    editText.setHint("Email");
+    editText.setHint(Strings.get(Strings.LOGIN_EMAIL_INPUT_HINT_ID));
     editText.setImeOptions(EditorInfo.IME_ACTION_NEXT);
     editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
     editText.setTextColor(Color.GRAY);
@@ -144,7 +145,7 @@ public class LoginView extends LinearLayout {
     params.setMargins(0, 0, 0, margin);
 
     editText.setLayoutParams(params);
-    editText.setHint("Password");
+    editText.setHint(Strings.get(Strings.LOGIN_PASSWORD_INPUT_HINT_ID));
     editText.setImeOptions(EditorInfo.IME_ACTION_NEXT);
     editText.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
     editText.setTransformationMethod(PasswordTransformationMethod.getInstance());
@@ -168,7 +169,7 @@ public class LoginView extends LinearLayout {
 
     button.setLayoutParams(params);
     button.setBackgroundDrawable(getButtonSelector());
-    button.setText("Login");
+    button.setText(Strings.get(Strings.LOGIN_LOGIN_BUTTON_TEXT_ID));
     button.setTextColor(Color.WHITE);
     button.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
 

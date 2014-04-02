@@ -14,6 +14,7 @@ import android.view.Gravity;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.*;
+import net.hockeyapp.android.Strings;
 
 /**
  * <h4>Description</h4>
@@ -228,7 +229,7 @@ public class FeedbackView extends LinearLayout {
     editText.setTextColor(Color.GRAY);
     editText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
     editText.setTypeface(null, Typeface.NORMAL);
-    editText.setHint("Name");
+    editText.setHint(Strings.get(Strings.FEEDBACK_NAME_INPUT_HINT_ID));
     editText.setHintTextColor(Color.LTGRAY);
     setEditTextBackground(context, editText);
     
@@ -250,7 +251,7 @@ public class FeedbackView extends LinearLayout {
     editText.setTextColor(Color.GRAY);
     editText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
     editText.setTypeface(null, Typeface.NORMAL);
-    editText.setHint("Email");
+    editText.setHint(Strings.get(Strings.FEEDBACK_EMAIL_INPUT_HINT_ID));
     editText.setHintTextColor(Color.LTGRAY);
     setEditTextBackground(context, editText);
     
@@ -272,7 +273,7 @@ public class FeedbackView extends LinearLayout {
     editText.setTextColor(Color.GRAY);
     editText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
     editText.setTypeface(null, Typeface.NORMAL);
-    editText.setHint("Subject");
+    editText.setHint(Strings.get(Strings.FEEDBACK_SUBJECT_INPUT_HINT_ID));
     editText.setHintTextColor(Color.LTGRAY);
     setEditTextBackground(context, editText);
     
@@ -297,7 +298,7 @@ public class FeedbackView extends LinearLayout {
     editText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
     editText.setTypeface(null, Typeface.NORMAL);
     editText.setMinimumHeight(minEditTextHeight);
-    editText.setHint("Message");
+    editText.setHint(Strings.get(Strings.FEEDBACK_MESSAGE_INPUT_HINT_ID));
     editText.setHintTextColor(Color.LTGRAY);
     setEditTextBackground(context, editText);
     
@@ -317,7 +318,7 @@ public class FeedbackView extends LinearLayout {
     textView.setEllipsize(TruncateAt.END);
     textView.setShadowLayer(1, 0, 1, Color.WHITE);
     textView.setSingleLine(true);
-    textView.setText("Last Updated: ");
+    textView.setText(Strings.get(Strings.FEEDBACK_LAST_UPDATED_TEXT_ID));
     textView.setTextColor(Color.GRAY);
     textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
     textView.setTypeface(null, Typeface.NORMAL);
@@ -356,7 +357,7 @@ public class FeedbackView extends LinearLayout {
     button.setLayoutParams(params);
     button.setBackgroundDrawable(getButtonSelector());
     button.setPadding(paddingLeftRight, paddingTopBottom, paddingLeftRight, paddingTopBottom);
-    button.setText("Add attachment");
+    button.setText(Strings.get(Strings.FEEDBACK_ATTACHMENT_BUTTON_TEXT_ID));
     button.setTextColor(Color.WHITE);
     button.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
 
@@ -380,7 +381,7 @@ public class FeedbackView extends LinearLayout {
     button.setLayoutParams(params);
     button.setBackgroundDrawable(getButtonSelector());
     button.setPadding(paddingLeftRight, paddingTopBottom, paddingLeftRight, paddingTopBottom);
-    button.setText("Send feedback");
+    button.setText(Strings.get(Strings.FEEDBACK_SEND_BUTTON_TEXT_ID));
     button.setTextColor(Color.WHITE);
     button.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
     
@@ -406,7 +407,7 @@ public class FeedbackView extends LinearLayout {
     button.setBackgroundDrawable(getButtonSelector());
     button.setPadding(0, paddingTopBottom, 0, paddingTopBottom);
     button.setGravity(Gravity.CENTER);
-    button.setText("Add a Response");
+    button.setText(Strings.get(Strings.FEEDBACK_RESPONSE_BUTTON_TEXT_ID));
     button.setTextColor(Color.WHITE);
     button.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
     
@@ -431,7 +432,7 @@ public class FeedbackView extends LinearLayout {
     button.setBackgroundDrawable(getButtonSelector());
     button.setPadding(0, paddingTopBottom, 0, paddingTopBottom);
     button.setGravity(Gravity.CENTER);
-    button.setText("Refresh");
+    button.setText(Strings.get(Strings.FEEDBACK_REFRESH_BUTTON_TEXT_ID));
     button.setTextColor(Color.WHITE);
     button.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
     params.weight = 1.0f;
