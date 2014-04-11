@@ -1,17 +1,16 @@
 package net.hockeyapp.android.utils;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.Scanner;
-
+import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import net.hockeyapp.android.UpdateInfoListener;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * <h4>Description</h4>
@@ -287,6 +286,29 @@ public class VersionHelper {
     catch (Exception e) {
       // If any exceptions happen, return zero
       return 0;
+    }
+  }
+
+  /**
+   * Returns true of the given timestamp is larger / newer than the last modified timestamp of
+   * the APK file of the app.
+   */
+  public static boolean isNewerThanLastUpdateTime(Context context, long timestamp) {
+    if (context == null) {
+      return false;
+    }
+
+    try {
+      PackageManager pm = context.getPackageManager();
+      ApplicationInfo appInfo = pm.getApplicationInfo(context.getPackageName(), 0);
+      String appFile = appInfo.sourceDir;
+      long lastModified = new File(appFile).lastModified() / 1000;
+
+      return timestamp > lastModified;
+    }
+    catch (PackageManager.NameNotFoundException e) {
+      e.printStackTrace();
+      return false;
     }
   }
 }
