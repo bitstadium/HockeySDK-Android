@@ -61,6 +61,7 @@ public class DownloadFileTask extends AsyncTask<String, Integer, Boolean>{
   private String filename;
   private String filePath;
   private ProgressDialog progressDialog;
+  private String downloadErrorMessage;
 
   public DownloadFileTask(Context context, String urlString, DownloadFileListener notifier) {
     this.context = context;
@@ -68,6 +69,7 @@ public class DownloadFileTask extends AsyncTask<String, Integer, Boolean>{
     this.filename = UUID.randomUUID() + ".apk";
     this.filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Download";
     this.notifier = notifier;
+    this.downloadErrorMessage = null;
   }
 
   public void attach(Context context) {
@@ -86,7 +88,14 @@ public class DownloadFileTask extends AsyncTask<String, Integer, Boolean>{
       URLConnection connection = createConnection(url);
       connection.connect();
 
-      int lenghtOfFile = connection.getContentLength();
+      int lengthOfFile = connection.getContentLength();
+      String contentType = connection.getContentType();
+
+      if (contentType != null && contentType.contains("text")) {
+        // This is not the expected APK file. Maybe the redirect could not be resolved.
+        downloadErrorMessage = "The requested download does not appear to be a file.";
+        return false;
+      }
 
       File dir = new File(this.filePath);
       boolean result = dir.mkdirs();
@@ -103,7 +112,7 @@ public class DownloadFileTask extends AsyncTask<String, Integer, Boolean>{
       long total = 0;
       while ((count = input.read(data)) != -1) {
         total += count;
-        publishProgress((int)(total * 100 / lenghtOfFile));
+        publishProgress((int)(total * 100 / lengthOfFile));
         output.write(data, 0, count);
       }
 
@@ -112,7 +121,7 @@ public class DownloadFileTask extends AsyncTask<String, Integer, Boolean>{
       input.close();
 
       return (total > 0);
-    } 
+    }
     catch (Exception e) {
       e.printStackTrace();
       return false;
@@ -170,7 +179,15 @@ public class DownloadFileTask extends AsyncTask<String, Integer, Boolean>{
       try {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(Strings.get(notifier, Strings.DOWNLOAD_FAILED_DIALOG_TITLE_ID));
-        builder.setMessage(Strings.get(notifier, Strings.DOWNLOAD_FAILED_DIALOG_MESSAGE_ID));
+
+        String message;
+        if (downloadErrorMessage == null) {
+          message = Strings.get(notifier, Strings.DOWNLOAD_FAILED_DIALOG_MESSAGE_ID);
+        }
+        else {
+          message = downloadErrorMessage;
+        }
+        builder.setMessage(message);
 
         builder.setNegativeButton(Strings.get(notifier, Strings.DOWNLOAD_FAILED_DIALOG_NEGATIVE_BUTTON_ID), new DialogInterface.OnClickListener() {
           public void onClick(DialogInterface dialog, int which) {
