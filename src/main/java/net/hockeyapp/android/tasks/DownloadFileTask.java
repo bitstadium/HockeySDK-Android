@@ -124,14 +124,31 @@ public class DownloadFileTask extends AsyncTask<String, Integer, Boolean>{
     }
   }
 
-  protected URLConnection createConnection(URL url) throws IOException {
-    HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+  protected void setConnectionProperties(HttpURLConnection connection) {
     connection.addRequestProperty("User-Agent", "HockeySDK/Android");
     connection.setInstanceFollowRedirects(true);
+
     // connection bug workaround for SDK<=2.x
     if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.GINGERBREAD) {
       connection.setRequestProperty("connection", "close");
     }
+  }
+
+  protected URLConnection createConnection(URL url) throws IOException {
+    HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+    setConnectionProperties(connection);
+
+    int code = connection.getResponseCode();
+    if (code == HttpURLConnection.HTTP_MOVED_PERM || code == HttpURLConnection.HTTP_MOVED_TEMP) {
+      URL movedUrl = new URL(connection.getHeaderField("Location"));
+      if (!url.getProtocol().equals(movedUrl.getProtocol())) {
+        // HttpURLConnection doesn't handle redirects across schemes, so handle it manually, see
+        // http://code.google.com/p/android/issues/detail?id=41651
+        connection = (HttpURLConnection)movedUrl.openConnection();
+        setConnectionProperties(connection);
+      }
+    }
+
     return connection;
   }
 
