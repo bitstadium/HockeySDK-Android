@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.Toast;
 import net.hockeyapp.android.tasks.ParseFeedbackTask;
 import net.hockeyapp.android.tasks.SendFeedbackTask;
+import net.hockeyapp.android.utils.AsyncTaskUtils;
 import net.hockeyapp.android.utils.PrefsUtil;
 
 import java.io.File;
@@ -194,13 +195,13 @@ public class FeedbackManager {
         if (responseString != null) {
           ParseFeedbackTask task = new ParseFeedbackTask(context, responseString, null, "fetch");
           task.setUrlString(getURLString(context));
-          task.execute();
+          AsyncTaskUtils.execute(task);
         }
       }
     }, true);
     sendFeedbackTask.setShowProgressDialog(false);
     sendFeedbackTask.setLastMessageId(lastMessageId);
-    sendFeedbackTask.execute();
+    AsyncTaskUtils.execute(sendFeedbackTask);
   }
 
   /**

@@ -54,7 +54,7 @@ import java.util.UUID;
  *
  * @author Thomas Dohmke
  **/
-public class DownloadFileTask extends AsyncTask<String, Integer, Boolean>{
+public class DownloadFileTask extends AsyncTask<Void, Integer, Boolean>{
   private Context context;
   private DownloadFileListener notifier;
   private String urlString;
@@ -80,7 +80,7 @@ public class DownloadFileTask extends AsyncTask<String, Integer, Boolean>{
   }
 
   @Override
-  protected Boolean doInBackground(String... args) {
+  protected Boolean doInBackground(Void... args) {
     try {
       URL url = new URL(getURLString());
       URLConnection connection = createConnection(url);
