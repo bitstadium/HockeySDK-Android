@@ -55,6 +55,8 @@ import java.util.UUID;
  * @author Thomas Dohmke
  **/
 public class DownloadFileTask extends AsyncTask<String, Integer, Boolean>{
+  private static final int MAX_REDIRECTS = 6;
+
   private Context context;
   private DownloadFileListener notifier;
   private String urlString;
@@ -83,7 +85,7 @@ public class DownloadFileTask extends AsyncTask<String, Integer, Boolean>{
   protected Boolean doInBackground(String... args) {
     try {
       URL url = new URL(getURLString());
-      URLConnection connection = createConnection(url);
+      URLConnection connection = createConnection(url, MAX_REDIRECTS);
       connection.connect();
 
       int lenghtOfFile = connection.getContentLength();
@@ -129,21 +131,31 @@ public class DownloadFileTask extends AsyncTask<String, Integer, Boolean>{
     }
   }
 
-  protected URLConnection createConnection(URL url) throws IOException {
-    HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+  /**
+   * Recursive method for resolving redirects. Resolves at most MAX_REDIRECTS times.
+   */
+  protected URLConnection createConnection(URL url, int remainingRedirects) throws IOException {
+    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
     setConnectionProperties(connection);
 
     int code = connection.getResponseCode();
-    if (code == HttpURLConnection.HTTP_MOVED_PERM || code == HttpURLConnection.HTTP_MOVED_TEMP) {
+    if (code == HttpURLConnection.HTTP_MOVED_PERM ||
+        code == HttpURLConnection.HTTP_MOVED_TEMP ||
+        code == HttpURLConnection.HTTP_SEE_OTHER) {
+
+      if (remainingRedirects == 0) {
+        // Stop redirecting.
+        return connection;
+      }
+
       URL movedUrl = new URL(connection.getHeaderField("Location"));
       if (!url.getProtocol().equals(movedUrl.getProtocol())) {
         // HttpURLConnection doesn't handle redirects across schemes, so handle it manually, see
         // http://code.google.com/p/android/issues/detail?id=41651
-        connection = (HttpURLConnection)movedUrl.openConnection();
-        setConnectionProperties(connection);
+        connection.disconnect();
+        return createConnection(movedUrl, --remainingRedirects); // Recursion
       }
     }
-
     return connection;
   }
 
