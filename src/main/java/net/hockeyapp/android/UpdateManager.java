@@ -1,19 +1,20 @@
 package net.hockeyapp.android;
 
-import java.lang.ref.WeakReference;
-import java.util.Date;
-
-import android.content.Context;
-import net.hockeyapp.android.tasks.CheckUpdateTask;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.AsyncTask.Status;
 import android.text.TextUtils;
+import net.hockeyapp.android.tasks.CheckUpdateTask;
 import net.hockeyapp.android.tasks.CheckUpdateTaskWithUI;
+import net.hockeyapp.android.utils.AsyncTaskUtils;
+
+import java.lang.ref.WeakReference;
+import java.util.Date;
 
 /**
  * <h4>Description</h4>
@@ -234,7 +235,7 @@ public class UpdateManager {
   private static void startUpdateTask(WeakReference<Activity> weakActivity, String urlString, String appIdentifier, UpdateManagerListener listener, boolean isDialogRequired) {
     if ((updateTask == null) || (updateTask.getStatus() == Status.FINISHED)) {
       updateTask = new CheckUpdateTaskWithUI(weakActivity, urlString, appIdentifier, listener, isDialogRequired);
-      updateTask.execute();
+      AsyncTaskUtils.execute(updateTask);
     }
     else {
       updateTask.attach(weakActivity);
@@ -248,7 +249,7 @@ public class UpdateManager {
   private static void startUpdateTaskForBackground(WeakReference<Context> weakContext, String urlString, String appIdentifier, UpdateManagerListener listener) {
     if ((updateTask == null) || (updateTask.getStatus() == Status.FINISHED)) {
       updateTask = new CheckUpdateTask(weakContext, urlString, appIdentifier, listener);
-      updateTask.execute();
+      AsyncTaskUtils.execute(updateTask);
     }
     else {
       updateTask.attach(weakContext);

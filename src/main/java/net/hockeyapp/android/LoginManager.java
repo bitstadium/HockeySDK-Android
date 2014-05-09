@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import net.hockeyapp.android.tasks.LoginTask;
+import net.hockeyapp.android.utils.AsyncTaskUtils;
 import net.hockeyapp.android.utils.PrefsUtil;
 
 import java.util.HashMap;
@@ -172,7 +173,7 @@ public class LoginManager {
 
     LoginTask verifyTask = new LoginTask(context, validateHandler, getURLString(LOGIN_MODE_VALIDATE), LOGIN_MODE_VALIDATE, params);
     verifyTask.setShowProgressDialog(false);
-    verifyTask.execute();
+    AsyncTaskUtils.execute(verifyTask);
   }
 
   private static void startLoginActivity(Context context) {

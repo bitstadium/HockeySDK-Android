@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import net.hockeyapp.android.tasks.LoginTask;
+import net.hockeyapp.android.utils.AsyncTaskUtils;
 import net.hockeyapp.android.views.LoginView;
 
 import java.security.MessageDigest;
@@ -148,7 +149,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
 
     if (ready) {
       loginTask = new LoginTask(this, loginHandler, url, mode, params);
-      loginTask.execute();
+      AsyncTaskUtils.execute(loginTask);
     }
     else {
       Toast.makeText(this, Strings.get(Strings.LOGIN_MISSING_CREDENTIALS_TOAST_ID), 1000).show();

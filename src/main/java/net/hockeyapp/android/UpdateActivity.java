@@ -3,6 +3,7 @@ package net.hockeyapp.android;
 import net.hockeyapp.android.listeners.DownloadFileListener;
 import net.hockeyapp.android.objects.ErrorObject;
 import net.hockeyapp.android.tasks.DownloadFileTask;
+import net.hockeyapp.android.utils.AsyncTaskUtils;
 import net.hockeyapp.android.utils.VersionHelper;
 import net.hockeyapp.android.views.UpdateView;
 import android.Manifest;
@@ -182,7 +183,7 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
         }
       }
     });
-    downloadTask.execute();
+    AsyncTaskUtils.execute(downloadTask);
   }
   
   protected void createDownloadTask(String url, DownloadFileListener listener) {

@@ -22,6 +22,7 @@ import net.hockeyapp.android.objects.FeedbackMessage;
 import net.hockeyapp.android.objects.FeedbackResponse;
 import net.hockeyapp.android.tasks.ParseFeedbackTask;
 import net.hockeyapp.android.tasks.SendFeedbackTask;
+import net.hockeyapp.android.utils.AsyncTaskUtils;
 import net.hockeyapp.android.utils.PrefsUtil;
 import net.hockeyapp.android.views.AttachmentListView;
 import net.hockeyapp.android.views.AttachmentView;
@@ -482,7 +483,7 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
    */
   private void sendFetchFeedback(String url, String name, String email, String subject, String text, List<Uri> attachmentUris, String token, Handler feedbackHandler, boolean isFetchMessages) {
     sendFeedbackTask = new SendFeedbackTask(context, url, name, email, subject, text, attachmentUris, token, feedbackHandler, isFetchMessages);
-    sendFeedbackTask.execute();
+    AsyncTaskUtils.execute(sendFeedbackTask);
   }
   	
   /**
@@ -491,7 +492,7 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
    */
   private void startParseFeedbackTask(String feedbackResponseString, String requestType) {
   	createParseFeedbackTask(feedbackResponseString, requestType);
-  	parseFeedbackTask.execute();
+    AsyncTaskUtils.execute(parseFeedbackTask);
   }
   
   /**
