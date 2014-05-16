@@ -105,14 +105,17 @@ public class VersionHelper {
     return failSafeGetStringFromJSON(newest, "shortversion", "") + " (" + failSafeGetStringFromJSON(newest, "version", "") + ")";
   }
   
-  public String getFileInfoString() {
-    int appSize = failSafeGetIntFromJSON(newest, "appsize", 0);
+  public String getFileDateString() {
     long timestamp = failSafeGetIntFromJSON(newest, "timestamp", 0);
     Date date = new Date(timestamp * 1000);
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-    return dateFormat.format(date) + " - " + String.format("%.2f", appSize / 1024F / 1024F) + " MB";
+    return dateFormat.format(date);
   }
-  
+
+  public int getFileSizeBytes() {
+    return failSafeGetIntFromJSON(newest, "appsize", 0);
+  }
+
   private static String failSafeGetStringFromJSON(JSONObject json, String name, String defaultValue) {
     try {
       return json.getString(name);
