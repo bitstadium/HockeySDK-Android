@@ -109,7 +109,12 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
     nameLabel.setText(getAppName());
     
     TextView versionLabel = (TextView)findViewById(UpdateView.VERSION_LABEL_ID);
-    versionLabel.setText("Version " + versionHelper.getVersionString() + "\n" + versionHelper.getFileInfoString());
+    String appSizeString = "Unknown size";
+    long appSize = versionHelper.getFileSizeBytes();
+    if (appSize >= 0L) {
+      appSizeString = String.format("%.2f", appSize / (1024.0f * 1024.0f)) + " MB";
+    }
+    versionLabel.setText("Version " + versionHelper.getVersionString() + "\n" + versionHelper.getFileDateString() + " - " + appSizeString);
     
     Button updateButton = (Button)findViewById(UpdateView.UPDATE_BUTTON_ID);
     updateButton.setOnClickListener(this);
