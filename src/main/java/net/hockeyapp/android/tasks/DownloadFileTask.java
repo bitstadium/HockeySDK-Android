@@ -54,15 +54,15 @@ import java.util.UUID;
  *
  * @author Thomas Dohmke
  **/
-public class DownloadFileTask extends AsyncTask<Void, Integer, Boolean>{
-  private static final int MAX_REDIRECTS = 6;
+public class DownloadFileTask extends AsyncTask<Void, Integer, Long> {
+  protected static final int MAX_REDIRECTS = 6;
 
-  private Context context;
-  private DownloadFileListener notifier;
-  private String urlString;
-  private String filename;
-  private String filePath;
-  private ProgressDialog progressDialog;
+  protected Context context;
+  protected DownloadFileListener notifier;
+  protected String urlString;
+  protected String filename;
+  protected String filePath;
+  protected ProgressDialog progressDialog;
 
   public DownloadFileTask(Context context, String urlString, DownloadFileListener notifier) {
     this.context = context;
@@ -82,7 +82,7 @@ public class DownloadFileTask extends AsyncTask<Void, Integer, Boolean>{
   }
 
   @Override
-  protected Boolean doInBackground(Void... args) {
+  protected Long doInBackground(Void... args) {
     try {
       URL url = new URL(getURLString());
       URLConnection connection = createConnection(url, MAX_REDIRECTS);
@@ -105,7 +105,7 @@ public class DownloadFileTask extends AsyncTask<Void, Integer, Boolean>{
       long total = 0;
       while ((count = input.read(data)) != -1) {
         total += count;
-        publishProgress((int)(total * 100 / lenghtOfFile));
+        publishProgress(Math.round(total * 100.0f / lenghtOfFile));
         output.write(data, 0, count);
       }
 
@@ -113,11 +113,11 @@ public class DownloadFileTask extends AsyncTask<Void, Integer, Boolean>{
       output.close();
       input.close();
 
-      return (total > 0);
+      return total;
     } 
     catch (Exception e) {
       e.printStackTrace();
-      return false;
+      return 0L;
     }
   }
 
@@ -160,7 +160,7 @@ public class DownloadFileTask extends AsyncTask<Void, Integer, Boolean>{
   }
 
   @Override
-  protected void onProgressUpdate(Integer... args){
+  protected void onProgressUpdate(Integer... args) {
     try {
       if (progressDialog == null) {
         progressDialog = new ProgressDialog(context);
@@ -177,7 +177,7 @@ public class DownloadFileTask extends AsyncTask<Void, Integer, Boolean>{
   }
 
   @Override
-  protected void onPostExecute(Boolean result) {
+  protected void onPostExecute(Long result) {
     if (progressDialog != null) {
       try {
         progressDialog.dismiss();
@@ -187,7 +187,7 @@ public class DownloadFileTask extends AsyncTask<Void, Integer, Boolean>{
       }
     }
 
-    if (result) {
+    if (result > 0L) {
       notifier.downloadSuccessful(this);
 
       Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -221,7 +221,7 @@ public class DownloadFileTask extends AsyncTask<Void, Integer, Boolean>{
     }
   }
 
-  private String getURLString() {
+  protected String getURLString() {
     return urlString + "&type=apk";      
   }
 }
