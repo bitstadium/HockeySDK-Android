@@ -107,8 +107,8 @@ public class VersionHelper {
   
   public String getFileInfoString() {
     long appSize = failSafeGetLongFromJSON(newest, "appsize", 0L);
-    long timestamp = failSafeGetIntFromJSON(newest, "timestamp", 0);
-    Date date = new Date(timestamp * 1000);
+    long timestamp = failSafeGetLongFromJSON(newest, "timestamp", 0L);
+    Date date = new Date(timestamp * 1000L);
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
     return dateFormat.format(date) + " - " + String.format("%.2f", appSize / 1024F / 1024F) + " MB";
   }
