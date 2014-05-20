@@ -106,7 +106,7 @@ public class VersionHelper {
   }
   
   public String getFileInfoString() {
-    int appSize = failSafeGetIntFromJSON(newest, "appsize", 0);
+    long appSize = failSafeGetLongFromJSON(newest, "appsize", 0L);
     long timestamp = failSafeGetIntFromJSON(newest, "timestamp", 0);
     Date date = new Date(timestamp * 1000);
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
@@ -131,6 +131,15 @@ public class VersionHelper {
     }
   }
   
+  private static long failSafeGetLongFromJSON(JSONObject json, String name, long defaultValue) {
+    try {
+      return json.getLong(name);
+    }
+    catch (JSONException e) {
+      return defaultValue;
+    }
+  }
+
   public String getReleaseNotes(boolean showRestore) {
     StringBuilder result = new StringBuilder();
     result.append("<html>");
