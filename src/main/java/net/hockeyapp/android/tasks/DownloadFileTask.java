@@ -101,7 +101,7 @@ public class DownloadFileTask extends AsyncTask<Void, Integer, Boolean>{
       OutputStream output = new FileOutputStream(file);
 
       byte data[] = new byte[1024];
-      int count = 0;
+      int count;
       long total = 0;
       while ((count = input.read(data)) != -1) {
         total += count;
