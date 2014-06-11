@@ -10,7 +10,7 @@ import android.view.View;
  * <h4>License</h4>
  * 
  * <pre>
- * Copyright (c) 2011-2013 Bit Stadium GmbH
+ * Copyright (c) 2011-2014 Bit Stadium GmbH
  * 
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
