@@ -83,11 +83,13 @@ public class CheckUpdateTask extends AsyncTask<Void, String, JSONArray>{
     this.urlString = urlString;
     this.listener = listener;
 
+    Context context = null;
     if (weakContext != null) {
       context = weakContext.get();
     }
 
     if (context != null) {
+      this.context = context.getApplicationContext();
       this.usageTime = Tracking.getUsageTime(context);
       Constants.loadFromContext(context);
     }
