@@ -83,25 +83,27 @@ public class CheckUpdateTask extends AsyncTask<Void, String, JSONArray>{
     this.urlString = urlString;
     this.listener = listener;
 
-    Context context = null;
+    Context ctx = null;
     if (weakContext != null) {
-      context = weakContext.get();
+      ctx = weakContext.get();
     }
 
-    if (context != null) {
-      this.context = context.getApplicationContext();
-      this.usageTime = Tracking.getUsageTime(context);
-      Constants.loadFromContext(context);
+    if (ctx != null) {
+      this.context = ctx.getApplicationContext();
+      this.usageTime = Tracking.getUsageTime(ctx);
+      Constants.loadFromContext(ctx);
     }
   }
 
   public void attach(WeakReference<? extends Context> weakContext) {
+    Context ctx = null;
     if (weakContext != null) {
-      context = weakContext.get();
+      ctx = weakContext.get();
     }
     
-    if (context != null) {
-      Constants.loadFromContext(context);
+    if (ctx != null) {
+      this.context = ctx.getApplicationContext();
+      Constants.loadFromContext(ctx);
     }
   }
   

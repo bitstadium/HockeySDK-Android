@@ -59,7 +59,7 @@ import java.lang.reflect.Method;
  * @author Francisco Javier Fernandez <fjfdeztoro@gmail.com>
  **/
 
-public class CheckUpdateTaskWithUI extends CheckUpdateTask{
+public class CheckUpdateTaskWithUI extends CheckUpdateTask {
 
   private Activity activity = null;
   protected boolean isDialogRequired = false;
