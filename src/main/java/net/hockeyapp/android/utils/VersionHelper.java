@@ -307,4 +307,16 @@ public class VersionHelper {
       return 0;
     }
   }
+
+  /**
+   * Map internal Google version letter to a semantic version.
+   */
+  public static String mapGoogleVersion(String version) {
+    if ((version == null) || (version.equalsIgnoreCase("L"))) {
+      return "5.0";
+    }
+    else {
+      return version;
+    }
+  }
 }

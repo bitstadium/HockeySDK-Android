@@ -276,29 +276,23 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
   
   /**
    * Checks if Unknown Sources is checked from {@link Settings}
+   *
    * @return
    */
+  @SuppressWarnings("deprecation")
   private boolean isUnknownSourcesChecked() {
-    String[] projection = new String[] {Settings.System.VALUE};
-    String selection = Settings.Secure.NAME + " = ? AND " + Settings.Secure.VALUE + " = ?";
-
-    Cursor query = null;
-    if (android.os.Build.VERSION.SDK_INT >= 17) { 
-      String[] selectionArgs = {Settings.Global.INSTALL_NON_MARKET_APPS, String.valueOf(1)};
-      query = getContentResolver().query(Settings.Global.CONTENT_URI, projection, selection, selectionArgs, null);
-    }
-    else {
-      @SuppressWarnings("deprecation")
-      String[] selectionArgs = {Settings.Secure.INSTALL_NON_MARKET_APPS, String.valueOf(1)};
-      query = getContentResolver().query(Settings.Secure.CONTENT_URI, projection, selection, selectionArgs, null);
-    }
-    if (query.getCount() == 1) {
+    try {
+      if (android.os.Build.VERSION.SDK_INT >= 17) {
+        return (Settings.Global.getInt(getContentResolver(), Settings.Global.INSTALL_NON_MARKET_APPS) == 1);
+      }
+      else {
+        return (Settings.Secure.getInt(getContentResolver(), Settings.Secure.INSTALL_NON_MARKET_APPS) == 1);
+      }
+    } catch (Settings.SettingNotFoundException e) {
       return true;
     }
-    
-    return false;
   }
-
+    
   /**
    * Called when the download button is tapped. Starts the download task and
    * disables the button to avoid multiple taps.

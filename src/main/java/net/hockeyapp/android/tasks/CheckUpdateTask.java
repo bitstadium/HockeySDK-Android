@@ -157,7 +157,7 @@ public class CheckUpdateTask extends AsyncTask<Void, String, JSONArray>{
       for (int index = 0; index < json.length(); index++) {
         JSONObject entry = json.getJSONObject(index);
         if ((entry.getInt("version") > versionCode) &&
-            (VersionHelper.compareVersionStrings(entry.getString("minimum_os_version"), Build.VERSION.RELEASE) <= 0)) {
+            (VersionHelper.compareVersionStrings(entry.getString("minimum_os_version"), VersionHelper.mapGoogleVersion(Build.VERSION.RELEASE)) <= 0)) {
           if (entry.has("mandatory")) {
             mandatory = entry.getBoolean("mandatory");
           }
