@@ -38,7 +38,7 @@ import java.util.List;
  * <h4>License</h4>
  * 
  * <pre>
- * Copyright (c) 2011-2013 Bit Stadium GmbH
+ * Copyright (c) 2011-2014 Bit Stadium GmbH
  * 
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -339,7 +339,6 @@ public class SendFeedbackTask extends AsyncTask<Void, Void, HashMap<String, Stri
         httpPost.setHeader("Content-type", "multipart/form-data; boundary=" + entity.getBoundary());
         httpPost.setEntity(entity);
         response = (HttpResponse) httpClient.execute(httpPost);
-        //Log.e("pe", slurp(entity.getContent(), 100));
       }
 
       if (response != null) {
@@ -398,36 +397,5 @@ public class SendFeedbackTask extends AsyncTask<Void, Void, HashMap<String, Stri
     }
     
     return result;
-  }
-
-  /**
-   * Debug method to write InputStream into a String.
-   */
-  private static String slurp(final InputStream is, final int bufferSize)
-  {
-    final char[] buffer = new char[bufferSize];
-    final StringBuilder out = new StringBuilder();
-
-    try {
-      final Reader in = new InputStreamReader(is, "UTF-8");
-      try {
-        for (;;) {
-          int rsz = in.read(buffer, 0, buffer.length);
-          if (rsz < 0)
-            break;
-          out.append(buffer, 0, rsz);
-        }
-      }
-      finally {
-        in.close();
-      }
-    }
-    catch (UnsupportedEncodingException ex) {
-    /* ... */
-    }
-    catch (IOException ex) {
-      /* ... */
-    }
-    return out.toString();
   }
 }

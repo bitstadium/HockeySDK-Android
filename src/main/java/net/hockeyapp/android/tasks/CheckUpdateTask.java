@@ -29,7 +29,7 @@ import java.util.Locale;
  * <h4>License</h4>
  * 
  * <pre>
- * Copyright (c) 2011-2013 Bit Stadium GmbH
+ * Copyright (c) 2011-2014 Bit Stadium GmbH
  * 
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -55,7 +55,7 @@ import java.util.Locale;
  *
  * @author Thomas Dohmke
  **/
-public class CheckUpdateTask extends AsyncTask<String, String, JSONArray> {
+public class CheckUpdateTask extends AsyncTask<Void, String, JSONArray>{
   private static final int MAX_NUMBER_OF_VERSIONS = 25;
 
 	protected static final String APK = "apk";
@@ -112,7 +112,7 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray> {
   }
   
   @Override
-  protected JSONArray doInBackground(String... args) {
+  protected JSONArray doInBackground(Void... args) {
     try {
       int versionCode = getVersionCode();
       
@@ -159,8 +159,7 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray> {
 
         boolean largerVersionCode = entry.getInt("version") > versionCode;
         boolean newerApkFile = VersionHelper.isNewerThanLastUpdateTime(context, entry.getLong("timestamp"));
-        boolean minRequirementsMet = VersionHelper.compareVersionStrings(
-            entry.getString("minimum_os_version"), Build.VERSION.RELEASE) <= 0;
+        boolean minRequirementsMet = VersionHelper.compareVersionStrings(entry.getString("minimum_os_version"), VersionHelper.mapGoogleVersion(Build.VERSION.RELEASE)) <= 0;
 
         if ((largerVersionCode || newerApkFile) && minRequirementsMet) {
           if (entry.has("mandatory")) {

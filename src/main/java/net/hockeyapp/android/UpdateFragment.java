@@ -2,6 +2,8 @@ package net.hockeyapp.android;
 
 import net.hockeyapp.android.listeners.DownloadFileListener;
 import net.hockeyapp.android.tasks.DownloadFileTask;
+import net.hockeyapp.android.tasks.GetFileSizeTask;
+import net.hockeyapp.android.utils.AsyncTaskUtils;
 import net.hockeyapp.android.utils.VersionHelper;
 import net.hockeyapp.android.views.UpdateView;
 
@@ -31,7 +33,7 @@ import android.widget.TextView;
  * <h4>License</h4>
  * 
  * <pre>
- * Copyright (c) 2011-2013 Bit Stadium GmbH
+ * Copyright (c) 2011-2014 Bit Stadium GmbH
  * 
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -133,8 +135,29 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
     TextView nameLabel = (TextView)view.findViewById(UpdateView.NAME_LABEL_ID);
     nameLabel.setText(getAppName());
     
-    TextView versionLabel = (TextView)view.findViewById(UpdateView.VERSION_LABEL_ID);
-    versionLabel.setText("Version " + versionHelper.getVersionString() + "\n" + versionHelper.getFileInfoString());
+    final TextView versionLabel = (TextView)view.findViewById(UpdateView.VERSION_LABEL_ID);
+    final String versionString = "Version " + versionHelper.getVersionString();
+    final String fileDate = versionHelper.getFileDateString();
+
+    String appSizeString = "Unknown size";
+    long appSize = versionHelper.getFileSizeBytes();
+    if (appSize >= 0L) {
+      appSizeString = String.format("%.2f", appSize / (1024.0f * 1024.0f)) + " MB";
+    }
+    else {
+      GetFileSizeTask task = new GetFileSizeTask(getActivity(), urlString, new DownloadFileListener() {
+        @Override
+        public void downloadSuccessful(DownloadFileTask task) {
+          if (task instanceof GetFileSizeTask) {
+            long appSize = ((GetFileSizeTask)task).getSize();
+            String appSizeString = String.format("%.2f", appSize / (1024.0f * 1024.0f)) + " MB";
+            versionLabel.setText(versionString + "\n" + fileDate + " - " + appSizeString);
+          }
+        }
+      });
+      AsyncTaskUtils.execute(task);
+    }
+    versionLabel.setText(versionString + "\n" + fileDate + " - " + appSizeString);
 
     Button updateButton = (Button)view.findViewById(UpdateView.UPDATE_BUTTON_ID);
     updateButton.setOnClickListener(this);
@@ -182,7 +205,7 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
         }
       }
     });
-    downloadTask.execute();
+    AsyncTaskUtils.execute(downloadTask);
   }
   
   /**

@@ -1,5 +1,11 @@
 package net.hockeyapp.android;
 
+import java.lang.ref.WeakReference;
+import java.util.Date;
+
+import net.hockeyapp.android.tasks.CheckUpdateTask;
+import net.hockeyapp.android.tasks.CheckUpdateTaskWithUI;
+import net.hockeyapp.android.utils.AsyncTaskUtils;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -9,11 +15,6 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.AsyncTask.Status;
 import android.text.TextUtils;
-import net.hockeyapp.android.tasks.CheckUpdateTask;
-import net.hockeyapp.android.tasks.CheckUpdateTaskWithUI;
-
-import java.lang.ref.WeakReference;
-import java.util.Date;
 
 /**
  * <h4>Description</h4>
@@ -24,7 +25,7 @@ import java.util.Date;
  * <h4>License</h4>
  * 
  * <pre>
- * Copyright (c) 2011-2013 Bit Stadium GmbH
+ * Copyright (c) 2011-2014 Bit Stadium GmbH
  * 
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -234,7 +235,7 @@ public class UpdateManager {
   private static void startUpdateTask(WeakReference<Activity> weakActivity, String urlString, String appIdentifier, UpdateManagerListener listener, boolean isDialogRequired) {
     if ((updateTask == null) || (updateTask.getStatus() == Status.FINISHED)) {
       updateTask = new CheckUpdateTaskWithUI(weakActivity, urlString, appIdentifier, listener, isDialogRequired);
-      updateTask.execute();
+      AsyncTaskUtils.execute(updateTask);
     }
     else {
       updateTask.attach(weakActivity);
@@ -248,7 +249,7 @@ public class UpdateManager {
   private static void startUpdateTaskForBackground(WeakReference<Context> weakContext, String urlString, String appIdentifier, UpdateManagerListener listener) {
     if ((updateTask == null) || (updateTask.getStatus() == Status.FINISHED)) {
       updateTask = new CheckUpdateTask(weakContext, urlString, appIdentifier, listener);
-      updateTask.execute();
+      AsyncTaskUtils.execute(updateTask);
     }
     else {
       updateTask.attach(weakContext);

@@ -13,7 +13,7 @@ import java.util.Random;
  * Otherwise the boundaries are not written correctly.
  *
  * Based on:
- * http://derivedcode.wordpress.com/2013/11/04/android-uploading-files-to-server-over-http-using-multipart-entity
+ * http://derivedcode.wordpress.com/2014/11/04/android-uploading-files-to-server-over-http-using-multipart-entity
  *
  * @author Patrick Eschenbach
  */

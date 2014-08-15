@@ -21,7 +21,7 @@ import java.util.*;
  * <h4>License</h4>
  * 
  * <pre>
- * Copyright (c) 2011-2013 Bit Stadium GmbH
+ * Copyright (c) 2011-2014 Bit Stadium GmbH
  * 
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -104,14 +104,23 @@ public class VersionHelper {
     return failSafeGetStringFromJSON(newest, "shortversion", "") + " (" + failSafeGetStringFromJSON(newest, "version", "") + ")";
   }
   
-  public String getFileInfoString() {
-    int appSize = failSafeGetIntFromJSON(newest, "appsize", 0);
-    long timestamp = failSafeGetIntFromJSON(newest, "timestamp", 0);
-    Date date = new Date(timestamp * 1000);
+  public String getFileDateString() {
+    long timestamp = failSafeGetLongFromJSON(newest, "timestamp", 0L);
+    Date date = new Date(timestamp * 1000L);
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-    return dateFormat.format(date) + " - " + String.format("%.2f", appSize / 1024F / 1024F) + " MB";
+    return dateFormat.format(date);
   }
-  
+
+  public long getFileSizeBytes() {
+    boolean external = Boolean.valueOf(failSafeGetStringFromJSON(newest, "external", "false"));
+    long appSize = failSafeGetLongFromJSON(newest, "appsize", 0L);
+
+    // In case of external builds a size of 0 most likely means that the size could not be determined because the URL
+    // is not accessible from the HockeyApp servers via the Internet. Return -1 in that case in order to try retrieving
+    // the size at runtime from the HTTP header later.
+    return (external && appSize == 0L) ? -1L : appSize;
+  }
+
   private static String failSafeGetStringFromJSON(JSONObject json, String name, String defaultValue) {
     try {
       return json.getString(name);
@@ -121,15 +130,15 @@ public class VersionHelper {
     }
   }
   
-  private static int failSafeGetIntFromJSON(JSONObject json, String name, int defaultValue) {
+  private static long failSafeGetLongFromJSON(JSONObject json, String name, long defaultValue) {
     try {
-      return json.getInt(name);
+      return json.getLong(name);
     }
     catch (JSONException e) {
       return defaultValue;
     }
   }
-  
+
   public String getReleaseNotes(boolean showRestore) {
     StringBuilder result = new StringBuilder();
     result.append("<html>");
@@ -309,6 +318,18 @@ public class VersionHelper {
     catch (PackageManager.NameNotFoundException e) {
       e.printStackTrace();
       return false;
+    }
+  }
+
+  /**
+   * Map internal Google version letter to a semantic version.
+   */
+  public static String mapGoogleVersion(String version) {
+    if ((version == null) || (version.equalsIgnoreCase("L"))) {
+      return "5.0";
+    }
+    else {
+      return version;
     }
   }
 }

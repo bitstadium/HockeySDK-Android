@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.Toast;
 import net.hockeyapp.android.tasks.ParseFeedbackTask;
 import net.hockeyapp.android.tasks.SendFeedbackTask;
+import net.hockeyapp.android.utils.AsyncTaskUtils;
 import net.hockeyapp.android.utils.PrefsUtil;
 
 import java.io.File;
@@ -32,7 +33,7 @@ import java.io.FileOutputStream;
  * <h4>License</h4>
  * 
  * <pre>
- * Copyright (c) 2011-2013 Bit Stadium GmbH
+ * Copyright (c) 2011-2014 Bit Stadium GmbH
  * 
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -194,13 +195,13 @@ public class FeedbackManager {
         if (responseString != null) {
           ParseFeedbackTask task = new ParseFeedbackTask(context, responseString, null, "fetch");
           task.setUrlString(getURLString(context));
-          task.execute();
+          AsyncTaskUtils.execute(task);
         }
       }
     }, true);
     sendFeedbackTask.setShowProgressDialog(false);
     sendFeedbackTask.setLastMessageId(lastMessageId);
-    sendFeedbackTask.execute();
+    AsyncTaskUtils.execute(sendFeedbackTask);
   }
 
   /**
@@ -285,6 +286,7 @@ public class FeedbackManager {
     Toast.makeText(context, "Screenshot '" + result.getName() + "' is available in gallery.", 2000).show();
   }
 
+  @SuppressWarnings("deprecation")
   private static void startNotification() {
     notificationActive = true;
 
