@@ -1,16 +1,22 @@
 package net.hockeyapp.android.utils;
 
-import android.content.Context;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.Scanner;
+
 import net.hockeyapp.android.UpdateInfoListener;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 
 /**
  * <h4>Description</h4>
@@ -48,20 +54,22 @@ import java.util.*;
  * @author Thomas Dohmke
  **/
 public class VersionHelper {
-  ArrayList<JSONObject> sortedVersions;
-  JSONObject newest;
-  UpdateInfoListener listener;
+  private ArrayList<JSONObject> sortedVersions;
+  private JSONObject newest;
+  private UpdateInfoListener listener;
+  private int currentVersionCode;
   
-  public VersionHelper(String infoJSON, UpdateInfoListener listener) {
+  public VersionHelper(Context context, String infoJSON, UpdateInfoListener listener) {
     this.listener = listener;
 
-    loadVersions(infoJSON);
+    loadVersions(context, infoJSON);
     sortVersions();
   }
   
-  private void loadVersions(String infoJSON) {
+  private void loadVersions(Context context, String infoJSON) {
     this.newest = new JSONObject();
     this.sortedVersions = new ArrayList<JSONObject>();
+    this.currentVersionCode = listener.getCurrentVersionCode();
 
     try {
       JSONArray versions = new JSONArray(infoJSON);
@@ -69,7 +77,10 @@ public class VersionHelper {
       int versionCode = listener.getCurrentVersionCode();
       for (int index = 0; index < versions.length(); index++) {
         JSONObject entry = versions.getJSONObject(index);
-        if (entry.getInt("version") > versionCode) {
+        boolean largerVersionCode = (entry.getInt("version") > versionCode);
+        boolean newerApkFile = ((entry.getInt("version") == versionCode) && VersionHelper.isNewerThanLastUpdateTime(context, entry.getLong("timestamp")));
+
+        if (largerVersionCode || newerApkFile) {
           newest = entry;
           versionCode = entry.getInt("version");
         }
@@ -191,6 +202,7 @@ public class VersionHelper {
   private String getVersionLine(int count, JSONObject version) {
     StringBuilder result = new StringBuilder();
 
+    int newestCode = getVersionCode(newest);
     int versionCode = getVersionCode(version);
     String versionName = getVersionName(version);
     
@@ -199,8 +211,11 @@ public class VersionHelper {
       result.append("Newest version:");
     }
     else {
-      int currentVersionCode = listener.getCurrentVersionCode();
-      result.append("Version " + versionName + " (" + versionCode + "): " + (versionCode == currentVersionCode ? "[INSTALLED]" : ""));
+      result.append("Version " + versionName + " (" + versionCode + "): ");
+      if ((versionCode != newestCode) && (versionCode == currentVersionCode)) {
+        currentVersionCode = -1;
+        result.append("[INSTALLED]");
+      }
     }
     result.append("</strong></div>");
     
@@ -312,7 +327,7 @@ public class VersionHelper {
       ApplicationInfo appInfo = pm.getApplicationInfo(context.getPackageName(), 0);
       String appFile = appInfo.sourceDir;
 
-      // Get the last modified timestamp and adjust by half an hour
+      // Get the last modified time stamp and adjust by half an hour
       // to avoid issues with time deviations between client and server
       long lastModified = new File(appFile).lastModified() / 1000 + 1800;
 

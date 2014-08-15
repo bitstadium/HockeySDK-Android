@@ -91,7 +91,7 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
     setContentView(getLayoutView());
 
     context = this;
-    versionHelper = new VersionHelper(getIntent().getStringExtra("json"), this);
+    versionHelper = new VersionHelper(this, getIntent().getStringExtra("json"), this);
     configureView();
     
     downloadTask = (DownloadFileTask)getLastNonConfigurationInstance();

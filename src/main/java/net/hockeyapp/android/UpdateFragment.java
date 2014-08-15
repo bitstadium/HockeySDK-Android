@@ -130,7 +130,7 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     View view = getLayoutView();
 
-    versionHelper = new VersionHelper(versionInfo.toString(), this);
+    versionHelper = new VersionHelper(getActivity(), versionInfo.toString(), this);
 
     TextView nameLabel = (TextView)view.findViewById(UpdateView.NAME_LABEL_ID);
     nameLabel.setText(getAppName());
