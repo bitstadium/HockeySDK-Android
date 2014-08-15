@@ -161,8 +161,8 @@ public class CheckUpdateTask extends AsyncTask<Void, String, JSONArray>{
       for (int index = 0; index < json.length(); index++) {
         JSONObject entry = json.getJSONObject(index);
 
-        boolean largerVersionCode = entry.getInt("version") > versionCode;
-        boolean newerApkFile = VersionHelper.isNewerThanLastUpdateTime(context, entry.getLong("timestamp"));
+        boolean largerVersionCode = (entry.getInt("version") > versionCode);
+        boolean newerApkFile = ((entry.getInt("version") == versionCode) && VersionHelper.isNewerThanLastUpdateTime(context, entry.getLong("timestamp")));
         boolean minRequirementsMet = VersionHelper.compareVersionStrings(entry.getString("minimum_os_version"), VersionHelper.mapGoogleVersion(Build.VERSION.RELEASE)) <= 0;
 
         if ((largerVersionCode || newerApkFile) && minRequirementsMet) {

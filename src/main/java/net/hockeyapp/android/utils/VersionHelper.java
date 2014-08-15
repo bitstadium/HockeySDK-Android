@@ -311,7 +311,10 @@ public class VersionHelper {
       PackageManager pm = context.getPackageManager();
       ApplicationInfo appInfo = pm.getApplicationInfo(context.getPackageName(), 0);
       String appFile = appInfo.sourceDir;
-      long lastModified = new File(appFile).lastModified() / 1000;
+
+      // Get the last modified timestamp and adjust by half an hour
+      // to avoid issues with time deviations between client and server
+      long lastModified = new File(appFile).lastModified() / 1000 + 1800;
 
       return timestamp > lastModified;
     }
