@@ -9,7 +9,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.hockeyapp.android</groupId>
   <artifactId>HockeySDK</artifactId>
-  <version>3.0.2-SNAPSHOT</version>
+  <version>3.5.0-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>HockeySDK</name>
 
@@ -24,7 +24,7 @@
     <dependency>
       <groupId>com.google.android.annotations</groupId>
       <artifactId>annotations</artifactId>
-      <version>22.3</version>
+      <version>22.6.2</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>

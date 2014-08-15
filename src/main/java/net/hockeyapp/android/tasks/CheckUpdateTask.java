@@ -1,31 +1,24 @@
 package net.hockeyapp.android.tasks;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.lang.ref.WeakReference;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLEncoder;
-import java.util.Locale;
-
 import android.content.Context;
+import android.os.AsyncTask;
+import android.os.Build;
+import android.provider.Settings;
 import net.hockeyapp.android.Constants;
 import net.hockeyapp.android.Tracking;
 import net.hockeyapp.android.UpdateManagerListener;
 import net.hockeyapp.android.utils.VersionCache;
 import net.hockeyapp.android.utils.VersionHelper;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.os.AsyncTask;
-import android.os.Build;
-import android.provider.Settings;
+import java.io.*;
+import java.lang.ref.WeakReference;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
+import java.util.Locale;
 
 /**
  * <h4>Description</h4>
@@ -36,7 +29,7 @@ import android.provider.Settings;
  * <h4>License</h4>
  * 
  * <pre>
- * Copyright (c) 2011-2013 Bit Stadium GmbH
+ * Copyright (c) 2011-2014 Bit Stadium GmbH
  * 
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -62,7 +55,7 @@ import android.provider.Settings;
  *
  * @author Thomas Dohmke
  **/
-public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
+public class CheckUpdateTask extends AsyncTask<Void, String, JSONArray>{
   private static final int MAX_NUMBER_OF_VERSIONS = 25;
 
 	protected static final String APK = "apk";
@@ -119,7 +112,7 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
   }
   
   @Override
-  protected JSONArray doInBackground(String... args) {
+  protected JSONArray doInBackground(Void... args) {
     try {
       int versionCode = getVersionCode();
       
@@ -164,7 +157,7 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
       for (int index = 0; index < json.length(); index++) {
         JSONObject entry = json.getJSONObject(index);
         if ((entry.getInt("version") > versionCode) &&
-            (VersionHelper.compareVersionStrings(entry.getString("minimum_os_version"), Build.VERSION.RELEASE) <= 0)) {
+            (VersionHelper.compareVersionStrings(entry.getString("minimum_os_version"), VersionHelper.mapGoogleVersion(Build.VERSION.RELEASE)) <= 0)) {
           if (entry.has("mandatory")) {
             mandatory = entry.getBoolean("mandatory");
           }

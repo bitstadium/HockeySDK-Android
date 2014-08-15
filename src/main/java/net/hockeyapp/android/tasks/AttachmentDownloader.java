@@ -8,6 +8,7 @@ import android.os.Message;
 import android.util.Log;
 import net.hockeyapp.android.Constants;
 import net.hockeyapp.android.objects.FeedbackAttachment;
+import net.hockeyapp.android.utils.AsyncTaskUtils;
 import net.hockeyapp.android.utils.ImageUtils;
 import net.hockeyapp.android.views.AttachmentView;
 
@@ -76,7 +77,7 @@ public class AttachmentDownloader {
         }
       });
       downloadRunning = true;
-      downloadTask.execute();
+      AsyncTaskUtils.execute(downloadTask);
     }
   }
 

@@ -28,7 +28,7 @@ import java.util.UUID;
  * <h4>License</h4>
  * 
  * <pre>
- * Copyright (c) 2011-2013 Bit Stadium GmbH
+ * Copyright (c) 2011-2014 Bit Stadium GmbH
  * 
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -54,13 +54,15 @@ import java.util.UUID;
  *
  * @author Thomas Dohmke
  **/
-public class DownloadFileTask extends AsyncTask<String, Integer, Boolean>{
-  private Context context;
-  private DownloadFileListener notifier;
-  private String urlString;
-  private String filename;
-  private String filePath;
-  private ProgressDialog progressDialog;
+public class DownloadFileTask extends AsyncTask<Void, Integer, Long> {
+  protected static final int MAX_REDIRECTS = 6;
+
+  protected Context context;
+  protected DownloadFileListener notifier;
+  protected String urlString;
+  protected String filename;
+  protected String filePath;
+  protected ProgressDialog progressDialog;
   private String downloadErrorMessage;
 
   public DownloadFileTask(Context context, String urlString, DownloadFileListener notifier) {
@@ -82,10 +84,10 @@ public class DownloadFileTask extends AsyncTask<String, Integer, Boolean>{
   }
 
   @Override
-  protected Boolean doInBackground(String... args) {
+  protected Long doInBackground(Void... args) {
     try {
       URL url = new URL(getURLString());
-      URLConnection connection = createConnection(url);
+      URLConnection connection = createConnection(url, MAX_REDIRECTS);
       connection.connect();
 
       int lengthOfFile = connection.getContentLength();
@@ -108,11 +110,11 @@ public class DownloadFileTask extends AsyncTask<String, Integer, Boolean>{
       OutputStream output = new FileOutputStream(file);
 
       byte data[] = new byte[1024];
-      int count = 0;
+      int count;
       long total = 0;
       while ((count = input.read(data)) != -1) {
         total += count;
-        publishProgress((int)(total * 100 / lengthOfFile));
+        publishProgress(Math.round(total * 100.0f / lengthOfFile));
         output.write(data, 0, count);
       }
 
@@ -120,27 +122,54 @@ public class DownloadFileTask extends AsyncTask<String, Integer, Boolean>{
       output.close();
       input.close();
 
-      return (total > 0);
-    }
+      return total;
+    } 
     catch (Exception e) {
       e.printStackTrace();
-      return false;
+      return 0L;
     }
   }
 
-  protected URLConnection createConnection(URL url) throws IOException {
-    HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+  protected void setConnectionProperties(HttpURLConnection connection) {
     connection.addRequestProperty("User-Agent", "HockeySDK/Android");
     connection.setInstanceFollowRedirects(true);
+
     // connection bug workaround for SDK<=2.x
     if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.GINGERBREAD) {
       connection.setRequestProperty("connection", "close");
+    }
+  }
+
+  /**
+   * Recursive method for resolving redirects. Resolves at most MAX_REDIRECTS times.
+   */
+  protected URLConnection createConnection(URL url, int remainingRedirects) throws IOException {
+    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    setConnectionProperties(connection);
+
+    int code = connection.getResponseCode();
+    if (code == HttpURLConnection.HTTP_MOVED_PERM ||
+        code == HttpURLConnection.HTTP_MOVED_TEMP ||
+        code == HttpURLConnection.HTTP_SEE_OTHER) {
+
+      if (remainingRedirects == 0) {
+        // Stop redirecting.
+        return connection;
+      }
+
+      URL movedUrl = new URL(connection.getHeaderField("Location"));
+      if (!url.getProtocol().equals(movedUrl.getProtocol())) {
+        // HttpURLConnection doesn't handle redirects across schemes, so handle it manually, see
+        // http://code.google.com/p/android/issues/detail?id=41651
+        connection.disconnect();
+        return createConnection(movedUrl, --remainingRedirects); // Recursion
+      }
     }
     return connection;
   }
 
   @Override
-  protected void onProgressUpdate(Integer... args){
+  protected void onProgressUpdate(Integer... args) {
     try {
       if (progressDialog == null) {
         progressDialog = new ProgressDialog(context);
@@ -157,7 +186,7 @@ public class DownloadFileTask extends AsyncTask<String, Integer, Boolean>{
   }
 
   @Override
-  protected void onPostExecute(Boolean result) {
+  protected void onPostExecute(Long result) {
     if (progressDialog != null) {
       try {
         progressDialog.dismiss();
@@ -167,7 +196,7 @@ public class DownloadFileTask extends AsyncTask<String, Integer, Boolean>{
       }
     }
 
-    if (result) {
+    if (result > 0L) {
       notifier.downloadSuccessful(this);
 
       Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -209,7 +238,7 @@ public class DownloadFileTask extends AsyncTask<String, Integer, Boolean>{
     }
   }
 
-  private String getURLString() {
+  protected String getURLString() {
     return urlString + "&type=apk";      
   }
 }

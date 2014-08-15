@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import net.hockeyapp.android.tasks.LoginTask;
+import net.hockeyapp.android.utils.AsyncTaskUtils;
 import net.hockeyapp.android.utils.PrefsUtil;
 
 import java.util.HashMap;
@@ -21,7 +22,7 @@ import java.util.Map;
  * <h4>License</h4>
  *
  * <pre>
- * Copyright (c) 2011-2013 Bit Stadium GmbH
+ * Copyright (c) 2011-2014 Bit Stadium GmbH
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -63,6 +64,10 @@ public class LoginManager {
    */
   static Class<?> mainActivity;
 
+  /**
+   * Optional listener to handler callbacks.
+   */
+  static LoginManagerListener listener;
 
   /**
    * App identifier from HockeyApp.
@@ -83,6 +88,20 @@ public class LoginManager {
    * The Login Mode.
    */
   private static int mode;
+
+  /**
+   * Registers new LoginManager.
+   *
+   * @param context The context to use. Usually your Activity object.
+   * @param appIdentifier App ID of your app on HockeyApp.
+   * @param appSecret The App Secret of your app on HockeyApp.
+   * @param mode The Login Mode.
+   * @param activity The first activity to be started by your app.
+   */
+  public static void register(final Context context, String appIdentifier, String appSecret, int mode, LoginManagerListener listener) {
+    LoginManager.listener = listener;
+    register(context, appIdentifier, appSecret, mode, (Class<?>)null);
+  }
 
   /**
    * Registers new LoginManager.
@@ -172,7 +191,7 @@ public class LoginManager {
 
     LoginTask verifyTask = new LoginTask(context, validateHandler, getURLString(LOGIN_MODE_VALIDATE), LOGIN_MODE_VALIDATE, params);
     verifyTask.setShowProgressDialog(false);
-    verifyTask.execute();
+    AsyncTaskUtils.execute(verifyTask);
   }
 
   private static void startLoginActivity(Context context) {

@@ -3,6 +3,8 @@ package net.hockeyapp.android;
 import net.hockeyapp.android.listeners.DownloadFileListener;
 import net.hockeyapp.android.objects.ErrorObject;
 import net.hockeyapp.android.tasks.DownloadFileTask;
+import net.hockeyapp.android.tasks.GetFileSizeTask;
+import net.hockeyapp.android.utils.AsyncTaskUtils;
 import net.hockeyapp.android.utils.VersionHelper;
 import net.hockeyapp.android.views.UpdateView;
 import android.Manifest;
@@ -33,7 +35,7 @@ import android.widget.TextView;
  * <h4>License</h4>
  * 
  * <pre>
- * Copyright (c) 2011-2013 Bit Stadium GmbH
+ * Copyright (c) 2011-2014 Bit Stadium GmbH
  * 
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -107,8 +109,29 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
     TextView nameLabel = (TextView)findViewById(UpdateView.NAME_LABEL_ID);
     nameLabel.setText(getAppName());
     
-    TextView versionLabel = (TextView)findViewById(UpdateView.VERSION_LABEL_ID);
-    versionLabel.setText("Version " + versionHelper.getVersionString() + "\n" + versionHelper.getFileInfoString());
+    final TextView versionLabel = (TextView)findViewById(UpdateView.VERSION_LABEL_ID);
+    final String versionString = "Version " + versionHelper.getVersionString();
+    final String fileDate = versionHelper.getFileDateString();
+
+    String appSizeString = "Unknown size";
+    long appSize = versionHelper.getFileSizeBytes();
+    if (appSize >= 0L) {
+      appSizeString = String.format("%.2f", appSize / (1024.0f * 1024.0f)) + " MB";
+    }
+    else {
+      GetFileSizeTask task = new GetFileSizeTask(this, getIntent().getStringExtra("url"), new DownloadFileListener() {
+        @Override
+        public void downloadSuccessful(DownloadFileTask task) {
+          if (task instanceof GetFileSizeTask) {
+            long appSize = ((GetFileSizeTask)task).getSize();
+            String appSizeString = String.format("%.2f", appSize / (1024.0f * 1024.0f)) + " MB";
+            versionLabel.setText(versionString + "\n" + fileDate + " - " + appSizeString);
+          }
+        }
+      });
+      AsyncTaskUtils.execute(task);
+    }
+    versionLabel.setText(versionString + "\n" + fileDate + " - " + appSizeString);
     
     Button updateButton = (Button)findViewById(UpdateView.UPDATE_BUTTON_ID);
     updateButton.setOnClickListener(this);
@@ -182,7 +205,7 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
         }
       }
     });
-    downloadTask.execute();
+    AsyncTaskUtils.execute(downloadTask);
   }
   
   protected void createDownloadTask(String url, DownloadFileListener listener) {
@@ -253,29 +276,23 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
   
   /**
    * Checks if Unknown Sources is checked from {@link Settings}
+   *
    * @return
    */
+  @SuppressWarnings("deprecation")
   private boolean isUnknownSourcesChecked() {
-    String[] projection = new String[] {Settings.System.VALUE};
-    String selection = Settings.Secure.NAME + " = ? AND " + Settings.Secure.VALUE + " = ?";
-
-    Cursor query = null;
-    if (android.os.Build.VERSION.SDK_INT >= 17) { 
-      String[] selectionArgs = {Settings.Global.INSTALL_NON_MARKET_APPS, String.valueOf(1)};
-      query = getContentResolver().query(Settings.Global.CONTENT_URI, projection, selection, selectionArgs, null);
-    }
-    else {
-      @SuppressWarnings("deprecation")
-      String[] selectionArgs = {Settings.Secure.INSTALL_NON_MARKET_APPS, String.valueOf(1)};
-      query = getContentResolver().query(Settings.Secure.CONTENT_URI, projection, selection, selectionArgs, null);
-    }
-    if (query.getCount() == 1) {
+    try {
+      if (android.os.Build.VERSION.SDK_INT >= 17) {
+        return (Settings.Global.getInt(getContentResolver(), Settings.Global.INSTALL_NON_MARKET_APPS) == 1);
+      }
+      else {
+        return (Settings.Secure.getInt(getContentResolver(), Settings.Secure.INSTALL_NON_MARKET_APPS) == 1);
+      }
+    } catch (Settings.SettingNotFoundException e) {
       return true;
     }
-    
-    return false;
   }
-
+    
   /**
    * Called when the download button is tapped. Starts the download task and
    * disables the button to avoid multiple taps.

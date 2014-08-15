@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import net.hockeyapp.android.tasks.LoginTask;
+import net.hockeyapp.android.utils.AsyncTaskUtils;
 import net.hockeyapp.android.views.LoginView;
 
 import java.security.MessageDigest;
@@ -27,7 +28,7 @@ import java.util.Map;
  * <h4>License</h4>
  *
  * <pre>
- * Copyright (c) 2011-2013 Bit Stadium GmbH
+ * Copyright (c) 2011-2014 Bit Stadium GmbH
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -94,6 +95,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
     configureView();
     initLoginHandler();
 
+    @SuppressWarnings("deprecation")
     Object object = getLastNonConfigurationInstance();
     if (object != null) {
       loginTask = (LoginTask) object;
@@ -120,6 +122,10 @@ public class LoginActivity extends Activity implements View.OnClickListener {
 
         if (success) {
           finish();
+
+          if (LoginManager.listener != null) {
+            LoginManager.listener.onSuccess();
+          }
         }
         else {
           Toast.makeText(LoginActivity.this, "Login failed. Check your credentials.", 2000).show();
@@ -148,7 +154,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
 
     if (ready) {
       loginTask = new LoginTask(this, loginHandler, url, mode, params);
-      loginTask.execute();
+      AsyncTaskUtils.execute(loginTask);
     }
     else {
       Toast.makeText(this, Strings.get(Strings.LOGIN_MISSING_CREDENTIALS_TOAST_ID), 1000).show();
@@ -193,11 +199,16 @@ public class LoginActivity extends Activity implements View.OnClickListener {
   @Override
   public boolean onKeyDown(int keyCode, KeyEvent event) {
     if (keyCode == KeyEvent.KEYCODE_BACK) {
-      Intent intent = new Intent(this, LoginManager.mainActivity);
-      intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-      intent.putExtra(LoginManager.LOGIN_EXIT_KEY, true);
-      startActivity(intent);
-      return true;
+      if (LoginManager.listener != null) {
+        LoginManager.listener.onBack();
+      }
+      else {
+        Intent intent = new Intent(this, LoginManager.mainActivity);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra(LoginManager.LOGIN_EXIT_KEY, true);
+        startActivity(intent);
+        return true;
+      }
     }
 
     return super.onKeyDown(keyCode, event);
