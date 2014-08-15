@@ -64,6 +64,10 @@ public class LoginManager {
    */
   static Class<?> mainActivity;
 
+  /**
+   * Optional listener to handler callbacks.
+   */
+  static LoginManagerListener listener;
 
   /**
    * App identifier from HockeyApp.
@@ -84,6 +88,20 @@ public class LoginManager {
    * The Login Mode.
    */
   private static int mode;
+
+  /**
+   * Registers new LoginManager.
+   *
+   * @param context The context to use. Usually your Activity object.
+   * @param appIdentifier App ID of your app on HockeyApp.
+   * @param appSecret The App Secret of your app on HockeyApp.
+   * @param mode The Login Mode.
+   * @param activity The first activity to be started by your app.
+   */
+  public static void register(final Context context, String appIdentifier, String appSecret, int mode, LoginManagerListener listener) {
+    LoginManager.listener = listener;
+    register(context, appIdentifier, appSecret, mode, (Class<?>)null);
+  }
 
   /**
    * Registers new LoginManager.

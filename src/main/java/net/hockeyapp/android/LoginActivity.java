@@ -95,6 +95,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
     configureView();
     initLoginHandler();
 
+    @SuppressWarnings("deprecation")
     Object object = getLastNonConfigurationInstance();
     if (object != null) {
       loginTask = (LoginTask) object;
@@ -121,6 +122,10 @@ public class LoginActivity extends Activity implements View.OnClickListener {
 
         if (success) {
           finish();
+
+          if (LoginManager.listener != null) {
+            LoginManager.listener.onSuccess();
+          }
         }
         else {
           Toast.makeText(LoginActivity.this, "Login failed. Check your credentials.", 2000).show();
@@ -194,11 +199,16 @@ public class LoginActivity extends Activity implements View.OnClickListener {
   @Override
   public boolean onKeyDown(int keyCode, KeyEvent event) {
     if (keyCode == KeyEvent.KEYCODE_BACK) {
-      Intent intent = new Intent(this, LoginManager.mainActivity);
-      intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-      intent.putExtra(LoginManager.LOGIN_EXIT_KEY, true);
-      startActivity(intent);
-      return true;
+      if (LoginManager.listener != null) {
+        LoginManager.listener.onBack();
+      }
+      else {
+        Intent intent = new Intent(this, LoginManager.mainActivity);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra(LoginManager.LOGIN_EXIT_KEY, true);
+        startActivity(intent);
+        return true;
+      }
     }
 
     return super.onKeyDown(keyCode, event);
