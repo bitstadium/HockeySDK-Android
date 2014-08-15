@@ -96,7 +96,7 @@ public class DownloadFileTask extends AsyncTask<Void, Integer, Long> {
       if (contentType != null && contentType.contains("text")) {
         // This is not the expected APK file. Maybe the redirect could not be resolved.
         downloadErrorMessage = "The requested download does not appear to be a file.";
-        return false;
+        return 0L;
       }
 
       File dir = new File(this.filePath);
