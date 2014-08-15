@@ -16,7 +16,6 @@ import android.content.DialogInterface;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;

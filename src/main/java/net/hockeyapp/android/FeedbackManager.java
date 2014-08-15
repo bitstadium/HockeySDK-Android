@@ -286,6 +286,7 @@ public class FeedbackManager {
     Toast.makeText(context, "Screenshot '" + result.getName() + "' is available in gallery.", 2000).show();
   }
 
+  @SuppressWarnings("deprecation")
   private static void startNotification() {
     notificationActive = true;
 

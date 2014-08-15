@@ -117,6 +117,7 @@ public class ParseFeedbackTask extends AsyncTask<Void, Void, FeedbackResponse> {
     }
   }
 
+  @SuppressWarnings("deprecation")
   private void startNotification(Context context) {
     if (urlString == null) {
       return;

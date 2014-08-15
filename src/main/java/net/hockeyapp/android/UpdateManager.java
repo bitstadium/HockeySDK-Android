@@ -1,5 +1,11 @@
 package net.hockeyapp.android;
 
+import java.lang.ref.WeakReference;
+import java.util.Date;
+
+import net.hockeyapp.android.tasks.CheckUpdateTask;
+import net.hockeyapp.android.tasks.CheckUpdateTaskWithUI;
+import net.hockeyapp.android.utils.AsyncTaskUtils;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -9,12 +15,6 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.AsyncTask.Status;
 import android.text.TextUtils;
-import net.hockeyapp.android.tasks.CheckUpdateTask;
-import net.hockeyapp.android.tasks.CheckUpdateTaskWithUI;
-import net.hockeyapp.android.utils.AsyncTaskUtils;
-
-import java.lang.ref.WeakReference;
-import java.util.Date;
 
 /**
  * <h4>Description</h4>
