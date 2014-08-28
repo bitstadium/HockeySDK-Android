@@ -317,10 +317,17 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
       if (nameEmailSubject != null) {
         /** We have Name and Email. Prepopulate the appropriate fields */
         String[] nameEmailSubjectArray = nameEmailSubject.split("\\|");
-        if (nameEmailSubjectArray != null && nameEmailSubjectArray.length == 3) {
+        if (nameEmailSubjectArray != null && nameEmailSubjectArray.length >= 2) {
           nameInput.setText(nameEmailSubjectArray[0]);
           emailInput.setText(nameEmailSubjectArray[1]);
-          subjectInput.setText(nameEmailSubjectArray[2]);
+
+          if (nameEmailSubjectArray.length >= 3) {
+            subjectInput.setText(nameEmailSubjectArray[2]);
+            textInput.requestFocus();
+          }
+          else {
+            subjectInput.requestFocus();
+          }
         }
       } 
       else {
@@ -328,6 +335,7 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
         nameInput.setText("");
         emailInput.setText("");
         subjectInput.setText("");
+        nameInput.requestFocus();
       }
 		
       /** Reset the remaining fields if previously populated */
