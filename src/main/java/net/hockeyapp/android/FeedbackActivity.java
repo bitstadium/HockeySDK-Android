@@ -70,6 +70,8 @@ import java.util.List;
  * </pre>
  *
  * @author Bogdan Nistor
+ * @author Patrick Eschenbach
+ * @author Thomas Dohmke
  **/
 public class FeedbackActivity extends Activity implements FeedbackActivityInterface, OnClickListener {
   /** Number of attachments allowed per message. **/

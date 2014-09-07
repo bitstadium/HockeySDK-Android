@@ -1,4 +1,17 @@
-/*
+package net.hockeyapp.android.utils;
+
+import java.io.UnsupportedEncodingException;
+
+/**
+ * <h4>Description</h4>
+ * 
+ * Utilities for encoding and decoding the Base64 representation of
+ * binary data.  See RFCs <a
+ * href="http://www.ietf.org/rfc/rfc2045.txt">2045</a> and <a
+ * href="http://www.ietf.org/rfc/rfc3548.txt">3548</a>.
+ * 
+ * <h4>License</h4>
+ * 
  * Copyright (C) 2010 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,17 +25,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
-
-package net.hockeyapp.android.utils;
-
-import java.io.UnsupportedEncodingException;
-
-/**
- * Utilities for encoding and decoding the Base64 representation of
- * binary data.  See RFCs <a
- * href="http://www.ietf.org/rfc/rfc2045.txt">2045</a> and <a
- * href="http://www.ietf.org/rfc/rfc3548.txt">3548</a>.
+ *
  */
 public class Base64 {
   /**
