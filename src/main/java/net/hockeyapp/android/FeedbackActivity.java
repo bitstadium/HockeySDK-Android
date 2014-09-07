@@ -15,6 +15,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.*;
 import android.view.View.OnClickListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
 import net.hockeyapp.android.adapters.MessagesAdapter;
 import net.hockeyapp.android.objects.ErrorObject;
@@ -24,6 +25,7 @@ import net.hockeyapp.android.tasks.ParseFeedbackTask;
 import net.hockeyapp.android.tasks.SendFeedbackTask;
 import net.hockeyapp.android.utils.AsyncTaskUtils;
 import net.hockeyapp.android.utils.PrefsUtil;
+import net.hockeyapp.android.utils.Util;
 import net.hockeyapp.android.views.AttachmentListView;
 import net.hockeyapp.android.views.AttachmentView;
 import net.hockeyapp.android.views.FeedbackView;
@@ -119,6 +121,9 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
   /** True when a message is posted **/
   private boolean inSendFeedback;
   
+  /** True when the view was initialized **/
+  private boolean feedbackViewInitialized;
+  
   /** Unique token of the message feed **/
   private String token;
   	
@@ -132,13 +137,21 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
     super.onCreate(savedInstanceState);
 
     setContentView(getLayoutView());
+    
     setTitle("Feedback");
     context = this;
     inSendFeedback = false;
-		
+    
     Bundle extras = getIntent().getExtras();
     if (extras != null) {
       url = extras.getString("url");
+    }
+    
+    if (savedInstanceState != null) {
+      feedbackViewInitialized = savedInstanceState.getBoolean("feedbackViewInitialized");
+    }
+    else {
+      feedbackViewInitialized = false;
     }
 
     // Cancel notification
@@ -307,35 +320,37 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
       wrapperLayoutFeedbackAndMessages.setVisibility(View.GONE);
       feedbackScrollView.setVisibility(View.VISIBLE);
 		
-      nameInput = (EditText) findViewById(FeedbackView.NAME_EDIT_TEXT_ID);
-      emailInput = (EditText) findViewById(FeedbackView.EMAIL_EDIT_TEXT_ID);
-      subjectInput = (EditText) findViewById(FeedbackView.SUBJECT_EDIT_TEXT_ID);
-      textInput = (EditText) findViewById(FeedbackView.TEXT_EDIT_TEXT_ID);
+      nameInput = (EditText)findViewById(FeedbackView.NAME_EDIT_TEXT_ID);
+      emailInput = (EditText)findViewById(FeedbackView.EMAIL_EDIT_TEXT_ID);
+      subjectInput = (EditText)findViewById(FeedbackView.SUBJECT_EDIT_TEXT_ID);
+      textInput = (EditText)findViewById(FeedbackView.TEXT_EDIT_TEXT_ID);
 		
       /** Check to see if the Name and Email are saved in {@link SharedPreferences} */
-      String nameEmailSubject = PrefsUtil.getInstance().getNameEmailFromPrefs(context);
-      if (nameEmailSubject != null) {
-        /** We have Name and Email. Prepopulate the appropriate fields */
-        String[] nameEmailSubjectArray = nameEmailSubject.split("\\|");
-        if (nameEmailSubjectArray != null && nameEmailSubjectArray.length >= 2) {
-          nameInput.setText(nameEmailSubjectArray[0]);
-          emailInput.setText(nameEmailSubjectArray[1]);
-
-          if (nameEmailSubjectArray.length >= 3) {
-            subjectInput.setText(nameEmailSubjectArray[2]);
-            textInput.requestFocus();
+      if (!feedbackViewInitialized) {
+        String nameEmailSubject = PrefsUtil.getInstance().getNameEmailFromPrefs(context);
+        if (nameEmailSubject != null) {
+          /** We have Name and Email. Prepopulate the appropriate fields */
+          String[] nameEmailSubjectArray = nameEmailSubject.split("\\|");
+          if (nameEmailSubjectArray != null && nameEmailSubjectArray.length >= 2) {
+            nameInput.setText(nameEmailSubjectArray[0]);
+            emailInput.setText(nameEmailSubjectArray[1]);
+  
+            if (nameEmailSubjectArray.length >= 3) {
+              subjectInput.setText(nameEmailSubjectArray[2]);
+              textInput.requestFocus();
+            }
+            else {
+              subjectInput.requestFocus();
+            }
           }
-          else {
-            subjectInput.requestFocus();
-          }
+        } 
+        else {
+          /** We dont have Name and Email. Reset those fields */
+          nameInput.setText("");
+          emailInput.setText("");
+          subjectInput.setText("");
+          nameInput.requestFocus();
         }
-      } 
-      else {
-        /** We dont have Name and Email. Reset those fields */
-        nameInput.setText("");
-        emailInput.setText("");
-        subjectInput.setText("");
-        nameInput.requestFocus();
       }
 		
       /** Reset the remaining fields if previously populated */
@@ -352,16 +367,18 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
       }
 
       /** Reset the attachment list */
-      ViewGroup attachmentListView = (ViewGroup) findViewById(FeedbackView.WRAPPER_LAYOUT_ATTACHMENTS);
+      ViewGroup attachmentListView = (ViewGroup)findViewById(FeedbackView.WRAPPER_LAYOUT_ATTACHMENTS);
       attachmentListView.removeAllViews();
 
       /** Use of context menu needs to be enabled explicitly */
-      addAttachmentButton = (Button) findViewById(FeedbackView.ADD_ATTACHMENT_BUTTON_ID);
+      addAttachmentButton = (Button)findViewById(FeedbackView.ADD_ATTACHMENT_BUTTON_ID);
       addAttachmentButton.setOnClickListener(this);
       registerForContextMenu(addAttachmentButton);
 
-      sendFeedbackButton = (Button) findViewById(FeedbackView.SEND_FEEDBACK_BUTTON_ID);
+      sendFeedbackButton = (Button)findViewById(FeedbackView.SEND_FEEDBACK_BUTTON_ID);
       sendFeedbackButton.setOnClickListener(this);
+      
+      feedbackViewInitialized = true;
   	}
   }
     
@@ -453,17 +470,30 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
   @SuppressWarnings("deprecation")
   private void sendFeedback() {
   	enableDisableSendFeedbackButton(false);
+  	hideKeyboard();
   	
-  	if ((nameInput.getText().toString().trim().length() <= 0) ||
-  	    (emailInput.getText().toString().trim().length() <= 0) ||
-  	    (subjectInput.getText().toString().trim().length() <= 0) ||
-  			(textInput.getText().toString().trim().length() <= 0)) {
+  	String name = nameInput.getText().toString().trim();
+  	String email = emailInput.getText().toString().trim();
+  	String subject = subjectInput.getText().toString().trim();
+  	String text = textInput.getText().toString().trim(); 
+  	
+  	if ((name.length() <= 0) ||
+  	    (email.length() <= 0) ||
+  	    (subject.length() <= 0) ||
+  			(text.length() <= 0)) {
   		/** Not all details were submitted, we're going to display an error dialog */
   		error = new ErrorObject();
-  		error.setMessage("Please provide all details");
+  		error.setMessage("Please provide all details.");
   		
   		showDialog(DIALOG_ERROR_ID);
   		enableDisableSendFeedbackButton(true);
+  	}
+  	else if (!Util.isValidEmail(email)) {
+      error = new ErrorObject();
+      error.setMessage("Please check the format of your email address.");
+      
+      showDialog(DIALOG_ERROR_ID);
+      enableDisableSendFeedbackButton(true);
   	}
   	else {
   		/** Save Name and Email to {@link SharedPreferences} */
@@ -474,10 +504,17 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
       List<Uri> attachmentUris = attachmentListView.getAttachments();
 
   		/** Start the Send Feedback {@link AsyncTask} */
-  		sendFetchFeedback(url, nameInput.getText().toString(), emailInput.getText().toString(), subjectInput.getText().toString(), textInput.getText().toString(), attachmentUris, PrefsUtil.getInstance().getFeedbackTokenFromPrefs(context), feedbackHandler, false);
+  		sendFetchFeedback(url, name, email, subject, text, attachmentUris, PrefsUtil.getInstance().getFeedbackTokenFromPrefs(context), feedbackHandler, false);
   	}
   }
 
+  private void hideKeyboard() {
+    if (textInput != null) {
+      InputMethodManager manager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+      manager.hideSoftInputFromWindow(textInput.getWindowToken(), 0);
+    }
+  }
+  
   /**
    * Initialize the {@link SendFeedbackTask}
    * @param url             URL to HockeyApp API
@@ -544,6 +581,8 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
     AttachmentListView attachmentListView = (AttachmentListView) findViewById(FeedbackView.WRAPPER_LAYOUT_ATTACHMENTS);
 
     outState.putParcelableArrayList("attachments", attachmentListView.getAttachments());
+    outState.putBoolean("feedbackViewInitialized", feedbackViewInitialized);
+    
     super.onSaveInstanceState(outState);
   }
 
@@ -552,11 +591,14 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
    */
   @Override
   protected void onRestoreInstanceState(Bundle savedInstanceState) {
-    ViewGroup attachmentList = (ViewGroup) findViewById(FeedbackView.WRAPPER_LAYOUT_ATTACHMENTS);
-    ArrayList<Uri> attachmentsUris = savedInstanceState.getParcelableArrayList("attachments");
-
-    for (Uri attachmentUri : attachmentsUris) {
-      attachmentList.addView(new AttachmentView(this, attachmentList, attachmentUri, true));
+    if (savedInstanceState != null) {
+      ViewGroup attachmentList = (ViewGroup) findViewById(FeedbackView.WRAPPER_LAYOUT_ATTACHMENTS);
+      ArrayList<Uri> attachmentsUris = savedInstanceState.getParcelableArrayList("attachments");
+      for (Uri attachmentUri : attachmentsUris) {
+        attachmentList.addView(new AttachmentView(this, attachmentList, attachmentUri, true));
+      }
+      
+      feedbackViewInitialized = savedInstanceState.getBoolean("feedbackViewInitialized");
     }
 
     super.onRestoreInstanceState(savedInstanceState);
