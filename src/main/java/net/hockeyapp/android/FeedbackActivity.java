@@ -140,7 +140,6 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
     
     setTitle("Feedback");
     context = this;
-    inSendFeedback = false;
     
     Bundle extras = getIntent().getExtras();
     if (extras != null) {
@@ -149,8 +148,10 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
     
     if (savedInstanceState != null) {
       feedbackViewInitialized = savedInstanceState.getBoolean("feedbackViewInitialized");
+      inSendFeedback = savedInstanceState.getBoolean("inSendFeedback");
     }
     else {
+      inSendFeedback = false;
       feedbackViewInitialized = false;
     }
 
@@ -166,7 +167,7 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
   private void configureAppropriateView() {
     /** Try to retrieve the Feedback Token from {@link SharedPreferences} */
     token = PrefsUtil.getInstance().getFeedbackTokenFromPrefs(this);
-    if (token == null) {
+    if ((token == null) || (inSendFeedback)) {
       /** If Feedback Token is NULL, show the usual {@link FeedbackView} */
       configureFeedbackView(false);           
     } 
@@ -351,6 +352,8 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
           subjectInput.setText("");
           nameInput.requestFocus();
         }
+        
+        feedbackViewInitialized = true;
       }
 		
       /** Reset the remaining fields if previously populated */
@@ -377,8 +380,6 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
 
       sendFeedbackButton = (Button)findViewById(FeedbackView.SEND_FEEDBACK_BUTTON_ID);
       sendFeedbackButton.setOnClickListener(this);
-      
-      feedbackViewInitialized = true;
   	}
   }
     
@@ -471,6 +472,8 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
   private void sendFeedback() {
   	enableDisableSendFeedbackButton(false);
   	hideKeyboard();
+
+  	String token = PrefsUtil.getInstance().getFeedbackTokenFromPrefs(context);
   	
   	String name = nameInput.getText().toString().trim();
   	String email = emailInput.getText().toString().trim();
@@ -479,12 +482,16 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
   	
   	if ((name.length() <= 0) ||
   	    (email.length() <= 0) ||
-  	    (subject.length() <= 0) ||
+        (subject.length() <= 0) ||
   			(text.length() <= 0)) {
   		/** Not all details were submitted, we're going to display an error dialog */
   		error = new ErrorObject();
   		error.setMessage("Please provide all details.");
-  		
+
+  		if (subject.length() <= 0) {
+  		  subjectInput.setVisibility(View.VISIBLE);
+  		}
+
   		showDialog(DIALOG_ERROR_ID);
   		enableDisableSendFeedbackButton(true);
   	}
@@ -497,14 +504,14 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
   	}
   	else {
   		/** Save Name and Email to {@link SharedPreferences} */
-  		PrefsUtil.getInstance().saveNameEmailSubjectToPrefs(context, nameInput.getText().toString(), emailInput.getText().toString(), subjectInput.getText().toString());
+  		PrefsUtil.getInstance().saveNameEmailSubjectToPrefs(context, name, email, subject);
 
       /** Make list for attachments file paths */
       AttachmentListView attachmentListView = (AttachmentListView) findViewById(FeedbackView.WRAPPER_LAYOUT_ATTACHMENTS);
       List<Uri> attachmentUris = attachmentListView.getAttachments();
 
   		/** Start the Send Feedback {@link AsyncTask} */
-  		sendFetchFeedback(url, name, email, subject, text, attachmentUris, PrefsUtil.getInstance().getFeedbackTokenFromPrefs(context), feedbackHandler, false);
+  		sendFetchFeedback(url, name, email, subject, text, attachmentUris, token, feedbackHandler, false);
   	}
   }
 
@@ -582,6 +589,7 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
 
     outState.putParcelableArrayList("attachments", attachmentListView.getAttachments());
     outState.putBoolean("feedbackViewInitialized", feedbackViewInitialized);
+    outState.putBoolean("inSendFeedback", inSendFeedback);
     
     super.onSaveInstanceState(outState);
   }
