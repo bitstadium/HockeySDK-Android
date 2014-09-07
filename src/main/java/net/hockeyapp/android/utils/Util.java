@@ -1,9 +1,13 @@
 package net.hockeyapp.android.utils;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.ref.WeakReference;
 import java.net.URLEncoder;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.Activity;
+import android.content.res.Configuration;
 import android.os.Build;
 import android.text.TextUtils;
 
@@ -47,21 +51,54 @@ public class Util {
   public static String encodeParam(String param) {
     try {
       return URLEncoder.encode(param, "UTF-8");
-    } catch (UnsupportedEncodingException e) {
+    } 
+    catch (UnsupportedEncodingException e) {
       // UTF-8 should be available, so just in case
       e.printStackTrace();
       return "";
     }
   }
   
+  /**
+   * Returns true if value is a valid email.
+   */
   @TargetApi(Build.VERSION_CODES.FROYO)
-  public final static boolean isValidEmail(CharSequence target) {
+  public final static boolean isValidEmail(String value) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
-      return !TextUtils.isEmpty(target) && android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
+      return !TextUtils.isEmpty(value) && android.util.Patterns.EMAIL_ADDRESS.matcher(value).matches();
     }
     else {
-      return !TextUtils.isEmpty(target);
+      return !TextUtils.isEmpty(value);
     }
   }
-  
+
+  /**
+   * Returns true if the Fragment API is supported (should be on Android 3.0+).
+   */
+  @SuppressLint("NewApi")
+  public static Boolean fragmentsSupported() {
+    try {
+      return (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) && (android.app.Fragment.class != null);
+    }
+    catch (NoClassDefFoundError e) {
+      return false;
+    }
+  }
+
+  /**
+   * Returns true if the app runs on large or very large screens (i.e. tablets). 
+   */
+  public static Boolean runsOnTablet(WeakReference<Activity> weakActivity) {
+    if (weakActivity != null) {
+      Activity activity = weakActivity.get();
+      if (activity != null) {
+        Configuration configuration = activity.getResources().getConfiguration();
+        
+        return (((configuration.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE) || 
+                ((configuration.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_XLARGE));
+      }
+    }
+    
+    return false;
+  }
 }

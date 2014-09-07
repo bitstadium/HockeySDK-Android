@@ -1,5 +1,18 @@
 package net.hockeyapp.android.tasks;
 
+import java.lang.ref.WeakReference;
+import java.lang.reflect.Method;
+
+import net.hockeyapp.android.Constants;
+import net.hockeyapp.android.Strings;
+import net.hockeyapp.android.UpdateActivity;
+import net.hockeyapp.android.UpdateFragment;
+import net.hockeyapp.android.UpdateManagerListener;
+import net.hockeyapp.android.utils.Util;
+import net.hockeyapp.android.utils.VersionCache;
+
+import org.json.JSONArray;
+
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -11,17 +24,6 @@ import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
-import net.hockeyapp.android.Constants;
-import net.hockeyapp.android.Strings;
-import net.hockeyapp.android.UpdateActivity;
-import net.hockeyapp.android.UpdateFragment;
-import net.hockeyapp.android.UpdateManager;
-import net.hockeyapp.android.UpdateManagerListener;
-import net.hockeyapp.android.utils.VersionCache;
-import org.json.JSONArray;
-
-import java.lang.ref.WeakReference;
-import java.lang.reflect.Method;
 
 /**
  * <h4>Description</h4>
@@ -117,7 +119,7 @@ public class CheckUpdateTaskWithUI extends CheckUpdateTask {
           }
 
           WeakReference<Activity> weakActivity = new WeakReference<Activity>(activity);
-          if ((UpdateManager.fragmentsSupported()) && (UpdateManager.runsOnTablet(weakActivity))) {
+          if ((Util.fragmentsSupported()) && (Util.runsOnTablet(weakActivity))) {
             showUpdateFragment(updateInfo);
           }
           else {

@@ -6,13 +6,12 @@ import java.util.Date;
 import net.hockeyapp.android.tasks.CheckUpdateTask;
 import net.hockeyapp.android.tasks.CheckUpdateTaskWithUI;
 import net.hockeyapp.android.utils.AsyncTaskUtils;
-import android.annotation.SuppressLint;
+import net.hockeyapp.android.utils.Util;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.AsyncTask.Status;
 import android.text.TextUtils;
 
@@ -107,7 +106,7 @@ public class UpdateManager {
     lastListener = listener;
 
     WeakReference<Activity> weakActivity = new WeakReference<Activity>(activity);
-    if ((fragmentsSupported()) && (dialogShown(weakActivity))) {
+    if ((Util.fragmentsSupported()) && (dialogShown(weakActivity))) {
       return;
     }
 
@@ -266,37 +265,6 @@ public class UpdateManager {
       if (activity != null) {
         Fragment existingFragment = activity.getFragmentManager().findFragmentByTag("hockey_update_dialog");
         return (existingFragment != null);
-      }
-    }
-    
-    return false;
-  }
-
-  /**
-   * Returns true if the Fragment API is supported (should be on Android 3.0+).
-   */
-  @SuppressLint("NewApi")
-  public static Boolean fragmentsSupported() {
-    try {
-      return (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) && (android.app.Fragment.class != null);
-    }
-    catch (NoClassDefFoundError e) {
-      return false;
-    }
-  }
-
-  /**
-   * Returns true if the app runs on large or very large screens (i.e. tablets). 
-   */
-  public static Boolean runsOnTablet(WeakReference<Activity> weakActivity) {
-    if (weakActivity != null) {
-      Activity activity = weakActivity.get();
-      if (activity != null) {
-        Configuration configuration = activity.getResources().getConfiguration();
-        
-        return (((configuration.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.
-            SCREENLAYOUT_SIZE_LARGE) || ((configuration.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == 
-            Configuration.SCREENLAYOUT_SIZE_XLARGE));
       }
     }
     
