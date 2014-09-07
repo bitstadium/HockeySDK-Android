@@ -161,13 +161,13 @@ public class SendFeedbackTask extends AsyncTask<Void, Void, HashMap<String, Stri
        */
       if (attachmentUris.isEmpty()) {
         return doPostPut(httpclient);
-
-      } else {
+      } 
+      else {
         HashMap<String, String> result = doPostPutWithAttachments(httpclient);
 
-        /** Clear temp folder */
+        /** Clear temporary folder */
         String status = result.get("status");
-        if (status != null && status.startsWith("2")) {
+        if ((status != null) && (status.startsWith("2")) && (context != null)) {
           File folder = new File(context.getCacheDir(), Constants.TAG);
           if (folder.exists()) {
             for (File file : folder.listFiles()) {
