@@ -140,6 +140,25 @@ public class Strings {
   /** Resource ID for the FeedbackView refresh button text. */
   public final static int FEEDBACK_REFRESH_BUTTON_TEXT_ID    = 0x40a;
 
+  /** Resource ID for the title of the FeedbackActivity. */
+  public final static int FEEDBACK_TITLE_ID                  = 0x40b;
+
+  /** Resource ID for the message when feedback could not be sent (generic). */
+  public final static int FEEDBACK_SEND_GENERIC_ERROR_ID     = 0x40c;
+
+  /** Resource ID for the message when feedback could not be sent (network error). */
+  public final static int FEEDBACK_SEND_NETWORK_ERROR_ID     = 0x40d;
+
+  /** Resource ID for the message when not all input fields all filled out. */
+  public final static int FEEDBACK_VALIDATE_INPUT_ERROR_ID   = 0x40e;
+
+  /** Resource ID for the message when the entered email is invalid. */
+  public final static int FEEDBACK_VALIDATE_EMAIL_ERROR_ID   = 0x40f;
+  
+  /** Resource ID for the message when a generic error has occurred. */
+  public final static int FEEDBACK_GENERIC_ERROR_ID          = 0x410;
+  
+
   ///////////////////////////////////////////////////
   // Login Activity
   ///////////////////////////////////////////////////
@@ -225,6 +244,12 @@ public class Strings {
     DEFAULT.put(FEEDBACK_SEND_BUTTON_TEXT_ID,       "Send Feedback");
     DEFAULT.put(FEEDBACK_RESPONSE_BUTTON_TEXT_ID,   "Add a Response");
     DEFAULT.put(FEEDBACK_REFRESH_BUTTON_TEXT_ID,    "Refresh");
+    DEFAULT.put(FEEDBACK_TITLE_ID,                  "Feedback");
+    DEFAULT.put(FEEDBACK_SEND_GENERIC_ERROR_ID,     "Message couldn't be posted. Please check your input values and your connection, then try again.");
+    DEFAULT.put(FEEDBACK_SEND_NETWORK_ERROR_ID,     "No response from server. Please check your connection, then try again.");
+    DEFAULT.put(FEEDBACK_VALIDATE_INPUT_ERROR_ID,   "Message couldn't be posted. Please fill-out all input fields.");
+    DEFAULT.put(FEEDBACK_VALIDATE_EMAIL_ERROR_ID,   "Message couldn't be posted. Please check the format of your email address.");
+    DEFAULT.put(FEEDBACK_GENERIC_ERROR_ID,          "An error has occured");
 
     // Login Activity
     DEFAULT.put(LOGIN_HEADLINE_TEXT_ID,             "Please enter your account credentials.");

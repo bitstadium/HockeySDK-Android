@@ -140,7 +140,7 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
 
     setContentView(getLayoutView());
     
-    setTitle("Feedback");
+    setTitle(Strings.get(Strings.FEEDBACK_TITLE_ID));
     context = this;
     
     Bundle extras = getIntent().getExtras();
@@ -213,7 +213,7 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
           String requestType = bundle.getString("request_type");
           if ((requestType.equals("send") && ((responseString == null) || (Integer.parseInt(statusCode) != 201)))) {
             // Send feedback went wrong if response is empty or status code != 201
-            error.setMessage("Message couldn't be posted. Please check your input values and your connection, then try again.");
+            error.setMessage(Strings.get(Strings.FEEDBACK_SEND_GENERIC_ERROR_ID));
           }
           else if ((requestType.equals("fetch") && (statusCode != null) && ((Integer.parseInt(statusCode) == 404) || (Integer.parseInt(statusCode) == 422)))) {
             // Fetch feedback went wrong if status code is 404 or 422
@@ -225,11 +225,11 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
             success = true;
           }
           else {
-            error.setMessage("No response from server. Please check your connection, then try again.");
+            error.setMessage(Strings.get(Strings.FEEDBACK_SEND_NETWORK_ERROR_ID));
           }
         }
         else {
-          error.setMessage("Message couldn't be posted. Please check your input values and your connection, then try again.");
+          error.setMessage(Strings.get(Strings.FEEDBACK_SEND_GENERIC_ERROR_ID));
         }
 
         if (!success) {
@@ -488,7 +488,7 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
   			(text.length() <= 0)) {
   		/** Not all details were submitted, we're going to display an error dialog */
   		error = new ErrorObject();
-  		error.setMessage("Please provide all details.");
+  		error.setMessage(Strings.get(Strings.FEEDBACK_VALIDATE_INPUT_ERROR_ID));
 
   		if (subject.length() <= 0) {
   		  subjectInput.setVisibility(View.VISIBLE);
@@ -499,7 +499,7 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
   	}
   	else if (!Util.isValidEmail(email)) {
       error = new ErrorObject();
-      error.setMessage("Please check the format of your email address.");
+      error.setMessage(Strings.get(Strings.FEEDBACK_VALIDATE_EMAIL_ERROR_ID));
       
       showDialog(DIALOG_ERROR_ID);
       enableDisableSendFeedbackButton(true);
@@ -744,7 +744,7 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
         messageDialogError.setMessage(error.getMessage());
       } else {
         /** If the ErrorObject is null, display the general error message */
-        messageDialogError.setMessage("An error has occured");
+        messageDialogError.setMessage(Strings.get(Strings.FEEDBACK_GENERIC_ERROR_ID));
       }
 
       break;
