@@ -62,7 +62,9 @@ public class ImageUtils {
       return determineOrientation(input);
     }
     finally {
-      input.close();
+      if (input != null) {
+        input.close();
+      }
     }
   }
 
@@ -81,7 +83,9 @@ public class ImageUtils {
       return determineOrientation(input);
     }
     finally {
-      input.close();
+      if (input != null) {
+        input.close();
+      }
     }
   }
 

@@ -289,8 +289,7 @@ public class AttachmentView extends FrameLayout {
 
       return ImageUtils.decodeSampledBitmap(context, attachmentUri, width, height);
     }
-    catch (IOException e) {
-      e.printStackTrace();
+    catch (Throwable t) {
       return null;
     }
   }
