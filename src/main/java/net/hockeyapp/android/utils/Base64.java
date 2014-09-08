@@ -3,14 +3,14 @@ package net.hockeyapp.android.utils;
 import java.io.UnsupportedEncodingException;
 
 /**
- * <h4>Description</h4>
+ * <h3>Description</h3>
  * 
  * Utilities for encoding and decoding the Base64 representation of
  * binary data.  See RFCs <a
  * href="http://www.ietf.org/rfc/rfc2045.txt">2045</a> and <a
  * href="http://www.ietf.org/rfc/rfc3548.txt">3548</a>.
  * 
- * <h4>License</h4>
+ * <h3>License</h3>
  * 
  * Copyright (C) 2010 The Android Open Source Project
  *
@@ -59,13 +59,6 @@ public class Base64 {
    * {@code /}.
    */
   public static final int URL_SAFE = 8;
-
-  /**
-   * Flag to pass to {@link Base64OutputStream} to indicate that it
-   * should not close the output stream it is wrapping when it
-   * itself is closed.
-   */
-  public static final int NO_CLOSE = 16;
 
   //  --------------------------------------------------------
   //  shared code
@@ -116,6 +109,7 @@ public class Base64 {
    *
    * @throws IllegalArgumentException if the input contains
    * incorrect padding
+   * @return the decoded data as a byte array
    */
   public static byte[] decode(String str, int flags) {
     return decode(str.getBytes(), flags);
@@ -134,6 +128,7 @@ public class Base64 {
    *
    * @throws IllegalArgumentException if the input contains
    * incorrect padding
+   * @return the decoded data as a byte array
    */
   public static byte[] decode(byte[] input, int flags) {
     return decode(input, 0, input.length, flags);
@@ -154,6 +149,7 @@ public class Base64 {
    *
    * @throws IllegalArgumentException if the input contains
    * incorrect padding
+   * @return the decoded data as a byte array
    */
   public static byte[] decode(byte[] input, int offset, int len, int flags) {
     // Allocate space for the most data the input could represent.
@@ -453,6 +449,7 @@ public class Base64 {
    * @param flags  controls certain features of the encoded output.
    *               Passing {@code DEFAULT} results in output that
    *               adheres to RFC 2045.
+   * @return the encoded data as a string
    */
   public static String encodeToString(byte[] input, int flags) {
     try {
@@ -474,6 +471,7 @@ public class Base64 {
    * @param flags  controls certain features of the encoded output.
    *               Passing {@code DEFAULT} results in output that
    *               adheres to RFC 2045.
+   * @return the encoded data as a string
    */
   public static String encodeToString(byte[] input, int offset, int len, int flags) {
     try {
@@ -492,6 +490,7 @@ public class Base64 {
    * @param flags  controls certain features of the encoded output.
    *               Passing {@code DEFAULT} results in output that
    *               adheres to RFC 2045.
+   * @return the encoded data as a byte array
    */
   public static byte[] encode(byte[] input, int flags) {
     return encode(input, 0, input.length, flags);
@@ -508,6 +507,7 @@ public class Base64 {
    * @param flags  controls certain features of the encoded output.
    *               Passing {@code DEFAULT} results in output that
    *               adheres to RFC 2045.
+   * @return the encoded data as a byte array
    */
   public static byte[] encode(byte[] input, int offset, int len, int flags) {
     Encoder encoder = new Encoder(flags, null);

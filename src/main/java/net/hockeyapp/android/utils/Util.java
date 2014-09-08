@@ -12,7 +12,7 @@ import android.os.Build;
 import android.text.TextUtils;
 
 /**
- * <h4>License</h4>
+ * <h3>License</h3>
  * 
  * <pre>
  * Copyright (c) 2011-2014 Bit Stadium GmbH
@@ -48,6 +48,12 @@ public class Util {
   public static final String PREFS_NAME_EMAIL_SUBJECT = "net.hockeyapp.android.prefs_name_email";
   public static final String PREFS_KEY_NAME_EMAIL_SUBJECT = "net.hockeyapp.android.prefs_key_name_email";
 
+  /**
+   * Returns the given param URL-encoded.
+   *
+   * @param param a string to encode
+   * @return the encoded param
+   */
   public static String encodeParam(String param) {
     try {
       return URLEncoder.encode(param, "UTF-8");
@@ -61,6 +67,9 @@ public class Util {
   
   /**
    * Returns true if value is a valid email.
+   *
+   * @param value a string
+   * @return true if value is a valid email
    */
   @TargetApi(Build.VERSION_CODES.FROYO)
   public final static boolean isValidEmail(String value) {
@@ -74,6 +83,8 @@ public class Util {
 
   /**
    * Returns true if the Fragment API is supported (should be on Android 3.0+).
+   *
+   * @return true if the Fragment API is supported
    */
   @SuppressLint("NewApi")
   public static Boolean fragmentsSupported() {
@@ -87,6 +98,9 @@ public class Util {
 
   /**
    * Returns true if the app runs on large or very large screens (i.e. tablets). 
+   *
+   * @param weakActivity the context to use
+   * @return true if the app runs on large or very large screens
    */
   public static Boolean runsOnTablet(WeakReference<Activity> weakActivity) {
     if (weakActivity != null) {

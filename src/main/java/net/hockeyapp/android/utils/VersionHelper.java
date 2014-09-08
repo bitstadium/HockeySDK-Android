@@ -19,12 +19,12 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 
 /**
- * <h4>Description</h4>
+ * <h3>Description</h3>
  * 
  * Internal helper class. Provides helper methods to parse the
  * version JSON and create the release notes as HTML. 
  * 
- * <h4>License</h4>
+ * <h3>License</h3>
  * 
  * <pre>
  * Copyright (c) 2011-2014 Bit Stadium GmbH
@@ -316,6 +316,10 @@ public class VersionHelper {
   /**
    * Returns true of the given timestamp is larger / newer than the last modified timestamp of
    * the APK file of the app.
+   *
+   * @param context the context to use
+   * @param timestamp a Unix-style timestamp
+   * @return true if the timestamp is larger / never
    */
   public static boolean isNewerThanLastUpdateTime(Context context, long timestamp) {
     if (context == null) {
@@ -340,7 +344,10 @@ public class VersionHelper {
   }
 
   /**
-   * Map internal Google version letter to a semantic version.
+   * Map internal Google version letter to a semantic version (currently L to 5.0).
+   *
+   * @param version value of Build.VERSION.RELEASE
+   * @return mapped version number
    */
   public static String mapGoogleVersion(String version) {
     if ((version == null) || (version.equalsIgnoreCase("L"))) {

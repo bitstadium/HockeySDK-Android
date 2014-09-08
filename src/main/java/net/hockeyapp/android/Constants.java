@@ -11,11 +11,11 @@ import android.util.Log;
 import java.io.File;
 
 /**
- * <h4>Description</h4>
+ * <h3>Description</h3>
  * 
  * Various constants and meta information loaded from the context.
  * 
- * <h4>License</h4>
+ * <h3>License</h3>
  * 
  * <pre>
  * Copyright (c) 2009 nullwire aps

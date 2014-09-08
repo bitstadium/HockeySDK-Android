@@ -32,7 +32,7 @@ import android.content.SharedPreferences.Editor;
 import android.util.Log;
 
 /**
- * <h4>Description</h4>
+ * <h3>Description</h3>
  * 
  * The crash manager sets an exception handler to catch all unhandled 
  * exceptions. The handler writes the stack trace and additional meta data to 
@@ -40,7 +40,7 @@ import android.util.Log;
  * an alert dialog to ask the user if he want the send the crash data to 
  * HockeyApp. 
  * 
- * <h4>License</h4>
+ * <h3>License</h3>
  * 
  * <pre>
  * Copyright (c) 2011-2014 Bit Stadium GmbH
@@ -195,7 +195,7 @@ public class CrashManager {
   /**
    * Checks if there are any saved stack traces in the files dir.
    * 
-   * @param context The context to use. Usually your Activity object.
+   * @param weakContext The context to use. Usually your Activity object.
    * @return 0 if there are no stack traces,
    *         1 if there are any new stack traces, 
    *         2 if there are confirmed stack traces
@@ -241,7 +241,7 @@ public class CrashManager {
   /**
    * Submits all stack traces in the files dir to HockeyApp.
    * 
-   * @param context The context to use. Usually your Activity object.
+   * @param weakContext The context to use. Usually your Activity object.
    * @param listener Implement for callback functions.
    */
   public static void submitStackTraces(WeakReference<Context> weakContext, CrashManagerListener listener) {
@@ -300,7 +300,7 @@ public class CrashManager {
   /**
    * Deletes all stack traces and meta files from files dir.
    * 
-   * @param context The context to use. Usually your Activity object.
+   * @param weakContext The context to use. Usually your Activity object.
    */
   public static void deleteStackTraces(WeakReference<Context> weakContext) {
     String[] list = searchForStackTraces();

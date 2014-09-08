@@ -7,12 +7,12 @@ import java.net.URL;
 import java.net.URLConnection;
 
 /**
- * <h4>Description</h4>
+ * <h3>Description</h3>
  * 
  * Internal helper class. Determines the size of an externally hosted
  * .apk from the HTTP header.
  *
- * <h4>License</h4>
+ * <h3>License</h3>
  * 
  * <pre>
  * Copyright (c) 2011-2014 Bit Stadium GmbH

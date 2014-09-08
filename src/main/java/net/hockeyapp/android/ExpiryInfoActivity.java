@@ -6,11 +6,11 @@ import android.os.Bundle;
 import android.view.View;
 
 /**
- * <h4>Description</h4>
+ * <h3>Description</h3>
  * 
  * The expiry activity is shown when the build is expired.
  * 
- * <h4>License</h4>
+ * <h3>License</h3>
  * 
  * <pre>
  * Copyright (c) 2011-2014 Bit Stadium GmbH

@@ -4,11 +4,11 @@ import net.hockeyapp.android.StringListener;
 import net.hockeyapp.android.tasks.DownloadFileTask;
 
 /**
- * <h4>Description</h4>
+ * <h3>Description</h3>
  * 
  * Abstract class for callbacks to be invoked from the DownloadFileTask. 
  * 
- * <h4>License</h4>
+ * <h3>License</h3>
  * 
  * <pre>
  * Copyright (c) 2011-2014 Bit Stadium GmbH

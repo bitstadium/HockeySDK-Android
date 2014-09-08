@@ -1,14 +1,14 @@
 package net.hockeyapp.android;
 
 /**
- * <h4>Description</h4>
+ * <h3>Description</h3>
  * 
  * Abstract class for callbacks to be invoked with regard to string resources.
  * This is used as the base class for both CrashManagerListener and 
  * UpdateManagerListener. Implement getStringForResource to return custom
  * or localized strings for dialogs and views.
  * 
- * <h4>License</h4>
+ * <h3>License</h3>
  * 
  * <pre>
  * Copyright (c) 2011-2014 Bit Stadium GmbH

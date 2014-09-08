@@ -4,12 +4,12 @@ import android.content.Context;
 import android.text.TextUtils;
 
 /**
- * <h4>Description</h4>
+ * <h3>Description</h3>
  *
  * The LocaleManager replaces statically initialized strings with
  * the respective strings defined in the resources.
  *
- * <h4>License</h4>
+ * <h3>License</h3>
  *
  * <pre>
  * Copyright (c) 2011-2014 Bit Stadium GmbH

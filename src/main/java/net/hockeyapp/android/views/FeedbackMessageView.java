@@ -9,11 +9,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 /**
- * <h4>Description</h4>
+ * <h3>Description</h3>
  * 
  * Internal helper class to draw the content view of a Feedback message row
  * 
- * <h4>License</h4>
+ * <h3>License</h3>
  * 
  * <pre>
  * Copyright (c) 2011-2014 Bit Stadium GmbH

@@ -16,12 +16,12 @@ import android.os.AsyncTask.Status;
 import android.text.TextUtils;
 
 /**
- * <h4>Description</h4>
+ * <h3>Description</h3>
  * 
  * The update manager sends version information to HockeyApp and
  * shows an alert dialog if a new version was found.
  * 
- * <h4>License</h4>
+ * <h3>License</h3>
  * 
  * <pre>
  * Copyright (c) 2011-2014 Bit Stadium GmbH

@@ -14,11 +14,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * <h4>Description</h4>
+ * <h3>Description</h3>
  * 
  * JSON parser helper class
  * 
- * <h4>License</h4>
+ * <h3>License</h3>
  * 
  * <pre>
  * Copyright (c) 2011-2014 Bit Stadium GmbH
@@ -53,9 +53,9 @@ public class FeedbackParser {
   }
 
   /**
-  * FeedbackParserHolder is loaded on the first execution of FeedbackParser.getInstance() 
-  * or the first access to FeedbackParserHolder.INSTANCE, not before.
-  */
+   * FeedbackParserHolder is loaded on the first execution of FeedbackParser.getInstance() 
+   * or the first access to FeedbackParserHolder.INSTANCE, not before.
+   */
   private static class FeedbackParserHolder { 
     public static final FeedbackParser INSTANCE = new FeedbackParser();
   }
@@ -66,8 +66,9 @@ public class FeedbackParser {
   
   /**
    * Parses JSON string
-   * @param feedbackResponseJson  JSON String
-   * @return
+   *
+   * @param feedbackResponseJson string with JSON response
+   * @return instance of FeedbackResponse
    */
   public FeedbackResponse parseFeedbackResponse(String feedbackResponseJson) {
     FeedbackResponse feedbackResponse = null;

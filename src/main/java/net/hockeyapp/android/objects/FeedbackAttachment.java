@@ -7,11 +7,11 @@ import java.io.FilenameFilter;
 import java.io.Serializable;
 
 /**
- * <h4>Description</h4>
+ * <h3>Description</h3>
  * 
  * Model for feedback attachments.
  * 
- * <h4>License</h4>
+ * <h3>License</h3>
  * 
  * <pre>
  * Copyright (c) 2011-2014 Bit Stadium GmbH

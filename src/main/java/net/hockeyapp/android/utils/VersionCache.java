@@ -4,11 +4,11 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 /**
- * <h4>Description</h4>
+ * <h3>Description</h3>
  * 
  * Internal helper class to cache version data.
  * 
- * <h4>License</h4>
+ * <h3>License</h3>
  * 
  * <pre>
  * Copyright (c) 2011-2014 Bit Stadium GmbH

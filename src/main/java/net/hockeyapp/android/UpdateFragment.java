@@ -25,12 +25,12 @@ import android.widget.Button;
 import android.widget.TextView;
 
 /**
- * <h4>Description</h4>
+ * <h3>Description</h3>
  * 
  * Fragment to show update information and start the download
  * process if the user taps the corresponding button. 
  * 
- * <h4>License</h4>
+ * <h3>License</h3>
  * 
  * <pre>
  * Copyright (c) 2011-2014 Bit Stadium GmbH

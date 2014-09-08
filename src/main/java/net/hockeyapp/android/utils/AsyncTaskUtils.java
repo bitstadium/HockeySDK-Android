@@ -4,12 +4,12 @@ import android.os.AsyncTask;
 import android.os.Build;
 
 /**
- * <h4>Description</h4>
+ * <h3>Description</h3>
  * 
  * Either calls execute or executeOnExecutor on an AsyncTask depending on the
  * API level.
  * 
- * <h4>License</h4>
+ * <h3>License</h3>
  * 
  * <pre>
  * Copyright (c) 2011-2014 Bit Stadium GmbH

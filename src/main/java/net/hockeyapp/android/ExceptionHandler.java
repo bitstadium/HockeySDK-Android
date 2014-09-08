@@ -13,13 +13,13 @@ import java.util.UUID;
 import android.util.Log;
 
 /**
- * <h4>Description</h4>
+ * <h3>Description</h3>
  * 
  * Helper class to catch exceptions. Saves the stack trace
  * as a file and executes callback methods to ask the app for 
  * additional information and meta data (see CrashManagerListener). 
  * 
- * <h4>License</h4>
+ * <h3>License</h3>
  * 
  * <pre>
  * Copyright (c) 2009 nullwire aps

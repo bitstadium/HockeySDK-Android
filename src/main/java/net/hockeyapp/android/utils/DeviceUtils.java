@@ -7,11 +7,11 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 
 /**
- * <h4>Description</h4>
+ * <h3>Description</h3>
  * 
  * Device helper class.
  * 
- * <h4>License</h4>
+ * <h3>License</h3>
  * 
  * <pre>
  * Copyright (c) 2011-2014 Bit Stadium GmbH
@@ -61,6 +61,7 @@ public class DeviceUtils {
   /**
    * Returns the current version of the app.
    * 
+   * @param context the context to use
    * @return The version code as integer.
    */
   public int getCurrentVersionCode(Context context) {
@@ -70,6 +71,7 @@ public class DeviceUtils {
   /**
    * Returns the app's name.
    * 
+   * @param context the context to use
    * @return The app's name as a String.
    */
   public String getAppName(Context context) {

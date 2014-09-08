@@ -15,11 +15,11 @@ import java.io.InputStream;
 import java.util.Stack;
 
 /**
- * <h4>Description</h4>
+ * <h3>Description</h3>
  * 
  * The PaintView for showing the image and drawing on it.
  * 
- * <h4>License</h4>
+ * <h3>License</h3>
  * 
  * <pre>
  * Copyright (c) 2011-2014 Bit Stadium GmbH
@@ -56,9 +56,9 @@ public class PaintView extends ImageView {
    * Determines the orientation of the image based on its ratio and returns the orientation the activity
    * should have.
    *
-   * @param resolver
-   * @param imageUri
-   * @return The desired activity orientation.
+   * @param resolver a content resolver
+   * @param imageUri the URI for the image
+   * @return the desired activity orientation
    */
   public static int determineOrientation(ContentResolver resolver, Uri imageUri) {
     BitmapFactory.Options options = new BitmapFactory.Options();
@@ -83,6 +83,11 @@ public class PaintView extends ImageView {
    * defined by the given reqWidth and reqHeight.
    *
    * See: http://developer.android.com/training/displaying-bitmaps/load-bitmap.html
+   *
+   * @param options options that describe the image
+   * @param reqWidth required height
+   * @param reqHeight required width
+   * @return the scale factor
    */
   private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
     /* Raw height and width of image */
@@ -110,6 +115,12 @@ public class PaintView extends ImageView {
    * and reqHeight.
    *
    * Based on: http://developer.android.com/training/displaying-bitmaps/load-bitmap.html
+   *
+   * @param resolver a content resolver
+   * @param imageUri the URI for the image
+   * @param reqWidth required height
+   * @param reqHeight required width
+   * @return the decoded bitmap
    */
   private static Bitmap decodeSampledBitmapFromResource(ContentResolver resolver, Uri imageUri, int reqWidth, int reqHeight) throws IOException {
     /* First decode with inJustDecodeBounds=true to check dimensions */

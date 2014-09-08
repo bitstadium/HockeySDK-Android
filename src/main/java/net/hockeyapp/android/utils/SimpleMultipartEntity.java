@@ -8,7 +8,7 @@ import java.io.*;
 import java.util.Random;
 
 /**
- * <h4>Description</h4>
+ * <h3>Description</h3>
  * 
  * To avoid external apache library "httpmime" this is a simple implementation for a MultipartEntity.
  * Please note that first all key value pairs have to be written and then at least one file part has to be added.
@@ -17,7 +17,7 @@ import java.util.Random;
  * Based on:
  * http://derivedcode.wordpress.com/2014/11/04/android-uploading-files-to-server-over-http-using-multipart-entity/
  * 
- * <h4>License</h4>
+ * <h3>License</h3>
  * 
  * <pre>
  * Copyright (c) 2011-2014 Bit Stadium GmbH

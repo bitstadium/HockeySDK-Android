@@ -5,11 +5,11 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 
 /**
- * <h4>Description</h4>
+ * <h3>Description</h3>
  * 
  * {@link SharedPreferences} helper class
  * 
- * <h4>License</h4>
+ * <h3>License</h3>
  * 
  * <pre>
  * Copyright (c) 2011-2014 Bit Stadium GmbH
@@ -58,7 +58,8 @@ public class PrefsUtil {
 
   /**
    * Return the singleton.
-   * @return
+   *
+   * @return the singleton
    */
   public static PrefsUtil getInstance() {
     return PrefsUtilHolder.INSTANCE;
@@ -66,6 +67,9 @@ public class PrefsUtil {
     
   /**
    * Save feedback token to {@link SharedPreferences}
+   * 
+   * @param context the context to use
+   * @param token the feedback token
    */
   public void saveFeedbackTokenToPrefs(Context context, String token) {
     if (context != null) {
@@ -80,6 +84,9 @@ public class PrefsUtil {
     
   /**
    * Retrieves the feedback token from {@link SharedPreferences}
+   *
+   * @param context the context to use
+   * @return the feedback token
    */
   public String getFeedbackTokenFromPrefs(Context context) {
     if (context == null) {
@@ -96,6 +103,11 @@ public class PrefsUtil {
 
   /**
    * Save name and email to {@link SharedPreferences}
+   *
+   * @param context the context to use
+   * @param name the user's name
+   * @param email the user's email
+   * @param subject the message subject
    */
   public void saveNameEmailSubjectToPrefs(Context context, String name, String email, String subject) {
     if (context != null) {
@@ -116,6 +128,9 @@ public class PrefsUtil {
   
   /**
    * Retrieves the name and email from {@link SharedPreferences}
+   *
+   * @param context the context to use
+   * @return a string with name, email, and subject
    */
   public String getNameEmailFromPrefs(Context context) {
     if (context == null) {
@@ -132,7 +147,9 @@ public class PrefsUtil {
   
   /**
    * Apply SharedPreferences.Editor changes. If the code runs on API level 9 or higher,
-   * the asynchronous method apply is used, otherwise commit. 
+   * the asynchronous method apply is used, otherwise commit.
+   *
+   * @param editor the editor that should be commited
    */
   public static void applyChanges(Editor editor) {
     if (applySupported()) {
@@ -145,6 +162,8 @@ public class PrefsUtil {
   
   /**
    * Returns true if SharedPreferences.Editor.apply is supported.
+   *
+   * @return true if SharedPreferences.Editor.apply is supported
    */
   public static Boolean applySupported() {
     try {

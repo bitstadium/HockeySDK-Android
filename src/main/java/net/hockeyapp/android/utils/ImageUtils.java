@@ -11,11 +11,11 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * <h4>Description</h4>
+ * <h3>Description</h3>
  * 
  * Various functions related to image loading and bitmap scaling.
  * 
- * <h4>License</h4>
+ * <h3>License</h3>
  * 
  * <pre>
  * Copyright (c) 2011-2014 Bit Stadium GmbH
@@ -51,6 +51,8 @@ public class ImageUtils {
   /**
    * Determines the orientation of the image based on its ratio.
    *
+   * @param file the file handle of the image
+   * @throws IOException if the file couldn't be processed
    * @return The image orientation, either ORIENTATION_PORTRAIT or ORIENTATION_LANDSCAPE.
    */
   public static int determineOrientation(File file) throws IOException {
@@ -67,6 +69,9 @@ public class ImageUtils {
   /**
    * Determines the orientation of the image based on its ratio.
    *
+   * @param context the context to use
+   * @param uri the URI of the image
+   * @throws IOException if the URI couldn't be processed
    * @return The image orientation, either ORIENTATION_PORTRAIT or ORIENTATION_LANDSCAPE.
    */
   public static int determineOrientation(Context context, Uri uri) throws IOException {
@@ -83,6 +88,7 @@ public class ImageUtils {
   /**
    * Determines the orientation of the image based on its ratio.
    *
+   * @param input the input stream of the image
    * @return The image orientation, either ORIENTATION_PORTRAIT or ORIENTATION_LANDSCAPE.
    */
   public static int determineOrientation(InputStream input) {
@@ -104,6 +110,12 @@ public class ImageUtils {
    * and reqHeight.
    *
    * Based on: http://developer.android.com/training/displaying-bitmaps/load-bitmap.html
+   * 
+   * @param file the file handle of the image
+   * @param reqWidth required width
+   * @param reqHeight required height
+   * @throws IOException if the URI couldn't be processed
+   * @return decoded the decoded bitmap
    */
   public static Bitmap decodeSampledBitmap(File file, int reqWidth, int reqHeight) throws IOException {
     // First decode with inJustDecodeBounds=true to check dimensions
@@ -127,6 +139,13 @@ public class ImageUtils {
    * and reqHeight.
    *
    * Based on: http://developer.android.com/training/displaying-bitmaps/load-bitmap.html
+   * 
+   * @param context the context to use
+   * @param imageUri the URI of the image
+   * @param reqWidth required width
+   * @param reqHeight required height
+   * @throws IOException if the URI couldn't be processed
+   * @return decoded the decoded bitmap
    */
   public static Bitmap decodeSampledBitmap(Context context, Uri imageUri, int reqWidth, int reqHeight) throws IOException {
     // First decode with inJustDecodeBounds=true to check dimensions
@@ -152,6 +171,11 @@ public class ImageUtils {
    * defined by the given reqWidth and reqHeight.
    *
    * See: http://developer.android.com/training/displaying-bitmaps/load-bitmap.html
+   *
+   * @param options options that describe the image
+   * @param reqWidth required height
+   * @param reqHeight required width
+   * @return the scale factor
    */
   private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
     // Raw height and width of image
