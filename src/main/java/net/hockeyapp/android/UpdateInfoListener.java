@@ -38,6 +38,8 @@ package net.hockeyapp.android;
 public interface UpdateInfoListener {
   /**
    * Implement to return the app's current version code.
+   *
+   * @return current version code
    */
   public int getCurrentVersionCode();
 }

@@ -40,7 +40,10 @@ package net.hockeyapp.android;
  **/
 public abstract class StringListener {
   /**
-   * Return a custom string for the specified resource ID.
+   * Return a localized string for the specified resource ID.
+   *
+   * @param resourceID the string's resource ID
+   * @return localized string
    */
   public String getStringForResource(int resourceID) {
     return null;

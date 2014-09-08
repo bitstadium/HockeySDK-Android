@@ -299,6 +299,8 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
   /**
    * Configures the content view by initializing the input {@link EditText}s 
    * and the listener for the Send Feedback {@link Button} 
+   *
+   * @param haveToken the message list is shown if true
    */
   protected void configureFeedbackView(boolean haveToken) {
     feedbackScrollView = (ScrollView) findViewById(FeedbackView.FEEDBACK_SCROLLVIEW_ID);
@@ -559,6 +561,8 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
   
   /**
    * Enables/Disables the Send Feedback button.
+   *
+   * @param isEnable the button is enabled if true
    */
   public void enableDisableSendFeedbackButton(boolean isEnable) {
   	if (sendFeedbackButton != null) {

@@ -176,6 +176,8 @@ public class FeedbackManager {
   /**
    * Checks if an answer to the feedback is available and if yes notifies the listener or
    * creates a system notification.
+   *
+   * @param context the context to use
    */
   public static void checkForAnswersAndNotify(final Context context) {
     String token = PrefsUtil.getInstance().getFeedbackTokenFromPrefs(context);
@@ -206,6 +208,8 @@ public class FeedbackManager {
 
   /**
    * Returns the last listener which has been registered with any Feedback manager.
+   *
+   * @return last used feedback listener
    */
   public static FeedbackManagerListener getLastListener() {
     return lastListener;
@@ -236,6 +240,8 @@ public class FeedbackManager {
 
   /**
    * Clears the reference to the activity that was set before by setActivityForScreenshot.
+   *
+   * @param activity activity for screenshot
    */
   public static void unsetCurrentActivityForScreenshot(Activity activity) {
     if (currentActivity == null || currentActivity != activity) {
@@ -250,8 +256,7 @@ public class FeedbackManager {
    * Takes a screenshot of the currently set activity and stores it in the HockeyApp folder on the
    * external storage also publishing it to the Android gallery.
    *
-   * @param context Toast messages will be displayed using this context.
-   * @return
+   * @param context toast messages will be displayed using this context
    */
   public static void takeScreenshot(Context context) {
     View view = currentActivity.getWindow().getDecorView();

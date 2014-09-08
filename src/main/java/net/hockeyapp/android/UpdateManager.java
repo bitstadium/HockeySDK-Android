@@ -97,10 +97,11 @@ public class UpdateManager {
   /**
    * Registers new update manager.
    * 
-   * @param activity Parent activity.
-   * @param urlString URL of the HockeyApp server.
-   * @param appIdentifier App ID of your app on HockeyApp.
-   * @param listener Implement for callback functions.
+   * @param activity parent activity
+   * @param urlString URL of the HockeyApp server
+   * @param appIdentifier App ID of your app on HockeyApp
+   * @param listener implement for callback functions
+   * @param isDialogRequired if false, no alert dialog is shown
    */
   public static void register(Activity activity, String urlString, String appIdentifier, UpdateManagerListener listener, boolean isDialogRequired) {
     lastListener = listener;
@@ -273,6 +274,8 @@ public class UpdateManager {
 
   /**
    * Returns the last listener which has been registered with any update manager.
+   *
+   * @return last update manager listener
    */
   public static UpdateManagerListener getLastListener() {
     return lastListener;

@@ -39,6 +39,8 @@ import net.hockeyapp.android.objects.FeedbackMessage;
 public abstract class FeedbackManagerListener extends StringListener {
   /**
    * Return your own subclass of FeedbackActivity for customization. 
+   *
+   * @return subclass of FeedbackActivity
    */
   public Class<? extends FeedbackActivity> getFeedbackActivityClass() {
     return FeedbackActivity.class;
@@ -47,9 +49,9 @@ public abstract class FeedbackManagerListener extends StringListener {
   /**
    * Called when an answer to a feedback is available.
    *
+   * @param latestMessage the last message
    * @return true if this event has been properly handled by this method
    *         and false if not and a notification should be fired.
-   * @param latestMessage
    */
   public abstract boolean feedbackAnswered(FeedbackMessage latestMessage);
 }

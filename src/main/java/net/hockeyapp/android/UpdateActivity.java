@@ -178,6 +178,8 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
   /**
    * Starts the download task and sets the listener for a successful
    * download, a failed download, and configuration strings.
+   *
+   * @param url URL of file that should be downloaded
    */
   protected void startDownloadTask(String url) {
     createDownloadTask(url, new DownloadFileListener() {

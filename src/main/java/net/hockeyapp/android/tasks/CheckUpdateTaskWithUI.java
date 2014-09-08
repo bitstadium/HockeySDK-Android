@@ -58,9 +58,8 @@ import android.widget.Toast;
  * OTHER DEALINGS IN THE SOFTWARE.
  * </pre>
  *
- * @author Francisco Javier Fernandez <fjfdeztoro@gmail.com>
+ * @author Francisco Javier Fernandez
  **/
-
 public class CheckUpdateTaskWithUI extends CheckUpdateTask {
 
   private Activity activity = null;

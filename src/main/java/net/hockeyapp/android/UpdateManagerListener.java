@@ -41,6 +41,8 @@ import java.util.Date;
 public abstract class UpdateManagerListener extends StringListener {
   /**
    * Return your own subclass of UpdateActivity for customization. 
+   *
+   * @return subclass of UpdateActivity
    */
   public Class<? extends UpdateActivity> getUpdateActivityClass() {
     return UpdateActivity.class;
@@ -48,6 +50,8 @@ public abstract class UpdateManagerListener extends StringListener {
 
   /**
    * Return your own subclass of UpdateFragment for customization. 
+   *
+   * @return subclass of UpdateFragment
    */
   public Class<? extends UpdateFragment> getUpdateFragmentClass() {
     return UpdateFragment.class;
@@ -79,6 +83,8 @@ public abstract class UpdateManagerListener extends StringListener {
   /**
    * Return an expiry date for this build or null. After this date the
    * build will be blocked by a dialog.
+   *
+   * @return a valid date object
    */
   public Date getExpiryDate() {
     return null;
@@ -87,6 +93,8 @@ public abstract class UpdateManagerListener extends StringListener {
   /**
    * Called when the build is expired. Return false to if you handle
    * the expiry in your code.
+   *
+   * @return app handles the expiration itself
    */
   public boolean onBuildExpired() {
     return true;

@@ -92,11 +92,11 @@ public class LoginManager {
   /**
    * Registers new LoginManager.
    *
-   * @param context The context to use. Usually your Activity object.
-   * @param appIdentifier App ID of your app on HockeyApp.
-   * @param appSecret The App Secret of your app on HockeyApp.
-   * @param mode The Login Mode.
-   * @param activity The first activity to be started by your app.
+   * @param context the context to use. Usually your Activity object.
+   * @param appIdentifier the App ID of your app on HockeyApp.
+   * @param appSecret the App Secret of your app on HockeyApp.
+   * @param mode the login mode.
+   * @param listener instance of LoginListener
    */
   public static void register(final Context context, String appIdentifier, String appSecret, int mode, LoginManagerListener listener) {
     LoginManager.listener = listener;

@@ -38,6 +38,8 @@ public abstract class CrashManagerListener extends StringListener {
   /**
    * Return true to ignore the default exception handler, i.e. the user will not
    * get the alert dialog with the "Force Close" button.
+   *
+   * @return if true, the default handler is ignored
    */
   public boolean ignoreDefaultHandler() {
     return false;
@@ -47,6 +49,8 @@ public abstract class CrashManagerListener extends StringListener {
    * Return false to remove the device data (OS version, manufacturer, model)
    * from the crash log, e.g. if some of your testers are using unreleased
    * devices.
+   *
+   * @return if true, the crash report will include device data
    */
   public boolean includeDeviceData() {
     return true;
@@ -56,6 +60,8 @@ public abstract class CrashManagerListener extends StringListener {
    * Return contact data or similar; note that this has privacy implications,
    * so you might want to return nil for release builds! The string will be
    * limited to 255 characters.
+   *
+   * @return the contact string
    */
   public String getContact() {
     return null;
@@ -64,6 +70,8 @@ public abstract class CrashManagerListener extends StringListener {
   /**
    * Return additional data, i.e. parts of the system log, the last server
    * response or similar. This string is not limited to a certain size.
+   *
+   * @return a description
    */
   public String getDescription() {
     return null;
@@ -73,6 +81,8 @@ public abstract class CrashManagerListener extends StringListener {
    * Return a user ID or similar; note that this has privacy implications,
    * so you might want to return nil for release builds! The string will be
    * limited to 255 characters.
+   *
+   * @return the user's ID
    */
   public String getUserID() {
     return null;
@@ -84,6 +94,7 @@ public abstract class CrashManagerListener extends StringListener {
    * 
    * @deprecated Replace this method with onNewCrashesFound, 
    *             onConfirmedCrashesFound, and shouldAutoUploadCrashReport.
+   * @return if true, crashes are sent automatically
    */
   public boolean onCrashesFound() {
     return false;
@@ -92,6 +103,8 @@ public abstract class CrashManagerListener extends StringListener {
   /**
    * Return true if you want to auto-send crashes. Note that this method
    * is only called if new crashes were found. 
+   *
+   * @return if true, crashes are sent automatically
    */
   public boolean shouldAutoUploadCrashes() {
     return false;

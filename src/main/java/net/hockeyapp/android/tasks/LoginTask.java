@@ -86,7 +86,9 @@ public class LoginTask extends AsyncTask<Void, Void, Boolean> {
    * @param context     {@link Context} object
    * @param handler     Handler object to send data back to the activity
    * @param urlString   URL for Identity Check
-   * @param params      A map for all key value params.
+   * @param mode        LoginManager.LOGIN_MODE_ANONYMOUS, LoginManager.LOGIN_MODE_EMAIL_ONLY, 
+   *                    LoginManager.LOGIN_MODE_EMAIL_PASSWORD, or LoginManager.LOGIN_MODE_VALIDATE
+   * @param params      a map for all key value params.
    */
   public LoginTask(Context context, Handler handler, String urlString, int mode, Map<String, String> params) {
     this.context = context;

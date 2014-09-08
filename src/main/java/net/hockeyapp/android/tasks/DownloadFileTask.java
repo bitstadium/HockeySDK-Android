@@ -142,6 +142,11 @@ public class DownloadFileTask extends AsyncTask<Void, Integer, Long> {
 
   /**
    * Recursive method for resolving redirects. Resolves at most MAX_REDIRECTS times.
+   * 
+   * @param url a URL
+   * @param remainingRedirects loop counter
+   * @throws IOException if connection fails
+   * @return instance of URLConnection
    */
   protected URLConnection createConnection(URL url, int remainingRedirects) throws IOException {
     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
