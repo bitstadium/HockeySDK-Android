@@ -6,9 +6,11 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.Settings;
 import android.util.Log;
 
 import java.io.File;
+import java.security.MessageDigest;
 
 /**
  * <h3>Description</h3>
@@ -86,6 +88,11 @@ public class Constants {
   public static String PHONE_MANUFACTURER = null;
 
   /**
+   * Unique identifier for crash reports. 
+   */
+  public static String CRASH_IDENTIFIER = null;
+
+  /**
    * Tag for internal logging statements.
    */
   public static final String TAG = "HockeyApp";
@@ -118,8 +125,9 @@ public class Constants {
 
     loadFilesPath(context);
     loadPackageData(context);
+    loadCrashIdentifier(context);
   }
-
+  
   /**
    * Returns a file representing the folder in which screenshots are stored.
    *
@@ -184,6 +192,12 @@ public class Constants {
     }
   }
 
+  /**
+   * Helper method to load the build number from the AndroidManifest. 
+   * 
+   * @param context the context to use. Usually your Activity object.
+   * @param packageManager an instance of PackageManager
+   */
   private static int loadBuildNumber(Context context, PackageManager packageManager) {
     try {
       ApplicationInfo appInfo = packageManager.getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
@@ -198,5 +212,45 @@ public class Constants {
     }
     
     return 0;
+  }
+
+  /**
+   * Helper method to load the crash identifier. 
+   * 
+   * @param context the context to use. Usually your Activity object.
+   */
+  private static void loadCrashIdentifier(Context context) {
+    String deviceIdentifier = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+    if ((Constants.APP_PACKAGE != null) && (deviceIdentifier != null)) {
+      String combined = Constants.APP_PACKAGE + ":" + deviceIdentifier;
+      try {
+          MessageDigest digest = MessageDigest.getInstance("SHA-1");
+          byte[] bytes = combined.getBytes("UTF-8");
+          digest.update(bytes, 0, bytes.length);
+          bytes = digest.digest();
+
+          Constants.CRASH_IDENTIFIER = bytesToHex(bytes);
+      }
+      catch (Throwable e) {
+      }
+    }
+  }
+
+  /**
+   * Helper method to convert a byte array to the hex string. 
+   * Based on http://stackoverflow.com/questions/9655181/convert-from-byte-array-to-hex-string-in-java
+   *
+   * @param bytes a byte array
+   */
+  private static String bytesToHex(byte[] bytes) {
+    final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
+    char[] hex = new char[bytes.length * 2];
+    for (int index = 0; index < bytes.length; index++) {
+      int value = bytes[index] & 0xFF;
+      hex[index * 2] = HEX_ARRAY[value >>> 4];
+      hex[index * 2 + 1] = HEX_ARRAY[value & 0x0F];
+    }
+    String result = new String(hex);
+    return result.replaceAll("(\\w{8})(\\w{4})(\\w{4})(\\w{4})(\\w{12})", "$1-$2-$3-$4-$5");  
   }
 }

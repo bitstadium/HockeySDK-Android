@@ -9,7 +9,6 @@ import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.Date;
 import java.util.UUID;
 
-
 import android.util.Log;
 
 /**
@@ -84,13 +83,20 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
       // Write the stacktrace to disk
       BufferedWriter write = new BufferedWriter(new FileWriter(path));
       write.write("Package: " + Constants.APP_PACKAGE + "\n");
+      
+      if (Constants.CRASH_IDENTIFIER != null) {
+        write.write("CrashReporter Key: " + Constants.CRASH_IDENTIFIER + "\n");
+      }
+      
       write.write("Version Code: " + Constants.APP_VERSION + "\n");
       write.write("Version Name: " + Constants.APP_VERSION_NAME + "\n");
+      
       if ((listener == null) || (listener.includeDeviceData())) {
         write.write("Android: " + Constants.ANDROID_VERSION + "\n");
         write.write("Manufacturer: " + Constants.PHONE_MANUFACTURER + "\n");
         write.write("Model: " + Constants.PHONE_MODEL + "\n");
       }
+      
       write.write("Date: " + now + "\n");
       write.write("\n");
       write.write(result.toString());
