@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
@@ -222,7 +223,7 @@ public class Constants {
   private static void loadCrashIdentifier(Context context) {
     String deviceIdentifier = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
     if ((Constants.APP_PACKAGE != null) && (deviceIdentifier != null)) {
-      String combined = Constants.APP_PACKAGE + ":" + deviceIdentifier;
+      String combined = Constants.APP_PACKAGE + ":" + deviceIdentifier + ":" + createSalt(context);
       try {
           MessageDigest digest = MessageDigest.getInstance("SHA-1");
           byte[] bytes = combined.getBytes("UTF-8");
@@ -234,6 +235,26 @@ public class Constants {
       catch (Throwable e) {
       }
     }
+  }
+
+  /**
+   * Helper method to create a salt for the crash identifier. 
+   * 
+   * @param context the context to use. Usually your Activity object.
+   */
+  private static String createSalt(Context context) {
+    String fingerprint = "HA" + (Build.BOARD.length() % 10) + (Build.BRAND.length() % 10) + (Build.CPU_ABI.length() % 10) + (Build.PRODUCT.length() % 10);
+
+    String serial = "";
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+      try {
+        serial = android.os.Build.class.getField("SERIAL").get(null).toString();
+      }
+      catch (Throwable t) {
+      }
+    }
+    
+    return fingerprint + ":" + serial;
   }
 
   /**
