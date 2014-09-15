@@ -128,11 +128,10 @@ public class FeedbackView extends LinearLayout {
     wrapperBase.setId(WRAPPER_BASE_ID);
     
     LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-    int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 10.0, getResources().getDisplayMetrics());
     params.gravity = Gravity.CENTER | Gravity.TOP;
     
     wrapperBase.setLayoutParams(params);
-    wrapperBase.setPadding(0, padding, 0, padding);
+    wrapperBase.setPadding(0, 0, 0, 0);
     wrapperBase.setOrientation(LinearLayout.VERTICAL);
     
     addView(wrapperBase);
@@ -147,7 +146,7 @@ public class FeedbackView extends LinearLayout {
     params.gravity = Gravity.CENTER;
     
     feedbackScrollView.setLayoutParams(params);
-    feedbackScrollView.setPadding(padding, padding, padding, padding);
+    feedbackScrollView.setPadding(padding, 0, padding, 0);
     
     wrapperBase.addView(feedbackScrollView);
   }
@@ -177,7 +176,7 @@ public class FeedbackView extends LinearLayout {
     params.gravity = Gravity.CENTER;
     
     wrapperLayoutFeedbackAndMessages.setLayoutParams(params);
-    wrapperLayoutFeedbackAndMessages.setPadding(padding, padding, padding, padding);
+    wrapperLayoutFeedbackAndMessages.setPadding(padding, padding, padding, 0);
     wrapperLayoutFeedbackAndMessages.setGravity(Gravity.TOP);
     wrapperLayoutFeedbackAndMessages.setOrientation(LinearLayout.VERTICAL);
     
@@ -220,7 +219,7 @@ public class FeedbackView extends LinearLayout {
     
     LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
     int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 20.0, getResources().getDisplayMetrics());
-    params.setMargins(0, 0, 0, margin);
+    params.setMargins(0, margin / 2, 0, margin);
 
     editText.setLayoutParams(params);
     editText.setImeOptions(EditorInfo.IME_ACTION_NEXT);
