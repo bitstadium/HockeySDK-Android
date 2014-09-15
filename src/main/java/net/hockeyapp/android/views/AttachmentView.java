@@ -1,5 +1,10 @@
 package net.hockeyapp.android.views;
 
+import java.io.File;
+
+import net.hockeyapp.android.Constants;
+import net.hockeyapp.android.objects.FeedbackAttachment;
+import net.hockeyapp.android.utils.ImageUtils;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -12,13 +17,11 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
-import net.hockeyapp.android.Constants;
-import net.hockeyapp.android.objects.FeedbackAttachment;
-import net.hockeyapp.android.utils.ImageUtils;
-
-import java.io.File;
-import java.io.IOException;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 /**
  * <h3>Description</h3>
