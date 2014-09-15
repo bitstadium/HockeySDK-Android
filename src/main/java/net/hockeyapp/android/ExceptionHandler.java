@@ -82,12 +82,9 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
       
       // Write the stacktrace to disk
       BufferedWriter write = new BufferedWriter(new FileWriter(path));
+      
+      // HockeyApp expects the package name in the first line!
       write.write("Package: " + Constants.APP_PACKAGE + "\n");
-      
-      if (Constants.CRASH_IDENTIFIER != null) {
-        write.write("CrashReporter Key: " + Constants.CRASH_IDENTIFIER + "\n");
-      }
-      
       write.write("Version Code: " + Constants.APP_VERSION + "\n");
       write.write("Version Name: " + Constants.APP_VERSION_NAME + "\n");
       
@@ -95,6 +92,10 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
         write.write("Android: " + Constants.ANDROID_VERSION + "\n");
         write.write("Manufacturer: " + Constants.PHONE_MANUFACTURER + "\n");
         write.write("Model: " + Constants.PHONE_MODEL + "\n");
+      }
+      
+      if (Constants.CRASH_IDENTIFIER != null) {
+        write.write("CrashReporter Key: " + Constants.CRASH_IDENTIFIER + "\n");
       }
       
       write.write("Date: " + now + "\n");
