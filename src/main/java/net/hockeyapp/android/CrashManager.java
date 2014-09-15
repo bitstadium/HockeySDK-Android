@@ -281,6 +281,7 @@ public class CrashManager {
         } 
         finally {
           if (successful) {
+            Log.d(Constants.TAG, "Transmission succeeded");
             deleteStackTrace(weakContext, list[index]);
 
             if (listener != null) {
@@ -288,6 +289,7 @@ public class CrashManager {
             }
           }
           else {
+            Log.d(Constants.TAG, "Transmission failed, will retry on next register() call");
             if (listener != null) {
               listener.onCrashesNotSent();
             }
