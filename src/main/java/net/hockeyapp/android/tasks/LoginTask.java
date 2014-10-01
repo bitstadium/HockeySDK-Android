@@ -127,7 +127,8 @@ public class LoginTask extends AsyncTask<Void, Void, Boolean> {
 
   @Override
   protected Boolean doInBackground(Void... args) {
-    HttpClient httpClient = ConnectionManager.getInstance().getHttpClient();
+    if (context == null) return false;
+    HttpClient httpClient = ConnectionManager.getInstance(context).getHttpClient();
 
     try {
       HttpUriRequest httpUriRequest = makeRequest(mode, params);

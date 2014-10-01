@@ -148,7 +148,8 @@ public class SendFeedbackTask extends AsyncTask<Void, Void, HashMap<String, Stri
   
   @Override
   protected HashMap<String, String> doInBackground(Void... args) {
-    HttpClient httpclient = ConnectionManager.getInstance().getHttpClient();
+    if (context == null) return null;
+    HttpClient httpclient = ConnectionManager.getInstance(context).getHttpClient();
 
     if (isFetchMessages && token != null) {
       /** If we are fetching messages then do a GET */
