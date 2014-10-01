@@ -259,7 +259,7 @@ public class CrashManager {
           if (stacktrace.length() > 0) {
             // Transmit stack trace with POST request
             Log.d(Constants.TAG, "Transmitting crash data: \n" + stacktrace);
-            DefaultHttpClient httpClient = (DefaultHttpClient)ConnectionManager.getInstance().getHttpClient();
+            DefaultHttpClient httpClient = (DefaultHttpClient)ConnectionManager.getInstance(weakContext.get()).getHttpClient();
             HttpPost httpPost = new HttpPost(getURLString());
             
             List <NameValuePair> parameters = new ArrayList <NameValuePair>(); 

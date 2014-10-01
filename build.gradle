@@ -8,6 +8,10 @@ buildscript {
     }
 }
 
+repositories {
+    mavenCentral()
+}
+
 version '3.5.0'
 group 'net.hockeyapp.android'
 
@@ -17,9 +21,23 @@ android {
     compileSdkVersion 17
     buildToolsVersion "19.1.0"
 
+    defaultConfig {
+        minSdkVersion 8
+        targetSdkVersion 19
+    }
+
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
         }
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+}
+
+dependencies {
+    compile 'org.thoughtcrime.ssl.pinning:AndroidPinning:1.0.0'
 }
