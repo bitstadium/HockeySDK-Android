@@ -63,6 +63,7 @@ import android.widget.Toast;
 public class CheckUpdateTaskWithUI extends CheckUpdateTask {
 
   private Activity activity = null;
+  private AlertDialog dialog = null;
   protected boolean isDialogRequired = false;
 
   public CheckUpdateTaskWithUI(WeakReference<Activity> weakActivity, String urlString, String appIdentifier, UpdateManagerListener listener, boolean isDialogRequired) {
@@ -78,7 +79,13 @@ public class CheckUpdateTaskWithUI extends CheckUpdateTask {
   @Override
   public void detach() {
     super.detach();
+    
     activity = null;
+    
+    if (dialog != null) {
+      dialog.dismiss();
+      dialog = null;
+    }
   }
 
   @Override
@@ -127,7 +134,8 @@ public class CheckUpdateTaskWithUI extends CheckUpdateTask {
         }
       });
 
-      builder.create().show();
+      dialog = builder.create();
+      dialog.show();
     }
     else {
       Toast.makeText(activity, Strings.get(listener, Strings.UPDATE_MANDATORY_TOAST_ID), Toast.LENGTH_LONG).show();
@@ -196,5 +204,6 @@ public class CheckUpdateTaskWithUI extends CheckUpdateTask {
   protected void cleanUp() {
     super.cleanUp();
     activity = null;
+    dialog = null;
   }
 }
