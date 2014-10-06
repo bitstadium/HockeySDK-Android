@@ -417,12 +417,12 @@ public class CrashManager {
    */
   private static void sendCrashes(final WeakReference<Context> weakContext, final CrashManagerListener listener, final boolean ignoreDefaultHandler) {
     saveConfirmedStackTraces(weakContext);
+    registerHandler(weakContext, listener, ignoreDefaultHandler);
     
     new Thread() {
       @Override
       public void run() {
         submitStackTraces(weakContext, listener);
-        registerHandler(weakContext, listener, ignoreDefaultHandler);
       }
     }.start();
   }
