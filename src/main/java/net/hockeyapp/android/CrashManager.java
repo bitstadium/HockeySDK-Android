@@ -81,6 +81,11 @@ public class CrashManager {
   private static String urlString = null;
 
   /**
+   * Stack traces are currently submitted
+   */
+  private static boolean submitting = false;
+
+  /**
    * Shared preferences key for always send dialog button.
    */
   private static final String ALWAYS_SEND_KEY = "always_send_crash_reports";
@@ -419,12 +424,17 @@ public class CrashManager {
     saveConfirmedStackTraces(weakContext);
     registerHandler(weakContext, listener, ignoreDefaultHandler);
     
-    new Thread() {
-      @Override
-      public void run() {
-        submitStackTraces(weakContext, listener);
-      }
-    }.start();
+    if (!submitting) {
+      submitting = true;
+      
+      new Thread() {
+        @Override
+        public void run() {
+          submitStackTraces(weakContext, listener);
+          submitting = false;
+        }
+      }.start();
+    }
   }
 
   /**
