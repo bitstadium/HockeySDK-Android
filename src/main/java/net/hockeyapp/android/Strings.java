@@ -149,15 +149,23 @@ public class Strings {
   /** Resource ID for the message when feedback could not be sent (network error). */
   public final static int FEEDBACK_SEND_NETWORK_ERROR_ID     = 0x40d;
 
-  /** Resource ID for the message when not all input fields all filled out. */
-  public final static int FEEDBACK_VALIDATE_INPUT_ERROR_ID   = 0x40e;
+  /** Resource ID for the message when the subject field is not filled out. */
+  public static final int FEEDBACK_VALIDATE_SUBJECT_ERROR_ID = 0x40e;
 
   /** Resource ID for the message when the entered email is invalid. */
   public final static int FEEDBACK_VALIDATE_EMAIL_ERROR_ID   = 0x40f;
   
   /** Resource ID for the message when a generic error has occurred. */
   public final static int FEEDBACK_GENERIC_ERROR_ID          = 0x410;
-  
+
+   /** Resource ID for the message when the name field is not filled out. */
+   public static final int FEEDBACK_VALIDATE_NAME_ERROR_ID = 0x411;
+
+   /** Resource ID for the message when the email field is not filled out. */
+   public static final int FEEDBACK_VALIDATE_EMAIL_EMPTY_ID = 0x412;
+
+   /** Resource ID for the message when the text field is not filled out. */
+   public static final int FEEDBACK_VALIDATE_TEXT_ERROR_ID = 0x413;
 
   ///////////////////////////////////////////////////
   // Login Activity
@@ -247,7 +255,10 @@ public class Strings {
     DEFAULT.put(FEEDBACK_TITLE_ID,                  "Feedback");
     DEFAULT.put(FEEDBACK_SEND_GENERIC_ERROR_ID,     "Message couldn't be posted. Please check your input values and your connection, then try again.");
     DEFAULT.put(FEEDBACK_SEND_NETWORK_ERROR_ID,     "No response from server. Please check your connection, then try again.");
-    DEFAULT.put(FEEDBACK_VALIDATE_INPUT_ERROR_ID,   "Message couldn't be posted. Please fill-out all input fields.");
+    DEFAULT.put(FEEDBACK_VALIDATE_SUBJECT_ERROR_ID, "Please enter a subject");
+    DEFAULT.put(FEEDBACK_VALIDATE_NAME_ERROR_ID,    "Please enter a name");
+    DEFAULT.put(FEEDBACK_VALIDATE_EMAIL_EMPTY_ID,  "Please enter an email address");
+     DEFAULT.put(FEEDBACK_VALIDATE_TEXT_ERROR_ID,  "Please enter a feedback text");
     DEFAULT.put(FEEDBACK_VALIDATE_EMAIL_ERROR_ID,   "Message couldn't be posted. Please check the format of your email address.");
     DEFAULT.put(FEEDBACK_GENERIC_ERROR_ID,          "An error has occured");
 
@@ -267,8 +278,10 @@ public class Strings {
     DEFAULT.put(PAINT_DIALOG_NEGATIVE_BUTTON_ID, "No");
     DEFAULT.put(PAINT_DIALOG_POSITIVE_BUTTON_ID, "Yes");
   }
-  
-  /**
+
+
+
+   /**
    * Returns the default string for the given resource ID.
    * 
    * @param resourceID The ID of the string resource.
