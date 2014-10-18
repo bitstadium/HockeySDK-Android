@@ -106,8 +106,8 @@ public class AttachmentView extends FrameLayout {
     new AsyncTask<Void, Void, Bitmap>() {
       @Override
       protected Bitmap doInBackground(Void... args) {
-          Bitmap bitmap = loadImageThumbnail();
-          return bitmap;
+        Bitmap bitmap = loadImageThumbnail();
+        return bitmap;
       }
         
       @Override
