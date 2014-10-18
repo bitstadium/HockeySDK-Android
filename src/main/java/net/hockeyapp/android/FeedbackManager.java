@@ -11,6 +11,7 @@ import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -272,15 +273,27 @@ public class FeedbackManager {
       suffix++;
     }
 
-    try {
-      FileOutputStream out = new FileOutputStream(result);
-      bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
-      out.close();
+    new AsyncTask<File, Void, Boolean>() {
+      @Override
+      protected Boolean doInBackground(File... args) {
+        try {
+          FileOutputStream out = new FileOutputStream(args[0]);
+          bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+          out.close();
+          return true;
+        } catch (Exception e) {
+          Log.e(Constants.TAG, "Could not save screenshot.", e);
+        }
+        return false;
+      }
 
-    } catch (Exception e) {
-      Log.e(Constants.TAG, "Could not save screenshot.", e);
-      Toast.makeText(context, "Screenshot could not be created. Sorry.", 2000).show();
-    }
+      @Override
+      protected void onPostExecute(Boolean success) {
+        if (success == false) {
+          Toast.makeText(context, "Screenshot could not be created. Sorry.", 2000).show();
+        }
+      }
+    }.execute(result);
 
     /* Publish to gallery. */
     MediaScannerClient client = new MediaScannerClient(result.getAbsolutePath());
