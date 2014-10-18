@@ -164,24 +164,24 @@ public class PaintView extends ImageView {
     new AsyncTask<Object, Void, Bitmap>() {
       @Override
       protected void onPreExecute() {
-          /* This is essential to make the image view to wrap exactly the displayed image and avoiding any
-          empty space around it that would be drawable but doesn't belong to the image. */
-          setAdjustViewBounds(true);
+        /* This is essential to make the image view to wrap exactly the displayed image and avoiding any
+        empty space around it that would be drawable but doesn't belong to the image. */
+        setAdjustViewBounds(true);
       }
 
       @Override
       protected Bitmap doInBackground(java.lang.Object... args) {
-          Context context = (Context) args[0];
-          Uri imageUri = (Uri) args[1];
-          Integer displayWidth = (Integer) args[2];
-          Integer displayHeight = (Integer) args[3];
-          try {
-            Bitmap bm = decodeSampledBitmapFromResource(context.getContentResolver(), imageUri, displayWidth, displayHeight);
-            return bm;
-          } catch (Exception e) {
-            Log.e(Constants.TAG, "Could not load image into ImageView.", e);
-          }
-          return null;
+        Context context = (Context) args[0];
+        Uri imageUri = (Uri) args[1];
+        Integer displayWidth = (Integer) args[2];
+        Integer displayHeight = (Integer) args[3];
+        try {
+          Bitmap bm = decodeSampledBitmapFromResource(context.getContentResolver(), imageUri, displayWidth, displayHeight);
+          return bm;
+        } catch (Exception e) {
+          Log.e(Constants.TAG, "Could not load image into ImageView.", e);
+        }
+        return null;
       }
 
       @Override
