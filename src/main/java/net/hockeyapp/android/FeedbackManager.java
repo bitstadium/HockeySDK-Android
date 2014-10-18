@@ -259,10 +259,10 @@ public class FeedbackManager {
    *
    * @param context toast messages will be displayed using this context
    */
-  public static void takeScreenshot(Context context) {
+  public static void takeScreenshot(final Context context) {
     View view = currentActivity.getWindow().getDecorView();
     view.setDrawingCacheEnabled(true);
-    Bitmap bitmap = view.getDrawingCache();
+    final Bitmap bitmap = view.getDrawingCache();
 
     String filename = currentActivity.getLocalClassName();
     File dir = Constants.getHockeyAppStorageDir();
