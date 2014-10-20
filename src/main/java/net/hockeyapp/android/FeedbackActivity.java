@@ -696,7 +696,6 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
   /**
    * Send feedback to HockeyApp.
    */
-  @SuppressWarnings("deprecation")
   private void sendFeedback() {
   	enableDisableSendFeedbackButton(false);
   	hideKeyboard();
@@ -708,19 +707,19 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
   	String subject = subjectInput.getText().toString().trim();
   	String text = textInput.getText().toString().trim();
 
-   if(TextUtils.isEmpty(subject)){
+    if(TextUtils.isEmpty(subject)){
       subjectInput.setVisibility(View.VISIBLE);
       setError(subjectInput, Strings.FEEDBACK_VALIDATE_SUBJECT_ERROR_ID);
-   }
-   else if (TextUtils.isEmpty(name)) {
+    }
+    else if (TextUtils.isEmpty(name)) {
       setError(nameInput, Strings.FEEDBACK_VALIDATE_NAME_ERROR_ID);
-   }
-   else if (TextUtils.isEmpty(email)) {
+    }
+    else if (TextUtils.isEmpty(email)) {
       setError(emailInput, Strings.FEEDBACK_VALIDATE_EMAIL_EMPTY_ID);
-   }
-   else if(TextUtils.isEmpty(text)) {
+    }
+    else if(TextUtils.isEmpty(text)) {
       setError(textInput, Strings.FEEDBACK_VALIDATE_TEXT_ERROR_ID);
-   }
+    }
   	else if (!Util.isValidEmail(email)) {
       setError(emailInput, Strings.FEEDBACK_VALIDATE_EMAIL_ERROR_ID);
   	}

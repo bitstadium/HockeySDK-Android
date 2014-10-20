@@ -83,8 +83,11 @@ public class LocaleManager {
     loadFromResources("hockeyapp_feedback_title", Strings.FEEDBACK_TITLE_ID, context);
     loadFromResources("hockeyapp_feedback_send_generic_error", Strings.FEEDBACK_SEND_GENERIC_ERROR_ID, context);
     loadFromResources("hockeyapp_feedback_send_network_error", Strings.FEEDBACK_SEND_NETWORK_ERROR_ID, context);
-    loadFromResources("hockeyapp_feedback_validate_input_error", Strings.FEEDBACK_VALIDATE_INPUT_ERROR_ID, context);
+    loadFromResources("hockeyapp_feedback_validate_subject_error", Strings.FEEDBACK_VALIDATE_SUBJECT_ERROR_ID, context);
     loadFromResources("hockeyapp_feedback_validate_email_error", Strings.FEEDBACK_VALIDATE_EMAIL_ERROR_ID, context);
+    loadFromResources("hockeyapp_feedback_validate_email_empty", Strings.FEEDBACK_VALIDATE_EMAIL_EMPTY_ID, context);
+    loadFromResources("hockeyapp_feedback_validate_name_error", Strings.FEEDBACK_VALIDATE_NAME_ERROR_ID, context);
+    loadFromResources("hockeyapp_feedback_validate_text_error", Strings.FEEDBACK_VALIDATE_TEXT_ERROR_ID, context);
     loadFromResources("hockeyapp_feedback_generic_error", Strings.FEEDBACK_GENERIC_ERROR_ID, context);
 
     // Login Activity

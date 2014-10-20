@@ -257,8 +257,8 @@ public class Strings {
     DEFAULT.put(FEEDBACK_SEND_NETWORK_ERROR_ID,     "No response from server. Please check your connection, then try again.");
     DEFAULT.put(FEEDBACK_VALIDATE_SUBJECT_ERROR_ID, "Please enter a subject");
     DEFAULT.put(FEEDBACK_VALIDATE_NAME_ERROR_ID,    "Please enter a name");
-    DEFAULT.put(FEEDBACK_VALIDATE_EMAIL_EMPTY_ID,  "Please enter an email address");
-     DEFAULT.put(FEEDBACK_VALIDATE_TEXT_ERROR_ID,  "Please enter a feedback text");
+    DEFAULT.put(FEEDBACK_VALIDATE_EMAIL_EMPTY_ID,   "Please enter an email address");
+    DEFAULT.put(FEEDBACK_VALIDATE_TEXT_ERROR_ID,    "Please enter a feedback text");
     DEFAULT.put(FEEDBACK_VALIDATE_EMAIL_ERROR_ID,   "Message couldn't be posted. Please check the format of your email address.");
     DEFAULT.put(FEEDBACK_GENERIC_ERROR_ID,          "An error has occured");
 
