@@ -10,6 +10,7 @@ import android.os.Message;
 import net.hockeyapp.android.tasks.LoginTask;
 import net.hockeyapp.android.utils.AsyncTaskUtils;
 import net.hockeyapp.android.utils.PrefsUtil;
+import net.hockeyapp.android.utils.Util;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -114,7 +115,7 @@ public class LoginManager {
    */
   public static void register(final Context context, String appIdentifier, String appSecret, int mode, Class<?> activity) {
     if (context != null) {
-      LoginManager.identifier = appIdentifier;
+      LoginManager.identifier = Util.sanitizeAppIdentifier(appIdentifier);
       LoginManager.secret = appSecret;
       LoginManager.mode = mode;
       LoginManager.mainActivity = activity;

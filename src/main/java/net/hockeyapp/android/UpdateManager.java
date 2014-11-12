@@ -104,6 +104,8 @@ public class UpdateManager {
    * @param isDialogRequired if false, no alert dialog is shown
    */
   public static void register(Activity activity, String urlString, String appIdentifier, UpdateManagerListener listener, boolean isDialogRequired) {
+    appIdentifier = Util.sanitizeAppIdentifier(appIdentifier);
+
     lastListener = listener;
 
     WeakReference<Activity> weakActivity = new WeakReference<Activity>(activity);
@@ -136,6 +138,8 @@ public class UpdateManager {
    * @param listener Implement for callback functions.
    */
   public static void registerForBackground(Context appContext, String urlString, String appIdentifier, UpdateManagerListener listener) {
+    appIdentifier = Util.sanitizeAppIdentifier(appIdentifier);
+
     lastListener = listener;
 
     WeakReference<Context> weakContext = new WeakReference<Context>(appContext);

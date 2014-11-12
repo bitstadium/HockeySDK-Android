@@ -3,6 +3,8 @@ package net.hockeyapp.android.utils;
 import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
 import java.net.URLEncoder;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -47,6 +49,10 @@ public class Util {
 
   public static final String PREFS_NAME_EMAIL_SUBJECT = "net.hockeyapp.android.prefs_name_email";
   public static final String PREFS_KEY_NAME_EMAIL_SUBJECT = "net.hockeyapp.android.prefs_key_name_email";
+  public static final String APP_IDENTIFIER_PATTERN = "[0-9a-f]+";
+  public static final int APP_IDENTIFIER_LENGTH = 32;
+
+  private static final Pattern appIdentifierPattern = Pattern.compile(APP_IDENTIFIER_PATTERN, Pattern.CASE_INSENSITIVE);
 
   /**
    * Returns the given param URL-encoded.
@@ -114,5 +120,30 @@ public class Util {
     }
     
     return false;
+  }
+
+  /**
+   * Sanitizes an app identifier or throws an exception if it can't be sanitized.
+   * @param appIdentifier the app identifier to sanitize
+   * @return the sanitized app identifier
+   * @throws java.lang.IllegalArgumentException if the app identifier can't be sanitized because of unrecoverable input character errors
+   */
+  public static String sanitizeAppIdentifier(String appIdentifier) throws IllegalArgumentException {
+
+    if (appIdentifier == null) {
+      throw new IllegalArgumentException("App ID must not be null.");
+    }
+
+    String sAppIdentifier = appIdentifier.trim();
+
+    Matcher matcher = appIdentifierPattern.matcher(sAppIdentifier);
+
+    if (sAppIdentifier.length() != APP_IDENTIFIER_LENGTH) {
+      throw new IllegalArgumentException("App ID length must be " + APP_IDENTIFIER_LENGTH + " characters.");
+    } else if (!matcher.matches()) {
+      throw new IllegalArgumentException("App ID must match regex pattern /" + APP_IDENTIFIER_PATTERN + "/i");
+    }
+
+    return sAppIdentifier;
   }
 }

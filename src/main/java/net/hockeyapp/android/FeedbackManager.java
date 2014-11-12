@@ -21,6 +21,7 @@ import net.hockeyapp.android.tasks.ParseFeedbackTask;
 import net.hockeyapp.android.tasks.SendFeedbackTask;
 import net.hockeyapp.android.utils.AsyncTaskUtils;
 import net.hockeyapp.android.utils.PrefsUtil;
+import net.hockeyapp.android.utils.Util;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -136,7 +137,7 @@ public class FeedbackManager {
    */
   public static void register(Context context, String urlString, String appIdentifier, FeedbackManagerListener listener) {
     if (context != null) {
-      FeedbackManager.identifier = appIdentifier;
+      FeedbackManager.identifier = Util.sanitizeAppIdentifier(appIdentifier);
       FeedbackManager.urlString = urlString;
       FeedbackManager.lastListener = listener;
     

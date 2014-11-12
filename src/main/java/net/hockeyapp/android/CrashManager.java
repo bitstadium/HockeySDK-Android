@@ -17,6 +17,7 @@ import android.preference.PreferenceManager;
 import net.hockeyapp.android.utils.ConnectionManager;
 import net.hockeyapp.android.utils.PrefsUtil;
 
+import net.hockeyapp.android.utils.Util;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
@@ -343,7 +344,7 @@ public class CrashManager {
   private static void initialize(Context context, String urlString, String appIdentifier, CrashManagerListener listener, boolean registerHandler) {
     if (context != null) {
       CrashManager.urlString = urlString;
-      CrashManager.identifier = appIdentifier;
+      CrashManager.identifier = Util.sanitizeAppIdentifier(appIdentifier);
   
       Constants.loadFromContext(context);
       
