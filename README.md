@@ -24,37 +24,57 @@ The SDK runs on devices with Android 2.1 or higher, but you need to build your a
 * Open your main activity or the activity in which you want to integrate the update process and crash reporting.
 * Add the following lines:
 
-        import net.hockeyapp.android.CrashManager;
-        import net.hockeyapp.android.UpdateManager;
-                       
-        public class YourActivity extends Activity {
-          @Override
-          public void onCreate(Bundle savedInstanceState) {
-            // Your own code to create the view
-            // ...
-            
-            checkForUpdates();
-          }
+```java
+import net.hockeyapp.android.CrashManager;
+import net.hockeyapp.android.UpdateManager;
 
-          @Override
-          public void onResume() {
-            super.onResume();
-            checkForCrashes();
-          }
+public class YourActivity extends Activity {
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
+    // Your own code to create the view
+    // ...
+    
+    checkForUpdates();
+  }
 
-          private void checkForCrashes() {
-            CrashManager.register(this, APP_ID);
-          }
+  @Override
+  public void onResume() {
+    super.onResume();
+    checkForCrashes();
+  }
+  
+  @Override
+  public void onPause() {
+    super.onPause();
+    unregisterManagers();
+  }
+  
+  @Override
+  public void onDestroy() {
+    super.onDestroy();
+    unregisterManagers();
+  }
+  
+  private void checkForCrashes() {
+    CrashManager.register(this, APP_ID);
+  }
+  
+  private void checkForUpdates() {
+    // Remove this for store builds!
+    UpdateManager.register(this, APP_ID);
+  }
+  
+  private void unregisterManagers() {
+    CrashManager.unregister();
+    UpdateManager.unregister();
+  }
+  
+  // Probably more methods
+}
+```
 
-          private void checkForUpdates() {
-            // Remove this for store builds!
-            UpdateManager.register(this, APP_ID);
-          }
-          
-          // Probably more methods
-        }
-      
 * The param APP_ID has to be replaced by your app's identifier. There are two options two create this: Either upload an existing .apk file of your app to HockeyApp or create a new app manually. The App ID can then be found an the app's page in the section App Info.
+* Always make sure to balance `register(...)` calls to all managers with `unregister()` calls in the corresponding lifecycle callbacks.
 * Build your project, create an .apk file, upload it to HockeyApp and you are ready to go.
 
 The above code does two things: 
