@@ -65,8 +65,8 @@ public class YourActivity extends Activity {
   }
   
   private void unregisterManagers() {
-    CrashManager.unregister();
     UpdateManager.unregister();
+    // unregister other managers if necessary...
   }
   
   // Probably more methods
@@ -74,7 +74,7 @@ public class YourActivity extends Activity {
 ```
 
 * The param APP_ID has to be replaced by your app's identifier. There are two options two create this: Either upload an existing .apk file of your app to HockeyApp or create a new app manually. The App ID can then be found an the app's page in the section App Info.
-* Always make sure to balance `register(...)` calls to all managers with `unregister()` calls in the corresponding lifecycle callbacks.
+* Always make sure to balance `register(...)` calls to SDK managers with `unregister()` calls in the corresponding lifecycle callbacks.
 * Build your project, create an .apk file, upload it to HockeyApp and you are ready to go.
 
 The above code does two things: 
