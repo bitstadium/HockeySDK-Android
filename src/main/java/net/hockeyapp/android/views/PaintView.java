@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.graphics.*;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.ImageView;
@@ -160,15 +161,36 @@ public class PaintView extends ImageView {
     paint.setStrokeCap(Paint.Cap.ROUND);
     paint.setStrokeWidth(12);
 
-    try {
-      /* This is essential to make the image view to wrap exactly the displayed image and avoiding any
-         empty space around it that would be drawable but doesn't belong to the image. */
-      setAdjustViewBounds(true);
-      setImageBitmap(decodeSampledBitmapFromResource(context.getContentResolver(), imageUri, displayWidth, displayHeight));
+    new AsyncTask<Object, Void, Bitmap>() {
+      @Override
+      protected void onPreExecute() {
+        /* This is essential to make the image view to wrap exactly the displayed image and avoiding any
+        empty space around it that would be drawable but doesn't belong to the image. */
+        setAdjustViewBounds(true);
+      }
 
-    } catch (Exception e) {
-      Log.e(Constants.TAG, "Could not load image into ImageView.", e);
-    }
+      @Override
+      protected Bitmap doInBackground(java.lang.Object... args) {
+        Context context = (Context) args[0];
+        Uri imageUri = (Uri) args[1];
+        Integer displayWidth = (Integer) args[2];
+        Integer displayHeight = (Integer) args[3];
+        try {
+          Bitmap bm = decodeSampledBitmapFromResource(context.getContentResolver(), imageUri, displayWidth, displayHeight);
+          return bm;
+        } catch (Exception e) {
+          Log.e(Constants.TAG, "Could not load image into ImageView.", e);
+        }
+        return null;
+      }
+
+      @Override
+      protected void onPostExecute(Bitmap bm) {
+        if (bm == null)
+          return;
+        setImageBitmap(bm);
+      }
+    }.execute(context, imageUri, displayWidth, displayHeight);
   }
 
   public void clearImage() {

@@ -9,6 +9,7 @@ import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -159,18 +160,23 @@ public class PaintActivity extends Activity {
       suffix++;
     }
 
-    try {
-      paintView.setDrawingCacheEnabled(true);
-      Bitmap bitmap = paintView.getDrawingCache();
-
-      FileOutputStream out = new FileOutputStream(result);
-      bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
-      out.close();
-    }
-    catch (Exception e) {
-      e.printStackTrace();
-      Log.e(Constants.TAG, "Could not save image.", e);
-    }
+    paintView.setDrawingCacheEnabled(true);
+    final Bitmap bitmap = paintView.getDrawingCache();
+    new AsyncTask<File, Void, Void>() {
+      @Override
+      protected Void doInBackground(File... args) {
+        try {
+          FileOutputStream out = new FileOutputStream(args[0]);
+          bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+          out.close();
+        }
+        catch (Exception e) {
+          e.printStackTrace();
+          Log.e(Constants.TAG, "Could not save image.", e);
+        }
+        return null;
+      }
+    }.execute(result);
 
     Intent intent = new Intent();
     Uri uri = Uri.fromFile(result);

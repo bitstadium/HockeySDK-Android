@@ -11,6 +11,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
@@ -102,13 +103,22 @@ public class AttachmentView extends FrameLayout {
     initializeView(context, removable);
 
     textView.setText(filename);
-    Bitmap bitmap = loadImageThumbnail();
-    if (bitmap != null) {
-      configureViewForThumbnail(bitmap, false);
-
-    } else {
-      configureViewForPlaceholder(false);
-    }
+    new AsyncTask<Void, Void, Bitmap>() {
+      @Override
+      protected Bitmap doInBackground(Void... args) {
+        Bitmap bitmap = loadImageThumbnail();
+        return bitmap;
+      }
+        
+      @Override
+      protected void onPostExecute(Bitmap bitmap) {
+        if (bitmap != null) {
+          configureViewForThumbnail(bitmap, false);
+        } else {
+          configureViewForPlaceholder(false);
+        }
+      }
+    }.execute();
   }
 
   public AttachmentView(Context context, ViewGroup parent, FeedbackAttachment attachment, boolean removable) {
