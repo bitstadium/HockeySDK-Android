@@ -51,12 +51,6 @@ import android.text.TextUtils;
  * @author Thomas Dohmke
  **/
 public class UpdateManager {
-
-  /**
-   * Enable in-app updates even when downloaded from a market
-   */
-  private static boolean enableFromMarket = false;
-
   /**
    * Singleton for update task.
    */
@@ -119,7 +113,7 @@ public class UpdateManager {
       return;
     }
 
-    if ((!checkExpiryDate(weakActivity, listener)) && (enableFromMarket || !installedFromMarket(weakActivity))) {
+    if ((!checkExpiryDate(weakActivity, listener)) && (listener.canUpdateInMarket() || !installedFromMarket(weakActivity))) {
       startUpdateTask(weakActivity, urlString, appIdentifier, listener, isDialogRequired);
     }
   }
@@ -150,7 +144,7 @@ public class UpdateManager {
 
     WeakReference<Context> weakContext = new WeakReference<Context>(appContext);
 
-    if ((!checkExpiryDateForBackground(listener)) && (!installedFromMarket(weakContext))) {
+    if ((!checkExpiryDateForBackground(listener)) && (listener.canUpdateInMarket() || !installedFromMarket(weakContext))) {
       startUpdateTaskForBackground(weakContext, urlString, appIdentifier, listener);
     }
   }
@@ -289,15 +283,5 @@ public class UpdateManager {
    */
   public static UpdateManagerListener getLastListener() {
     return lastListener;
-  }
-
-  /**
-   * Enable updates even if installed from a market. Exercise caution with this, as some markets
-   * don't allow apps to update internally!
-   *
-   * Must be called before registering.
-   */
-  public static void enableUpdateFromMarket(boolean allow) {
-      enableFromMarket = allow;
   }
 }

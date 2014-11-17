@@ -99,5 +99,13 @@ public abstract class UpdateManagerListener extends StringListener {
   public boolean onBuildExpired() {
     return true;
   }
+
+  /**
+   * To allow updates even if installed from a market, override this to return true.
+   * Exercise caution with this, as some markets' policies don't allow apps to update internally!
+   */
+  public boolean canUpdateInMarket() {
+      return false;
+  }
 }
   
