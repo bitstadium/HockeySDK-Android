@@ -113,7 +113,7 @@ public class UpdateManager {
       return;
     }
 
-    if ((!checkExpiryDate(weakActivity, listener)) && (listener.canUpdateInMarket() || !installedFromMarket(weakActivity))) {
+    if ((!checkExpiryDate(weakActivity, listener)) && (!installedFromMarket(weakActivity) || (listener != null && listener.canUpdateInMarket()))) {
       startUpdateTask(weakActivity, urlString, appIdentifier, listener, isDialogRequired);
     }
   }
@@ -144,7 +144,7 @@ public class UpdateManager {
 
     WeakReference<Context> weakContext = new WeakReference<Context>(appContext);
 
-    if ((!checkExpiryDateForBackground(listener)) && (listener.canUpdateInMarket() || !installedFromMarket(weakContext))) {
+    if ((!checkExpiryDateForBackground(listener)) && (!installedFromMarket(weakContext) || (listener != null && listener.canUpdateInMarket()))) {
       startUpdateTaskForBackground(weakContext, urlString, appIdentifier, listener);
     }
   }
