@@ -94,7 +94,7 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
         write.write("Model: " + Constants.PHONE_MODEL + "\n");
       }
       
-      if (Constants.CRASH_IDENTIFIER != null) {
+      if (Constants.CRASH_IDENTIFIER != null && (listener == null || listener.includeDeviceIdentifier())) {
         write.write("CrashReporter Key: " + Constants.CRASH_IDENTIFIER + "\n");
       }
       

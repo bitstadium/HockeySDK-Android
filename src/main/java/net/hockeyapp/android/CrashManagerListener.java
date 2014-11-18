@@ -57,6 +57,16 @@ public abstract class CrashManagerListener extends StringListener {
   }
 
   /**
+   * Return false to remove the stable device identifier from the
+   * crash log, e.g. if there are privacy concerns.
+   *
+   * @return if true, the crash report will include a stable device identifier
+   */
+  public boolean includeDeviceIdentifier() {
+    return true;
+  }
+
+  /**
    * Return contact data or similar; note that this has privacy implications,
    * so you might want to return nil for release builds! The string will be
    * limited to 255 characters.
