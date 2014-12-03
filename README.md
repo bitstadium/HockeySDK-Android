@@ -89,7 +89,12 @@ The reason for the two different entry points is that the update check causes ne
 Starting with HockeySDK 3.0, you can integrate a feedback view in your app:
 
 * Open your AndroidManifest.xml.
-* Add the following line as a child element of application: <pre>&lt;activity android:name="net.hockeyapp.android.FeedbackActivity" /></pre>
+* Add the following lines as child elements of your application: 
+```
+<activity android:name="net.hockeyapp.android.FeedbackActivity" />
+<activity android:name="net.hockeyapp.android.PaintActivity" />
+```
+
 * If not already present, add the permission for internet access: <pre>&lt;uses-permission android:name="android.permission.INTERNET" /></pre>
 * Save the AndroidManifest.xml.
 * Open the activity from which you want to show the feedback view.
