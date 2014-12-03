@@ -4,16 +4,14 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.NotificationManager;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.*;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.*;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
@@ -389,9 +387,14 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
 
       /** Start PaintActivity */
       if (uri != null) {
-        Intent intent = new Intent(this, PaintActivity.class);
-        intent.putExtra("imageUri", uri);
-        startActivityForResult(intent, PAINT_IMAGE);
+        try {
+          Intent intent = new Intent(this, PaintActivity.class);
+          intent.putExtra("imageUri", uri);
+          startActivityForResult(intent, PAINT_IMAGE);
+        } catch (ActivityNotFoundException e) {
+          Log.e(Util.LOG_IDENTIFIER, "Paint activity not declared!", e);
+        }
+
       }
 
     } else if (requestCode == PAINT_IMAGE) {

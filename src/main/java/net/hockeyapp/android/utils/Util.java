@@ -52,6 +52,8 @@ public class Util {
   public static final String APP_IDENTIFIER_PATTERN = "[0-9a-f]+";
   public static final int APP_IDENTIFIER_LENGTH = 32;
 
+  public static final String LOG_IDENTIFIER = "HockeyApp";
+
   private static final Pattern appIdentifierPattern = Pattern.compile(APP_IDENTIFIER_PATTERN, Pattern.CASE_INSENSITIVE);
 
   /**
