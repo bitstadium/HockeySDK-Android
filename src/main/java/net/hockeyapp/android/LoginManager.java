@@ -86,6 +86,11 @@ public class LoginManager {
   private static Handler validateHandler = null;
 
   /**
+   * URL of HockeyApp service
+   */
+  private static String urlString = null;
+
+  /**
    * The Login Mode.
    */
   private static int mode;
@@ -107,16 +112,31 @@ public class LoginManager {
   /**
    * Registers new LoginManager.
    *
+   * @param context       The context to use. Usually your Activity object.
+   * @param appIdentifier App ID of your app on HockeyApp.
+   * @param appSecret     The App Secret of your app on HockeyApp.
+   * @param mode          The Login Mode.
+   * @param activity      The first activity to be started by your app.
+   */
+  public static void register(final Context context, String appIdentifier, String appSecret, int mode, Class<?> activity) {
+    register(context, appIdentifier, appSecret, Constants.BASE_URL, mode, activity);
+  }
+
+  /**
+   * Registers new LoginManager.
+   *
    * @param context The context to use. Usually your Activity object.
    * @param appIdentifier App ID of your app on HockeyApp.
    * @param appSecret The App Secret of your app on HockeyApp.
+   * @param urlString The URL of the HockeyApp service
    * @param mode The Login Mode.
    * @param activity The first activity to be started by your app.
    */
-  public static void register(final Context context, String appIdentifier, String appSecret, int mode, Class<?> activity) {
+  public static void register(final Context context, String appIdentifier, String appSecret, String urlString, int mode, Class<?> activity) {
     if (context != null) {
       LoginManager.identifier = Util.sanitizeAppIdentifier(appIdentifier);
       LoginManager.secret = appSecret;
+      LoginManager.urlString = urlString;
       LoginManager.mode = mode;
       LoginManager.mainActivity = activity;
 
@@ -217,6 +237,6 @@ public class LoginManager {
       suffix = "validate";
     }
 
-    return Constants.BASE_URL + "api/3/apps/" + identifier + "/identity/" + suffix;
+    return urlString + "api/3/apps/" + identifier + "/identity/" + suffix;
   }
 }
