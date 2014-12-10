@@ -156,8 +156,9 @@ public class FeedbackManager {
   /**
    * Starts the {@link FeedbackActivity}
    * @param context {@link Context} object
+   * @param attachments the optional attachment {@link Uri}s
    */
-  public static void showFeedbackActivity(Context context) {
+  public static void showFeedbackActivity(Context context, Uri... attachments) {
     if (context != null) {
       Class<?> activityClass = null;
       if (lastListener != null) {
@@ -171,6 +172,7 @@ public class FeedbackManager {
       intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
       intent.setClass(context, activityClass);
       intent.putExtra("url", getURLString(context));
+      intent.putExtra("initialAttachments", attachments);
       context.startActivity(intent);
     }
   }
