@@ -18,6 +18,7 @@ import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
+import net.hockeyapp.android.objects.FeedbackUserDataElement;
 import net.hockeyapp.android.tasks.ParseFeedbackTask;
 import net.hockeyapp.android.tasks.SendFeedbackTask;
 import net.hockeyapp.android.utils.AsyncTaskUtils;
@@ -101,7 +102,17 @@ public class FeedbackManager {
    * URL of HockeyApp service.
    */
   private static String urlString = null;
-  
+
+  /**
+   * Whether the user's name is required.
+   */
+  private static FeedbackUserDataElement requireUserName;
+
+  /**
+   * Whether the user's email is required.
+   */
+  private static FeedbackUserDataElement requireUserEmail;
+
   /**
    * Last listener instance.
    */
@@ -224,6 +235,38 @@ public class FeedbackManager {
    */
   private static String getURLString(Context context) {
     return urlString + "api/2/apps/" + identifier + "/feedback/";
+  }
+
+  /**
+   * Returns the required setting for the user name property.
+   * @return required setting for name
+   */
+  public static FeedbackUserDataElement getRequireUserName() {
+    return requireUserName;
+  }
+
+  /**
+   * Sets the required setting for the user name property
+   * @param requireUserName whether the user name property should be required
+   */
+  public static void setRequireUserName(FeedbackUserDataElement requireUserName) {
+    FeedbackManager.requireUserName = requireUserName;
+  }
+
+  /**
+   * Returns the required setting for the user email property.
+   * @return required setting for email
+   */
+  public static FeedbackUserDataElement getRequireUserEmail() {
+    return requireUserEmail;
+  }
+
+  /**
+   * Sets the required setting for the user email property
+   * @param requireUserEmail whether the user email property should be required
+   */
+  public static void setRequireUserEmail(FeedbackUserDataElement requireUserEmail) {
+    FeedbackManager.requireUserEmail = requireUserEmail;
   }
 
   /**
