@@ -283,7 +283,7 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
   @SuppressWarnings("deprecation")
   private boolean isUnknownSourcesChecked() {
     try {
-      if (android.os.Build.VERSION.SDK_INT >= 17) {
+      if (android.os.Build.VERSION.SDK_INT >= 17 && android.os.Build.VERSION.SDK_INT < 21) {
         return (Settings.Global.getInt(getContentResolver(), Settings.Global.INSTALL_NON_MARKET_APPS) == 1);
       }
       else {
