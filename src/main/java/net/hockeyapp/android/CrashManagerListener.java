@@ -1,14 +1,14 @@
 package net.hockeyapp.android;
 
 /**
- * <h4>Description</h4>
+ * <h3>Description</h3>
  * 
  * Abstract class for callbacks to be invoked from the CrashManager. 
  * 
- * <h4>License</h4>
+ * <h3>License</h3>
  * 
  * <pre>
- * Copyright (c) 2011-2013 Bit Stadium GmbH
+ * Copyright (c) 2011-2014 Bit Stadium GmbH
  * 
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -38,6 +38,8 @@ public abstract class CrashManagerListener extends StringListener {
   /**
    * Return true to ignore the default exception handler, i.e. the user will not
    * get the alert dialog with the "Force Close" button.
+   *
+   * @return if true, the default handler is ignored
    */
   public boolean ignoreDefaultHandler() {
     return false;
@@ -47,8 +49,20 @@ public abstract class CrashManagerListener extends StringListener {
    * Return false to remove the device data (OS version, manufacturer, model)
    * from the crash log, e.g. if some of your testers are using unreleased
    * devices.
+   *
+   * @return if true, the crash report will include device data
    */
   public boolean includeDeviceData() {
+    return true;
+  }
+
+  /**
+   * Return false to remove the stable device identifier from the
+   * crash log, e.g. if there are privacy concerns.
+   *
+   * @return if true, the crash report will include a stable device identifier
+   */
+  public boolean includeDeviceIdentifier() {
     return true;
   }
 
@@ -56,6 +70,8 @@ public abstract class CrashManagerListener extends StringListener {
    * Return contact data or similar; note that this has privacy implications,
    * so you might want to return nil for release builds! The string will be
    * limited to 255 characters.
+   *
+   * @return the contact string
    */
   public String getContact() {
     return null;
@@ -64,6 +80,8 @@ public abstract class CrashManagerListener extends StringListener {
   /**
    * Return additional data, i.e. parts of the system log, the last server
    * response or similar. This string is not limited to a certain size.
+   *
+   * @return a description
    */
   public String getDescription() {
     return null;
@@ -73,6 +91,8 @@ public abstract class CrashManagerListener extends StringListener {
    * Return a user ID or similar; note that this has privacy implications,
    * so you might want to return nil for release builds! The string will be
    * limited to 255 characters.
+   *
+   * @return the user's ID
    */
   public String getUserID() {
     return null;
@@ -84,6 +104,7 @@ public abstract class CrashManagerListener extends StringListener {
    * 
    * @deprecated Replace this method with onNewCrashesFound, 
    *             onConfirmedCrashesFound, and shouldAutoUploadCrashReport.
+   * @return if true, crashes are sent automatically
    */
   public boolean onCrashesFound() {
     return false;
@@ -92,6 +113,8 @@ public abstract class CrashManagerListener extends StringListener {
   /**
    * Return true if you want to auto-send crashes. Note that this method
    * is only called if new crashes were found. 
+   *
+   * @return if true, crashes are sent automatically
    */
   public boolean shouldAutoUploadCrashes() {
     return false;

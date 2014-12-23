@@ -1,14 +1,16 @@
 package net.hockeyapp.android;
 
+import net.hockeyapp.android.objects.FeedbackMessage;
+
 /**
- * <h4>Description</h4>
+ * <h3>Description</h3>
  * 
  * Abstract class for callbacks to be invoked from the {@link FeedbackManager} 
  * 
- * <h4>License</h4>
+ * <h3>License</h3>
  * 
  * <pre>
- * Copyright (c) 2011-2013 Bit Stadium GmbH
+ * Copyright (c) 2011-2014 Bit Stadium GmbH
  * 
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -37,9 +39,19 @@ package net.hockeyapp.android;
 public abstract class FeedbackManagerListener extends StringListener {
   /**
    * Return your own subclass of FeedbackActivity for customization. 
+   *
+   * @return subclass of FeedbackActivity
    */
   public Class<? extends FeedbackActivity> getFeedbackActivityClass() {
     return FeedbackActivity.class;
   }
+
+  /**
+   * Called when an answer to a feedback is available.
+   *
+   * @param latestMessage the last message
+   * @return true if this event has been properly handled by this method
+   *         and false if not and a notification should be fired.
+   */
+  public abstract boolean feedbackAnswered(FeedbackMessage latestMessage);
 }
-  

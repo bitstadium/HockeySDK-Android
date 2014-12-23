@@ -1,5 +1,6 @@
 package net.hockeyapp.android.utils;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,16 +14,20 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+
 /**
- * <h4>Description</h4>
+ * <h3>Description</h3>
  * 
  * Internal helper class. Provides helper methods to parse the
  * version JSON and create the release notes as HTML. 
  * 
- * <h4>License</h4>
+ * <h3>License</h3>
  * 
  * <pre>
- * Copyright (c) 2011-2013 Bit Stadium GmbH
+ * Copyright (c) 2011-2014 Bit Stadium GmbH
  * 
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -49,20 +54,22 @@ import org.json.JSONObject;
  * @author Thomas Dohmke
  **/
 public class VersionHelper {
-  ArrayList<JSONObject> sortedVersions;
-  JSONObject newest;
-  UpdateInfoListener listener;
+  private ArrayList<JSONObject> sortedVersions;
+  private JSONObject newest;
+  private UpdateInfoListener listener;
+  private int currentVersionCode;
   
-  public VersionHelper(String infoJSON, UpdateInfoListener listener) {
+  public VersionHelper(Context context, String infoJSON, UpdateInfoListener listener) {
     this.listener = listener;
 
-    loadVersions(infoJSON);
+    loadVersions(context, infoJSON);
     sortVersions();
   }
   
-  private void loadVersions(String infoJSON) {
+  private void loadVersions(Context context, String infoJSON) {
     this.newest = new JSONObject();
     this.sortedVersions = new ArrayList<JSONObject>();
+    this.currentVersionCode = listener.getCurrentVersionCode();
 
     try {
       JSONArray versions = new JSONArray(infoJSON);
@@ -70,7 +77,10 @@ public class VersionHelper {
       int versionCode = listener.getCurrentVersionCode();
       for (int index = 0; index < versions.length(); index++) {
         JSONObject entry = versions.getJSONObject(index);
-        if (entry.getInt("version") > versionCode) {
+        boolean largerVersionCode = (entry.getInt("version") > versionCode);
+        boolean newerApkFile = ((entry.getInt("version") == versionCode) && VersionHelper.isNewerThanLastUpdateTime(context, entry.getLong("timestamp")));
+
+        if (largerVersionCode || newerApkFile) {
           newest = entry;
           versionCode = entry.getInt("version");
         }
@@ -105,14 +115,23 @@ public class VersionHelper {
     return failSafeGetStringFromJSON(newest, "shortversion", "") + " (" + failSafeGetStringFromJSON(newest, "version", "") + ")";
   }
   
-  public String getFileInfoString() {
-    int appSize = failSafeGetIntFromJSON(newest, "appsize", 0);
-    long timestamp = failSafeGetIntFromJSON(newest, "timestamp", 0);
-    Date date = new Date(timestamp * 1000);
+  public String getFileDateString() {
+    long timestamp = failSafeGetLongFromJSON(newest, "timestamp", 0L);
+    Date date = new Date(timestamp * 1000L);
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-    return dateFormat.format(date) + " - " + String.format("%.2f", appSize / 1024F / 1024F) + " MB";
+    return dateFormat.format(date);
   }
-  
+
+  public long getFileSizeBytes() {
+    boolean external = Boolean.valueOf(failSafeGetStringFromJSON(newest, "external", "false"));
+    long appSize = failSafeGetLongFromJSON(newest, "appsize", 0L);
+
+    // In case of external builds a size of 0 most likely means that the size could not be determined because the URL
+    // is not accessible from the HockeyApp servers via the Internet. Return -1 in that case in order to try retrieving
+    // the size at runtime from the HTTP header later.
+    return (external && appSize == 0L) ? -1L : appSize;
+  }
+
   private static String failSafeGetStringFromJSON(JSONObject json, String name, String defaultValue) {
     try {
       return json.getString(name);
@@ -122,15 +141,15 @@ public class VersionHelper {
     }
   }
   
-  private static int failSafeGetIntFromJSON(JSONObject json, String name, int defaultValue) {
+  private static long failSafeGetLongFromJSON(JSONObject json, String name, long defaultValue) {
     try {
-      return json.getInt(name);
+      return json.getLong(name);
     }
     catch (JSONException e) {
       return defaultValue;
     }
   }
-  
+
   public String getReleaseNotes(boolean showRestore) {
     StringBuilder result = new StringBuilder();
     result.append("<html>");
@@ -183,6 +202,7 @@ public class VersionHelper {
   private String getVersionLine(int count, JSONObject version) {
     StringBuilder result = new StringBuilder();
 
+    int newestCode = getVersionCode(newest);
     int versionCode = getVersionCode(version);
     String versionName = getVersionName(version);
     
@@ -191,8 +211,11 @@ public class VersionHelper {
       result.append("Newest version:");
     }
     else {
-      int currentVersionCode = listener.getCurrentVersionCode();
-      result.append("Version " + versionName + " (" + versionCode + "): " + (versionCode == currentVersionCode ? "[INSTALLED]" : ""));
+      result.append("Version " + versionName + " (" + versionCode + "): ");
+      if ((versionCode != newestCode) && (versionCode == currentVersionCode)) {
+        currentVersionCode = -1;
+        result.append("[INSTALLED]");
+      }
     }
     result.append("</strong></div>");
     
@@ -287,6 +310,51 @@ public class VersionHelper {
     catch (Exception e) {
       // If any exceptions happen, return zero
       return 0;
+    }
+  }
+
+  /**
+   * Returns true of the given timestamp is larger / newer than the last modified timestamp of
+   * the APK file of the app.
+   *
+   * @param context the context to use
+   * @param timestamp a Unix-style timestamp
+   * @return true if the timestamp is larger / never
+   */
+  public static boolean isNewerThanLastUpdateTime(Context context, long timestamp) {
+    if (context == null) {
+      return false;
+    }
+
+    try {
+      PackageManager pm = context.getPackageManager();
+      ApplicationInfo appInfo = pm.getApplicationInfo(context.getPackageName(), 0);
+      String appFile = appInfo.sourceDir;
+
+      // Get the last modified time stamp and adjust by half an hour
+      // to avoid issues with time deviations between client and server
+      long lastModified = new File(appFile).lastModified() / 1000 + 1800;
+
+      return timestamp > lastModified;
+    }
+    catch (PackageManager.NameNotFoundException e) {
+      e.printStackTrace();
+      return false;
+    }
+  }
+
+  /**
+   * Map internal Google version letter to a semantic version (currently L to 5.0).
+   *
+   * @param version value of Build.VERSION.RELEASE
+   * @return mapped version number
+   */
+  public static String mapGoogleVersion(String version) {
+    if ((version == null) || (version.equalsIgnoreCase("L"))) {
+      return "5.0";
+    }
+    else {
+      return version;
     }
   }
 }

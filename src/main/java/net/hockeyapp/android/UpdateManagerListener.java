@@ -1,16 +1,18 @@
 package net.hockeyapp.android;
 
+import org.json.JSONArray;
+
 import java.util.Date;
 
 /**
- * <h4>Description</h4>
+ * <h3>Description</h3>
  * 
  * Abstract class for callbacks to be invoked from the UpdateManager. 
  * 
- * <h4>License</h4>
+ * <h3>License</h3>
  * 
  * <pre>
- * Copyright (c) 2011-2013 Bit Stadium GmbH
+ * Copyright (c) 2011-2014 Bit Stadium GmbH
  * 
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -39,6 +41,8 @@ import java.util.Date;
 public abstract class UpdateManagerListener extends StringListener {
   /**
    * Return your own subclass of UpdateActivity for customization. 
+   *
+   * @return subclass of UpdateActivity
    */
   public Class<? extends UpdateActivity> getUpdateActivityClass() {
     return UpdateActivity.class;
@@ -46,6 +50,8 @@ public abstract class UpdateManagerListener extends StringListener {
 
   /**
    * Return your own subclass of UpdateFragment for customization. 
+   *
+   * @return subclass of UpdateFragment
    */
   public Class<? extends UpdateFragment> getUpdateFragmentClass() {
     return UpdateFragment.class;
@@ -64,10 +70,21 @@ public abstract class UpdateManagerListener extends StringListener {
   public void onUpdateAvailable() {
     // Do nothing
   }
+
+  /**
+   * Called when the update manager found an update.
+   * @param data Information about the update.
+   * @param url Link to apk file update.
+   */
+  public void onUpdateAvailable(JSONArray data, String url){
+    onUpdateAvailable();
+  }
   
   /**
    * Return an expiry date for this build or null. After this date the
    * build will be blocked by a dialog.
+   *
+   * @return a valid date object
    */
   public Date getExpiryDate() {
     return null;
@@ -76,9 +93,22 @@ public abstract class UpdateManagerListener extends StringListener {
   /**
    * Called when the build is expired. Return false to if you handle
    * the expiry in your code.
+   *
+   * @return app handles the expiration itself
    */
   public boolean onBuildExpired() {
     return true;
+  }
+
+  /**
+   * To allow updates even if installed from a market, override this 
+   * to return true. Exercise caution with this, as some markets' 
+   * policies don't allow apps to update internally!
+   *
+   * @return app can be updated when installed from market
+   */
+  public boolean canUpdateInMarket() {
+    return false;
   }
 }
   

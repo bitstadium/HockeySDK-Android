@@ -1,8 +1,11 @@
 package net.hockeyapp.android.utils;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import net.hockeyapp.android.objects.Feedback;
+import net.hockeyapp.android.objects.FeedbackAttachment;
 import net.hockeyapp.android.objects.FeedbackMessage;
 import net.hockeyapp.android.objects.FeedbackResponse;
 
@@ -11,9 +14,38 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * JSON Parser helper class
+ * <h3>Description</h3>
+ * 
+ * JSON parser helper class
+ * 
+ * <h3>License</h3>
+ * 
+ * <pre>
+ * Copyright (c) 2011-2014 Bit Stadium GmbH
+ * 
+ * Permission is hereby granted, free of charge, to any person
+ * obtaining a copy of this software and associated documentation
+ * files (the "Software"), to deal in the Software without
+ * restriction, including without limitation the rights to use,
+ * copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following
+ * conditions:
+ * 
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ * OTHER DEALINGS IN THE SOFTWARE.
+ * </pre>
+ * 
  * @author Bogdan Nistor
- *
  */
 public class FeedbackParser {
   /** Private constructor prevents instantiation from other classes */
@@ -21,9 +53,9 @@ public class FeedbackParser {
   }
 
   /**
-  * FeedbackParserHolder is loaded on the first execution of FeedbackParser.getInstance() 
-  * or the first access to FeedbackParserHolder.INSTANCE, not before.
-  */
+   * FeedbackParserHolder is loaded on the first execution of FeedbackParser.getInstance() 
+   * or the first access to FeedbackParserHolder.INSTANCE, not before.
+   */
   private static class FeedbackParserHolder { 
     public static final FeedbackParser INSTANCE = new FeedbackParser();
   }
@@ -34,8 +66,9 @@ public class FeedbackParser {
   
   /**
    * Parses JSON string
-   * @param feedbackResponseJson  JSON String
-   * @return
+   *
+   * @param feedbackResponseJson string with JSON response
+   * @return instance of FeedbackResponse
    */
   public FeedbackResponse parseFeedbackResponse(String feedbackResponseJson) {
     FeedbackResponse feedbackResponse = null;
@@ -69,7 +102,31 @@ public class FeedbackParser {
             String cleanText = messagesArray.getJSONObject(i).getString("clean_text").toString();
             String name = messagesArray.getJSONObject(i).getString("name").toString();
             String appId = messagesArray.getJSONObject(i).getString("app_id").toString();
-            
+
+            JSONArray jsonAttachments = messagesArray.getJSONObject(i).optJSONArray("attachments");
+            List<FeedbackAttachment> feedbackAttachments = Collections.emptyList();
+            if (jsonAttachments != null) {
+              feedbackAttachments = new ArrayList<FeedbackAttachment>();
+
+              for (int j = 0; j < jsonAttachments.length(); j++) {
+                int attachmentId = jsonAttachments.getJSONObject(j).getInt("id");
+                int attachmentMessageId = jsonAttachments.getJSONObject(j).getInt("feedback_message_id");
+                String filename = jsonAttachments.getJSONObject(j).getString("file_name");
+                String url = jsonAttachments.getJSONObject(j).getString("url");
+                String attachmentCreatedAt = jsonAttachments.getJSONObject(j).getString("created_at");
+                String attachmentUpdatedAt = jsonAttachments.getJSONObject(j).getString("updated_at");
+
+                FeedbackAttachment feedbackAttachment = new FeedbackAttachment();
+                feedbackAttachment.setId(attachmentId);
+                feedbackAttachment.setMessageId(attachmentMessageId);
+                feedbackAttachment.setFilename(filename);
+                feedbackAttachment.setUrl(url);
+                feedbackAttachment.setCreatedAt(attachmentCreatedAt);
+                feedbackAttachment.setUpdatedAt(attachmentUpdatedAt);
+                feedbackAttachments.add(feedbackAttachment);
+              }
+            }
+
             feedbackMessage = new FeedbackMessage();
             feedbackMessage.setAppId(appId);
             feedbackMessage.setCleanText(cleanText);
@@ -84,7 +141,7 @@ public class FeedbackParser {
             feedbackMessage.setToken(token);
             feedbackMessage.setUserString(userString);
             feedbackMessage.setVia(via);
-            
+            feedbackMessage.setFeedbackAttachments(feedbackAttachments);
             messages.add(feedbackMessage);
           }
         }

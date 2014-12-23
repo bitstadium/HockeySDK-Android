@@ -1,4 +1,4 @@
-This README describes on how to integrate HockeyApp into you Android apps. The client allows testers to update your app to another beta version right from within the application. It will notify the tester if a new update is available. It also allows to send feedback and crash reports right from within the application. If a crash has occured, it will ask the tester on the next resume of the main activity whether he wants to send information about the crash to the server. The latter feature works for both beta apps and apps for the Android Market.
+This README describes on how to integrate HockeyApp into your Android apps. The client allows testers to update your app to another beta version right from within the application. It will notify the tester if a new update is available. It also allows users to send feedback and crash reports right from within the application. If a crash has occurred, it will ask the tester, on the next resume of the main activity, if they want to send information about the crash to the server. The latter feature works for both beta apps and apps for the Android Market.
 
 ## Requirements
 
@@ -24,37 +24,57 @@ The SDK runs on devices with Android 2.1 or higher, but you need to build your a
 * Open your main activity or the activity in which you want to integrate the update process and crash reporting.
 * Add the following lines:
 
-        import net.hockeyapp.android.CrashManager;
-        import net.hockeyapp.android.UpdateManager;
-                       
-        public class YourActivity extends Activity {
-          @Override
-          public void onCreate(Bundle savedInstanceState) {
-            // Your own code to create the view
-            // ...
-            
-            checkForUpdates();
-          }
+```java
+import net.hockeyapp.android.CrashManager;
+import net.hockeyapp.android.UpdateManager;
 
-          @Override
-          public void onResume() {
-            super.onResume();
-            checkForCrashes();
-          }
+public class YourActivity extends Activity {
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
+    // Your own code to create the view
+    // ...
+    
+    checkForUpdates();
+  }
 
-          private void checkForCrashes() {
-            CrashManager.register(this, APP_ID);
-          }
+  @Override
+  public void onResume() {
+    super.onResume();
+    checkForCrashes();
+  }
+  
+  @Override
+  public void onPause() {
+    super.onPause();
+    unregisterManagers();
+  }
+  
+  @Override
+  public void onDestroy() {
+    super.onDestroy();
+    unregisterManagers();
+  }
+  
+  private void checkForCrashes() {
+    CrashManager.register(this, APP_ID);
+  }
+  
+  private void checkForUpdates() {
+    // Remove this for store builds!
+    UpdateManager.register(this, APP_ID);
+  }
+  
+  private void unregisterManagers() {
+    UpdateManager.unregister();
+    // unregister other managers if necessary...
+  }
+  
+  // Probably more methods
+}
+```
 
-          private void checkForUpdates() {
-            // Remove this for store builds!
-            UpdateManager.register(this, APP_ID);
-          }
-          
-          // Probably more methods
-        }
-      
 * The param APP_ID has to be replaced by your app's identifier. There are two options two create this: Either upload an existing .apk file of your app to HockeyApp or create a new app manually. The App ID can then be found an the app's page in the section App Info.
+* Always make sure to balance `register(...)` calls to SDK managers with `unregister()` calls in the corresponding lifecycle callbacks.
 * Build your project, create an .apk file, upload it to HockeyApp and you are ready to go.
 
 The above code does two things: 
@@ -69,7 +89,12 @@ The reason for the two different entry points is that the update check causes ne
 Starting with HockeySDK 3.0, you can integrate a feedback view in your app:
 
 * Open your AndroidManifest.xml.
-* Add the following line as a child element of application: <pre>&lt;activity android:name="net.hockeyapp.android.FeedbackActivity" /></pre>
+* Add the following lines as child elements of your application: 
+```
+<activity android:name="net.hockeyapp.android.FeedbackActivity" />
+<activity android:name="net.hockeyapp.android.PaintActivity" />
+```
+
 * If not already present, add the permission for internet access: <pre>&lt;uses-permission android:name="android.permission.INTERNET" /></pre>
 * Save the AndroidManifest.xml.
 * Open the activity from which you want to show the feedback view.

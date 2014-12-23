@@ -9,21 +9,20 @@ import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.Date;
 import java.util.UUID;
 
-
 import android.util.Log;
 
 /**
- * <h4>Description</h4>
+ * <h3>Description</h3>
  * 
  * Helper class to catch exceptions. Saves the stack trace
  * as a file and executes callback methods to ask the app for 
  * additional information and meta data (see CrashManagerListener). 
  * 
- * <h4>License</h4>
+ * <h3>License</h3>
  * 
  * <pre>
  * Copyright (c) 2009 nullwire aps
- * Copyright (c) 2011-2013 Bit Stadium GmbH
+ * Copyright (c) 2011-2014 Bit Stadium GmbH
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -83,14 +82,22 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
       
       // Write the stacktrace to disk
       BufferedWriter write = new BufferedWriter(new FileWriter(path));
+      
+      // HockeyApp expects the package name in the first line!
       write.write("Package: " + Constants.APP_PACKAGE + "\n");
       write.write("Version Code: " + Constants.APP_VERSION + "\n");
       write.write("Version Name: " + Constants.APP_VERSION_NAME + "\n");
+      
       if ((listener == null) || (listener.includeDeviceData())) {
         write.write("Android: " + Constants.ANDROID_VERSION + "\n");
         write.write("Manufacturer: " + Constants.PHONE_MANUFACTURER + "\n");
         write.write("Model: " + Constants.PHONE_MODEL + "\n");
       }
+      
+      if (Constants.CRASH_IDENTIFIER != null && (listener == null || listener.includeDeviceIdentifier())) {
+        write.write("CrashReporter Key: " + Constants.CRASH_IDENTIFIER + "\n");
+      }
+      
       write.write("Date: " + now + "\n");
       write.write("\n");
       write.write(result.toString());

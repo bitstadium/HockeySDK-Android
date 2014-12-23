@@ -9,14 +9,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 /**
- * <h4>Description</h4>
+ * <h3>Description</h3>
  * 
  * Internal helper class to draw the content view of a Feedback message row
  * 
- * <h4>License</h4>
+ * <h3>License</h3>
  * 
  * <pre>
- * Copyright (c) 2011-2013 Bit Stadium GmbH
+ * Copyright (c) 2011-2014 Bit Stadium GmbH
  * 
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -46,10 +46,12 @@ public class FeedbackMessageView extends LinearLayout {
   public final static int AUTHOR_TEXT_VIEW_ID = 0x3001;
   public final static int DATE_TEXT_VIEW_ID = 0x3002;
   public final static int MESSAGE_TEXT_VIEW_ID = 0x3003;
+  public final static int ATTACHMENT_LIST_VIEW_ID = 0x3004;
   
   private TextView authorTextView;
   private TextView dateTextView;
   private TextView messageTextView;
+  private AttachmentListView attachmentListView;
   
   @SuppressWarnings("unused")
   private boolean ownMessage;
@@ -67,6 +69,7 @@ public class FeedbackMessageView extends LinearLayout {
     loadAuthorLabel(context);
     loadDateLabel(context);
     loadMessageLabel(context);
+    loadAttachmentList(context);
   }
 
   private void loadLayoutParams(Context context) {
@@ -174,6 +177,20 @@ public class FeedbackMessageView extends LinearLayout {
     if (messageTextView != null) {
       messageTextView.setTextColor(color);
     }
+  }
+
+  private void loadAttachmentList(Context context) {
+    attachmentListView = new AttachmentListView(context);
+    attachmentListView.setId(ATTACHMENT_LIST_VIEW_ID);
+
+    LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+    int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 20.0,
+        getResources().getDisplayMetrics());
+
+    params.setMargins(margin, 0, margin, margin);
+    attachmentListView.setLayoutParams(params);
+
+    addView(attachmentListView);
   }
   
   /**

@@ -1,17 +1,17 @@
 package net.hockeyapp.android;
 
 /**
- * <h4>Description</h4>
+ * <h3>Description</h3>
  * 
  * Abstract class for callbacks to be invoked with regard to string resources.
  * This is used as the base class for both CrashManagerListener and 
  * UpdateManagerListener. Implement getStringForResource to return custom
  * or localized strings for dialogs and views.
  * 
- * <h4>License</h4>
+ * <h3>License</h3>
  * 
  * <pre>
- * Copyright (c) 2011-2013 Bit Stadium GmbH
+ * Copyright (c) 2011-2014 Bit Stadium GmbH
  * 
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -40,7 +40,10 @@ package net.hockeyapp.android;
  **/
 public abstract class StringListener {
   /**
-   * Return a custom string for the specified resource ID.
+   * Return a localized string for the specified resource ID.
+   *
+   * @param resourceID the string's resource ID
+   * @return localized string
    */
   public String getStringForResource(int resourceID) {
     return null;

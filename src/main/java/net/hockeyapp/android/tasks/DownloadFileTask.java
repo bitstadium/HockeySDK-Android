@@ -1,18 +1,5 @@
 package net.hockeyapp.android.tasks;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.UUID;
-
-import net.hockeyapp.android.Strings;
-import net.hockeyapp.android.listeners.DownloadFileListener;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -22,18 +9,26 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
+import net.hockeyapp.android.Strings;
+import net.hockeyapp.android.listeners.DownloadFileListener;
+
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.UUID;
 
 /**
- * <h4>Description</h4>
+ * <h3>Description</h3>
  * 
  * Internal helper class. Downloads an .apk from HockeyApp and stores
  * it on external storage. If the download was successful, the file 
  * is then opened to trigger the installation. 
  * 
- * <h4>License</h4>
+ * <h3>License</h3>
  * 
  * <pre>
- * Copyright (c) 2011-2013 Bit Stadium GmbH
+ * Copyright (c) 2011-2014 Bit Stadium GmbH
  * 
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -59,13 +54,16 @@ import android.os.Environment;
  *
  * @author Thomas Dohmke
  **/
-public class DownloadFileTask extends AsyncTask<String, Integer, Boolean>{
-  private Context context;
-  private DownloadFileListener notifier;
-  private String urlString;
-  private String filename;
-  private String filePath;
-  private ProgressDialog progressDialog;
+public class DownloadFileTask extends AsyncTask<Void, Integer, Long> {
+  protected static final int MAX_REDIRECTS = 6;
+
+  protected Context context;
+  protected DownloadFileListener notifier;
+  protected String urlString;
+  protected String filename;
+  protected String filePath;
+  protected ProgressDialog progressDialog;
+  private String downloadErrorMessage;
 
   public DownloadFileTask(Context context, String urlString, DownloadFileListener notifier) {
     this.context = context;
@@ -73,6 +71,7 @@ public class DownloadFileTask extends AsyncTask<String, Integer, Boolean>{
     this.filename = UUID.randomUUID() + ".apk";
     this.filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Download";
     this.notifier = notifier;
+    this.downloadErrorMessage = null;
   }
 
   public void attach(Context context) {
@@ -85,13 +84,20 @@ public class DownloadFileTask extends AsyncTask<String, Integer, Boolean>{
   }
 
   @Override
-  protected Boolean doInBackground(String... args) {
+  protected Long doInBackground(Void... args) {
     try {
       URL url = new URL(getURLString());
-      URLConnection connection = createConnection(url);
+      URLConnection connection = createConnection(url, MAX_REDIRECTS);
       connection.connect();
 
-      int lenghtOfFile = connection.getContentLength();
+      int lengthOfFile = connection.getContentLength();
+      String contentType = connection.getContentType();
+
+      if (contentType != null && contentType.contains("text")) {
+        // This is not the expected APK file. Maybe the redirect could not be resolved.
+        downloadErrorMessage = "The requested download does not appear to be a file.";
+        return 0L;
+      }
 
       File dir = new File(this.filePath);
       boolean result = dir.mkdirs();
@@ -104,11 +110,11 @@ public class DownloadFileTask extends AsyncTask<String, Integer, Boolean>{
       OutputStream output = new FileOutputStream(file);
 
       byte data[] = new byte[1024];
-      int count = 0;
+      int count;
       long total = 0;
       while ((count = input.read(data)) != -1) {
         total += count;
-        publishProgress((int)(total * 100 / lenghtOfFile));
+        publishProgress(Math.round(total * 100.0f / lengthOfFile));
         output.write(data, 0, count);
       }
 
@@ -116,11 +122,11 @@ public class DownloadFileTask extends AsyncTask<String, Integer, Boolean>{
       output.close();
       input.close();
 
-      return (total > 0);
+      return total;
     } 
     catch (Exception e) {
       e.printStackTrace();
-      return false;
+      return 0L;
     }
   }
 
@@ -134,26 +140,41 @@ public class DownloadFileTask extends AsyncTask<String, Integer, Boolean>{
     }
   }
 
-  protected URLConnection createConnection(URL url) throws IOException {
-    HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+  /**
+   * Recursive method for resolving redirects. Resolves at most MAX_REDIRECTS times.
+   * 
+   * @param url a URL
+   * @param remainingRedirects loop counter
+   * @throws IOException if connection fails
+   * @return instance of URLConnection
+   */
+  protected URLConnection createConnection(URL url, int remainingRedirects) throws IOException {
+    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
     setConnectionProperties(connection);
 
     int code = connection.getResponseCode();
-    if (code == HttpURLConnection.HTTP_MOVED_PERM || code == HttpURLConnection.HTTP_MOVED_TEMP) {
+    if (code == HttpURLConnection.HTTP_MOVED_PERM ||
+        code == HttpURLConnection.HTTP_MOVED_TEMP ||
+        code == HttpURLConnection.HTTP_SEE_OTHER) {
+
+      if (remainingRedirects == 0) {
+        // Stop redirecting.
+        return connection;
+      }
+
       URL movedUrl = new URL(connection.getHeaderField("Location"));
       if (!url.getProtocol().equals(movedUrl.getProtocol())) {
         // HttpURLConnection doesn't handle redirects across schemes, so handle it manually, see
         // http://code.google.com/p/android/issues/detail?id=41651
-        connection = (HttpURLConnection)movedUrl.openConnection();
-        setConnectionProperties(connection);
+        connection.disconnect();
+        return createConnection(movedUrl, --remainingRedirects); // Recursion
       }
     }
-
     return connection;
   }
 
   @Override
-  protected void onProgressUpdate(Integer... args){
+  protected void onProgressUpdate(Integer... args) {
     try {
       if (progressDialog == null) {
         progressDialog = new ProgressDialog(context);
@@ -170,7 +191,7 @@ public class DownloadFileTask extends AsyncTask<String, Integer, Boolean>{
   }
 
   @Override
-  protected void onPostExecute(Boolean result) {
+  protected void onPostExecute(Long result) {
     if (progressDialog != null) {
       try {
         progressDialog.dismiss();
@@ -180,7 +201,7 @@ public class DownloadFileTask extends AsyncTask<String, Integer, Boolean>{
       }
     }
 
-    if (result) {
+    if (result > 0L) {
       notifier.downloadSuccessful(this);
 
       Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -192,7 +213,15 @@ public class DownloadFileTask extends AsyncTask<String, Integer, Boolean>{
       try {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(Strings.get(notifier, Strings.DOWNLOAD_FAILED_DIALOG_TITLE_ID));
-        builder.setMessage(Strings.get(notifier, Strings.DOWNLOAD_FAILED_DIALOG_MESSAGE_ID));
+
+        String message;
+        if (downloadErrorMessage == null) {
+          message = Strings.get(notifier, Strings.DOWNLOAD_FAILED_DIALOG_MESSAGE_ID);
+        }
+        else {
+          message = downloadErrorMessage;
+        }
+        builder.setMessage(message);
 
         builder.setNegativeButton(Strings.get(notifier, Strings.DOWNLOAD_FAILED_DIALOG_NEGATIVE_BUTTON_ID), new DialogInterface.OnClickListener() {
           public void onClick(DialogInterface dialog, int which) {
@@ -214,7 +243,7 @@ public class DownloadFileTask extends AsyncTask<String, Integer, Boolean>{
     }
   }
 
-  private String getURLString() {
+  protected String getURLString() {
     return urlString + "&type=apk";      
   }
 }

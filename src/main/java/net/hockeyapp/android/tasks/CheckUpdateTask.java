@@ -1,56 +1,35 @@
 package net.hockeyapp.android.tasks;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
+import android.content.Context;
+import android.os.AsyncTask;
+import android.os.Build;
+import android.provider.Settings;
+import net.hockeyapp.android.Constants;
+import net.hockeyapp.android.Tracking;
+import net.hockeyapp.android.UpdateManagerListener;
+import net.hockeyapp.android.utils.VersionCache;
+import net.hockeyapp.android.utils.VersionHelper;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.*;
 import java.lang.ref.WeakReference;
-import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.Locale;
 
-import net.hockeyapp.android.Constants;
-import net.hockeyapp.android.Strings;
-import net.hockeyapp.android.Tracking;
-import net.hockeyapp.android.UpdateActivity;
-import net.hockeyapp.android.UpdateFragment;
-import net.hockeyapp.android.UpdateManager;
-import net.hockeyapp.android.UpdateManagerListener;
-import net.hockeyapp.android.utils.VersionCache;
-import net.hockeyapp.android.utils.VersionHelper;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import android.annotation.TargetApi;
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.DialogFragment;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.os.AsyncTask;
-import android.os.Build;
-import android.provider.Settings;
-import android.util.Log;
-import android.widget.Toast;
-
 /**
- * <h4>Description</h4>
+ * <h3>Description</h3>
  * 
  * Internal helper class. Checks if a new update is available by 
  * fetching version data from Hockeyapp. 
  * 
- * <h4>License</h4>
+ * <h3>License</h3>
  * 
  * <pre>
- * Copyright (c) 2011-2013 Bit Stadium GmbH
+ * Copyright (c) 2011-2014 Bit Stadium GmbH
  * 
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -76,72 +55,60 @@ import android.widget.Toast;
  *
  * @author Thomas Dohmke
  **/
-public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
+public class CheckUpdateTask extends AsyncTask<Void, String, JSONArray>{
   private static final int MAX_NUMBER_OF_VERSIONS = 25;
-  
-  protected String urlString = null;
+
+	protected static final String APK = "apk";
+	protected static final String INTENT_EXTRA_URL = "url";
+	protected static final String INTENT_EXTRA_JSON = "json";
+
+	protected String urlString = null;
   protected String appIdentifier = null;
-  
-  private Activity activity = null;
-  private Boolean mandatory = false;
-  private UpdateManagerListener listener;
+
+  private Context context = null;
+  protected Boolean mandatory = false;
+  protected UpdateManagerListener listener;
   private long usageTime = 0;
   
-  public CheckUpdateTask(WeakReference<Activity> weakActivity, String urlString) {
-    this.appIdentifier = null;
-    this.urlString = urlString;
-    
-    if (weakActivity != null) {
-      activity = weakActivity.get();
-    }
-    
-    if (activity != null) {
-      this.usageTime = Tracking.getUsageTime(activity);
-      Constants.loadFromContext(activity);
-    }
+  public CheckUpdateTask(WeakReference<? extends Context> weakContext, String urlString) {
+   this(weakContext, urlString, null);
   }
   
-  public CheckUpdateTask(WeakReference<Activity> weakActivity, String urlString, String appIdentifier) {
-    this.appIdentifier = appIdentifier;
-    this.urlString = urlString;
+  public CheckUpdateTask(WeakReference<? extends Context> weakContext, String urlString, String appIdentifier) {
+   this(weakContext, urlString, appIdentifier, null);
+  }
 
-    if (weakActivity != null) {
-      activity = weakActivity.get();
-    }
-    
-    if (activity != null) {
-      this.usageTime = Tracking.getUsageTime(activity);
-      Constants.loadFromContext(activity);
-    }
-  }
-  
-  public CheckUpdateTask(WeakReference<Activity> weakActivity, String urlString, String appIdentifier, UpdateManagerListener listener) {
+  public CheckUpdateTask(WeakReference<? extends Context> weakContext, String urlString, String appIdentifier, UpdateManagerListener listener) {
     this.appIdentifier = appIdentifier;
     this.urlString = urlString;
     this.listener = listener;
 
-    if (weakActivity != null) {
-      activity = weakActivity.get();
+    Context ctx = null;
+    if (weakContext != null) {
+      ctx = weakContext.get();
     }
-    
-    if (activity != null) {
-      this.usageTime = Tracking.getUsageTime(activity);
-      Constants.loadFromContext(activity);
+
+    if (ctx != null) {
+      this.context = ctx.getApplicationContext();
+      this.usageTime = Tracking.getUsageTime(ctx);
+      Constants.loadFromContext(ctx);
     }
   }
 
-  public void attach(WeakReference<Activity> weakActivity) {
-    if (weakActivity != null) {
-      activity = weakActivity.get();
+  public void attach(WeakReference<? extends Context> weakContext) {
+    Context ctx = null;
+    if (weakContext != null) {
+      ctx = weakContext.get();
     }
     
-    if (activity != null) {
-      Constants.loadFromContext(activity);
+    if (ctx != null) {
+      this.context = ctx.getApplicationContext();
+      Constants.loadFromContext(ctx);
     }
   }
   
   public void detach() {
-    activity = null;
+    context = null;
   }
 
   protected int getVersionCode() {
@@ -149,11 +116,11 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
   }
   
   @Override
-  protected JSONArray doInBackground(String... args) {
+  protected JSONArray doInBackground(Void... args) {
     try {
       int versionCode = getVersionCode();
       
-      JSONArray json = new JSONArray(VersionCache.getVersionInfo(activity));
+      JSONArray json = new JSONArray(VersionCache.getVersionInfo(context));
       if ((getCachingEnabled()) && (findNewVersion(json, versionCode))) {
         return json;
       }
@@ -193,8 +160,12 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
     try {
       for (int index = 0; index < json.length(); index++) {
         JSONObject entry = json.getJSONObject(index);
-        if ((entry.getInt("version") > versionCode) &&
-            (VersionHelper.compareVersionStrings(entry.getString("minimum_os_version"), Build.VERSION.RELEASE) <= 0)) {
+
+        boolean largerVersionCode = (entry.getInt("version") > versionCode);
+        boolean newerApkFile = ((entry.getInt("version") == versionCode) && VersionHelper.isNewerThanLastUpdateTime(context, entry.getLong("timestamp")));
+        boolean minRequirementsMet = VersionHelper.compareVersionStrings(entry.getString("minimum_os_version"), VersionHelper.mapGoogleVersion(Build.VERSION.RELEASE)) <= 0;
+
+        if ((largerVersionCode || newerApkFile) && minRequirementsMet) {
           if (entry.has("mandatory")) {
             mandatory = entry.getBoolean("mandatory");
           }
@@ -225,10 +196,8 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
   protected void onPostExecute(JSONArray updateInfo) {
     if (updateInfo != null) {
       if (listener != null) {
-        listener.onUpdateAvailable();
+        listener.onUpdateAvailable(updateInfo, getURLString(APK));
       }
-
-      showDialog(updateInfo);
     }
     else {
       if (listener != null) {
@@ -237,8 +206,7 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
     }
   }
   
-  private void cleanUp() {
-    activity = null;
+  protected void cleanUp() {
     urlString = null;
     appIdentifier = null;
   }
@@ -247,12 +215,12 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
     StringBuilder builder = new StringBuilder();
     builder.append(urlString);
     builder.append("api/2/apps/");
-    builder.append((this.appIdentifier != null ? this.appIdentifier : activity.getPackageName()));
+    builder.append((this.appIdentifier != null ? this.appIdentifier : context.getPackageName()));
     builder.append("?format=" + format);
 
-    String deviceIdentifier = Settings.Secure.getString(activity.getContentResolver(), Settings.Secure.ANDROID_ID);
+    String deviceIdentifier = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
     if (deviceIdentifier != null) {
-      builder.append("&udid=" + encodeParam(Settings.Secure.getString(activity.getContentResolver(), Settings.Secure.ANDROID_ID)));
+      builder.append("&udid=" + encodeParam(Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID)));
     }
     
     builder.append("&os=Android");
@@ -278,109 +246,21 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
     }
   }
   
-  @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-  private void showDialog(final JSONArray updateInfo) {
-    if (getCachingEnabled()) {
-      VersionCache.setVersionInfo(activity, updateInfo.toString());
-    }
-    
-    if ((activity == null) || (activity.isFinishing())) {
-      return;
-    }
-    
-    AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-    builder.setTitle(Strings.get(listener, Strings.UPDATE_DIALOG_TITLE_ID));
-    
-    if (!mandatory) {
-      builder.setMessage(Strings.get(listener, Strings.UPDATE_DIALOG_MESSAGE_ID));
+  protected boolean getCachingEnabled() {
+    return true;
+  }
   
-      builder.setNegativeButton(Strings.get(listener, Strings.UPDATE_DIALOG_NEGATIVE_BUTTON_ID), new DialogInterface.OnClickListener() {
-        public void onClick(DialogInterface dialog, int which) {
-          cleanUp();
-        } 
-      });
-      
-      builder.setPositiveButton(Strings.get(listener, Strings.UPDATE_DIALOG_POSITIVE_BUTTON_ID), new DialogInterface.OnClickListener() {
-        public void onClick(DialogInterface dialog, int which) {
-          if (getCachingEnabled()) {
-            VersionCache.setVersionInfo(activity, "[]");
-          }
-          
-          WeakReference<Activity> weakActivity = new WeakReference<Activity>(activity);
-          if ((UpdateManager.fragmentsSupported()) && (UpdateManager.runsOnTablet(weakActivity))) {
-            showUpdateFragment(updateInfo);
-          }
-          else {
-            startUpdateIntent(updateInfo, false);
-          }
-        } 
-      });
+/*
+MIT Mobile for Android is open source software, created, maintained, and shared under the MIT license by Information Services & Technology at the Massachusetts Institute of Technology. The project includes components from other open source projects which remain under their existing licenses, detailed in their respective source files. The open source license does not apply to media depicting people and places at MIT which are included in the source. Said media may not be duplicated without MIT's consent.
 
-      builder.create().show();
-    }
-    else {
-      Toast.makeText(activity, Strings.get(listener, Strings.UPDATE_MANDATORY_TOAST_ID), Toast.LENGTH_LONG).show();
-      startUpdateIntent(updateInfo, true);
-    }
-  }
-  
-  @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-  private void startUpdateIntent(final JSONArray updateInfo, Boolean finish) {
-    Class<?> activityClass = null;
-    if (listener != null) {
-      activityClass = listener.getUpdateActivityClass();
-    }
-    if (activityClass == null) {
-      activityClass = UpdateActivity.class;
-    }
-    
-    if (activity != null) {
-      Intent intent = new Intent();
-      intent.setClass(activity, activityClass);
-      intent.putExtra("json", updateInfo.toString());
-      intent.putExtra("url", getURLString("apk"));
-      activity.startActivity(intent);
-      
-      if (finish) {
-        activity.finish();
-      }
-    }
-    
-    cleanUp();
-  }
+Copyright (c) 2010 Massachusetts Institute of Technology
 
-  @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-  private void showUpdateFragment(final JSONArray updateInfo) {
-    if (activity != null) {
-      FragmentTransaction fragmentTransaction = activity.getFragmentManager().beginTransaction();
-      fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-      
-      Fragment existingFragment = activity.getFragmentManager().findFragmentByTag("hockey_update_dialog");
-      if (existingFragment != null) {
-        fragmentTransaction.remove(existingFragment);
-      }
-      fragmentTransaction.addToBackStack(null);
-  
-      // Create and show the dialog
-      Class<? extends UpdateFragment> fragmentClass = UpdateFragment.class;
-      if (listener != null) {
-        fragmentClass = listener.getUpdateFragmentClass();
-      }
-      
-      try {
-        Method method = fragmentClass.getMethod("newInstance", JSONArray.class, String.class);
-        DialogFragment updateFragment = (DialogFragment)method.invoke(null, updateInfo, getURLString("apk"));
-        updateFragment.show(fragmentTransaction, "hockey_update_dialog");
-      }
-      catch (Exception e) {
-        Log.d(Constants.TAG, "An exception happened while showing the update fragment:");
-        e.printStackTrace();
-        Log.d(Constants.TAG, "Showing update activity instead.");
-        startUpdateIntent(updateInfo, false);
-      }
-    }
-  }
-  
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
   private static String convertStreamToString(InputStream inputStream) {
     BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream), 1024);
     StringBuilder stringBuilder = new StringBuilder();
@@ -405,7 +285,4 @@ public class CheckUpdateTask extends AsyncTask<String, String, JSONArray>{
     return stringBuilder.toString();
   }
 
-  protected boolean getCachingEnabled() {
-    return true;
-  }
 }
