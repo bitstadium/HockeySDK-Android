@@ -101,11 +101,14 @@ public abstract class UpdateManagerListener extends StringListener {
   }
 
   /**
-   * To allow updates even if installed from a market, override this to return true.
-   * Exercise caution with this, as some markets' policies don't allow apps to update internally!
+   * To allow updates even if installed from a market, override this 
+   * to return true. Exercise caution with this, as some markets' 
+   * policies don't allow apps to update internally!
+   *
+   * @return app can be updated when installed from market
    */
   public boolean canUpdateInMarket() {
-      return false;
+    return false;
   }
 }
   
