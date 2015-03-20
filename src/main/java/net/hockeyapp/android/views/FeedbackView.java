@@ -14,7 +14,9 @@ import android.view.Gravity;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.*;
+import net.hockeyapp.android.FeedbackManager;
 import net.hockeyapp.android.Strings;
+import net.hockeyapp.android.objects.FeedbackUserDataElement;
 
 /**
  * <h3>Description</h3>
@@ -231,7 +233,9 @@ public class FeedbackView extends LinearLayout {
     editText.setHint(Strings.get(Strings.FEEDBACK_NAME_INPUT_HINT_ID));
     editText.setHintTextColor(Color.LTGRAY);
     setEditTextBackground(context, editText);
-    
+
+    editText.setVisibility(FeedbackManager.getRequireUserName() == FeedbackUserDataElement.DONT_SHOW ? GONE : VISIBLE);
+
     wrapperLayoutFeedback.addView(editText);
   }
 
@@ -253,7 +257,8 @@ public class FeedbackView extends LinearLayout {
     editText.setHint(Strings.get(Strings.FEEDBACK_EMAIL_INPUT_HINT_ID));
     editText.setHintTextColor(Color.LTGRAY);
     setEditTextBackground(context, editText);
-    
+    editText.setVisibility(FeedbackManager.getRequireUserEmail() == FeedbackUserDataElement.DONT_SHOW ? GONE : VISIBLE);
+
     wrapperLayoutFeedback.addView(editText);
   }
 

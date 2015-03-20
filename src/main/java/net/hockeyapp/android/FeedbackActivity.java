@@ -20,6 +20,7 @@ import net.hockeyapp.android.adapters.MessagesAdapter;
 import net.hockeyapp.android.objects.ErrorObject;
 import net.hockeyapp.android.objects.FeedbackMessage;
 import net.hockeyapp.android.objects.FeedbackResponse;
+import net.hockeyapp.android.objects.FeedbackUserDataElement;
 import net.hockeyapp.android.tasks.ParseFeedbackTask;
 import net.hockeyapp.android.tasks.SendFeedbackTask;
 import net.hockeyapp.android.utils.AsyncTaskUtils;
@@ -714,16 +715,16 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
       subjectInput.setVisibility(View.VISIBLE);
       setError(subjectInput, Strings.FEEDBACK_VALIDATE_SUBJECT_ERROR_ID);
     }
-    else if (TextUtils.isEmpty(name)) {
+    else if (FeedbackManager.getRequireUserName() == FeedbackUserDataElement.REQUIRED && TextUtils.isEmpty(name)) {
       setError(nameInput, Strings.FEEDBACK_VALIDATE_NAME_ERROR_ID);
     }
-    else if (TextUtils.isEmpty(email)) {
+    else if (FeedbackManager.getRequireUserEmail() == FeedbackUserDataElement.REQUIRED && TextUtils.isEmpty(email)) {
       setError(emailInput, Strings.FEEDBACK_VALIDATE_EMAIL_EMPTY_ID);
     }
     else if(TextUtils.isEmpty(text)) {
       setError(textInput, Strings.FEEDBACK_VALIDATE_TEXT_ERROR_ID);
     }
-  	else if (!Util.isValidEmail(email)) {
+  	else if (FeedbackManager.getRequireUserEmail() == FeedbackUserDataElement.REQUIRED && !Util.isValidEmail(email)) {
       setError(emailInput, Strings.FEEDBACK_VALIDATE_EMAIL_ERROR_ID);
   	}
   	else {
