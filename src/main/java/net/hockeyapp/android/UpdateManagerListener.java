@@ -72,6 +72,13 @@ public abstract class UpdateManagerListener extends StringListener {
   }
 
   /**
+   * Called when the user dismisses the update dialog.
+   */
+  public void onCancel() {
+    // Do nothing
+  }
+
+  /**
    * Called when the update manager found an update.
    * @param data Information about the update.
    * @param url Link to apk file update.

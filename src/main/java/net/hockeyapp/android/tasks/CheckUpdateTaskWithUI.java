@@ -1,18 +1,5 @@
 package net.hockeyapp.android.tasks;
 
-import java.lang.ref.WeakReference;
-import java.lang.reflect.Method;
-
-import net.hockeyapp.android.Constants;
-import net.hockeyapp.android.Strings;
-import net.hockeyapp.android.UpdateActivity;
-import net.hockeyapp.android.UpdateFragment;
-import net.hockeyapp.android.UpdateManagerListener;
-import net.hockeyapp.android.utils.Util;
-import net.hockeyapp.android.utils.VersionCache;
-
-import org.json.JSONArray;
-
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -24,6 +11,19 @@ import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
+
+import net.hockeyapp.android.Constants;
+import net.hockeyapp.android.Strings;
+import net.hockeyapp.android.UpdateActivity;
+import net.hockeyapp.android.UpdateFragment;
+import net.hockeyapp.android.UpdateManagerListener;
+import net.hockeyapp.android.utils.Util;
+import net.hockeyapp.android.utils.VersionCache;
+
+import org.json.JSONArray;
+
+import java.lang.ref.WeakReference;
+import java.lang.reflect.Method;
 
 /**
  * <h3>Description</h3>
@@ -115,6 +115,7 @@ public class CheckUpdateTaskWithUI extends CheckUpdateTask {
       builder.setNegativeButton(Strings.get(listener, Strings.UPDATE_DIALOG_NEGATIVE_BUTTON_ID), new DialogInterface.OnClickListener() {
         public void onClick(DialogInterface dialog, int which) {
           cleanUp();
+          listener.onCancel();
         }
       });
 
