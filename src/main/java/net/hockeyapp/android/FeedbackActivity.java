@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.*;
@@ -106,7 +107,10 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
   private ParseFeedbackTask parseFeedbackTask;
   private Handler parseFeedbackHandler;
 
-  /** URL for HockeyApp API **/
+  /** Initial attachment uris */
+  private List<Uri> initialAttachments;
+
+    /** URL for HockeyApp API **/
   private String url;
 
   /** Current error for alert dialog **/
@@ -211,6 +215,14 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
     Bundle extras = getIntent().getExtras();
     if (extras != null) {
       url = extras.getString("url");
+
+      Parcelable[] initialAttachmentsArray = extras.getParcelableArray("initialAttachments");
+      if (initialAttachmentsArray != null) {
+        initialAttachments = new ArrayList<Uri>();
+          for (Parcelable parcelable : initialAttachmentsArray) {
+              initialAttachments.add((Uri) parcelable);
+          }
+      }
     }
 
     if (savedInstanceState != null) {
@@ -354,6 +366,12 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
       /** Reset the attachment list */
       ViewGroup attachmentListView = (ViewGroup)findViewById(FeedbackView.WRAPPER_LAYOUT_ATTACHMENTS);
       attachmentListView.removeAllViews();
+
+      if (initialAttachments != null) {
+        for (Uri attachmentUri : initialAttachments) {
+            attachmentListView.addView(new AttachmentView(this, attachmentListView, attachmentUri, true));
+        }
+      }
 
       /** Use of context menu needs to be enabled explicitly */
       addAttachmentButton = (Button)findViewById(FeedbackView.ADD_ATTACHMENT_BUTTON_ID);
