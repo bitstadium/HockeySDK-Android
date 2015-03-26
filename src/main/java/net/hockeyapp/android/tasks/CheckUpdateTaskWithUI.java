@@ -115,7 +115,9 @@ public class CheckUpdateTaskWithUI extends CheckUpdateTask {
       builder.setNegativeButton(Strings.get(listener, Strings.UPDATE_DIALOG_NEGATIVE_BUTTON_ID), new DialogInterface.OnClickListener() {
         public void onClick(DialogInterface dialog, int which) {
           cleanUp();
-          listener.onCancel();
+          if (null != listener) {
+            listener.onCancel();
+          }
         }
       });
 
