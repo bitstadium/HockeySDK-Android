@@ -49,6 +49,7 @@ public class LocaleManager {
     loadFromResources("hockeyapp_crash_dialog_title", Strings.CRASH_DIALOG_TITLE_ID, context);
     loadFromResources("hockeyapp_crash_dialog_message", Strings.CRASH_DIALOG_MESSAGE_ID, context);
     loadFromResources("hockeyapp_crash_dialog_negative_button", Strings.CRASH_DIALOG_NEGATIVE_BUTTON_ID, context);
+    loadFromResources("hockeyapp_crash_dialog_neutral_button", Strings.CRASH_DIALOG_NEUTRAL_BUTTON_ID, context);
     loadFromResources("hockeyapp_crash_dialog_positive_button", Strings.CRASH_DIALOG_POSITIVE_BUTTON_ID, context);
 
     // Download Failed
