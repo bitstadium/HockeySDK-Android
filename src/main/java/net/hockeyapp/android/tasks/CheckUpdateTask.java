@@ -158,6 +158,8 @@ public class CheckUpdateTask extends AsyncTask<Void, String, JSONArray>{
 
   private boolean findNewVersion(JSONArray json, int versionCode) {
     try {
+	  boolean newerVersionFound = false;
+
       for (int index = 0; index < json.length(); index++) {
         JSONObject entry = json.getJSONObject(index);
 
@@ -167,13 +169,13 @@ public class CheckUpdateTask extends AsyncTask<Void, String, JSONArray>{
 
         if ((largerVersionCode || newerApkFile) && minRequirementsMet) {
           if (entry.has("mandatory")) {
-            mandatory = entry.getBoolean("mandatory");
+            mandatory |= entry.getBoolean("mandatory");
           }
-          return true;
+          newerVersionFound = true;
         }
       }
       
-      return false;
+      return newerVersionFound;
     }
     catch (JSONException e) {
       return false;
