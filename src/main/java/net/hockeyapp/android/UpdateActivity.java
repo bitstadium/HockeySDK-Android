@@ -271,8 +271,9 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
   private boolean isWriteExternalStorageSet(Context context) {
     String permission = "android.permission.WRITE_EXTERNAL_STORAGE";
     int res = context.checkCallingOrSelfPermission(permission);
-    
-    return res == PackageManager.PERMISSION_GRANTED;
+
+    // Always return true on Kitkat or newer
+    return ((res == PackageManager.PERMISSION_GRANTED) || (android.os.Build.VERSION.SDK_INT > 18));
   }
   
   /**
