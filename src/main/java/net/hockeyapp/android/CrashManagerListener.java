@@ -152,4 +152,12 @@ public abstract class CrashManagerListener extends StringListener {
    */
   public void onUserDeniedCrashes() {
   }
+
+  /**
+   * Get the number of max retry attempts to send crashes to HockeyApp.
+   * Infinite retries if this value is set to -1
+   */
+  public int getMaxRetryAttempts() {
+      return -1;
+  }
 }

@@ -292,18 +292,20 @@ public class CrashManager {
 
             if (listener != null) {
               listener.onCrashesSent();
+              deleteRetryCounter(weakContext, list[index], listener.getMaxRetryAttempts());
             }
           }
           else {
             Log.d(Constants.TAG, "Transmission failed, will retry on next register() call");
             if (listener != null) {
               listener.onCrashesNotSent();
+              updateRetryCounter(weakContext, list[index], listener.getMaxRetryAttempts());
             }
           }
         }
       }
     }
-  } 
+  }
 
   /**
    * Deletes all stack traces and meta files from files dir.
@@ -468,7 +470,56 @@ public class CrashManager {
   private static String getURLString() {
     return urlString + "api/2/apps/" + identifier + "/crashes/";      
   }
-  
+
+  /**
+   * Update the retry attempts count for this crash stacktrace
+   */
+    private static void updateRetryCounter(WeakReference<Context> weakContext, String filename, int maxRetryAttempts) {
+        if (maxRetryAttempts == -1)
+            return;
+        Context context = null;
+        if (weakContext != null) {
+            context = weakContext.get();
+            if (context != null) {
+                SharedPreferences preferences = context.getSharedPreferences("HockeySDK", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = preferences.edit();
+
+                int retryCounter = preferences.getInt(filename, 0);
+                if (retryCounter >= maxRetryAttempts){
+                    deleteStackTrace(weakContext, filename);
+                    deleteRetryCounter(weakContext, filename, maxRetryAttempts);
+                }
+                else {
+                    editor.putInt(filename, retryCounter + 1);
+                    editor.commit();
+                }
+            }
+        }
+    }
+
+    /**
+     * Delete the retry counter if stacktrace is uploaded or
+     * retry limit is reached.
+     */
+    private static void deleteRetryCounter(WeakReference<Context> weakContext, String filename, int maxRetryAttempts)
+    {
+        if (maxRetryAttempts == -1)
+            return;
+        Context context = null;
+        if (weakContext != null) {
+            context = weakContext.get();
+            if (context != null) {
+                SharedPreferences preferences = context.getSharedPreferences("HockeySDK", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = preferences.edit();
+                int retryCounter = preferences.getInt(filename, 0);
+                if (retryCounter > 0) {
+                    editor.remove(filename);
+                    editor.commit();
+                }
+            }
+        }
+    }
+
   /**
    * Deletes the give filename and all corresponding files (same name, 
    * different extension).
@@ -487,7 +538,7 @@ public class CrashManager {
         context.deleteFile(contact);
         
         String description = filename.replace(".stacktrace", ".description");
-        context.deleteFile(description);        
+        context.deleteFile(description);
       }
     }
   }
