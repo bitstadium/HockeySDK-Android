@@ -392,22 +392,22 @@ public class CrashManager {
     });
 
     builder.setNeutralButton(Strings.get(listener, Strings.CRASH_DIALOG_NEUTRAL_BUTTON_ID), new DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-            Context context = null;
-            if (weakContext != null) {
-                context = weakContext.get();
-            }
-
-            if (context == null) {
-                return;
-            }
-
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-            prefs.edit().putBoolean(ALWAYS_SEND_KEY, true).commit();
-
-            sendCrashes(weakContext, listener, ignoreDefaultHandler);
+      @Override
+      public void onClick(DialogInterface dialog, int which) {
+        Context context = null;
+        if (weakContext != null) {
+          context = weakContext.get();
         }
+
+        if (context == null) {
+          return;
+        }
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        prefs.edit().putBoolean(ALWAYS_SEND_KEY, true).commit();
+
+        sendCrashes(weakContext, listener, ignoreDefaultHandler);
+      }
     });
 
     builder.setPositiveButton(Strings.get(listener, Strings.CRASH_DIALOG_POSITIVE_BUTTON_ID), new DialogInterface.OnClickListener() {
@@ -472,53 +472,49 @@ public class CrashManager {
   }
 
   /**
-   * Update the retry attempts count for this crash stacktrace
+   * Update the retry attempts count for this crash stacktrace.
    */
-    private static void updateRetryCounter(WeakReference<Context> weakContext, String filename, int maxRetryAttempts) {
-        if (maxRetryAttempts == -1)
-            return;
-        Context context = null;
-        if (weakContext != null) {
-            context = weakContext.get();
-            if (context != null) {
-                SharedPreferences preferences = context.getSharedPreferences("HockeySDK", Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = preferences.edit();
-
-                int retryCounter = preferences.getInt(filename, 0);
-                if (retryCounter >= maxRetryAttempts){
-                    deleteStackTrace(weakContext, filename);
-                    deleteRetryCounter(weakContext, filename, maxRetryAttempts);
-                }
-                else {
-                    editor.putInt(filename, retryCounter + 1);
-                    editor.commit();
-                }
-            }
-        }
+  private static void updateRetryCounter(WeakReference<Context> weakContext, String filename, int maxRetryAttempts) {
+    if (maxRetryAttempts == -1) {
+        return;
     }
 
-    /**
-     * Delete the retry counter if stacktrace is uploaded or
-     * retry limit is reached.
-     */
-    private static void deleteRetryCounter(WeakReference<Context> weakContext, String filename, int maxRetryAttempts)
-    {
-        if (maxRetryAttempts == -1)
-            return;
-        Context context = null;
-        if (weakContext != null) {
-            context = weakContext.get();
-            if (context != null) {
-                SharedPreferences preferences = context.getSharedPreferences("HockeySDK", Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = preferences.edit();
-                int retryCounter = preferences.getInt(filename, 0);
-                if (retryCounter > 0) {
-                    editor.remove(filename);
-                    editor.commit();
-                }
-            }
+    Context context = null;
+    if (weakContext != null) {
+      context = weakContext.get();
+      if (context != null) {
+        SharedPreferences preferences = context.getSharedPreferences("HockeySDK", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+
+        int retryCounter = preferences.getInt("RETRY_COUNT: "+ filename, 0);
+        if (retryCounter >= maxRetryAttempts){
+          deleteStackTrace(weakContext, filename);
+          deleteRetryCounter(weakContext, filename, maxRetryAttempts);
         }
+        else {
+          editor.putInt("RETRY_COUNT: "+ filename, retryCounter + 1);
+          editor.commit();
+        }
+      }
     }
+  }
+
+  /**
+   * Delete the retry counter if stacktrace is uploaded or retry limit is 
+   * reached.
+   */
+  private static void deleteRetryCounter(WeakReference<Context> weakContext, String filename, int maxRetryAttempts) {
+    Context context = null;
+    if (weakContext != null) {
+      context = weakContext.get();
+      if (context != null) {
+        SharedPreferences preferences = context.getSharedPreferences("HockeySDK", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.remove("RETRY_COUNT: "+ filename);
+        editor.commit();
+      }
+    }
+  }
 
   /**
    * Deletes the give filename and all corresponding files (same name, 

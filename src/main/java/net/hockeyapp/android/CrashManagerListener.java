@@ -158,6 +158,6 @@ public abstract class CrashManagerListener extends StringListener {
    * Infinite retries if this value is set to -1
    */
   public int getMaxRetryAttempts() {
-      return -1;
+    return 1;
   }
 }
