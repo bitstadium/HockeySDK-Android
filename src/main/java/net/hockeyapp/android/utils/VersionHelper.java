@@ -352,8 +352,9 @@ public class VersionHelper {
   public static String mapGoogleVersion(String version) {
     if ((version == null) || (version.equalsIgnoreCase("L"))) {
       return "5.0";
-    }
-    else {
+    } else if (version.equalsIgnoreCase("M")) {
+      return "6.0";
+    } else {
       return version;
     }
   }
