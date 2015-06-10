@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 import net.hockeyapp.android.UpdateInfoListener;
 
@@ -344,18 +345,12 @@ public class VersionHelper {
   }
 
   /**
-   * Map internal Google version letter to a semantic version (currently L to 5.0).
+   * Detect Android pre-release versions (currently null or single-letter version names).
    *
-   * @param version value of Build.VERSION.RELEASE
-   * @return mapped version number
+   * @param version
+   * @return true if the version indicates an Android pre-release version
    */
-  public static String mapGoogleVersion(String version) {
-    if ((version == null) || (version.equalsIgnoreCase("L"))) {
-      return "5.0";
-    } else if (version.equalsIgnoreCase("M")) {
-      return "6.0";
-    } else {
-      return version;
-    }
+  public static boolean isAndroidPreReleaseVersion(String version) {
+    return version == null || Pattern.matches("[a-zA-Z]", version);
   }
 }
