@@ -1,22 +1,17 @@
 package net.hockeyapp.android.utils;
 
-import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.Scanner;
-
+import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import net.hockeyapp.android.UpdateInfoListener;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.content.Context;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * <h3>Description</h3>
@@ -54,6 +49,8 @@ import android.content.pm.PackageManager;
  * @author Thomas Dohmke
  **/
 public class VersionHelper {
+  public static final String VERSION_MAX = "99.0";
+
   private ArrayList<JSONObject> sortedVersions;
   private JSONObject newest;
   private UpdateInfoListener listener;
@@ -344,7 +341,10 @@ public class VersionHelper {
   }
 
   /**
-   * Map internal Google version letter to a semantic version (currently L to 5.0).
+   * Map internal Google version letter to a semantic version (currently L to 5.0, M to 6.0).
+   * All other pre release versions (versions consisting of only letters) will return VERSION_MAX,
+   * to indicate they are newer, to prevent having new releases of the SDK with every Android
+   * pre release.
    *
    * @param version value of Build.VERSION.RELEASE
    * @return mapped version number
@@ -354,6 +354,8 @@ public class VersionHelper {
       return "5.0";
     } else if (version.equalsIgnoreCase("M")) {
       return "6.0";
+    } else if (Pattern.matches("[a-zA-Z]+", version)) {
+      return VERSION_MAX;
     } else {
       return version;
     }
