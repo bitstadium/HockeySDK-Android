@@ -14,6 +14,8 @@ import java.util.List;
 
 
 import android.preference.PreferenceManager;
+import net.hockeyapp.android.objects.CrashManagerUserInput;
+import net.hockeyapp.android.objects.CrashMetaData;
 import net.hockeyapp.android.utils.ConnectionManager;
 import net.hockeyapp.android.utils.PrefsUtil;
 
@@ -246,11 +248,21 @@ public class CrashManager {
 
   /**
    * Submits all stack traces in the files dir to HockeyApp.
-   * 
+   *
    * @param weakContext The context to use. Usually your Activity object.
    * @param listener Implement for callback functions.
    */
   public static void submitStackTraces(WeakReference<Context> weakContext, CrashManagerListener listener) {
+    submitStackTraces(weakContext, listener, null);
+  }
+  /**
+   * Submits all stack traces in the files dir to HockeyApp.
+   *
+   * @param weakContext The context to use. Usually your Activity object.
+   * @param listener Implement for callback functions.
+   * @param crashMetaData The crashMetaData, provided by the user.
+   */
+  public static void submitStackTraces(WeakReference<Context> weakContext, CrashManagerListener listener, CrashMetaData crashMetaData) {
     String[] list = searchForStackTraces();
     Boolean successful = false;
 
@@ -267,24 +279,34 @@ public class CrashManager {
             Log.d(Constants.TAG, "Transmitting crash data: \n" + stacktrace);
             DefaultHttpClient httpClient = (DefaultHttpClient)ConnectionManager.getInstance().getHttpClient();
             HttpPost httpPost = new HttpPost(getURLString());
-            
-            List <NameValuePair> parameters = new ArrayList <NameValuePair>(); 
+
+            final String applicationLog = contentsOfFile(weakContext, filename.replace(".stacktrace", ".description"));
+            String description = crashMetaData != null ? crashMetaData.getUserDescription() : "";
+            if(applicationLog != null && applicationLog.length() > 0) {
+              if(description != null && description.length() > 0) {
+                description = String.format("%s\n\nLog:\n%s", description, applicationLog);
+              } else {
+                description = String.format("Log:\n%s", applicationLog);
+              }
+            }
+
+            List <NameValuePair> parameters = new ArrayList <NameValuePair>();
             parameters.add(new BasicNameValuePair("raw", stacktrace));
             parameters.add(new BasicNameValuePair("userID", contentsOfFile(weakContext, filename.replace(".stacktrace", ".user"))));
             parameters.add(new BasicNameValuePair("contact", contentsOfFile(weakContext, filename.replace(".stacktrace", ".contact"))));
-            parameters.add(new BasicNameValuePair("description", contentsOfFile(weakContext, filename.replace(".stacktrace", ".description"))));
+            parameters.add(new BasicNameValuePair("description", description));
             parameters.add(new BasicNameValuePair("sdk", Constants.SDK_NAME));
             parameters.add(new BasicNameValuePair("sdk_version", Constants.SDK_VERSION));
-            
+
             httpPost.setEntity(new UrlEncodedFormEntity(parameters, HTTP.UTF_8));
-            
-            httpClient.execute(httpPost);   
+
+            httpClient.execute(httpPost);
             successful = true;
           }
         }
         catch (Exception e) {
           e.printStackTrace();
-        } 
+        }
         finally {
           if (successful) {
             Log.d(Constants.TAG, "Transmission succeeded");
@@ -324,22 +346,68 @@ public class CrashManager {
           if (weakContext != null) {
             Log.d(Constants.TAG, "Delete stacktrace " + list[index] + ".");
             deleteStackTrace(weakContext, list[index]);
-            
+
             context = weakContext.get();
             if (context != null) {
-              context.deleteFile(list[index]);              
+              context.deleteFile(list[index]);
             }
           }
-        } 
+        }
         catch (Exception e) {
           e.printStackTrace();
         }
       }
     }
   }
-  
+
   /**
-   * Private method to initialize the crash manager. This method has an 
+   Provides an interface to pass user input from a custom alert to a crash report
+
+   @param userInput Defines the users action wether to send, always send, or not to send the crash report.
+   @param userProvidedMetaData The content of this optional BITCrashMetaData instance will be attached to the crash report and allows to ask the user for e.g. additional comments or info.
+
+   @return Returns YES if the input is a valid option and successfully triggered further processing of the crash report
+
+   @see CrashManagerUserInput
+   @see CrashMetaData
+   */
+  public static boolean handleUserInput(final CrashManagerUserInput userInput,
+      final CrashMetaData userProvidedMetaData, final CrashManagerListener listener,
+      final WeakReference<Context> weakContext, final boolean ignoreDefaultHandler) {
+    switch (userInput) {
+      case CrashManagerUserInputDontSend:
+        if (listener != null) {
+          listener.onUserDeniedCrashes();
+        }
+
+        deleteStackTraces(weakContext);
+        registerHandler(weakContext, listener, ignoreDefaultHandler);
+        return true;
+      case CrashManagerUserInputSend:
+        Context context = null;
+        if (weakContext != null) {
+          context = weakContext.get();
+        }
+
+        if (context == null) {
+          return false;
+        }
+
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        prefs.edit().putBoolean(ALWAYS_SEND_KEY, true).commit();
+
+        sendCrashes(weakContext, listener, ignoreDefaultHandler, userProvidedMetaData);
+        return true;
+      case CrashManagerUserInputAlwaysSend:
+        sendCrashes(weakContext, listener, ignoreDefaultHandler, userProvidedMetaData);
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  /**
+   * Private method to initialize the crash manager. This method has an
    * additional parameter to decide whether to register the exception handler
    * at the end or not.
    */
@@ -371,8 +439,12 @@ public class CrashManager {
     if (weakContext != null) {
       context = weakContext.get();
     }
-    
+
     if (context == null) {
+      return;
+    }
+
+    if(listener.onHandleAlertView()) {
       return;
     }
 
@@ -382,58 +454,50 @@ public class CrashManager {
 
     builder.setNegativeButton(Strings.get(listener, Strings.CRASH_DIALOG_NEGATIVE_BUTTON_ID), new DialogInterface.OnClickListener() {
       public void onClick(DialogInterface dialog, int which) {
-        if (listener != null) {
-          listener.onUserDeniedCrashes();
-        }
-        
-        deleteStackTraces(weakContext);
-        registerHandler(weakContext, listener, ignoreDefaultHandler);
-      } 
+        handleUserInput(CrashManagerUserInput.CrashManagerUserInputDontSend, null, listener, weakContext, ignoreDefaultHandler);
+      }
     });
 
     builder.setNeutralButton(Strings.get(listener, Strings.CRASH_DIALOG_NEUTRAL_BUTTON_ID), new DialogInterface.OnClickListener() {
       @Override
       public void onClick(DialogInterface dialog, int which) {
-        Context context = null;
-        if (weakContext != null) {
-          context = weakContext.get();
-        }
-
-        if (context == null) {
-          return;
-        }
-
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        prefs.edit().putBoolean(ALWAYS_SEND_KEY, true).commit();
-
-        sendCrashes(weakContext, listener, ignoreDefaultHandler);
+        handleUserInput(CrashManagerUserInput.CrashManagerUserInputAlwaysSend, null, listener, weakContext, ignoreDefaultHandler);
       }
     });
 
     builder.setPositiveButton(Strings.get(listener, Strings.CRASH_DIALOG_POSITIVE_BUTTON_ID), new DialogInterface.OnClickListener() {
       public void onClick(DialogInterface dialog, int which) {
-        sendCrashes(weakContext, listener, ignoreDefaultHandler);
-      } 
+        handleUserInput(CrashManagerUserInput.CrashManagerUserInputDontSend, null, listener,
+            weakContext, ignoreDefaultHandler);
+      }
     });
 
     builder.create().show();
   }
-  
+
   /**
-   * Starts thread to send crashes to HockeyApp, then registers the exception 
-   * handler. 
+   * Starts thread to send crashes to HockeyApp, then registers the exception
+   * handler.
    */
   private static void sendCrashes(final WeakReference<Context> weakContext, final CrashManagerListener listener, final boolean ignoreDefaultHandler) {
+    sendCrashes(weakContext, listener, ignoreDefaultHandler, null);
+  }
+
+  /**
+   * Starts thread to send crashes to HockeyApp, then registers the exception
+   * handler.
+   */
+  private static void sendCrashes(final WeakReference<Context> weakContext, final CrashManagerListener listener, final boolean ignoreDefaultHandler, final CrashMetaData crashMetaData) {
     saveConfirmedStackTraces(weakContext);
     registerHandler(weakContext, listener, ignoreDefaultHandler);
-    
+
     if (!submitting) {
       submitting = true;
-      
+
       new Thread() {
         @Override
         public void run() {
-          submitStackTraces(weakContext, listener);
+          submitStackTraces(weakContext, listener, crashMetaData);
           submitting = false;
         }
       }.start();
