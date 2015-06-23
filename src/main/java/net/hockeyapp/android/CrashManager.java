@@ -383,7 +383,7 @@ public class CrashManager {
         deleteStackTraces(weakContext);
         registerHandler(weakContext, listener, ignoreDefaultHandler);
         return true;
-      case CrashManagerUserInputSend:
+      case CrashManagerUserInputAlwaysSend:
         Context context = null;
         if (weakContext != null) {
           context = weakContext.get();
@@ -398,7 +398,7 @@ public class CrashManager {
 
         sendCrashes(weakContext, listener, ignoreDefaultHandler, userProvidedMetaData);
         return true;
-      case CrashManagerUserInputAlwaysSend:
+      case CrashManagerUserInputSend:
         sendCrashes(weakContext, listener, ignoreDefaultHandler, userProvidedMetaData);
         return true;
       default:
