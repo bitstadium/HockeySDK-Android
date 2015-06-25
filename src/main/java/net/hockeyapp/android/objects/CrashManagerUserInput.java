@@ -20,7 +20,7 @@ public enum CrashManagerUserInput {
 
     private final int value;
 
-    private CrashManagerUserInput(int value) {
+    CrashManagerUserInput(int value) {
         this.value = value;
     }
 
