@@ -282,8 +282,8 @@ public class CrashManager {
 
             final String applicationLog = contentsOfFile(weakContext, filename.replace(".stacktrace", ".description"));
             String description = crashMetaData != null ? crashMetaData.getUserDescription() : "";
-            if(applicationLog != null && applicationLog.length() > 0) {
-              if(description != null && description.length() > 0) {
+            if (applicationLog != null && applicationLog.length() > 0) {
+              if (description != null && description.length() > 0) {
                 description = String.format("%s\n\nLog:\n%s", description, applicationLog);
               } else {
                 description = String.format("Log:\n%s", applicationLog);
@@ -444,7 +444,7 @@ public class CrashManager {
       return;
     }
 
-    if(listener.onHandleAlertView()) {
+    if (listener.onHandleAlertView()) {
       return;
     }
 
