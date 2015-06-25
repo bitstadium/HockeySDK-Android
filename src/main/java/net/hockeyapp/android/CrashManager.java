@@ -280,6 +280,7 @@ public class CrashManager {
             DefaultHttpClient httpClient = (DefaultHttpClient)ConnectionManager.getInstance().getHttpClient();
             HttpPost httpPost = new HttpPost(getURLString());
 
+            // Append application log to user provided description if present, if not, just send application log
             final String applicationLog = contentsOfFile(weakContext, filename.replace(".stacktrace", ".description"));
             String description = crashMetaData != null ? crashMetaData.getUserDescription() : "";
             if (applicationLog != null && applicationLog.length() > 0) {
@@ -363,10 +364,11 @@ public class CrashManager {
   /**
    Provides an interface to pass user input from a custom alert to a crash report
 
-   @param userInput Defines the users action wether to send, always send, or not to send the crash report.
-   @param userProvidedMetaData The content of this optional BITCrashMetaData instance will be attached to the crash report and allows to ask the user for e.g. additional comments or info.
+   @param userInput Defines the users action whether to send, always send, or not to send the crash report.
+   @param userProvidedMetaData The content of this optional CrashMetaData instance will be attached to the crash report
+                               and allows to ask the user for e.g. additional comments or info.
 
-   @return Returns YES if the input is a valid option and successfully triggered further processing of the crash report
+   @return true if the input is a valid option and successfully triggered further processing of the crash report
 
    @see CrashManagerUserInput
    @see CrashMetaData
