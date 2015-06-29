@@ -281,6 +281,20 @@ public class CrashManager {
             HttpPost httpPost = new HttpPost(getURLString());
 
             // Append application log to user provided description if present, if not, just send application log
+            String userID =  contentsOfFile(weakContext, filename.replace(".stacktrace", ".user"));
+            String contact = contentsOfFile(weakContext, filename.replace(".stacktrace", ".contact"));
+
+            if(crashMetaData != null) {
+              final String crashMetaDataUserID = crashMetaData.getUserID();
+              if(crashMetaDataUserID != null && crashMetaDataUserID.length() > 0) {
+                userID = crashMetaDataUserID;
+              }
+              final String crashMetaDataContact = crashMetaData.getUserEmail();
+              if(crashMetaDataContact != null && crashMetaDataContact.length() > 0) {
+                contact = crashMetaDataContact;
+              }
+            }
+
             final String applicationLog = contentsOfFile(weakContext, filename.replace(".stacktrace", ".description"));
             String description = crashMetaData != null ? crashMetaData.getUserDescription() : "";
             if (applicationLog != null && applicationLog.length() > 0) {
@@ -293,8 +307,8 @@ public class CrashManager {
 
             List <NameValuePair> parameters = new ArrayList <NameValuePair>();
             parameters.add(new BasicNameValuePair("raw", stacktrace));
-            parameters.add(new BasicNameValuePair("userID", contentsOfFile(weakContext, filename.replace(".stacktrace", ".user"))));
-            parameters.add(new BasicNameValuePair("contact", contentsOfFile(weakContext, filename.replace(".stacktrace", ".contact"))));
+            parameters.add(new BasicNameValuePair("userID", userID));
+            parameters.add(new BasicNameValuePair("contact", contact));
             parameters.add(new BasicNameValuePair("description", description));
             parameters.add(new BasicNameValuePair("sdk", Constants.SDK_NAME));
             parameters.add(new BasicNameValuePair("sdk_version", Constants.SDK_VERSION));
