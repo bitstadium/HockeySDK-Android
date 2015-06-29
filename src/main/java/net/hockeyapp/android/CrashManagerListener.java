@@ -160,4 +160,10 @@ public abstract class CrashManagerListener extends StringListener {
   public int getMaxRetryAttempts() {
     return 1;
   }
+
+  /**
+   * Called when dialog should be displayed to inform the user about crash.
+   * @return if true, alert-view is handled by user
+   */
+  public boolean onHandleAlertView() { return false; }
 }
