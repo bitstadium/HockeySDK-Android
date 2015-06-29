@@ -280,21 +280,22 @@ public class CrashManager {
             DefaultHttpClient httpClient = (DefaultHttpClient)ConnectionManager.getInstance().getHttpClient();
             HttpPost httpPost = new HttpPost(getURLString());
 
-            // Append application log to user provided description if present, if not, just send application log
+            // Retrieve user ID and contact information if given
             String userID =  contentsOfFile(weakContext, filename.replace(".stacktrace", ".user"));
             String contact = contentsOfFile(weakContext, filename.replace(".stacktrace", ".contact"));
 
-            if(crashMetaData != null) {
+            if (crashMetaData != null) {
               final String crashMetaDataUserID = crashMetaData.getUserID();
-              if(crashMetaDataUserID != null && crashMetaDataUserID.length() > 0) {
+              if (crashMetaDataUserID != null && crashMetaDataUserID.length() > 0) {
                 userID = crashMetaDataUserID;
               }
               final String crashMetaDataContact = crashMetaData.getUserEmail();
-              if(crashMetaDataContact != null && crashMetaDataContact.length() > 0) {
+              if (crashMetaDataContact != null && crashMetaDataContact.length() > 0) {
                 contact = crashMetaDataContact;
               }
             }
 
+            // Append application log to user provided description if present, if not, just send application log
             final String applicationLog = contentsOfFile(weakContext, filename.replace(".stacktrace", ".description"));
             String description = crashMetaData != null ? crashMetaData.getUserDescription() : "";
             if (applicationLog != null && applicationLog.length() > 0) {
@@ -376,16 +377,19 @@ public class CrashManager {
   }
 
   /**
-   Provides an interface to pass user input from a custom alert to a crash report
-
-   @param userInput Defines the users action whether to send, always send, or not to send the crash report.
-   @param userProvidedMetaData The content of this optional CrashMetaData instance will be attached to the crash report
-                               and allows to ask the user for e.g. additional comments or info.
-
-   @return true if the input is a valid option and successfully triggered further processing of the crash report
-
-   @see CrashManagerUserInput
-   @see CrashMetaData
+   * Provides an interface to pass user input from a custom alert to a crash report
+   *
+   * @param userInput Defines the users action whether to send, always send, or not to send the crash report.
+   * @param userProvidedMetaData The content of this optional CrashMetaData instance will be attached to the crash report
+   *                             and allows to ask the user for e.g. additional comments or info.
+   * @param listener an optional crash manager listener to use.
+   * @param weakContext The context to use. Usually your Activity object.
+   * @param ignoreDefaultHandler whether to ignore the default exception handler.
+   * @return true if the input is a valid option and successfully triggered further processing of the crash report.
+   *
+   * @see CrashManagerUserInput
+   * @see CrashMetaData
+   * @see CrashManagerListener
    */
   public static boolean handleUserInput(final CrashManagerUserInput userInput,
       final CrashMetaData userProvidedMetaData, final CrashManagerListener listener,
