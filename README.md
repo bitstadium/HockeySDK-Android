@@ -117,3 +117,7 @@ Starting with HockeySDK 3.0, you can integrate a feedback view in your app:
 3. If your app crashes and you start it again, is the dialog shown which asks the user to send the crash report? If not, please crash your app again, then connect the debugger and set a break point in CrashManager.java, method [register](https://github.com/TheRealKerni/HockeyKit/blob/develop/client/Android/src/net/hockeyapp/android/CrashManager.java#L27) to see why the dialog is not shown.
 
 5. If it still does not work, please [contact us](http://support.hockeyapp.net/discussion/new).
+
+## Contributor License
+
+You must sign a [Contributor License Agreement](https://cla.microsoft.com/) before submitting your pull request. To complete the Contributor License Agreement (CLA), you will need to submit a request via the [form](https://cla.microsoft.com/) and then electronically sign the CLA when you receive the email containing the link to the document. You need to sign the CLA only once to cover submission to any Microsoft OSS project. 
