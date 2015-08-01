@@ -383,6 +383,13 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
   	}
   }
 
+ /**
+  * Called when the request for sending the feedback has finished.
+  *
+  * @param success is true if the sending of the feedback was successful
+  */
+  protected void onSendFeedbackResult(final boolean success) {}
+
   /**
    * Called when picture or file was chosen.
    */
@@ -596,6 +603,8 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
             }
           });
         }
+
+        onSendFeedbackResult(success);
       }
     };
   }
