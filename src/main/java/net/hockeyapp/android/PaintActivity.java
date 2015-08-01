@@ -152,11 +152,13 @@ public class PaintActivity extends Activity {
   private void makeResult() {
     File hockeyAppCache = new File(getCacheDir(), Constants.TAG);
     hockeyAppCache.mkdir();
-    File result = new File(hockeyAppCache, imageName);
+
+    String filename = imageName + ".jpg";
+    File result = new File(hockeyAppCache, filename);
 
     int suffix = 1;
     while (result.exists()) {
-      result = new File(hockeyAppCache, imageName + "_" + suffix);
+      result = new File(hockeyAppCache, imageName + "_" + suffix + ".jpg");
       suffix++;
     }
 
