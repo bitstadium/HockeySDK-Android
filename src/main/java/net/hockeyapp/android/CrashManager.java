@@ -427,6 +427,25 @@ public class CrashManager {
   }
 
   /**
+   * Clears the preference to always send crashes. The next time the user
+   * sees a crash and restarts the app, they will see the dialog again to 
+   * send the crash.
+   *
+   * @param weakContext The context to use. Usually your Activity object.
+   */
+  public static void resetAlwaysSend(final WeakReference<Context> weakContext) {
+    Context context = null;
+    if (weakContext != null) {
+      context = weakContext.get();
+
+      if (context != null) {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        prefs.edit().remove(ALWAYS_SEND_KEY).commit();
+      }
+    }
+  }
+
+  /**
    * Private method to initialize the crash manager. This method has an
    * additional parameter to decide whether to register the exception handler
    * at the end or not.
