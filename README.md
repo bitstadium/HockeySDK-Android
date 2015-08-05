@@ -6,6 +6,8 @@ The SDK runs on devices with Android 2.1 or higher, but you need to build your a
 
 ## Integration Into Your Own App
 
+A sample integration can be found [here](https://github.com/akoscz/HockeyAppSample).
+
 ### Download the Library
 
 * Download the latest release from [here](http://hockeyapp.net/releases/#android).
