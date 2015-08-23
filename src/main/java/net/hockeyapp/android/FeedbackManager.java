@@ -1,7 +1,6 @@
 package net.hockeyapp.android;
 
 import android.app.Activity;
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -15,9 +14,11 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
+
 import net.hockeyapp.android.objects.FeedbackUserDataElement;
 import net.hockeyapp.android.tasks.ParseFeedbackTask;
 import net.hockeyapp.android.tasks.SendFeedbackTask;
@@ -357,13 +358,19 @@ public class FeedbackManager {
     NotificationManager notificationManager = (NotificationManager) currentActivity.getSystemService(Context.NOTIFICATION_SERVICE);
 
     int iconId = currentActivity.getResources().getIdentifier("ic_menu_camera", "drawable", "android");
-    Notification notification = new Notification(iconId, "", System.currentTimeMillis());
 
     Intent intent =  new Intent();
     intent.setAction(BROADCAST_ACTION);
     PendingIntent pendingIntent = PendingIntent.getBroadcast(currentActivity, BROADCAST_REQUEST_CODE, intent, PendingIntent.FLAG_ONE_SHOT);
-    notification.setLatestEventInfo(currentActivity, "HockeyApp Feedback", "Take a screenshot for your feedback.", pendingIntent);
-    notificationManager.notify(SCREENSHOT_NOTIFICATION_ID, notification);
+
+    NotificationCompat.Builder builder = new NotificationCompat.Builder(currentActivity)
+            .setWhen(System.currentTimeMillis())
+            .setSmallIcon(iconId)
+            .setContentTitle("HockeyApp Feedback")
+            .setContentText("Take a screenshot for your feedback.")
+            .setContentIntent(pendingIntent);
+
+    notificationManager.notify(SCREENSHOT_NOTIFICATION_ID, builder.build());
 
     if (receiver == null) {
       receiver = new BroadcastReceiver() {
