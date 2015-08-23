@@ -2,16 +2,18 @@
 <manifest 
     xmlns:android="http://schemas.android.com/apk/res/android"
 	package="net.hockeyapp.android">
-    
+
+    <uses-sdk
+        android:minSdkVersion="7"
+        android:targetSdkVersion="23"/>
+
     <application>
 
         <activity android:name=".UpdateActivity"/>
-        <activity 
+        <activity
             android:name="net.hockeyapp.android.FeedbackActivity"
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan"/>
 
     </application>
-
-    <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="13"/>
     
 </manifest> 
