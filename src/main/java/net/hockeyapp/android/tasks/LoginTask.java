@@ -11,27 +11,14 @@ import android.text.TextUtils;
 import android.util.Base64;
 import net.hockeyapp.android.Constants;
 import net.hockeyapp.android.LoginManager;
-import net.hockeyapp.android.utils.ConnectionManager;
 import net.hockeyapp.android.utils.PrefsUtil;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.protocol.HTTP;
-import org.apache.http.util.EntityUtils;
+import net.hockeyapp.android.utils.Util;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Map;
 
 /**
@@ -68,7 +55,7 @@ import java.util.Map;
  *
  * @author Patrick Eschenbach
  **/
-public class LoginTask extends AsyncTask<Void, Void, Boolean> {
+public class LoginTask extends ConnectionTask<Void, Void, Boolean> {
   private Context context;
   private Handler handler;
   private ProgressDialog progressDialog;
@@ -127,16 +114,14 @@ public class LoginTask extends AsyncTask<Void, Void, Boolean> {
 
   @Override
   protected Boolean doInBackground(Void... args) {
-    HttpClient httpClient = ConnectionManager.getInstance().getHttpClient();
-
+    HttpURLConnection connection = null;
     try {
-      HttpUriRequest httpUriRequest = makeRequest(mode, params);
-      HttpResponse response = httpClient.execute(httpUriRequest);
 
-      if (response != null) {
-        HttpEntity resEntity = response.getEntity();
-        String responseStr = EntityUtils.toString(resEntity);
-        //int status = response.getStatusLine().getStatusCode();
+      connection = makeRequest(mode, params);
+      connection.connect();
+
+      if (connection.getResponseCode() == 200) {
+        String responseStr = getStringFromConnection(connection);
 
         if (!TextUtils.isEmpty(responseStr)) {
           return handleResponse(responseStr);
@@ -146,11 +131,13 @@ public class LoginTask extends AsyncTask<Void, Void, Boolean> {
     catch (UnsupportedEncodingException e) {
       e.printStackTrace();
     }
-    catch (ClientProtocolException e) {
-      e.printStackTrace();
-    }
     catch (IOException e) {
       e.printStackTrace();
+    }
+    finally {
+      if (connection != null) {
+        connection.disconnect();
+      }
     }
 
     return false;
@@ -178,39 +165,39 @@ public class LoginTask extends AsyncTask<Void, Void, Boolean> {
     }
   }
 
-  private HttpUriRequest makeRequest(int mode, Map<String, String> params) throws UnsupportedEncodingException {
+  private HttpURLConnection makeRequest(int mode, Map<String, String> params) throws IOException {
     if (mode == LoginManager.LOGIN_MODE_EMAIL_ONLY) {
-      List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+      HttpURLConnection connection = createConnection(new URL(urlString));
+      connection.setDoOutput(true);
+      connection.setRequestMethod("POST");
 
-      for (Map.Entry<String, String> param : params.entrySet()) {
-        nameValuePairs.add(new BasicNameValuePair(param.getKey(), param.getValue()));
-      }
+      OutputStream outputStream = connection.getOutputStream();
+      BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
+      writer.write(Util.getFormString(params));
 
-      UrlEncodedFormEntity form = new UrlEncodedFormEntity(nameValuePairs, "UTF-8");
-      form.setContentEncoding(HTTP.UTF_8);
-      HttpPost httpPost = new HttpPost(urlString);
-      httpPost.setEntity(form);
-
-      return httpPost;
+      return connection;
     }
     else if (mode == LoginManager.LOGIN_MODE_EMAIL_PASSWORD) {
+      HttpURLConnection connection = createConnection(new URL(urlString));
+      connection.setDoOutput(true);
+      connection.setRequestMethod("POST");
+
       String email = params.get("email");
       String password = params.get("password");
       String authStr = "Basic " + net.hockeyapp.android.utils.Base64.encodeToString(
           (email + ":" + password).getBytes(), Base64.NO_WRAP);
 
-      HttpPost httpPost = new HttpPost(urlString);
-      httpPost.setHeader("Authorization", authStr);
+      connection.setRequestProperty("Authorization", authStr);
 
-      return httpPost;
+      return connection;
     }
     else if (mode == LoginManager.LOGIN_MODE_VALIDATE) {
       String type = params.get("type");
       String id   = params.get("id");
       String paramUrl = urlString + "?" + type + "=" + id;
 
-      HttpGet httpGet = new HttpGet(paramUrl);
-      return httpGet;
+      HttpURLConnection connection = createConnection(new URL(paramUrl));
+      return connection;
     }
     else {
       throw new IllegalArgumentException("Login mode " + mode + " not supported.");

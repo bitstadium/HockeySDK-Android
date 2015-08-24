@@ -1,9 +1,5 @@
 package net.hockeyapp.android.utils;
 
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.message.BasicHeader;
-
 import java.io.*;
 import java.util.Random;
 
@@ -46,7 +42,7 @@ import java.util.Random;
  *
  * @author Patrick Eschenbach
  */
-public class SimpleMultipartEntity implements HttpEntity {
+public class SimpleMultipartEntity {
 
   private final static char[] BOUNDARY_CHARS = "-_1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
 
@@ -148,51 +144,18 @@ public class SimpleMultipartEntity implements HttpEntity {
     }
   }
 
-  @Override
   public long getContentLength() {
     writeLastBoundaryIfNeeds();
     return out.toByteArray().length;
   }
 
-  @Override
-  public Header getContentType() {
-    return new BasicHeader("Content-Type", "multipart/form-data; boundary=" + getBoundary());
+  public String getContentType() {
+    return "multipart/form-data; boundary=" + getBoundary();
   }
 
-  @Override
-  public boolean isChunked() {
-    return false;
+  public ByteArrayOutputStream getOutputStream() {
+    writeLastBoundaryIfNeeds();
+    return out;
   }
 
-  @Override
-  public boolean isRepeatable() {
-    return false;
-  }
-
-  @Override
-  public boolean isStreaming() {
-    return false;
-  }
-
-  @Override
-  public void writeTo(final OutputStream outstream) throws IOException {
-    outstream.write(out.toByteArray());
-  }
-
-  @Override
-  public Header getContentEncoding() {
-    return null;
-  }
-
-  @Override
-  public void consumeContent() throws IOException, UnsupportedOperationException {
-    if (isStreaming()) {
-      throw new UnsupportedOperationException("Streaming entity does not implement #consumeContent()");
-    }
-  }
-
-  @Override
-  public InputStream getContent() throws IOException, UnsupportedOperationException {
-    return new ByteArrayInputStream(out.toByteArray());
-  }
 }

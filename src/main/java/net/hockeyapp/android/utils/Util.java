@@ -3,6 +3,9 @@ package net.hockeyapp.android.utils;
 import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -147,5 +150,16 @@ public class Util {
     }
 
     return sAppIdentifier;
+  }
+
+  public static String getFormString(Map<String, String> params) throws UnsupportedEncodingException {
+      List<String> protoList = new ArrayList<String>();
+      for (String key : params.keySet()) {
+          String value = params.get(key);
+          key = URLEncoder.encode(key, "UTF-8");
+          value = URLEncoder.encode(value, "UTF-8");
+          protoList.add(key + "=" + value);
+      }
+      return TextUtils.join("&", protoList);
   }
 }
