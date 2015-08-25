@@ -477,7 +477,7 @@ public class CrashManager {
       return;
     }
 
-    if (listener.onHandleAlertView()) {
+    if (listener != null && listener.onHandleAlertView()) {
       return;
     }
 
