@@ -6,10 +6,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
+import android.os.*;
 import net.hockeyapp.android.FeedbackActivity;
 import net.hockeyapp.android.FeedbackManager;
 import net.hockeyapp.android.FeedbackManagerListener;
@@ -154,7 +151,6 @@ public class ParseFeedbackTask extends AsyncTask<Void, Void, FeedbackResponse> {
 
     NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
     int iconId = context.getResources().getIdentifier("ic_menu_refresh", "drawable", "android");
-    Notification notification = new Notification(iconId, "New Answer to Your Feedback.", System.currentTimeMillis());
 
     Class<?> activityClass = null;
     if (FeedbackManager.getLastListener() != null) {
@@ -170,7 +166,33 @@ public class ParseFeedbackTask extends AsyncTask<Void, Void, FeedbackResponse> {
     intent.putExtra("url", urlString);
 
     PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_ONE_SHOT);
-    notification.setLatestEventInfo(context, "HockeyApp Feedback", "A new answer to your feedback is available.", pendingIntent);
-    notificationManager.notify(NEW_ANSWER_NOTIFICATION_ID, notification);
+
+    Notification notification;
+
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+      // use old notification system
+      notification = new Notification(iconId, "New Answer to Your Feedback.", System.currentTimeMillis());
+      notification.contentIntent = pendingIntent;
+
+    } else {
+      // use notification builder
+      Notification.Builder builder = new Notification.Builder(context)
+              .setContentTitle("HockeyApp Feedback")
+              .setContentText("A new answer to your feedback is available.")
+              .setContentIntent(pendingIntent)
+              .setSmallIcon(iconId);
+
+      if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+        notification = builder.getNotification();
+      } else {
+        notification = builder.build();
+      }
+    }
+
+    if (notification != null) {
+      notificationManager.notify(NEW_ANSWER_NOTIFICATION_ID, notification);
+    }
+
+
   }
 }

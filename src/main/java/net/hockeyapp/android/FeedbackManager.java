@@ -11,10 +11,7 @@ import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
+import android.os.*;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -357,12 +354,31 @@ public class FeedbackManager {
     NotificationManager notificationManager = (NotificationManager) currentActivity.getSystemService(Context.NOTIFICATION_SERVICE);
 
     int iconId = currentActivity.getResources().getIdentifier("ic_menu_camera", "drawable", "android");
-    Notification notification = new Notification(iconId, "", System.currentTimeMillis());
+    Notification notification;
 
     Intent intent =  new Intent();
     intent.setAction(BROADCAST_ACTION);
     PendingIntent pendingIntent = PendingIntent.getBroadcast(currentActivity, BROADCAST_REQUEST_CODE, intent, PendingIntent.FLAG_ONE_SHOT);
-    notification.setLatestEventInfo(currentActivity, "HockeyApp Feedback", "Take a screenshot for your feedback.", pendingIntent);
+
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+      // use old notification system
+      notification = new Notification(iconId, "", System.currentTimeMillis());
+      notification.contentIntent = pendingIntent;
+    } else {
+      // use notification builder
+      Notification.Builder builder = new Notification.Builder(currentActivity)
+              .setContentTitle("HockeyApp Feedback")
+              .setContentText("Take a screenshot for your feedback.")
+              .setContentIntent(pendingIntent)
+              .setSmallIcon(iconId);
+
+      if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+        notification = builder.getNotification();
+      } else {
+        notification = builder.build();
+      }
+    }
+
     notificationManager.notify(SCREENSHOT_NOTIFICATION_ID, notification);
 
     if (receiver == null) {
