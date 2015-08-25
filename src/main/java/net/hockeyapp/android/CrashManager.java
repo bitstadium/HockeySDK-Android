@@ -483,7 +483,7 @@ public class CrashManager {
       return;
     }
 
-    if (listener.onHandleAlertView()) {
+    if (listener != null && listener.onHandleAlertView()) {
       return;
     }
 
@@ -506,7 +506,7 @@ public class CrashManager {
 
     builder.setPositiveButton(Strings.get(listener, Strings.CRASH_DIALOG_POSITIVE_BUTTON_ID), new DialogInterface.OnClickListener() {
       public void onClick(DialogInterface dialog, int which) {
-        handleUserInput(CrashManagerUserInput.CrashManagerUserInputDontSend, null, listener,
+        handleUserInput(CrashManagerUserInput.CrashManagerUserInputSend, null, listener,
             weakContext, ignoreDefaultHandler);
       }
     });
