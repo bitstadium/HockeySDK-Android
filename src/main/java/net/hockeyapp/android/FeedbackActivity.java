@@ -398,29 +398,13 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
       return;
     }
 
-    if (requestCode == ATTACH_FILE) {
+    if (requestCode == ATTACH_FILE || requestCode == ATTACH_PICTURE) {
       /** User picked file */
       Uri uri = data.getData();
 
       if (uri != null) {
         final ViewGroup attachments = (ViewGroup) findViewById(FeedbackView.WRAPPER_LAYOUT_ATTACHMENTS);
         attachments.addView(new AttachmentView(this, attachments, uri, true));
-      }
-
-    } else if (requestCode == ATTACH_PICTURE) {
-      /** User picked image */
-      Uri uri = data.getData();
-
-      /** Start PaintActivity */
-      if (uri != null) {
-        try {
-          Intent intent = new Intent(this, PaintActivity.class);
-          intent.putExtra("imageUri", uri);
-          startActivityForResult(intent, PAINT_IMAGE);
-        } catch (ActivityNotFoundException e) {
-          Log.e(Util.LOG_IDENTIFIER, "Paint activity not declared!", e);
-        }
-
       }
 
     } else if (requestCode == PAINT_IMAGE) {

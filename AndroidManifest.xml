@@ -2,6 +2,8 @@
 <manifest 
     xmlns:android="http://schemas.android.com/apk/res/android"
 	package="net.hockeyapp.android">
+
+    <uses-sdk android:minSdkVersion="11" android:targetSdkVersion="22"/>
     
     <application>
 
@@ -11,7 +13,5 @@
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan"/>
 
     </application>
-
-    <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="13"/>
     
 </manifest> 
