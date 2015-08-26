@@ -98,6 +98,14 @@ public class HttpURLConnectionBuilder {
         return this;
     }
 
+    public HttpURLConnectionBuilder setBasicAuthorization(String username, String password) {
+        String authString = "Basic " + net.hockeyapp.android.utils.Base64.encodeToString(
+                (username + ":" + password).getBytes(), android.util.Base64.NO_WRAP);
+
+        setHeader("Authorization", authString);
+        return this;
+    }
+
     public HttpURLConnection build() {
         HttpURLConnection connection;
         try {
