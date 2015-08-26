@@ -162,4 +162,9 @@ public class Util {
       }
       return TextUtils.join("&", protoList);
   }
+
+  public static boolean isNullOrEmptyString(String in) {
+    return in == null || in.isEmpty();
+  }
+
 }
