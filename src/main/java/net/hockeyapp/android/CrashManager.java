@@ -492,7 +492,6 @@ public class CrashManager {
     });
 
     builder.setNeutralButton(Strings.get(listener, Strings.CRASH_DIALOG_NEUTRAL_BUTTON_ID), new DialogInterface.OnClickListener() {
-      @Override
       public void onClick(DialogInterface dialog, int which) {
         handleUserInput(CrashManagerUserInput.CrashManagerUserInputAlwaysSend, null, listener, weakContext, ignoreDefaultHandler);
       }
