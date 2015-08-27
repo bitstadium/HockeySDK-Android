@@ -1,5 +1,7 @@
 package net.hockeyapp.android.utils;
 
+import android.content.Context;
+import android.net.Uri;
 import android.os.Build;
 import android.text.TextUtils;
 
@@ -55,6 +57,7 @@ public class HttpURLConnectionBuilder {
 
     private String mRequestMethod;
     private String mRequestBody;
+    private SimpleMultipartEntity mMultipartEntity;
     private int mTimeout = DEFAULT_TIMEOUT;
 
     private final Map<String, String> mHeaders;
@@ -82,6 +85,34 @@ public class HttpURLConnectionBuilder {
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
+        return this;
+    }
+
+    public HttpURLConnectionBuilder writeMultipartData(Map<String, String> fields, Context context, List<Uri> attachmentUris) {
+        try {
+            mMultipartEntity = new SimpleMultipartEntity();
+            mMultipartEntity.writeFirstBoundaryIfNeeds();
+
+            for (String key : fields.keySet()) {
+                mMultipartEntity.addPart(key, fields.get(key));
+            }
+
+            for (int i = 0; i < attachmentUris.size(); i++) {
+                Uri attachmentUri = attachmentUris.get(i);
+                boolean lastFile = (i == attachmentUris.size() - 1);
+
+                InputStream input = context.getContentResolver().openInputStream(attachmentUri);
+                String filename = attachmentUri.getLastPathSegment();
+                mMultipartEntity.addPart("attachment" + i, filename, input, lastFile);
+            }
+            mMultipartEntity.writeLastBoundaryIfNeeds();
+
+            setHeader("Content-Type", "multipart/form-data; boundary=" + mMultipartEntity.getBoundary());
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
         return this;
     }
 
@@ -119,9 +150,9 @@ public class HttpURLConnectionBuilder {
                 connection.setRequestProperty("Connection", "close");
             }
 
-            if (!isNullOrEmptyString(mRequestMethod)) {
+            if (!TextUtils.isEmpty(mRequestMethod)) {
                 connection.setRequestMethod(mRequestMethod);
-                if (!isNullOrEmptyString(mRequestBody) || mRequestMethod.equalsIgnoreCase("POST") || mRequestMethod.equalsIgnoreCase("PUT")) {
+                if (!TextUtils.isEmpty(mRequestBody) || mRequestMethod.equalsIgnoreCase("POST") || mRequestMethod.equalsIgnoreCase("PUT")) {
                     connection.setDoOutput(true);
                 }
             }
@@ -130,7 +161,7 @@ public class HttpURLConnectionBuilder {
                 connection.setRequestProperty(name, mHeaders.get(name));
             }
 
-            if (!isNullOrEmptyString(mRequestBody)) {
+            if (!TextUtils.isEmpty(mRequestBody)) {
                 OutputStream outputStream = connection.getOutputStream();
                 BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream, DEFAULT_CHARSET));
                 writer.write(mRequestBody);
@@ -138,6 +169,13 @@ public class HttpURLConnectionBuilder {
                 writer.close();
             }
 
+            if (mMultipartEntity != null) {
+                connection.setRequestProperty("Content-Length", String.valueOf(mMultipartEntity.getContentLength()));
+                BufferedOutputStream outputStream = new BufferedOutputStream(connection.getOutputStream());
+                outputStream.write(mMultipartEntity.getOutputStream().toByteArray());
+                outputStream.flush();
+                outputStream.close();
+            }
 
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -154,10 +192,6 @@ public class HttpURLConnectionBuilder {
             protoList.add(key + "=" + value);
         }
         return TextUtils.join("&", protoList);
-    }
-
-    private static boolean isNullOrEmptyString(String in) {
-        return in == null || in.isEmpty();
     }
 
 }
