@@ -114,6 +114,11 @@ public class Constants {
   public static final String SDK_VERSION = "3.6.0";
 
   /**
+   * Permissions request for the update task.
+   */
+  public static final int UPDATE_PERMISSIONS_REQUEST = 1;
+
+  /**
    * Initializes constants from the given context. The context is used to set 
    * the package name, version code, and the files path.
    *
