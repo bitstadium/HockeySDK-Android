@@ -4,13 +4,13 @@ import java.io.*;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.*;
 
 
 import android.preference.PreferenceManager;
 import net.hockeyapp.android.objects.CrashManagerUserInput;
 import net.hockeyapp.android.objects.CrashMetaData;
+import net.hockeyapp.android.utils.HttpURLConnectionBuilder;
 import net.hockeyapp.android.utils.PrefsUtil;
 
 import net.hockeyapp.android.utils.Util;
@@ -258,6 +258,7 @@ public class CrashManager {
       Log.d(Constants.TAG, "Found " + list.length + " stacktrace(s).");
 
       for (int index = 0; index < list.length; index++) {
+        HttpURLConnection urlConnection = null;
         try {
           // Read contents of stack trace
           String filename = list[index];
@@ -302,15 +303,14 @@ public class CrashManager {
             parameters.put("sdk", Constants.SDK_NAME);
             parameters.put("sdk_version", Constants.SDK_VERSION);
 
-            HttpURLConnection urlConnection = (HttpURLConnection) new URL(getURLString()).openConnection();
-            urlConnection.setDoOutput(true);
-            urlConnection.setRequestMethod("POST");
-            OutputStream outputStream = urlConnection.getOutputStream();
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
-            writer.write(Util.getFormString(parameters));
+            urlConnection = new HttpURLConnectionBuilder(getURLString())
+                    .setRequestMethod("POST")
+                    .writeFormFields(parameters)
+                    .build();
 
-            urlConnection.connect();
-            successful = true;
+            int responseCode = urlConnection.getResponseCode();
+
+            successful = (responseCode == HttpURLConnection.HTTP_ACCEPTED || responseCode == HttpURLConnection.HTTP_CREATED);
 
           }
         }
@@ -318,6 +318,9 @@ public class CrashManager {
           e.printStackTrace();
         }
         finally {
+          if (urlConnection != null) {
+            urlConnection.disconnect();
+          }
           if (successful) {
             Log.d(Constants.TAG, "Transmission succeeded");
             deleteStackTrace(weakContext, list[index]);

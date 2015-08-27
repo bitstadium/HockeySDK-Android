@@ -48,18 +48,6 @@ import java.util.Map;
  **/
 public abstract class ConnectionTask<Params, Progress, Result> extends AsyncTask<Params, Progress, Result> {
 
-    protected HttpURLConnection createConnection(URL url) throws IOException {
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setConnectTimeout(2 * 60 * 1000);
-        connection.setReadTimeout(2 * 60 * 1000);
-
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.GINGERBREAD) {
-            connection.setRequestProperty("Connection", "close");
-        }
-
-        return connection;
-    }
-
     protected static String getStringFromConnection(HttpURLConnection connection) throws IOException {
         InputStream inputStream = new BufferedInputStream(connection.getInputStream());
         String jsonString = convertStreamToString(inputStream);

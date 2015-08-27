@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import net.hockeyapp.android.Constants;
+import net.hockeyapp.android.utils.HttpURLConnectionBuilder;
 import net.hockeyapp.android.utils.SimpleMultipartEntity;
 import net.hockeyapp.android.utils.Util;
 
@@ -209,6 +210,7 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
         HashMap<String, String> result = new HashMap<String, String>();
         result.put("type", "send");
 
+        HttpURLConnection urlConnection = null;
         try {
             Map<String, String> parameters = new HashMap<String, String>();
             parameters.put("name", name);
@@ -222,19 +224,14 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
             parameters.put("oem", Constants.PHONE_MANUFACTURER);
             parameters.put("model", Constants.PHONE_MODEL);
 
-            HttpURLConnection urlConnection = (HttpURLConnection) new URL(urlString).openConnection();
-            urlConnection.setDoOutput(true);
-
             if (token != null) {
                 urlString += token + "/";
-                urlConnection.setRequestMethod("PUT");
-
-            } else {
-                urlConnection.setRequestMethod("POST");
             }
 
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(urlConnection.getOutputStream(), "UTF-8"));
-            writer.write(Util.getFormString(parameters));
+            urlConnection = new HttpURLConnectionBuilder(urlString)
+                    .setRequestMethod(token != null ? "PUT" : "POST")
+                    .writeFormFields(parameters)
+                    .build();
 
             urlConnection.connect();
 
@@ -242,6 +239,10 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
             result.put("response", getStringFromConnection(urlConnection));
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            if (urlConnection != null) {
+                urlConnection.disconnect();
+            }
         }
 
         return result;
@@ -256,6 +257,7 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
         HashMap<String, String> result = new HashMap<String, String>();
         result.put("type", "send");
 
+        HttpURLConnection urlConnection = null;
         try {
             Map<String, String> parameters = new HashMap<String, String>();
             parameters.put("name", name);
@@ -269,39 +271,14 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
             parameters.put("oem", Constants.PHONE_MANUFACTURER);
             parameters.put("model", Constants.PHONE_MODEL);
 
-            SimpleMultipartEntity entity = new SimpleMultipartEntity();
-            entity.writeFirstBoundaryIfNeeds();
-
-            /** Write form data */
-
-            for (String key : parameters.keySet()) {
-                entity.addPart(key, parameters.get(key));
-            }
-
-            /** Write files */
-            for (int i = 0; i < attachmentUris.size(); i++) {
-                Uri attachmentUri = attachmentUris.get(i);
-                boolean lastFile = (i == attachmentUris.size() - 1);
-
-                InputStream input = context.getContentResolver().openInputStream(attachmentUri);
-                String filename = attachmentUri.getLastPathSegment();
-                entity.addPart("attachment" + i, filename, input, lastFile);
-            }
-            entity.writeLastBoundaryIfNeeds();
-
-            HttpURLConnection urlConnection = (HttpURLConnection) new URL(urlString).openConnection();
-            urlConnection.setDoOutput(true);
-
             if (token != null) {
                 urlString += token + "/";
-                urlConnection.setRequestMethod("PUT");
-            } else {
-                urlConnection.setRequestMethod("POST");
             }
 
-            urlConnection.setRequestProperty("Content-Type", entity.getContentType());
-            urlConnection.setRequestProperty("Content-Length", String.valueOf(entity.getContentLength()));
-            urlConnection.getOutputStream().write(entity.getOutputStream().toByteArray());
+            urlConnection = new HttpURLConnectionBuilder(urlString)
+                    .setRequestMethod(token != null ? "PUT" : "POST")
+                    .writeMultipartData(parameters, context, attachmentUris)
+                    .build();
 
             urlConnection.connect();
 
@@ -310,6 +287,10 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
 
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            if (urlConnection != null) {
+                urlConnection.disconnect();
+            }
         }
 
         return result;
@@ -330,9 +311,11 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
 
         HashMap<String, String> result = new HashMap<String, String>();
 
+        HttpURLConnection urlConnection = null;
         try {
 
-            HttpURLConnection urlConnection = (HttpURLConnection) new URL(sb.toString()).openConnection();
+            urlConnection = new HttpURLConnectionBuilder(sb.toString())
+                    .build();
 
             result.put("type", "fetch");
 
@@ -342,6 +325,10 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
             result.put("response", getStringFromConnection(urlConnection));
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            if (urlConnection != null) {
+                urlConnection.disconnect();
+            }
         }
 
         return result;
