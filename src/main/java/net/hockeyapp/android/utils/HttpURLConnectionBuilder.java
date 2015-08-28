@@ -17,7 +17,7 @@ import java.util.Map;
 /**
  * <h3>Description</h3>
  * <p/>
- * Base class for asynchronous HTTP connections.
+ * Builder class for HttpURLConnection.
  * <p/>
  * <h3>License</h3>
  * <p/>
