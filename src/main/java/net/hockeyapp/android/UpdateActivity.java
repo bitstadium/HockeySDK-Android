@@ -196,19 +196,23 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
         // Permission denied, show user alert
         Log.w(Constants.TAG, "User denied write permission, can't continue with updater task.");
 
-        final UpdateActivity updateActivity = this;
-
-        new AlertDialog.Builder(this)
-                .setTitle("Need storage access")
-                .setMessage("In order to download and install app updates you will have to allow the app to access your device storage.")
-                .setNegativeButton("Cancel", null)
-                .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
-                  public void onClick(DialogInterface dialog, int which) {
-                    updateActivity.prepareDownload();
-                  }
-                })
-                .create()
-                .show();
+        UpdateManagerListener listener = UpdateManager.getLastListener();
+        if (listener != null) {
+          listener.onUpdatePermissionsNotGranted();
+        } else {
+          final UpdateActivity updateActivity = this;
+          new AlertDialog.Builder(context)
+                  .setTitle(Strings.get(Strings.PERMISSION_UPDATE_TITLE_ID))
+                  .setMessage(Strings.get(Strings.PERMISSION_UPDATE_MESSAGE_ID))
+                  .setNegativeButton(Strings.get(Strings.PERMISSION_DIALOG_NEGATIVE_BUTTON_ID), null)
+                  .setPositiveButton(Strings.get(Strings.PERMISSION_DIALOG_POSITIVE_BUTTON_ID), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                      updateActivity.prepareDownload();
+                    }
+                  })
+                  .create()
+                  .show();
+        }
       }
     }
   }

@@ -215,19 +215,23 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
         // Permission denied, show user alert
         Log.w(Constants.TAG, "User denied write permission, can't continue with updater task.");
 
-        final UpdateFragment updateFragment = this;
-
-        new AlertDialog.Builder(getActivity())
-                .setTitle("Need storage access")
-                .setMessage("In order to download and install app updates you will have to allow the app to access your device storage.")
-                .setNegativeButton("Cancel", null)
-                .setPositiveButton("Retry", new DialogInterface.OnClickListener() {
-                  public void onClick(DialogInterface dialog, int which) {
-                    updateFragment.prepareDownload();
-                  }
-                })
-                .create()
-                .show();
+        UpdateManagerListener listener = UpdateManager.getLastListener();
+        if (listener != null) {
+          listener.onUpdatePermissionsNotGranted();
+        } else {
+          final UpdateFragment updateFragment = this;
+          new AlertDialog.Builder(getActivity())
+                  .setTitle(Strings.get(Strings.PERMISSION_UPDATE_TITLE_ID))
+                  .setMessage(Strings.get(Strings.PERMISSION_UPDATE_MESSAGE_ID))
+                  .setNegativeButton(Strings.get(Strings.PERMISSION_DIALOG_NEGATIVE_BUTTON_ID), null)
+                  .setPositiveButton(Strings.get(Strings.PERMISSION_DIALOG_POSITIVE_BUTTON_ID), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                      updateFragment.prepareDownload();
+                    }
+                  })
+                  .create()
+                  .show();
+        }
       }
     }
   }
