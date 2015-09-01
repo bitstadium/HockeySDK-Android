@@ -1,20 +1,24 @@
 package net.hockeyapp.android.utils;
 
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
+import android.app.Activity;
+import android.app.Notification;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.res.Configuration;
+import android.os.Build;
+import android.text.TextUtils;
+
 import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Method;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
-import android.app.Activity;
-import android.content.res.Configuration;
-import android.os.Build;
-import android.text.TextUtils;
 
 /**
  * <h3>License</h3>
@@ -100,7 +104,7 @@ public class Util {
   @SuppressLint("NewApi")
   public static Boolean fragmentsSupported() {
     try {
-      return (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) && (android.app.Fragment.class != null);
+      return (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) && classExists("android.app.Fragment");
     }
     catch (NoClassDefFoundError e) {
       return false;
@@ -163,8 +167,56 @@ public class Util {
       return TextUtils.join("&", protoList);
   }
 
-  public static boolean isNullOrEmptyString(String in) {
-    return in == null || in.isEmpty();
+  public static boolean classExists(String className) {
+    try {
+      return Class.forName(className) != null;
+    } catch (ClassNotFoundException e) {
+      return false;
+    }
   }
 
+  public static boolean isNotificationBuilderSupported() {
+    return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) && classExists("android.app.Notification.Builder");
+  }
+
+  public static Notification createNotification(Context context, PendingIntent pendingIntent, String title, String text, int iconId) {
+    Notification notification;
+    if (Util.isNotificationBuilderSupported()) {
+      // use old notification system
+      notification = buildNotificationWithBuilder(context, pendingIntent, title, text, iconId);
+    } else {
+      // use notification builder
+      notification = buildNotificationPreHoneycomb(context, pendingIntent, title, text, iconId);
+    }
+    return notification;
+  }
+
+  @SuppressWarnings("deprecation")
+  private static Notification buildNotificationPreHoneycomb(Context context, PendingIntent pendingIntent, String title, String text, int iconId) {
+    Notification notification = new Notification(iconId, "", System.currentTimeMillis());
+    try {
+      // try to call "setLatestEventInfo" if available
+      Method m = notification.getClass().getMethod("setLatestEventInfo", Context.class, CharSequence.class, CharSequence.class, PendingIntent.class);
+      m.invoke(notification, context, title, text, pendingIntent);
+    } catch (Exception e) {
+      // do nothing
+    }
+    return notification;
+  }
+
+  @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+  @SuppressWarnings("deprecation")
+  private static Notification buildNotificationWithBuilder(Context context, PendingIntent pendingIntent, String title, String text, int iconId) {
+    android.app.Notification.Builder builder = new android.app.Notification.Builder(context)
+            .setContentTitle(title)
+            .setContentText(text)
+            .setContentIntent(pendingIntent)
+            .setSmallIcon(iconId);
+
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+      return builder.getNotification();
+    } else {
+      return builder.build();
+    }
+  }
 }

@@ -6,7 +6,10 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.*;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import net.hockeyapp.android.FeedbackActivity;
 import net.hockeyapp.android.FeedbackManager;
 import net.hockeyapp.android.FeedbackManagerListener;
@@ -15,6 +18,7 @@ import net.hockeyapp.android.objects.FeedbackMessage;
 import net.hockeyapp.android.objects.FeedbackResponse;
 import net.hockeyapp.android.utils.FeedbackParser;
 import net.hockeyapp.android.utils.PrefsUtil;
+import net.hockeyapp.android.utils.Util;
 
 import java.util.ArrayList;
 
@@ -167,32 +171,10 @@ public class ParseFeedbackTask extends AsyncTask<Void, Void, FeedbackResponse> {
 
     PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_ONE_SHOT);
 
-    Notification notification;
-
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-      // use old notification system
-      notification = new Notification(iconId, "New Answer to Your Feedback.", System.currentTimeMillis());
-      notification.contentIntent = pendingIntent;
-
-    } else {
-      // use notification builder
-      Notification.Builder builder = new Notification.Builder(context)
-              .setContentTitle("HockeyApp Feedback")
-              .setContentText("A new answer to your feedback is available.")
-              .setContentIntent(pendingIntent)
-              .setSmallIcon(iconId);
-
-      if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-        notification = builder.getNotification();
-      } else {
-        notification = builder.build();
-      }
-    }
+    Notification notification = Util.createNotification(context, pendingIntent, "HockeyApp Feedback", "A new answer to your feedback is available.", iconId);
 
     if (notification != null) {
       notificationManager.notify(NEW_ANSWER_NOTIFICATION_ID, notification);
     }
-
-
   }
 }
