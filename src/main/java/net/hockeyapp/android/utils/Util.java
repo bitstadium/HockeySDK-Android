@@ -156,6 +156,12 @@ public class Util {
     return sAppIdentifier;
   }
 
+  /**
+   * Converts a map of parameters to a HTML form entity.
+   * @param params the parameters
+   * @return an URL-encoded form string ready for use in a HTTP post
+   * @throws UnsupportedEncodingException
+   */
   public static String getFormString(Map<String, String> params) throws UnsupportedEncodingException {
       List<String> protoList = new ArrayList<String>();
       for (String key : params.keySet()) {
@@ -167,6 +173,11 @@ public class Util {
       return TextUtils.join("&", protoList);
   }
 
+  /**
+   * Helper method to safely check whether a class exists at runtime.
+   * @param className the full-qualified class name to check for
+   * @return whether the class exists
+   */
   public static boolean classExists(String className) {
     try {
       return Class.forName(className) != null;
@@ -175,17 +186,28 @@ public class Util {
     }
   }
 
+  /**
+   * Checks if the Notification.Builder API is supported.
+   * @return if builder API is supported
+   */
   public static boolean isNotificationBuilderSupported() {
     return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) && classExists("android.app.Notification.Builder");
   }
 
+  /**
+   * Creates a notification on API levels from 9 to 23
+   * @param context the context to use, e.g. your Activity
+   * @param pendingIntent the Intent to call
+   * @param title the title string for the notification
+   * @param text the text content for the notification
+   * @param iconId the icon resource ID for the notification
+   * @return
+   */
   public static Notification createNotification(Context context, PendingIntent pendingIntent, String title, String text, int iconId) {
     Notification notification;
     if (Util.isNotificationBuilderSupported()) {
-      // use old notification system
       notification = buildNotificationWithBuilder(context, pendingIntent, title, text, iconId);
     } else {
-      // use notification builder
       notification = buildNotificationPreHoneycomb(context, pendingIntent, title, text, iconId);
     }
     return notification;
