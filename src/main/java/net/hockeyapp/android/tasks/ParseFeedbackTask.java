@@ -10,6 +10,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.NotificationCompat;
+
 import net.hockeyapp.android.FeedbackActivity;
 import net.hockeyapp.android.FeedbackManager;
 import net.hockeyapp.android.FeedbackManagerListener;
@@ -154,7 +156,6 @@ public class ParseFeedbackTask extends AsyncTask<Void, Void, FeedbackResponse> {
 
     NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
     int iconId = context.getResources().getIdentifier("ic_menu_refresh", "drawable", "android");
-    Notification notification = new Notification(iconId, "New Answer to Your Feedback.", System.currentTimeMillis());
 
     Class<?> activityClass = null;
     if (FeedbackManager.getLastListener() != null) {
@@ -170,7 +171,14 @@ public class ParseFeedbackTask extends AsyncTask<Void, Void, FeedbackResponse> {
     intent.putExtra("url", urlString);
 
     PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_ONE_SHOT);
-    notification.setLatestEventInfo(context, "HockeyApp Feedback", "A new answer to your feedback is available.", pendingIntent);
+    Notification notification = new NotificationCompat.Builder(context)
+            .setWhen(System.currentTimeMillis())
+            .setSmallIcon(iconId)
+            .setTicker("New Answer to Your Feedback.")
+            .setContentTitle("HockeyApp Feedback")
+            .setContentText("A new answer to your feedback is available.")
+            .setContentIntent(pendingIntent).build();
+
     notificationManager.notify(NEW_ANSWER_NOTIFICATION_ID, notification);
   }
 }
