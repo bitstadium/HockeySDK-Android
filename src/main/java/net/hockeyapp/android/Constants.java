@@ -111,7 +111,12 @@ public class Constants {
   /**
    * Version of this SDK.
    */
-  public static final String SDK_VERSION = "3.5.0";
+  public static final String SDK_VERSION = "3.6.0";
+
+  /**
+   * Permissions request for the update task.
+   */
+  public static final int UPDATE_PERMISSIONS_REQUEST = 1;
 
   /**
    * Initializes constants from the given context. The context is used to set 

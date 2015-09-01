@@ -211,6 +211,22 @@ public class Strings {
   /** Resource ID for the positive button label of the dialog when activity is exited with changes. */
   public final static int PAINT_DIALOG_POSITIVE_BUTTON_ID = 0x606;
 
+  ///////////////////////////////////////////////////
+  // Permissions
+  ///////////////////////////////////////////////////
+
+  /** Resource ID for the title of the dialog explaining why permission is necessary. **/
+  public final static int PERMISSION_UPDATE_TITLE_ID = 0x700;
+
+  /** Resource ID for the message of the dialog explaining why permission is necessary **/
+  public final static int PERMISSION_UPDATE_MESSAGE_ID = 0x701;
+
+  /** Resource ID for the cancel button in the dialog. **/
+  public final static int PERMISSION_DIALOG_NEGATIVE_BUTTON_ID = 0x702;
+
+  /** Resource ID for the retry button in the dialog. **/
+  public final static int PERMISSION_DIALOG_POSITIVE_BUTTON_ID = 0x703;
+
   /**
    * Default strings.
    */
@@ -277,6 +293,13 @@ public class Strings {
     DEFAULT.put(PAINT_DIALOG_MESSAGE_ID,         "Discard your drawings?");
     DEFAULT.put(PAINT_DIALOG_NEGATIVE_BUTTON_ID, "No");
     DEFAULT.put(PAINT_DIALOG_POSITIVE_BUTTON_ID, "Yes");
+
+    // Permissions
+    DEFAULT.put(PERMISSION_UPDATE_TITLE_ID,           "Need storage access");
+    DEFAULT.put(PERMISSION_UPDATE_MESSAGE_ID,         "In order to download and install app updates you will have to allow the app to access your device storage.");
+    DEFAULT.put(PERMISSION_DIALOG_NEGATIVE_BUTTON_ID, "Cancel");
+    DEFAULT.put(PERMISSION_DIALOG_POSITIVE_BUTTON_ID, "Retry");
+
   }
 
 

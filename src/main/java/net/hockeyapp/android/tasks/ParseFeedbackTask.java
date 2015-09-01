@@ -18,6 +18,7 @@ import net.hockeyapp.android.objects.FeedbackMessage;
 import net.hockeyapp.android.objects.FeedbackResponse;
 import net.hockeyapp.android.utils.FeedbackParser;
 import net.hockeyapp.android.utils.PrefsUtil;
+import net.hockeyapp.android.utils.Util;
 
 import java.util.ArrayList;
 
@@ -154,7 +155,6 @@ public class ParseFeedbackTask extends AsyncTask<Void, Void, FeedbackResponse> {
 
     NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
     int iconId = context.getResources().getIdentifier("ic_menu_refresh", "drawable", "android");
-    Notification notification = new Notification(iconId, "New Answer to Your Feedback.", System.currentTimeMillis());
 
     Class<?> activityClass = null;
     if (FeedbackManager.getLastListener() != null) {
@@ -170,7 +170,11 @@ public class ParseFeedbackTask extends AsyncTask<Void, Void, FeedbackResponse> {
     intent.putExtra("url", urlString);
 
     PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_ONE_SHOT);
-    notification.setLatestEventInfo(context, "HockeyApp Feedback", "A new answer to your feedback is available.", pendingIntent);
-    notificationManager.notify(NEW_ANSWER_NOTIFICATION_ID, notification);
+
+    Notification notification = Util.createNotification(context, pendingIntent, "HockeyApp Feedback", "A new answer to your feedback is available.", iconId);
+
+    if (notification != null) {
+      notificationManager.notify(NEW_ANSWER_NOTIFICATION_ID, notification);
+    }
   }
 }

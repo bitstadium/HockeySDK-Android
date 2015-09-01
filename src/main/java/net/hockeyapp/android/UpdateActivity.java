@@ -1,5 +1,7 @@
 package net.hockeyapp.android;
 
+import android.os.Build;
+import android.util.Log;
 import net.hockeyapp.android.listeners.DownloadFileListener;
 import net.hockeyapp.android.objects.ErrorObject;
 import net.hockeyapp.android.tasks.DownloadFileTask;
@@ -64,7 +66,7 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
   private final int DIALOG_ERROR_ID = 0;
   private ErrorObject error;
   private Context context;
-  
+
   /**
    * Task to download the .apk file.
    */
@@ -174,7 +176,47 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
     String url = getIntent().getStringExtra("url");
     startDownloadTask(url);
   }
-  
+
+  @Override
+  public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+
+    enableUpdateButton();
+
+    if (permissions.length == 0 || grantResults.length == 0) {
+      // User cancelled permissions dialog -> don't do anything.
+      return;
+    }
+
+    if (requestCode == Constants.UPDATE_PERMISSIONS_REQUEST) {
+      // Check for the grant result on write permission
+      if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        // Permission granted, re-invoke download process
+        prepareDownload();
+      } else {
+        // Permission denied, show user alert
+        Log.w(Constants.TAG, "User denied write permission, can't continue with updater task.");
+
+        UpdateManagerListener listener = UpdateManager.getLastListener();
+        if (listener != null) {
+          listener.onUpdatePermissionsNotGranted();
+        } else {
+          final UpdateActivity updateActivity = this;
+          new AlertDialog.Builder(context)
+                  .setTitle(Strings.get(Strings.PERMISSION_UPDATE_TITLE_ID))
+                  .setMessage(Strings.get(Strings.PERMISSION_UPDATE_MESSAGE_ID))
+                  .setNegativeButton(Strings.get(Strings.PERMISSION_DIALOG_NEGATIVE_BUTTON_ID), null)
+                  .setPositiveButton(Strings.get(Strings.PERMISSION_DIALOG_POSITIVE_BUTTON_ID), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                      updateActivity.prepareDownload();
+                    }
+                  })
+                  .create()
+                  .show();
+        }
+      }
+    }
+  }
+
   /**
    * Starts the download task and sets the listener for a successful
    * download, a failed download, and configuration strings.
@@ -272,8 +314,7 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
     String permission = "android.permission.WRITE_EXTERNAL_STORAGE";
     int res = context.checkCallingOrSelfPermission(permission);
 
-    // Always return true on Kitkat or newer
-    return ((res == PackageManager.PERMISSION_GRANTED) || (android.os.Build.VERSION.SDK_INT > 18));
+    return (res == PackageManager.PERMISSION_GRANTED);
   }
   
   /**
@@ -300,10 +341,22 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
    * disables the button to avoid multiple taps.
    */
   public void onClick(View v) {
+    prepareDownload();
+    v.setEnabled(false);
+  }
+
+  protected void prepareDownload() {
     if (!isWriteExternalStorageSet(context)) {
+
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        // Only if we're running on Android M or later we can request permissions at runtime
+        requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, Constants.UPDATE_PERMISSIONS_REQUEST);
+        return;
+      }
+
       error = new ErrorObject();
       error.setMessage("The permission to access the external storage permission is not set. Please contact the developer.");
-      
+
       runOnUiThread(new Runnable() {
         @SuppressWarnings("deprecation")
         @Override
@@ -311,14 +364,14 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
           showDialog(DIALOG_ERROR_ID);
         }
       });
-      
+
       return;
     }
-    
+
     if (!isUnknownSourcesChecked()) {
       error = new ErrorObject();
       error.setMessage("The installation from unknown sources is not enabled. Please check the device settings.");
-      
+
       runOnUiThread(new Runnable() {
         @SuppressWarnings("deprecation")
         @Override
@@ -326,16 +379,20 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
           showDialog(DIALOG_ERROR_ID);
         }
       });
-      
+
       return;
     }
-    
+
     startDownloadTask();
-    v.setEnabled(false);
   }
 
   @Override
   protected Dialog onCreateDialog(int id) {
+    return onCreateDialog(id, null);
+  }
+
+  @Override
+  protected Dialog onCreateDialog(int id, Bundle args) {
     switch(id) {
       case DIALOG_ERROR_ID:
         return new AlertDialog.Builder(this)
