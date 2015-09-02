@@ -5,13 +5,15 @@ buildscript {
 
     dependencies {
         classpath 'com.android.tools.build:gradle:0.12.+'
+        classpath 'com.github.dcendents:android-maven-plugin:1.1'
     }
 }
 
-version '3.5.0'
+version '3.5.0-SNAPSHOT'
 group 'net.hockeyapp.android'
 
-apply plugin: 'android-library'
+apply plugin: 'com.android.library'
+apply plugin: 'android-maven'
 
 android {
     compileSdkVersion 17
@@ -21,5 +23,66 @@ android {
         main {
             manifest.srcFile 'AndroidManifest.xml'
         }
+    }
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from android.sourceSets.main.java.srcDirs
+}
+
+task jar(type: Jar) {
+    from 'build/intermediates/classes/release'
+    exclude '**/BuildConfig.class'
+    exclude '**/R.class'
+    exclude 'de/keyboardsurfer/mobile/'
+}
+
+artifacts {
+    archives sourcesJar
+    archives jar
+}
+
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+
+            repository(url: "http://your-url")
+
+            snapshotRepository(url: "file://just-for-testing")
+
+            pom.groupId = 'net.hockeyapp.android'
+
+            pom.project {
+                inceptionYear '2014'
+                name 'HockeySDK'
+                artifactId "HockeySDK"
+                packaging 'jar'
+
+
+                scm {
+                    url 'https://github.com/bitstadium/HockeySDK-Android'
+                    connection 'scm:git://github.com/bitstadium/HockeySDK-Android.git'
+                    developerConnection 'scm:git:git@github.com:bitstadium/HockeySDK-Android.git'
+                }
+                developers {
+                    developer {
+                        id 'ashtom'
+                        name 'Thomas Dohmke'
+                        email 'thomas@dohmke.de'
+                    }
+                }
+                licenses {
+                    license {
+                        name 'The MIT License'
+                        url 'http://www.opensource.org/licenses/mit-license.php'
+                        distribution 'repo'
+
+                    }
+                }
+            }
+        }
+
     }
 }
