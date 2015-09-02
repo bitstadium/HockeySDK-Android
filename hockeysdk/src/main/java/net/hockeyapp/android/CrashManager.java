@@ -1,31 +1,19 @@
 package net.hockeyapp.android;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.net.HttpURLConnection;
+import java.util.*;
 
 
 import android.preference.PreferenceManager;
 import net.hockeyapp.android.objects.CrashManagerUserInput;
 import net.hockeyapp.android.objects.CrashMetaData;
-import net.hockeyapp.android.utils.ConnectionManager;
+import net.hockeyapp.android.utils.HttpURLConnectionBuilder;
 import net.hockeyapp.android.utils.PrefsUtil;
 
 import net.hockeyapp.android.utils.Util;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.protocol.HTTP;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -270,15 +258,15 @@ public class CrashManager {
       Log.d(Constants.TAG, "Found " + list.length + " stacktrace(s).");
 
       for (int index = 0; index < list.length; index++) {
+        HttpURLConnection urlConnection = null;
         try {
           // Read contents of stack trace
           String filename = list[index];
           String stacktrace = contentsOfFile(weakContext, filename);
           if (stacktrace.length() > 0) {
             // Transmit stack trace with POST request
+
             Log.d(Constants.TAG, "Transmitting crash data: \n" + stacktrace);
-            DefaultHttpClient httpClient = (DefaultHttpClient)ConnectionManager.getInstance().getHttpClient();
-            HttpPost httpPost = new HttpPost(getURLString());
 
             // Retrieve user ID and contact information if given
             String userID =  contentsOfFile(weakContext, filename.replace(".stacktrace", ".user"));
@@ -306,24 +294,33 @@ public class CrashManager {
               }
             }
 
-            List <NameValuePair> parameters = new ArrayList <NameValuePair>();
-            parameters.add(new BasicNameValuePair("raw", stacktrace));
-            parameters.add(new BasicNameValuePair("userID", userID));
-            parameters.add(new BasicNameValuePair("contact", contact));
-            parameters.add(new BasicNameValuePair("description", description));
-            parameters.add(new BasicNameValuePair("sdk", Constants.SDK_NAME));
-            parameters.add(new BasicNameValuePair("sdk_version", Constants.SDK_VERSION));
+            Map<String, String> parameters = new HashMap<String, String>();
 
-            httpPost.setEntity(new UrlEncodedFormEntity(parameters, HTTP.UTF_8));
+            parameters.put("raw", stacktrace);
+            parameters.put("userID", userID);
+            parameters.put("contact", contact);
+            parameters.put("description", description);
+            parameters.put("sdk", Constants.SDK_NAME);
+            parameters.put("sdk_version", Constants.SDK_VERSION);
 
-            httpClient.execute(httpPost);
-            successful = true;
+            urlConnection = new HttpURLConnectionBuilder(getURLString())
+                    .setRequestMethod("POST")
+                    .writeFormFields(parameters)
+                    .build();
+
+            int responseCode = urlConnection.getResponseCode();
+
+            successful = (responseCode == HttpURLConnection.HTTP_ACCEPTED || responseCode == HttpURLConnection.HTTP_CREATED);
+
           }
         }
         catch (Exception e) {
           e.printStackTrace();
         }
         finally {
+          if (urlConnection != null) {
+            urlConnection.disconnect();
+          }
           if (successful) {
             Log.d(Constants.TAG, "Transmission succeeded");
             deleteStackTrace(weakContext, list[index]);
@@ -483,7 +480,7 @@ public class CrashManager {
       return;
     }
 
-    if (listener.onHandleAlertView()) {
+    if (listener != null && listener.onHandleAlertView()) {
       return;
     }
 
@@ -498,7 +495,6 @@ public class CrashManager {
     });
 
     builder.setNeutralButton(Strings.get(listener, Strings.CRASH_DIALOG_NEUTRAL_BUTTON_ID), new DialogInterface.OnClickListener() {
-      @Override
       public void onClick(DialogInterface dialog, int which) {
         handleUserInput(CrashManagerUserInput.CrashManagerUserInputAlwaysSend, null, listener, weakContext, ignoreDefaultHandler);
       }
@@ -506,7 +502,7 @@ public class CrashManager {
 
     builder.setPositiveButton(Strings.get(listener, Strings.CRASH_DIALOG_POSITIVE_BUTTON_ID), new DialogInterface.OnClickListener() {
       public void onClick(DialogInterface dialog, int which) {
-        handleUserInput(CrashManagerUserInput.CrashManagerUserInputDontSend, null, listener,
+        handleUserInput(CrashManagerUserInput.CrashManagerUserInputSend, null, listener,
             weakContext, ignoreDefaultHandler);
       }
     });

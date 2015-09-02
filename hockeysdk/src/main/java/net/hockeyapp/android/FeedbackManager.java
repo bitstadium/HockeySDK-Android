@@ -357,12 +357,13 @@ public class FeedbackManager {
     NotificationManager notificationManager = (NotificationManager) currentActivity.getSystemService(Context.NOTIFICATION_SERVICE);
 
     int iconId = currentActivity.getResources().getIdentifier("ic_menu_camera", "drawable", "android");
-    Notification notification = new Notification(iconId, "", System.currentTimeMillis());
 
     Intent intent =  new Intent();
     intent.setAction(BROADCAST_ACTION);
     PendingIntent pendingIntent = PendingIntent.getBroadcast(currentActivity, BROADCAST_REQUEST_CODE, intent, PendingIntent.FLAG_ONE_SHOT);
-    notification.setLatestEventInfo(currentActivity, "HockeyApp Feedback", "Take a screenshot for your feedback.", pendingIntent);
+
+    Notification notification = Util.createNotification(currentActivity, pendingIntent, "HockeyApp Feedback", "Take a screenshot for your feedback.", iconId);
+
     notificationManager.notify(SCREENSHOT_NOTIFICATION_ID, notification);
 
     if (receiver == null) {
@@ -375,6 +376,8 @@ public class FeedbackManager {
     }
     currentActivity.registerReceiver(receiver, new IntentFilter(BROADCAST_ACTION));
   }
+
+
 
   private static void endNotification() {
     notificationActive = false;

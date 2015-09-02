@@ -1,6 +1,13 @@
 package net.hockeyapp.android;
 
+import android.*;
+import android.app.AlertDialog;
+import android.app.Fragment;
+import android.content.DialogInterface;
+import android.os.Build;
+import android.util.Log;
 import net.hockeyapp.android.listeners.DownloadFileListener;
+import net.hockeyapp.android.objects.ErrorObject;
 import net.hockeyapp.android.tasks.DownloadFileTask;
 import net.hockeyapp.android.tasks.GetFileSizeTask;
 import net.hockeyapp.android.utils.AsyncTaskUtils;
@@ -175,10 +182,60 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
    * disables the button to avoid multiple taps.
    */
   public void onClick(View view) {
+    prepareDownload();
+  }
+
+  public void prepareDownload() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+      // Only if we're running on Android M or later
+      if (getActivity().checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+        // We don't have the permission to write to external storage yet, so we have to request it asynchronously.
+        requestPermissions(new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, Constants.UPDATE_PERMISSIONS_REQUEST);
+        return;
+      }
+    }
+
     startDownloadTask(this.getActivity());
     dismiss();
   }
-    
+
+  @Override
+  public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    if (permissions.length == 0 || grantResults.length == 0) {
+      // User cancelled permissions dialog -> don't do anything.
+      return;
+    }
+
+    if (requestCode == Constants.UPDATE_PERMISSIONS_REQUEST) {
+      // Check for the grant result on write permission
+      if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        // Permission granted, start download
+        startDownloadTask(getActivity());
+      } else {
+        // Permission denied, show user alert
+        Log.w(Constants.TAG, "User denied write permission, can't continue with updater task.");
+
+        UpdateManagerListener listener = UpdateManager.getLastListener();
+        if (listener != null) {
+          listener.onUpdatePermissionsNotGranted();
+        } else {
+          final UpdateFragment updateFragment = this;
+          new AlertDialog.Builder(getActivity())
+                  .setTitle(Strings.get(Strings.PERMISSION_UPDATE_TITLE_ID))
+                  .setMessage(Strings.get(Strings.PERMISSION_UPDATE_MESSAGE_ID))
+                  .setNegativeButton(Strings.get(Strings.PERMISSION_DIALOG_NEGATIVE_BUTTON_ID), null)
+                  .setPositiveButton(Strings.get(Strings.PERMISSION_DIALOG_POSITIVE_BUTTON_ID), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                      updateFragment.prepareDownload();
+                    }
+                  })
+                  .create()
+                  .show();
+        }
+      }
+    }
+  }
+
   /**
    * Starts the download task and sets the listener for a successful
    * download, a failed download, and configuration strings.
