@@ -106,6 +106,12 @@ public class LocaleManager {
     loadFromResources("hockeyapp_paint_dialog_message", Strings.PAINT_DIALOG_MESSAGE_ID, context);
     loadFromResources("hockeyapp_paint_dialog_negative_button", Strings.PAINT_DIALOG_NEGATIVE_BUTTON_ID, context);
     loadFromResources("hockeyapp_paint_dialog_positive_button", Strings.PAINT_DIALOG_POSITIVE_BUTTON_ID, context);
+
+    // Permissions
+    loadFromResources("hockeyapp_permission_update_title", Strings.PERMISSION_UPDATE_TITLE_ID, context);
+    loadFromResources("hockeyapp_permission_update_message", Strings.PERMISSION_UPDATE_MESSAGE_ID, context);
+    loadFromResources("hockeyapp_permission_dialog_negative_button", Strings.PERMISSION_DIALOG_NEGATIVE_BUTTON_ID, context);
+    loadFromResources("hockeyapp_permission_dialog_positive_button", Strings.PERMISSION_DIALOG_POSITIVE_BUTTON_ID, context);
   }
 
   private static void loadFromResources(String name, int resourceId, Context context) {
