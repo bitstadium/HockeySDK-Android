@@ -24,11 +24,11 @@ import java.util.Map;
 
 /**
  * <h3>Description</h3>
- * <p/>
+ *
  * Internal helper class. Sends feedback to server.
- * <p/>
+ *
  * <h3>License</h3>
- * <p/>
+ *
  * <pre>
  * Copyright (c) 2011-2014 Bit Stadium GmbH
  *
