@@ -89,6 +89,7 @@ import net.hockeyapp.android.UpdateManager;
 public class YourActivity extends Activity {
   @Override
   public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
     // Your own code to create the view
     // ...
     
