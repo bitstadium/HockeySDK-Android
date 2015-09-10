@@ -228,7 +228,7 @@ To achieve this call `CrashManager.handleUserInput()` and provide an instance of
 <a id="documentation"></a>
 ## 4. Documentation
 
-Our documentation can be found on [HockeyApp](http://hockeyapp.net/help/sdk/android/3.6.0-b.1/index.html).
+Our documentation can be found under [docs](http://htmlpreview.github.io/?https://github.com/bitstadium/HockeySDK-Android/blob/develop/docs/index.html).
 
 <a id="troubleshooting"></a>
 ## 5.Troubleshooting
