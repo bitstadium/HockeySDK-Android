@@ -89,6 +89,7 @@ import net.hockeyapp.android.UpdateManager;
 public class YourActivity extends Activity {
   @Override
   public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
     // Your own code to create the view
     // ...
     
@@ -206,13 +207,13 @@ To configure a custom `CrashManagerListener` use the following `register()` meth
 
 #### 3.3.1 Autosend crash reports
 
-Crashes are send the next time the app starts. If your custom crash manager listener returns `true` for `onCrashesFound()`, crashes will be send without any user interaction, otherwise a dialog will appear allowing the user to decide whether they want to send the report or not.
+Crashes are sent the next time the app starts. If your custom crash manager listener returns `true` for `shouldAutoUploadCrashes()`, crashes will be sent without any user interaction, otherwise a dialog will appear allowing the user to decide whether they want to send the report or not.
 
 ```java
 
-public class MyCustomCrashManagerListener {
+public class MyCustomCrashManagerListener extends CrashManagerListener {
   @Override
-  public boolean onCrashesFound() {
+  public boolean shouldAutoUploadCrashes() {
     return true;
   }
 }
@@ -227,7 +228,7 @@ To achieve this call `CrashManager.handleUserInput()` and provide an instance of
 <a id="documentation"></a>
 ## 4. Documentation
 
-Our documentation can be found on [HockeyApp](http://hockeyapp.net/help/sdk/android/3.6.0-b.1/index.html).
+Our documentation can be found on [HockeyApp](http://hockeyapp.net/help/sdk/android/3.6-b.1/index.html).
 
 <a id="troubleshooting"></a>
 ## 5.Troubleshooting
