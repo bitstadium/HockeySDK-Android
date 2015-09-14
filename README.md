@@ -50,7 +50,7 @@ Please see the "[How to create a new app](http://support.hockeyapp.net/kb/about-
 Add the SDK to your app module's dependencies in Android Studio by adding the following line to your `dependencies { ... }` configuration:
 
 ```groovy
-  compile 'net.hockeyapp.android:HockeySDK:3.6.0-b.1'
+  compile 'net.hockeyapp.android:HockeySDK:3.6.0-rc.1'
 ```
 also make sure your repository configuration contains
 
@@ -228,7 +228,7 @@ To achieve this call `CrashManager.handleUserInput()` and provide an instance of
 <a id="documentation"></a>
 ## 4. Documentation
 
-Our documentation can be found on [HockeyApp](http://hockeyapp.net/help/sdk/android/3.6-b.1/index.html).
+Our documentation can be found on [HockeyApp](http://hockeyapp.net/help/sdk/android/3.6-rc.1/index.html).
 
 <a id="troubleshooting"></a>
 ## 5.Troubleshooting
