@@ -68,7 +68,22 @@ public class TelemetryManager implements Application.ActivityLifecycleCallbacks 
      */
     private static final Object LOCK = new Object();
     private static boolean sessionTrackingDisabled;
-    ;
+
+    /**
+     * A channel for collecting new events before storing and sending them.
+     */
+    private static Channel channel;
+
+    /**
+     * A telemetry context which is used to add meta info to events, before they're sent out.
+     */
+    private static TelemetryContext telemetryContext;
+
+    /**
+     * The app identifier of the appropriate HockeyApp app.
+     */
+    private static String appIdentifier;
+
     /**
      * The application needed for auto collecting session data
      */
@@ -77,6 +92,9 @@ public class TelemetryManager implements Application.ActivityLifecycleCallbacks 
     public static void register(Context context, Application application) {
         synchronized (LOCK) {
             TelemetryManager.weakApplication = new WeakReference<>(application);
+
+            telemetryContext = new TelemetryContext(context, appIdentifier);
+            channel = new Channel(telemetryContext);
 
             if (Util.sessionTrackingSupported()) {
                 setSessionTrackingDisabled(true);
@@ -95,7 +113,6 @@ public class TelemetryManager implements Application.ActivityLifecycleCallbacks 
     public static boolean sessionTrackingEnabled() {
         return sessionTrackingDisabled;
     }
-
 
     /**
      * Enable and disable tracking of sessions
