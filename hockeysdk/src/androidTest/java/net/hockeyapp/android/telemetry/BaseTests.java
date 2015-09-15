@@ -1,4 +1,4 @@
-package net.hockeyapp.android;
+package net.hockeyapp.android.telemetry;
 
 
 import junit.framework.Assert;
