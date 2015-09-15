@@ -6,8 +6,10 @@ import android.app.Activity;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Build;
+import android.os.Bundle;
 import android.text.TextUtils;
 
 import java.io.UnsupportedEncodingException;
@@ -58,6 +60,7 @@ public class Util {
   public static final String PREFS_KEY_NAME_EMAIL_SUBJECT = "net.hockeyapp.android.prefs_key_name_email";
   public static final String APP_IDENTIFIER_PATTERN = "[0-9a-f]+";
   public static final int APP_IDENTIFIER_LENGTH = 32;
+  public static final String APP_IDENTIFIER_KEY = "net.hockeyapp.android.appIdentifier";
 
   public static final String LOG_IDENTIFIER = "HockeyApp";
 
@@ -240,5 +243,19 @@ public class Util {
     } else {
       return builder.build();
     }
+  }
+
+  public static String getAppIdentifier(Context context) {
+    return getBundle(context).getString(APP_IDENTIFIER_KEY);
+  }
+
+  private static Bundle getBundle(Context context) {
+    Bundle bundle;
+    try {
+      bundle = context.getPackageManager().getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA).metaData;
+    } catch (PackageManager.NameNotFoundException e) {
+      throw new RuntimeException(e);
+    }
+    return bundle;
   }
 }

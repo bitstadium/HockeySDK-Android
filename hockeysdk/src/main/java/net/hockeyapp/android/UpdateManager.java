@@ -63,6 +63,20 @@ public class UpdateManager {
 
   /**
    * Registers new update manager.
+   * HockeyApp app identifier is read from AndroidManifest.xml.
+   *
+   * @param activity The parent activity to return to.
+   */
+  public static void register(Activity activity) {
+    String appIdentifier = Util.getAppIdentifier(activity);
+    if (appIdentifier == null || appIdentifier.length() == 0) {
+      throw new IllegalArgumentException("HockeyApp app identifier was not configured correctly in manifest or build configuration.");
+    }
+    register(activity, appIdentifier);
+  }
+
+  /**
+   * Registers new update manager.
    * 
    * @param activity Parent activity.
    * @param appIdentifier App ID of your app on HockeyApp.
