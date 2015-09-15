@@ -197,6 +197,7 @@ public class TelemetryManager implements Application.ActivityLifecycleCallbacks 
         // unused but required to implement ActivityLifecycleCallbacks
     }
 
+    // TODO: Change method name to something like updateSession
     private void sessionManagement() {
         int count = this.activityCount.getAndIncrement();
         if (count == 0) {
@@ -217,11 +218,40 @@ public class TelemetryManager implements Application.ActivityLifecycleCallbacks 
             if (shouldRenew) {
                 Log.d(TAG, "Renewing session");
                 //TODO: renew ID for session
-//                this.telemetryContext.renewSessionId();
                 String sessionId = UUID.randomUUID().toString();
                 telemetryContext.updateSessionContext(sessionId);
+                trackSessionState(SessionState.START);
             }
         }
+    }
+
+    /**
+     * Creates and enqueues a session event for the given state.
+     *
+     * @param sessionState value that determines whether the session started or ended
+     */
+    private void trackSessionState(SessionState sessionState) {
+        // TODO: Do not create & log events on main thread
+        SessionStateData sessionItem = new SessionStateData();
+        sessionItem.setState(sessionState);
+        Data<Domain> data = createData(sessionItem);
+        channel.log(data);
+    }
+
+    /**
+     * Pack and forward the telemetry item to the queue.
+     *
+     * @param telemetryData The telemetry event to be persisted and sent
+     * @return a base data object containing the telemetry data
+     */
+    protected Data<Domain> createData(TelemetryData telemetryData) {
+
+        Data<Domain> data = new Data<Domain>();
+        data.setBaseData(telemetryData);
+        data.setBaseType(telemetryData.getBaseType());
+        data.QualifiedName = telemetryData.getEnvelopeName();
+
+        return data;
     }
 }
 
