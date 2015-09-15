@@ -195,6 +195,15 @@ public class Util {
   }
 
   /**
+   * Determines if Session is possible for the current user or not.
+   *
+   * @return YES if app runs on at least OS 4.0
+   */
+  public static boolean sessionTrackingSupported() {
+    return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH);
+  }
+
+  /**
    * Creates a notification on API levels from 9 to 23
    * @param context the context to use, e.g. your Activity
    * @param pendingIntent the Intent to call
