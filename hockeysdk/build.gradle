@@ -5,10 +5,10 @@ def artifactId = "HockeySDK"
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.0"
+    buildToolsVersion "23.0.1"
 
     defaultConfig {
-        minSdkVersion 7
+        minSdkVersion 9
         targetSdkVersion 23
         versionCode 1
         versionName "3.6.0-beta.1"
