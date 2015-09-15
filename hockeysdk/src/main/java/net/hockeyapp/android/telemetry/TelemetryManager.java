@@ -1,8 +1,10 @@
-package net.hockeyapp.android;
+package net.hockeyapp.android.telemetry;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -49,27 +51,24 @@ import java.util.concurrent.atomic.AtomicLong;
  * @author Benjamin Reimold
  **/
 
+@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 public class TelemetryManager implements Application.ActivityLifecycleCallbacks {
-
-    private static final String TAG = "TelemetryManager";
-
-    /**
-     * Synchronization LOCK for setting static context
-     */
-    private static final Object LOCK = new Object();
-
-    private static boolean sessionTrackingDisabled;
 
     /**
      * The activity counter
      */
     protected static final AtomicInteger activityCount = new AtomicInteger(0);
-
     /**
      * The timestamp of the last activity
      */
-    protected static final AtomicLong lastBackground = new AtomicLong(getTime());;
-
+    protected static final AtomicLong lastBackground = new AtomicLong(getTime());
+    private static final String TAG = "TelemetryManager";
+    /**
+     * Synchronization LOCK for setting static context
+     */
+    private static final Object LOCK = new Object();
+    private static boolean sessionTrackingDisabled;
+    ;
     /**
      * The application needed for auto collecting session data
      */
@@ -132,6 +131,15 @@ public class TelemetryManager implements Application.ActivityLifecycleCallbacks 
         return application;
     }
 
+    /**
+     * Get the current time
+     *
+     * @return the current time in milliseconds
+     */
+    private static long getTime() {
+        return new Date().getTime();
+    }
+
     @Override
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
         // unused but required to implement ActivityLifecycleCallbacks
@@ -185,7 +193,7 @@ public class TelemetryManager implements Application.ActivityLifecycleCallbacks 
             long now = this.getTime();
             long then = this.lastBackground.getAndSet(getTime());
             //TODO save session intervall in configuration
-            boolean shouldRenew = ((now - then) >= (20*1000));
+            boolean shouldRenew = ((now - then) >= (20 * 1000));
             Log.d(TAG, "Checking if we have to renew a session, time difference is: " + (now - then));
 
             if (shouldRenew) {
@@ -194,15 +202,6 @@ public class TelemetryManager implements Application.ActivityLifecycleCallbacks 
 //                this.telemetryContext.renewSessionId();
             }
         }
-    }
-
-    /**
-     * Get the current time
-     *
-     * @return the current time in milliseconds
-     */
-    private static long getTime() {
-        return new Date().getTime();
     }
 }
 
