@@ -60,7 +60,7 @@ import java.util.UUID;
  *
  * @author Christoph Wendt
  **/
-public class TelemetryContext {
+class TelemetryContext {
 
     private static final String SHARED_PREFERENCES_KEY = "HOCKEY_APP_TELEMETRY_CONTEXT";
     private static final String USER_ANOM_ID_KEY = "USER_ID";

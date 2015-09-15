@@ -85,7 +85,7 @@ class Channel {
     /**
      * Instantiates a new INSTANCE of Channel
      */
-    protected Channel(TelemetryContext telemetryContext) {
+    public Channel(TelemetryContext telemetryContext) {
         this.telemetryContext = telemetryContext;
         this.list = new LinkedList<String>();
     }
