@@ -12,6 +12,7 @@ import net.hockeyapp.android.utils.Util;
 
 import java.lang.ref.WeakReference;
 import java.util.Date;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -217,6 +218,8 @@ public class TelemetryManager implements Application.ActivityLifecycleCallbacks 
                 Log.d(TAG, "Renewing session");
                 //TODO: renew ID for session
 //                this.telemetryContext.renewSessionId();
+                String sessionId = UUID.randomUUID().toString();
+                telemetryContext.updateSessionContext(sessionId);
             }
         }
     }

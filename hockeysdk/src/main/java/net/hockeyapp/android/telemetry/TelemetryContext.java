@@ -64,6 +64,7 @@ public class TelemetryContext {
 
     private static final String SHARED_PREFERENCES_KEY = "HOCKEY_APP_TELEMETRY_CONTEXT";
     private static final String USER_ANOM_ID_KEY = "USER_ID";
+    private static final String SESSION_IS_FIRST_KEY = "SESSION_IS_FIRST";
     private static final String TAG = "TelemetryContext";
 
     /**
@@ -144,6 +145,38 @@ public class TelemetryContext {
         configInternalContext();
         configApplicationContext();
         setInstrumentationKey(instrumentationKey);
+    }
+
+    /**
+     * Updates the session context.
+     *
+     * @param sessionId the current session Id
+     */
+    protected void updateSessionContext(String sessionId) {
+        configSessionContext(sessionId);
+    }
+
+    /**
+     * Configure the session context.
+     *
+     * @param sessionId the current session Id
+     */
+    protected void configSessionContext(String sessionId) {
+        setSessionId(sessionId);
+        //normally, this should also be saved to SharedPrefs like isFirst.
+        //The problem is that there are cases when committing the changes is too slow and we get
+        //the wrong value. As isNew is only "true" when we start a new session, it is set in
+        //TrackDataOperation directly before enqueueing the session event.
+        setIsNewSession("false");
+
+        SharedPreferences.Editor editor = this.settings.edit();
+        if (!this.settings.getBoolean(SESSION_IS_FIRST_KEY, false)) {
+            editor.putBoolean(SESSION_IS_FIRST_KEY, true);
+            editor.apply();
+            setIsFirstSession("true");
+        } else {
+            setIsFirstSession("false");
+        }
     }
 
     /**
