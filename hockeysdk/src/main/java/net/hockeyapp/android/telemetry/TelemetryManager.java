@@ -54,7 +54,6 @@ import java.util.concurrent.atomic.AtomicLong;
 
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 public class TelemetryManager implements Application.ActivityLifecycleCallbacks {
-
     /**
      * The activity counter
      */
@@ -68,40 +67,61 @@ public class TelemetryManager implements Application.ActivityLifecycleCallbacks 
      * Synchronization LOCK for setting static context
      */
     private static final Object LOCK = new Object();
-    private static boolean sessionTrackingDisabled;
 
-    /**
-     * A channel for collecting new events before storing and sending them.
-     */
-    private static Channel channel;
-
-    /**
-     * A telemetry context which is used to add meta info to events, before they're sent out.
-     */
-    private static TelemetryContext telemetryContext;
-
-    /**
-     * The app identifier of the appropriate HockeyApp app.
-     */
-    private static String appIdentifier;
+    private static volatile TelemetryManager instance;
 
     /**
      * The application needed for auto collecting session data
      */
     private static WeakReference<Application> weakApplication;
+    /**
+     * Flag that indicates disabled session tracking.
+     * Default is false.
+     */
+    private volatile boolean sessionTrackingDisabled;
+    /**
+     * A channel for collecting new events before storing and sending them.
+     */
+    private Channel channel;
 
-    public static void register(Context context, Application application) {
-        synchronized (LOCK) {
-            TelemetryManager.weakApplication = new WeakReference<>(application);
+    /**
+     * A telemetry context which is used to add meta info to events, before they're sent out.
+     */
+    private TelemetryContext telemetryContext;
 
-            telemetryContext = new TelemetryContext(context, appIdentifier);
-            channel = new Channel(telemetryContext);
+    /**
+     * The app identifier of the appropriate HockeyApp app.
+     */
+    private String appIdentifier;
 
-            if (Util.sessionTrackingSupported()) {
-                setSessionTrackingDisabled(true);
 
-            } else {
-                sessionTrackingDisabled = false;
+    /**
+     * Restrict access to the default constructor
+     * Create a new INSTANCE of the TelemetryManager class
+     */
+    protected TelemetryManager() {
+    }
+
+
+    public static void register(Context context, Application application, String appIdentifier) {
+        TelemetryManager r = instance;
+        if (r == null) {
+            synchronized (LOCK) {
+                r = instance;        // thread may have instantiated the object.
+                if (r == null) {
+                    r = new TelemetryManager();
+                    instance = r;
+                    instance.appIdentifier = appIdentifier;//TODO remove app Identifier property?
+                    instance.telemetryContext = new TelemetryContext(context,
+                          appIdentifier);
+                    instance.weakApplication = new WeakReference<>(application);
+                }
+                if (Util.sessionTrackingSupported()) {
+                    instance.setSessionTrackingDisabled(false);
+
+                } else {
+                    instance.setSessionTrackingDisabled(true);
+                }
             }
         }
     }
@@ -112,7 +132,7 @@ public class TelemetryManager implements Application.ActivityLifecycleCallbacks 
      * @return YES if session tracking is enabled
      */
     public static boolean sessionTrackingEnabled() {
-        return sessionTrackingDisabled;
+        return !instance.sessionTrackingDisabled;
     }
 
     /**
@@ -121,16 +141,22 @@ public class TelemetryManager implements Application.ActivityLifecycleCallbacks 
      * @param disabled flag to indicate
      */
     public static void setSessionTrackingDisabled(Boolean disabled) {
-        synchronized (LOCK) {
-            if (Util.sessionTrackingSupported()) {
-                sessionTrackingDisabled = disabled;
-                if (!disabled) {
-                    //TODO move back to singleton --> static class doesn't work as Callback
-                    //or make LifeCyclecallback-Class
-                    //getApplication().registerActivityLifecycleCallbacks(TelemetryManager);
+        if(instance == null) {
+            Log.d(TAG, "TelemetryManager hasn't been registered");
+        }
+        else {
+            synchronized (LOCK) {
+                if (Util.sessionTrackingSupported()) {
+                    instance.sessionTrackingDisabled = disabled;
+                    //TODO persist this setting so the dev doesn't have to take care of this
+                    //between launches
+                    if (!disabled) {
+                        getApplication().registerActivityLifecycleCallbacks(instance);
+                    }
+                } else {
+                    instance.sessionTrackingDisabled = true;
+                    getApplication().unregisterActivityLifecycleCallbacks(instance);
                 }
-            } else {
-                sessionTrackingDisabled = false;
             }
         }
     }
