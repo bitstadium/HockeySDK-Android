@@ -679,7 +679,7 @@ public class CrashManager {
   }
   
   /**
-   * Saves the list of the stack traces' file names in shared preferences.  
+   * Saves the queue of the stack traces' file names in shared preferences.
    */
   private static void saveConfirmedStackTraces(WeakReference<Context> weakContext) {
     Context context = null;

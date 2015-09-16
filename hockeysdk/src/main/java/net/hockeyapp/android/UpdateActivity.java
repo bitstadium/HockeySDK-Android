@@ -79,7 +79,7 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
   
   /**
    * Called when the activity is starting. Sets the title and content view.
-   * Configures the list view adapter. Attaches itself to a previously 
+   * Configures the queue view adapter. Attaches itself to a previously
    * started download task.
    * 
    * @param savedInstanceState Data it most recently supplied in 

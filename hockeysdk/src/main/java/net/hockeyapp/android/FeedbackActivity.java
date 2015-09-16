@@ -290,7 +290,7 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
    * Configures the content view by initializing the input {@link EditText}s
    * and the listener for the Send Feedback {@link Button}
    *
-   * @param haveToken the message list is shown if true
+   * @param haveToken the message queue is shown if true
    */
   protected void configureFeedbackView(boolean haveToken) {
     feedbackScrollView = (ScrollView) findViewById(FeedbackView.FEEDBACK_SCROLLVIEW_ID);
@@ -298,7 +298,7 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
     messagesListView = (ListView) findViewById(FeedbackView.MESSAGES_LISTVIEW_ID);
 
     if (haveToken) {
-      /** If a token exists, the list of messages should be displayed */
+      /** If a token exists, the queue of messages should be displayed */
       wrapperLayoutFeedbackAndMessages.setVisibility(View.VISIBLE);
       feedbackScrollView.setVisibility(View.GONE);
 
@@ -363,7 +363,7 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
         subjectInput.setVisibility(View.VISIBLE);
       }
 
-      /** Reset the attachment list */
+      /** Reset the attachment queue */
       ViewGroup attachmentListView = (ViewGroup)findViewById(FeedbackView.WRAPPER_LAYOUT_ATTACHMENTS);
       attachmentListView.removeAllViews();
 
@@ -424,7 +424,7 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
       }
 
     } else if (requestCode == PAINT_IMAGE) {
-      /** Final attachment picture received and ready to be added to list. */
+      /** Final attachment picture received and ready to be added to queue. */
       Uri uri = data.getParcelableExtra("imageUri");
 
       if (uri != null) {
@@ -678,7 +678,7 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
     				getFeedback().getMessages().size() > 0) {
 
     			feedbackMessages = feedbackResponse.getFeedback().getMessages();
-    			/** Reverse the order of the feedback messages list, so we show the latest one first */
+    			/** Reverse the order of the feedback messages queue, so we show the latest one first */
     			Collections.reverse(feedbackMessages);
 
     			/** Set the lastUpdatedTextView text as the date of the latest feedback message */
@@ -758,7 +758,7 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
   		/** Save Name and Email to {@link SharedPreferences} */
   		PrefsUtil.getInstance().saveNameEmailSubjectToPrefs(context, name, email, subject);
 
-      /** Make list for attachments file paths */
+      /** Make queue for attachments file paths */
       AttachmentListView attachmentListView = (AttachmentListView) findViewById(FeedbackView.WRAPPER_LAYOUT_ATTACHMENTS);
       List<Uri> attachmentUris = attachmentListView.getAttachments();
 

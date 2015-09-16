@@ -73,21 +73,16 @@ class Channel {
 //    private Persistence persistence;
 
     /**
-     * The linked list for this queue
+     * The linked queue for this queue.
      */
-    protected final List<String> list;
-
-    /**
-     * All tasks which have been scheduled and not cancelled
-     */
-    private TimerTask scheduledPersistenceTask;
+    protected final List<String> queue;
 
     /**
      * Instantiates a new INSTANCE of Channel
      */
     public Channel(TelemetryContext telemetryContext) {
         this.telemetryContext = telemetryContext;
-        this.list = new LinkedList<String>();
+        this.queue = new LinkedList<String>();
     }
 
     /**
@@ -103,8 +98,8 @@ class Channel {
         }
         synchronized (this.LOCK) {
 
-            if (this.list.add(serializedItem)) {
-                if ((this.list.size() >= MAX_BATCH_COUNT)) {
+            if (this.queue.add(serializedItem)) {
+                if ((this.queue.size() >= MAX_BATCH_COUNT)) {
                     synchronize();
                 }
             } else {
@@ -119,10 +114,10 @@ class Channel {
     public void synchronize() {
         String[] data;
         synchronized (this.LOCK) {
-            if (!list.isEmpty()) {
-                data = new String[list.size()];
-                list.toArray(data);
-                list.clear();
+            if (!queue.isEmpty()) {
+                data = new String[queue.size()];
+                queue.toArray(data);
+                queue.clear();
 
                 if (data != null) {
 //                    if (this.persistence != null) {

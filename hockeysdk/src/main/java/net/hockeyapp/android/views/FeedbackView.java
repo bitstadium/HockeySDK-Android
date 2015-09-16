@@ -80,7 +80,7 @@ public class FeedbackView extends LinearLayout {
   /** Wrapper {@link LinearLayout} for the input elements for sending feedback */
   private LinearLayout wrapperLayoutFeedback;
   
-  /** Wrapper {@link LinearLayout} for last updated label, add response {@link Button} and list of discussions */
+  /** Wrapper {@link LinearLayout} for last updated label, add response {@link Button} and queue of discussions */
   private LinearLayout wrapperLayoutFeedbackAndMessages;
   
   /** Wrapper {@link LinearLayout} for Add a Response and Refresh {@link Button}s */
@@ -89,7 +89,7 @@ public class FeedbackView extends LinearLayout {
   /** Wrapper {@link LinearLayout} for Attachments */
   private ViewGroup wrapperLayoutAttachments;
   
-  /** {@link ListView} for list of discussions */
+  /** {@link ListView} for queue of discussions */
   private ListView messagesListView;
 
   public FeedbackView(Context context) {

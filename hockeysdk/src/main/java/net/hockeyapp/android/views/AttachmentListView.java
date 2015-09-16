@@ -50,7 +50,7 @@ public class AttachmentListView extends ViewGroup {
   }
 
   /**
-   * Returns a list of Uris of its AttachmentView children.
+   * Returns a queue of Uris of its AttachmentView children.
    *
    * @return ArrayList of Uri
    */
