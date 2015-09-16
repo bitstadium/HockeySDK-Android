@@ -20,13 +20,14 @@ public class ChannelTests extends InstrumentationTestCase {
         super.setUp();
 
         System.setProperty("dexmaker.dexcache", getInstrumentation().getTargetContext().getCacheDir().getPath());
-
         mockTelemetryContext = getMockTelemetryContext();
         sut = new PublicChannel(mockTelemetryContext);
     }
 
     public void testNewInstanceWasInitialisedCorrectly() {
+        Assert.assertNotNull(sut);
         Assert.assertNotNull(sut.telemetryContext);
+        Assert.assertEquals(mockTelemetryContext, sut.telemetryContext);
         Assert.assertNotNull(sut.queue);
         Assert.assertEquals(0, sut.queue.size());
     }

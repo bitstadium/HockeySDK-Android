@@ -76,47 +76,47 @@ class TelemetryContext {
     /**
      * The application context needed to update some context values.
      */
-    private Context context;
+    protected Context context;
 
     /**
      * The shared preferences INSTANCE for reading persistent context.
      */
-    private SharedPreferences settings;
+    protected SharedPreferences settings;
 
     /**
      * Device context.
      */
-    private String instrumentationKey;
+    protected String instrumentationKey;
 
     /**
      * Device telemetryContext.
      */
-    private final Device device;
+    protected final Device device;
 
     /**
      * Session context.
      */
-    private final Session session;
+    protected final Session session;
 
     /**
      * User context.
      */
-    private final User user;
+    protected final User user;
 
     /**
      * Internal context.
      */
-    private final Internal internal;
+    protected final Internal internal;
 
     /**
      * Application context.
      */
-    private final Application application;
+    protected final Application application;
 
     /**
      * The app's package name.
      */
-    private String packageName;
+    protected String packageName;
 
 
     private TelemetryContext() {
