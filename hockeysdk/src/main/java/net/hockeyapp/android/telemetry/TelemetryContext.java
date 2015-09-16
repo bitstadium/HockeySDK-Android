@@ -7,8 +7,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -277,28 +275,6 @@ class TelemetryContext {
             setDeviceType("Phone");
         } else {
             setDeviceType("Tablet");
-        }
-
-        // check network type
-        final ConnectivityManager connectivityManager = (ConnectivityManager)
-                this.context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
-        if (activeNetwork != null) {
-            int networkType = activeNetwork.getType();
-            String networkString;
-            switch (networkType) {
-                case ConnectivityManager.TYPE_WIFI:
-                    networkString = "WiFi";
-                    break;
-                case ConnectivityManager.TYPE_MOBILE:
-                    networkString = "Mobile";
-                    break;
-                default:
-                    networkString = "Unknown";
-                    Log.d(TAG, "Unknown network type:" + networkType);
-                    break;
-            }
-            setNetworkType(networkString);
         }
 
         // detect emulator
@@ -577,16 +553,6 @@ class TelemetryContext {
     public void setDeviceType(String deviceType) {
         synchronized (this.device){
             this.device.setType(deviceType);
-        }
-    }
-
-    public String getNetworkType() {
-        return this.device.getNetwork();
-    }
-
-    public void setNetworkType(String networkType) {
-        synchronized (this.device) {
-            this.device.setNetwork(networkType);
         }
     }
 }
