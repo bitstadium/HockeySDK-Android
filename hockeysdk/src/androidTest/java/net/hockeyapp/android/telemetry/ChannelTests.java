@@ -15,13 +15,15 @@ public class ChannelTests extends InstrumentationTestCase {
 
     private PublicChannel sut;
     private PublicTelemetryContext mockTelemetryContext;
+    private PublicPersistence mockPersistence;
 
     public void setUp() throws Exception {
         super.setUp();
 
         System.setProperty("dexmaker.dexcache", getInstrumentation().getTargetContext().getCacheDir().getPath());
         mockTelemetryContext = getMockTelemetryContext();
-        sut = new PublicChannel(mockTelemetryContext);
+        mockPersistence = mock(PublicPersistence.class);
+        sut = new PublicChannel(mockTelemetryContext, mockPersistence);
     }
 
     public void testNewInstanceWasInitialisedCorrectly() {
@@ -54,7 +56,7 @@ public class ChannelTests extends InstrumentationTestCase {
         sut.log(new Data<Domain>());
         Assert.assertEquals(0, sut.queue.size());
 
-        // TODO: Verify persistence call
+        verify(mockPersistence).persist(any(String[].class));
     }
 
     public void testCreateEnvelopeForTelemetryDataWorks() {

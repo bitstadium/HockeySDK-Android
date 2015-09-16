@@ -10,7 +10,6 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.TimerTask;
 
 /**
  * <h3>Description</h3>
@@ -66,10 +65,10 @@ class Channel {
      */
     private static final Object LOCK = new Object();
 
-//    /**
-//     * Persistence used for storing telemetry items before they get sent out.
-//     */
-//    private Persistence persistence;
+    /**
+     * Persistence used for storing telemetry items before they get sent out.
+     */
+    private Persistence persistence;
 
     /**
      * The linked queue for this queue.
@@ -79,9 +78,10 @@ class Channel {
     /**
      * Instantiates a new INSTANCE of Channel
      */
-    public Channel(TelemetryContext telemetryContext) {
+    public Channel(TelemetryContext telemetryContext, Persistence persistence) {
         this.telemetryContext = telemetryContext;
         this.queue = new LinkedList<String>();
+        this.persistence = persistence;
     }
 
     /**
@@ -119,9 +119,9 @@ class Channel {
                 queue.clear();
 
                 if (data != null) {
-//                    if (this.persistence != null) {
-//                        this.persistence.persist(data);
-//                    }
+                    if (this.persistence != null) {
+                        this.persistence.persist(data);
+                    }
                 }
             }
         }

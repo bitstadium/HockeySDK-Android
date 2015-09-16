@@ -7,15 +7,15 @@ import android.content.Context;
  *  the devs. But they have to be public to be mockable in the test target. This is why we need to
  *  create this kind of subclass with the modifier `public`.
  */
-public class PublicChannel extends Channel {
+public class PublicPersistence extends Persistence {
+
 
     /**
-     * Instantiates a new INSTANCE of Channel
+     * Restrict access to the default constructor
      *
-     * @param telemetryContext
-     * @param persistence
+     * @param context android Context object
      */
-    public PublicChannel(TelemetryContext telemetryContext, Persistence persistence) {
-        super(telemetryContext, persistence);
+    protected PublicPersistence(Context context) {
+        super(context);
     }
 }
