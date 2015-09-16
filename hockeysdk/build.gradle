@@ -23,7 +23,7 @@ android {
     repositories { jcenter() }
     dependencies {
         compile fileTree(dir: 'libs', include: ['*.jar'])
-        androidTestCompile 'org.mockito:mockito-core:2.0.17-beta'
-        androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.2'
+        androidTestCompile 'org.mockito:mockito-core:1.9.5'
+        androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.0'
     }
 }

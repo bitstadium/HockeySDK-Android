@@ -25,7 +25,7 @@ class Persistence {
 
     private static final Integer MAX_FILE_COUNT = 50;
 
-    private final ArrayList<File> servedFiles;
+    protected final ArrayList<File> servedFiles;
 
     /**
      * The tag for logging
