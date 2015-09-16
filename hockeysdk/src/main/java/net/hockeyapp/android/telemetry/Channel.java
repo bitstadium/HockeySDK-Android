@@ -1,6 +1,5 @@
 package net.hockeyapp.android.telemetry;
 
-import android.content.Context;
 import android.util.Log;
 
 import net.hockeyapp.android.utils.Util;
@@ -60,7 +59,7 @@ class Channel {
     /**
      *  Telemetry context used by the channel to create the payload.
      */
-    private TelemetryContext telemetryContext;
+    protected TelemetryContext telemetryContext;
 
     /**
      * Synchronization LOCK
