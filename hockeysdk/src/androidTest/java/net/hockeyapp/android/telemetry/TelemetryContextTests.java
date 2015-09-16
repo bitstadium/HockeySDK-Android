@@ -4,13 +4,6 @@ import android.test.InstrumentationTestCase;
 
 import junit.framework.Assert;
 
-import net.hockeyapp.android.utils.Util;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import static  org.mockito.Mockito.*;
-
 public class TelemetryContextTests extends InstrumentationTestCase {
 
     private PublicTelemetryContext sut;
@@ -23,6 +16,7 @@ public class TelemetryContextTests extends InstrumentationTestCase {
 
     public void testNewInstanceWasInitialisedCorrectly() {
         Assert.assertNotNull(sut);
+        Assert.assertNotNull(sut.getInstrumentationKey());
         Assert.assertNotNull(sut.context);
         Assert.assertNotNull(sut.device);
         Assert.assertNotNull(sut.user);

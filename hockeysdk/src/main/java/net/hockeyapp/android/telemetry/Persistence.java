@@ -153,7 +153,7 @@ class Persistence {
     }
 
     /**
-     * Get a reference to the next available file. High priority is served before regular priority.
+     * Get a reference to the next available file.
      *
      * @return the next available file.
      */
@@ -255,11 +255,10 @@ class Persistence {
     }
 
     /**
-     * create local folders for both priorities if they are not present, yet.
+     * Create local folders telemetry files if needed.
      */
     private void createDirectoriesIfNecessary() {
         String filesDirPath = getContext().getFilesDir().getPath();
-        //create high prio directory
         File dir = new File(filesDirPath + BIT_TELEMETRY_DIRECTORY);
         String successMessage = "Successfully created directory";
         String errorMessage = "Error creating directory";
@@ -273,7 +272,7 @@ class Persistence {
     }
 
     /**
-     * Retrieves the weak context reference
+     * Retrieves the weak context reference.
      *
      * @return the context object for this instance
      */
