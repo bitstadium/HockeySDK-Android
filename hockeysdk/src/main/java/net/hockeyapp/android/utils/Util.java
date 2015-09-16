@@ -246,7 +246,11 @@ public class Util {
   }
 
   public static String getAppIdentifier(Context context) {
-    return getBundle(context).getString(APP_IDENTIFIER_KEY);
+    return getManifestString(context, APP_IDENTIFIER_KEY);
+  }
+
+  public static String getManifestString(Context context, String key) {
+    return getBundle(context).getString(key);
   }
 
   private static Bundle getBundle(Context context) {
