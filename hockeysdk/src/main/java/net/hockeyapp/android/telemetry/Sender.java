@@ -88,7 +88,7 @@ public class Sender {
         //as sendNextFile() is NOT guarranteed to be executed from a background thread, we need to
         //create an async task if necessary
         if (Looper.myLooper() == Looper.getMainLooper()) {
-            Log.d(TAG, "Kick of new async task");
+            Log.d(TAG, "We're on the main thread, so we kick of a new async task");
             AsyncTaskUtils.execute(createAsyncTask());//TODO will this happen for HA SDK?
         } else {
             if (requestCount() < MAX_REQUEST_COUNT) {
@@ -96,7 +96,7 @@ public class Sender {
                 // Send the persisted data
                 send();
             } else {
-                Log.d(TAG, "We have already 10 pending reguests");
+                Log.d(TAG, "We have already 10 pending requests");
             }
         }
     }
@@ -113,7 +113,7 @@ public class Sender {
 
     protected void send() {
         if (this.persistence != null) {
-            File fileToSend = this.persistence.nextTelemetryFile();
+            File fileToSend = this.persistence.nextAvailableFileInDirectory();
             if (fileToSend != null) {
                 String persistedData = this.persistence.load(fileToSend);
                 if (!persistedData.isEmpty()) {
