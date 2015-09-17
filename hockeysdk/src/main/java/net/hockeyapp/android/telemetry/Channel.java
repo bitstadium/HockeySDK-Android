@@ -96,7 +96,6 @@ class Channel {
             return;
         }
         synchronized (this.LOCK) {
-
             if (this.queue.add(serializedItem)) {
                 if ((this.queue.size() >= MAX_BATCH_COUNT)) {
                     synchronize();

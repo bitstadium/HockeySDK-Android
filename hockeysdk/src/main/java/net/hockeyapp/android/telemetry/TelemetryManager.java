@@ -4,10 +4,12 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
+import net.hockeyapp.android.utils.AsyncTaskUtils;
 import net.hockeyapp.android.utils.Util;
 
 import java.lang.ref.WeakReference;
@@ -262,12 +264,17 @@ public class TelemetryManager implements Application.ActivityLifecycleCallbacks 
      *
      * @param sessionState value that determines whether the session started or ended
      */
-    private void trackSessionState(SessionState sessionState) {
-        // TODO: Do not create & log events on main thread
-        SessionStateData sessionItem = new SessionStateData();
-        sessionItem.setState(sessionState);
-        Data<Domain> data = createData(sessionItem);
-        channel.log(data);
+    private void trackSessionState(final SessionState sessionState) {
+       AsyncTaskUtils.execute(new AsyncTask<Void, Void, Void>() {
+           @Override
+           protected Void doInBackground(Void... params) {
+               SessionStateData sessionItem = new SessionStateData();
+               sessionItem.setState(sessionState);
+               Data<Domain> data = createData(sessionItem);
+               channel.log(data);
+               return null;
+           }
+       });
     }
 
     /**
