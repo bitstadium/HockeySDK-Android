@@ -2,8 +2,6 @@ package net.hockeyapp.android.telemetry;
 
 import android.content.Context;
 import android.util.Log;
-
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,18 +12,42 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.UUID;
 
+/**
+ * <h3>Description</h3>
+ * <p/>
+ * Class used to save telemetry data to disk before they get sent to the server. This is neccessary
+ * to prevent the data from being dropped in case of an app crash.
+ * <p/>
+ * <h3>License</h3>
+ * <p/>
+ * <pre>
+ * Copyright (c) 2011-2015 Bit Stadium GmbH
+ *
+ * Permission is hereby granted, free of charge, to any person
+ * obtaining a copy of this software and associated documentation
+ * files (the "Software"), to deal in the Software without
+ * restriction, including without limitation the rights to use,
+ * copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following
+ * conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ * OTHER DEALINGS IN THE SOFTWARE.
+ * </pre>
+ *
+ * @author Christoph Wendt
+ */
 class Persistence {
-
-    /**
-     * Synchronization LOCK for setting static context
-     */
-    private static final Object LOCK = new Object();
-
-    private static final String BIT_TELEMETRY_DIRECTORY = "/net.hockeyapp.android/telemetry/";
-
-    private static final Integer MAX_FILE_COUNT = 50;
-
-    protected ArrayList<File> servedFiles;
 
     /**
      * The tag for logging
@@ -33,13 +55,39 @@ class Persistence {
     private static final String TAG = "Persistence";
 
     /**
+     * Synchronization LOCK for setting static context.
+     */
+    private static final Object LOCK = new Object();
+
+    /**
+     * Path for storing telemetry data files.
+     */
+    private static final String BIT_TELEMETRY_DIRECTORY = "/net.hockeyapp.android/telemetry/";
+
+    /**
+     * Directory of telemetry files.
+     */
+    protected File telemetryDirectory;
+
+    /**
+     * Maximum numbers of telemetry files on disk.
+     */
+    private static final Integer MAX_FILE_COUNT = 50;
+
+    /**
+     * Sender module used to send out files.
+     */
+    protected Sender sender;
+
+    /**
+     * List with paths of telemetry files which are currently used by the sender.
+     */
+    protected ArrayList<File> servedFiles;
+
+    /**
      * A weak reference to the app context
      */
     private WeakReference<Context> weakContext;
-
-    protected Sender sender;
-
-    protected File telemetryDirectory;
 
     /**
      * Restrict access to the default constructor
@@ -72,6 +120,7 @@ class Persistence {
      */
     protected void persist(String[] data) {
         if (!this.isFreeSpaceAvailable()) {
+            Log.w(TAG, "Failed to persist file: Too many files on disk.");
             getSender().triggerSending();
         }else{
             StringBuilder buffer = new StringBuilder();
@@ -82,6 +131,7 @@ class Persistence {
                 }
                 buffer.append(aData);
             }
+
             String serializedData = buffer.toString();
             isSuccess = writeToDisk(serializedData);
             if (isSuccess) {
@@ -101,14 +151,14 @@ class Persistence {
         Boolean isSuccess = false;
         FileOutputStream outputStream = null;
         try {
-            File filesDir = new File(this.telemetryDirectory + "/" + uuid);
-            outputStream = new FileOutputStream(filesDir, true);
-            outputStream.write(data.getBytes());
-
+            synchronized (this.LOCK) {
+                File filesDir = new File(this.telemetryDirectory + "/" + uuid);
+                outputStream = new FileOutputStream(filesDir, true);
+                outputStream.write(data.getBytes());
+                Log.w(TAG, "Saving data to: " + filesDir.toString());
+            }
             isSuccess = true;
-            Log.w(TAG, "Saving data to: " + filesDir.toString());
         } catch (Exception e) {
-            //Do nothing
             Log.w(TAG, "Failed to save data with exception: " + e.toString());
         }finally {
             if(outputStream != null){
@@ -133,19 +183,18 @@ class Persistence {
         if (file != null) {
             BufferedReader reader = null;
             try {
-                FileInputStream inputStream = new FileInputStream(file);
-                InputStreamReader streamReader = new InputStreamReader(inputStream);
-                reader = new BufferedReader(streamReader);
-                //comment: we can't use BufferedReader's readline() as this removes linebreaks that
-                //are required for JSON stream
-                int c;
-                while ((c = reader.read()) != -1) {
-                    //Cast c to char. As it's not -1, we won't get a problem
-                    buffer.append((char) c);
+                synchronized (this.LOCK) {
+                    FileInputStream inputStream = new FileInputStream(file);
+                    InputStreamReader streamReader = new InputStreamReader(inputStream);
+                    reader = new BufferedReader(streamReader);
+                    int c;
+                    while ((c = reader.read()) != -1) {
+                        buffer.append((char) c);
+                    }
                 }
             } catch (Exception e) {
                 Log.w(TAG, "Error reading telemetry data from file with exception message "
-                      + e.getMessage());
+                        + e.getMessage());
             }finally {
 
                 try{
@@ -154,7 +203,7 @@ class Persistence {
                     }
                 }catch (IOException e){
                     Log.w(TAG, "Error closing stream."
-                                + e.getMessage());
+                            + e.getMessage());
                 }
             }
         }
@@ -166,7 +215,7 @@ class Persistence {
      * @return reference to the next available file, null if no file is available
      */
     protected File nextAvailableFileInDirectory() {
-        synchronized (Persistence.LOCK) {
+        synchronized (this.LOCK) {
             if (this.telemetryDirectory != null) {
                 File[] files = this.telemetryDirectory.listFiles();
                 File file;
@@ -199,8 +248,7 @@ class Persistence {
      */
     protected void deleteFile(File file) {
         if (file != null) {
-            synchronized (Persistence.LOCK) {
-                // always delete the file
+            synchronized (this.LOCK) {
                 boolean deletedFile = file.delete();
                 if (!deletedFile) {
                     Log.w(TAG, "Error deleting telemetry file " + file.toString());
@@ -220,7 +268,7 @@ class Persistence {
      * @param file reference to the file that should be made available so it can be sent again later
      */
     protected void makeAvailable(File file) {
-        synchronized (Persistence.LOCK) {
+        synchronized (this.LOCK) {
             if (file != null) {
                 servedFiles.remove(file);
             }
@@ -231,7 +279,7 @@ class Persistence {
      * Check if we haven't reached MAX_FILE_COUNT yet
      */
     protected Boolean isFreeSpaceAvailable() {
-        synchronized (Persistence.LOCK) {
+        synchronized (this.LOCK) {
             Context context = getContext();
             if (context != null) {
                 String path = (context.getFilesDir() + BIT_TELEMETRY_DIRECTORY);
@@ -273,6 +321,7 @@ class Persistence {
 
     private Sender getSender (){
         if(this.sender == null) {
+            // TODO:
             this.sender = new Sender(this);
         }
         return this.sender;

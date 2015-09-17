@@ -27,7 +27,7 @@ import java.util.UUID;
 /**
  * <h3>Description</h3>
  * <p/>
- * This class is holding all telemetry context information.
+ * Class that manages the context in which telemetry items get sent.
  * <p/>
  * <h3>License</h3>
  * <p/>
@@ -60,17 +60,31 @@ import java.util.UUID;
  **/
 class TelemetryContext {
 
-    private static final String SHARED_PREFERENCES_KEY = "HOCKEY_APP_TELEMETRY_CONTEXT";
-    private static final String USER_ANOM_ID_KEY = "USER_ID";
-    private static final String SESSION_IS_FIRST_KEY = "SESSION_IS_FIRST";
     private static final String TAG = "TelemetryContext";
 
     /**
-     * Synchronization LOCK for setting static context
+     * Key needed to access the shared preferences of the SDK.
+     */
+    private static final String SHARED_PREFERENCES_KEY = "HOCKEY_APP_TELEMETRY_CONTEXT";
+
+    /**
+     * Key needed to access the anonymous user id saved in the preferences.
+     */
+    private static final String USER_ANOM_ID_KEY = "USER_ID";
+
+    /**
+     * Key needed to determine, whether we have a new or exisiting user.
+     */
+    private static final String SESSION_IS_FIRST_KEY = "SESSION_IS_FIRST";
+
+    /**
+     * Synchronization LOCK for setting static context.
      */
     private static final Object LOCK = new Object();
 
-
+    /**
+     * Synchronization LOCK for setting instrumentation key.
+     */
     private final Object IKEY_LOCK = new Object();
 
     /**
@@ -118,7 +132,9 @@ class TelemetryContext {
      */
     protected String packageName;
 
-
+    /**
+     * Constructs a new INSTANCE of TelemetryContext.
+     */
     private TelemetryContext() {
         this.device = new Device();
         this.session = new Session();
@@ -128,7 +144,7 @@ class TelemetryContext {
     }
 
     /**
-     * Constructs a new INSTANCE of the Telemetry telemetryContext tag keys
+     * Constructs a new INSTANCE of TelemetryContext.
      *
      * @param context            the context for this telemetryContext
      * @param appIdentifier      the app identifier for this application
