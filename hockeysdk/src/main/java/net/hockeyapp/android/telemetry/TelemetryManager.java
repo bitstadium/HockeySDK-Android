@@ -89,10 +89,6 @@ public class TelemetryManager implements Application.ActivityLifecycleCallbacks 
      */
     private TelemetryContext telemetryContext;
 
-    /**
-     * The app identifier of the appropriate HockeyApp app.
-     */
-    private String appIdentifier;
 
 
     /**
@@ -102,26 +98,28 @@ public class TelemetryManager implements Application.ActivityLifecycleCallbacks 
     protected TelemetryManager() {
     }
 
+    protected static void register(Application application, TelemetryContext context) {
+
+    }
 
     public static void register(Context context, Application application, String appIdentifier) {
-        TelemetryManager r = instance;
-        if (r == null) {
+        TelemetryManager result = instance;
+        if (result == null) {
             synchronized (LOCK) {
-                r = instance;        // thread may have instantiated the object.
-                if (r == null) {
-                    r = new TelemetryManager();
-                    instance = r;
-                    instance.appIdentifier = appIdentifier;//TODO remove app Identifier property?
-                    instance.telemetryContext = new TelemetryContext(context,
+                result = instance;        // thread may have instantiated the object.
+                if (result == null) {
+                    result = new TelemetryManager();
+                    result.telemetryContext = new TelemetryContext(context,
                           appIdentifier);
-                    instance.weakApplication = new WeakReference<>(application);
+                    result.weakApplication = new WeakReference<>(application);
                 }
                 if (Util.sessionTrackingSupported()) {
-                    instance.setSessionTrackingDisabled(false);
+                    result.sessionTrackingDisabled = false;
 
                 } else {
-                    instance.setSessionTrackingDisabled(true);
+                    result.sessionTrackingDisabled = true;
                 }
+                instance = result;
             }
         }
     }
@@ -141,10 +139,9 @@ public class TelemetryManager implements Application.ActivityLifecycleCallbacks 
      * @param disabled flag to indicate
      */
     public static void setSessionTrackingDisabled(Boolean disabled) {
-        if(instance == null) {
+        if (instance == null) {
             Log.d(TAG, "TelemetryManager hasn't been registered");
-        }
-        else {
+        } else {
             synchronized (LOCK) {
                 if (Util.sessionTrackingSupported()) {
                     instance.sessionTrackingDisabled = disabled;
