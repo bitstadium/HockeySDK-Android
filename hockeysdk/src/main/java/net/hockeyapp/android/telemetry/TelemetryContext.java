@@ -131,18 +131,18 @@ class TelemetryContext {
      * Constructs a new INSTANCE of the Telemetry telemetryContext tag keys
      *
      * @param context            the context for this telemetryContext
-     * @param instrumentationKey the instrumentationkey for this application
+     * @param appIdentifier      the app identifier for this application
      */
-    protected TelemetryContext(Context context, String instrumentationKey) {
+    protected TelemetryContext(Context context, String appIdentifier) {
         this();
         this.settings = context.getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
         this.context = context;
+        this.instrumentationKey = Util.convertAppIdentifierToGuid(appIdentifier);
 
         configDeviceContext();
         configUserContext();
         configInternalContext();
         configApplicationContext();
-        setInstrumentationKey(instrumentationKey);
     }
 
     /**
@@ -339,6 +339,7 @@ class TelemetryContext {
                         .getApplicationInfo(this.context.getPackageName(), PackageManager.GET_META_DATA)
                         .metaData;
                 if (bundle != null) {
+                    // TODO: Change key
                     sdkVersionString = bundle.getString("com.microsoft.applicationinsights.library.sdkVersion");
                 } else {
                     Log.d(TAG, "Could not load sdk version from gradle.properties or manifest");
