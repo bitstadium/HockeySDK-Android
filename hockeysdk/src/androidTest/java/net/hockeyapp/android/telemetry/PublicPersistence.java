@@ -11,11 +11,11 @@ import java.io.File;
  */
 public class PublicPersistence extends Persistence {
 
-    protected PublicPersistence(Context context, File telemetryDirectory) {
-        super(context, telemetryDirectory);
-    }
-
     public PublicPersistence(Context context) {
         super(context);
+    }
+
+    public PublicPersistence(Context context, File directory, Sender sender) {
+        super(context, directory, sender);
     }
 }
