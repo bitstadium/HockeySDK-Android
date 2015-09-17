@@ -30,7 +30,7 @@ public class PersistenceTests extends InstrumentationTestCase {
     public void testTelemetryDirIsGetsCreated (){
         File spy = spy(new File("/my/test/directory/"));
 
-        sut = new PublicPersistence(getInstrumentation().getContext(), spy);
+        sut = new PublicPersistence(getInstrumentation().getContext(), spy, null);
 
         verify(spy).mkdirs();
     }
@@ -72,7 +72,7 @@ public class PersistenceTests extends InstrumentationTestCase {
         File mockFile1 = mock(File.class);
         File mockFile2 = mock(File.class);
         File[] mockFiles = {mockFile1, mockFile2};
-        sut = new PublicPersistence(getInstrumentation().getContext(), mockDirectory);
+        sut = new PublicPersistence(getInstrumentation().getContext(), mockDirectory, null);
         when(mockDirectory.listFiles()).thenReturn(mockFiles);
 
         // Mock served list containing 1 file
