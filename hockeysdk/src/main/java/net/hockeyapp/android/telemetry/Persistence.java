@@ -101,7 +101,7 @@ class Persistence {
         Boolean isSuccess = false;
         FileOutputStream outputStream = null;
         try {
-            File filesDir = new File(this.telemetryDirectory + uuid);
+            File filesDir = new File(this.telemetryDirectory + "/" + uuid);
             outputStream = new FileOutputStream(filesDir, true);
             outputStream.write(data.getBytes());
 
