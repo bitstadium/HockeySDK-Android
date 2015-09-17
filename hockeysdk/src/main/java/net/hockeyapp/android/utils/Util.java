@@ -319,4 +319,33 @@ public class Util {
   public static boolean isEmulator() {
     return Build.BRAND.equalsIgnoreCase("generic");
   }
+
+  /**
+   * Sanitizes an app identifier and adds dashes to it so that it conforms to the instrumentation
+   * key format of Application Insights.
+   *
+   * @param appIdentifier the app identifier to sanitize and convert
+   *
+   * @return the converted appIdentifier
+   * @throws java.lang.IllegalArgumentException if the app identifier can't be converted because of unrecoverable input character errors
+   */
+  public static String convertAppIdentifierToGuid(String appIdentifier) throws IllegalArgumentException {
+    String sanitizedAppIdentifier = null;
+    String guid = null;
+    try{
+      sanitizedAppIdentifier = sanitizeAppIdentifier(appIdentifier);
+    }catch(IllegalArgumentException e){
+      throw e;
+    }
+
+    if(sanitizedAppIdentifier != null){
+      StringBuffer idBuf = new StringBuffer(sanitizedAppIdentifier);
+      idBuf.insert(20, '-');
+      idBuf.insert(16, '-');
+      idBuf.insert(12, '-');
+      idBuf.insert(8, '-');
+      guid = idBuf.toString();
+    }
+    return guid;
+  }
 }
