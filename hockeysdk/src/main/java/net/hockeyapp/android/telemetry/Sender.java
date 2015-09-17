@@ -3,7 +3,6 @@ package net.hockeyapp.android.telemetry;
 import android.annotation.TargetApi;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.os.Looper;
 import android.util.Log;
 
 import net.hockeyapp.android.utils.AsyncTaskUtils;
@@ -64,8 +63,8 @@ public class Sender {
     static final String DEFAULT_ENDPOINT_URL = "https://dc.services.visualstudio.com/v2/track";
     static final int DEFAULT_SENDER_READ_TIMEOUT = 10 * 1000;
     static final int DEFAULT_SENDER_CONNECT_TIMEOUT = 15 * 1000;
-    private static final String TAG = "Sender";
     static final int MAX_REQUEST_COUNT = 10;
+    private static final String TAG = "Sender";
     /**
      * Persistence object used to reserve, free, or delete files.
      */
@@ -86,30 +85,22 @@ public class Sender {
     }
 
     protected void triggerSending() {
-        //as sendNextFile() is NOT guarranteed to be executed from a background thread, we need to
-        //create an async task if necessary
-        if (Looper.myLooper() == Looper.getMainLooper()) {
-            Log.d(TAG, "We're on the main thread, so we kick of a new async task");
-            AsyncTaskUtils.execute(createAsyncTask());//TODO will this happen for HA SDK?
-        } else {
-            if (requestCount() < MAX_REQUEST_COUNT) {
-                this.requestCount.getAndIncrement();
-                // Send the persisted data
-                send();
-            } else {
-                Log.d(TAG, "We have already 10 pending requests");
-            }
-        }
-    }
+        if (requestCount() < MAX_REQUEST_COUNT) {
+            this.requestCount.getAndIncrement();
 
-    private AsyncTask<Void, Void, Void> createAsyncTask() {
-        return new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
-                triggerSending();
-                return null;
-            }
-        };
+            AsyncTaskUtils.execute(
+                  new AsyncTask<Void, Void, Void>() {
+                      @Override
+                      protected Void doInBackground(Void... params) {
+                          // Send the persisted data
+                          send();
+                          return null;
+                      }
+                  }
+            );
+        } else {
+            Log.d(TAG, "We have already 10 pending requests, not sending anything.");
+        }
     }
 
     protected void send() {
@@ -191,9 +182,7 @@ public class Sender {
      * @param fileToSend   reference to the file we want to send
      */
     protected void onResponse(HttpURLConnection connection, int responseCode, String payload, File fileToSend) {
-        this.requestCount.getAndDecrement();//TODO do sanity check – was done in sendNextFile()
-        // in AI SDK!
-
+        this.requestCount.getAndDecrement();
         Log.d(TAG, "response code " + Integer.toString(responseCode));
 
         boolean isRecoverableError = isRecoverableError(responseCode);
@@ -308,16 +297,16 @@ public class Sender {
             connection.addRequestProperty("Content-Encoding", "gzip");
             connection.setRequestProperty("Content-Type", "application/x-json-stream");
             GZIPOutputStream gzip = new GZIPOutputStream(connection.getOutputStream(), true);
-            return new OutputStreamWriter(gzip);
+            return new OutputStreamWriter(gzip, "UTF-8");
         } else {
             // no GZIP for older devices
-            return new OutputStreamWriter(connection.getOutputStream());
+            return new OutputStreamWriter(connection.getOutputStream(), "UTF-8");
         }
     }
 
     protected Persistence getPersistence() {
         Persistence persistence = null;
-        if(weakPersistence != null) {
+        if (weakPersistence != null) {
             persistence = weakPersistence.get();
         }
         return persistence;
