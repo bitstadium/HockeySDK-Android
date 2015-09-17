@@ -21,7 +21,7 @@ class Persistence {
      */
     private static final Object LOCK = new Object();
 
-    private static final String BIT_TELEMETRY_DIRECTORY = "/com.microsoft.applicationinsights/telemetry/";
+    private static final String BIT_TELEMETRY_DIRECTORY = "/net.hockeyapp.android/telemetry/";
 
     private static final Integer MAX_FILE_COUNT = 50;
 
