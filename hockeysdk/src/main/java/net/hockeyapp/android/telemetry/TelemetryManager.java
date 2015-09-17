@@ -226,6 +226,7 @@ public class TelemetryManager implements Application.ActivityLifecycleCallbacks 
         if (count == 0) {
             if (sessionTrackingEnabled()) {
                 Log.d(TAG, "Starting & tracking session");
+                renewSession();
             } else {
                 Log.d(TAG, "Session management disabled by the developer");
             }
@@ -241,11 +242,15 @@ public class TelemetryManager implements Application.ActivityLifecycleCallbacks 
             if (shouldRenew) {
                 Log.d(TAG, "Renewing session");
                 //TODO: renew ID for session
-                String sessionId = UUID.randomUUID().toString();
-                telemetryContext.updateSessionContext(sessionId);
-                trackSessionState(SessionState.START);
+                renewSession();
             }
         }
+    }
+
+    protected void renewSession() {
+        String sessionId = UUID.randomUUID().toString();
+        telemetryContext.updateSessionContext(sessionId);
+        trackSessionState(SessionState.START);
     }
 
     /**
