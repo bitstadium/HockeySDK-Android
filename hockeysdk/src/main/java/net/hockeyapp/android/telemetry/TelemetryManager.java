@@ -95,7 +95,9 @@ public class TelemetryManager implements Application.ActivityLifecycleCallbacks 
      * Restrict access to the default constructor
      * Create a new INSTANCE of the TelemetryManager class
      */
-    protected TelemetryManager() {
+    protected TelemetryManager(Context context, TelemetryContext telemetryContext) {
+        this.telemetryContext = telemetryContext;
+        this.channel = new Channel(this.telemetryContext, new Persistence(context));
     }
 
     protected static void register(Application application, TelemetryContext context) {
@@ -108,18 +110,19 @@ public class TelemetryManager implements Application.ActivityLifecycleCallbacks 
             synchronized (LOCK) {
                 result = instance;        // thread may have instantiated the object.
                 if (result == null) {
-                    result = new TelemetryManager();
-                    result.telemetryContext = new TelemetryContext(context,
-                          appIdentifier);
-                    result.weakApplication = new WeakReference<>(application);
+                    result = new TelemetryManager(context, new TelemetryContext(context, appIdentifier));
+                    weakApplication = new WeakReference<>(application);
                 }
                 if (Util.sessionTrackingSupported()) {
                     result.sessionTrackingDisabled = false;
-
                 } else {
                     result.sessionTrackingDisabled = true;
                 }
                 instance = result;
+                if(!result.sessionTrackingDisabled){
+                    setSessionTrackingDisabled(false);
+                }
+
             }
         }
     }
@@ -197,6 +200,7 @@ public class TelemetryManager implements Application.ActivityLifecycleCallbacks 
 
     @Override
     public void onActivityResumed(Activity activity) {
+
         sessionManagement();
     }
 
