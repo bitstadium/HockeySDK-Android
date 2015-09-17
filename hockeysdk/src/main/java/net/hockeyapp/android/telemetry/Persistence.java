@@ -25,7 +25,7 @@ class Persistence {
 
     private static final Integer MAX_FILE_COUNT = 50;
 
-    protected final ArrayList<File> servedFiles;
+    protected ArrayList<File> servedFiles;
 
     /**
      * The tag for logging
@@ -37,15 +37,28 @@ class Persistence {
      */
     private WeakReference<Context> weakContext;
 
+    protected File telemetryDirectory;
+
+    /**
+     * Restrict access to the default constructor
+     *
+     * @param context android Context object
+     * @param telemetryDirectory the directory where files should be saved
+     */
+    protected Persistence(Context context, File telemetryDirectory) {
+        this.weakContext = new WeakReference<Context>(context);
+        this.servedFiles = new ArrayList<File>(51);
+        this.telemetryDirectory = telemetryDirectory;
+        createDirectoriesIfNecessary();
+    }
+
     /**
      * Restrict access to the default constructor
      *
      * @param context android Context object
      */
     protected Persistence(Context context) {
-        this.weakContext = new WeakReference<Context>(context);
-        createDirectoriesIfNecessary();
-        this.servedFiles = new ArrayList<File>(51);
+        this(context, new File(context.getFilesDir().getPath() + BIT_TELEMETRY_DIRECTORY));
     }
 
     /**
@@ -84,31 +97,26 @@ class Persistence {
     protected boolean writeToDisk(String data) {
         String uuid = UUID.randomUUID().toString();
         Boolean isSuccess = false;
-        Context context = getContext();
-        if (context != null) {
-            FileOutputStream outputStream = null;
-            try {
-                File filesDir = getContext().getFilesDir();
-                filesDir = new File(filesDir + BIT_TELEMETRY_DIRECTORY + uuid);
-                outputStream = new FileOutputStream(filesDir, true);
-                outputStream.write(data.getBytes());
+        FileOutputStream outputStream = null;
+        try {
+            File filesDir = new File(this.telemetryDirectory + uuid);
+            outputStream = new FileOutputStream(filesDir, true);
+            outputStream.write(data.getBytes());
 
-                isSuccess = true;
-                Log.w(TAG, "Saving data to: " + filesDir.toString());
-            } catch (Exception e) {
-                //Do nothing
-                Log.w(TAG, "Failed to save data with exception: " + e.toString());
-            }finally {
-                if(outputStream != null){
-                    try {
-                        outputStream.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+            isSuccess = true;
+            Log.w(TAG, "Saving data to: " + filesDir.toString());
+        } catch (Exception e) {
+            //Do nothing
+            Log.w(TAG, "Failed to save data with exception: " + e.toString());
+        }finally {
+            if(outputStream != null){
+                try {
+                    outputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
         }
-
         return isSuccess;
     }
 
@@ -153,34 +161,12 @@ class Persistence {
     }
 
     /**
-     * Get a reference to the next available file.
-     *
-     * @return the next available file.
-     */
-    protected File nextTelemetryFile() {
-
-        synchronized (Persistence.LOCK) {
-            Context context = getContext();
-            if (context != null) {
-                String path = context.getFilesDir() + BIT_TELEMETRY_DIRECTORY;
-                File directory = new File(path);
-                Log.i(TAG, "Returning Telemetry File: " + path);
-                return this.nextAvailableFileInDirectory(directory);
-            }
-        }
-
-        Log.w(TAG, "Couldn't provide next file, the context for persistence is null");
-        return null;
-    }
-
-    /**
-     * @param directory reference to the directory
      * @return reference to the next available file, null if no file is available
      */
-    private File nextAvailableFileInDirectory(File directory) {
+    protected File nextAvailableFileInDirectory() {
         synchronized (Persistence.LOCK) {
-            if (directory != null) {
-                File[] files = directory.listFiles();
+            if (this.telemetryDirectory != null) {
+                File[] files = this.telemetryDirectory.listFiles();
                 File file;
 
                 if ((files != null) && (files.length > 0)) {
@@ -197,8 +183,8 @@ class Persistence {
                     }
                 }
             }
-            if(directory != null) {
-                Log.i(TAG, "The directory " + directory.toString() + " did not contain any unserved files");
+            if(this.telemetryDirectory != null) {
+                Log.i(TAG, "The directory " + this.telemetryDirectory.toString() + " did not contain any unserved files");
             }
             return null;
         }
@@ -257,13 +243,11 @@ class Persistence {
     /**
      * Create local folders telemetry files if needed.
      */
-    private void createDirectoriesIfNecessary() {
-        String filesDirPath = getContext().getFilesDir().getPath();
-        File dir = new File(filesDirPath + BIT_TELEMETRY_DIRECTORY);
+    protected void createDirectoriesIfNecessary() {
         String successMessage = "Successfully created directory";
         String errorMessage = "Error creating directory";
-        if (!dir.exists()) {
-            if (dir.mkdirs()) {
+        if (this.telemetryDirectory != null && !this.telemetryDirectory.exists()) {
+            if (this.telemetryDirectory.mkdirs()) {
                 Log.i(TAG, successMessage);
             } else {
                 Log.i(TAG, errorMessage);

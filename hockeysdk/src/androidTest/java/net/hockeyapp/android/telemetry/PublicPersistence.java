@@ -2,6 +2,8 @@ package net.hockeyapp.android.telemetry;
 
 import android.content.Context;
 
+import java.io.File;
+
 /*
  *  Class needed to mock dependencies. Most dependencies have private modifier to be not visible to
  *  the devs. But they have to be public to be mockable in the test target. This is why we need to
@@ -9,13 +11,11 @@ import android.content.Context;
  */
 public class PublicPersistence extends Persistence {
 
+    protected PublicPersistence(Context context, File telemetryDirectory) {
+        super(context, telemetryDirectory);
+    }
 
-    /**
-     * Restrict access to the default constructor
-     *
-     * @param context android Context object
-     */
-    protected PublicPersistence(Context context) {
+    public PublicPersistence(Context context) {
         super(context);
     }
 }
