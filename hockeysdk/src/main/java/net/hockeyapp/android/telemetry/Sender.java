@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Arrays;
@@ -64,11 +65,11 @@ public class Sender {
     static final int DEFAULT_SENDER_READ_TIMEOUT = 10 * 1000;
     static final int DEFAULT_SENDER_CONNECT_TIMEOUT = 15 * 1000;
     private static final String TAG = "Sender";
-    private final int MAX_REQUEST_COUNT = 10;
+    static final int MAX_REQUEST_COUNT = 10;
     /**
      * Persistence object used to reserve, free, or delete files.
      */
-    protected Persistence persistence;
+    protected WeakReference<Persistence> weakPersistence;
     /**
      * Thread safe counter to keep track of num of operations
      */
@@ -81,7 +82,7 @@ public class Sender {
      */
     protected Sender(Persistence persistence) {
         this.requestCount = new AtomicInteger(0);
-        this.persistence = persistence;
+        this.weakPersistence = new WeakReference<>(persistence);
     }
 
     protected void triggerSending() {
@@ -112,10 +113,10 @@ public class Sender {
     }
 
     protected void send() {
-        if (this.persistence != null) {
-            File fileToSend = this.persistence.nextAvailableFileInDirectory();
+        if (this.getPersistence() != null) {
+            File fileToSend = this.getPersistence().nextAvailableFileInDirectory();
             if (fileToSend != null) {
-                String persistedData = this.persistence.load(fileToSend);
+                String persistedData = this.getPersistence().load(fileToSend);
                 if (!persistedData.isEmpty()) {
                     HttpURLConnection connection = createConnection();
                     if (connection != null) {
@@ -129,14 +130,14 @@ public class Sender {
                             onResponse(connection, responseCode, persistedData, fileToSend);
                         } catch (IOException e) {
                             Log.d(TAG, "Couldn't send data with IOException: " + e.toString());
-                            if (this.persistence != null) {
+                            if (this.getPersistence() != null) {
                                 Log.d(TAG, "Persisting because of IOException: We're probably offline =)");
-                                this.persistence.makeAvailable(fileToSend); //send again later
+                                this.getPersistence().makeAvailable(fileToSend); //send again later
                             }
                         }
                     }
                 } else {
-                    this.persistence.deleteFile(fileToSend);
+                    this.getPersistence().deleteFile(fileToSend);
                 }
             }
         }
@@ -198,13 +199,13 @@ public class Sender {
         boolean isRecoverableError = isRecoverableError(responseCode);
         if (isRecoverableError) {
             Log.d(TAG, "Recoverable error (probably a server error), persisting data:\n" + payload);
-            if (this.persistence != null) {
-                this.persistence.makeAvailable(fileToSend);
+            if (this.getPersistence() != null) {
+                this.getPersistence().makeAvailable(fileToSend);
             }
         } else {
             //delete in case of success or unrecoverable errors
-            if (this.persistence != null) {
-                this.persistence.deleteFile(fileToSend);
+            if (this.getPersistence() != null) {
+                this.getPersistence().deleteFile(fileToSend);
             }
 
             //trigger send next file or log unexpected responses
@@ -314,14 +315,23 @@ public class Sender {
         }
     }
 
+    protected Persistence getPersistence() {
+        Persistence persistence = null;
+        if(weakPersistence != null) {
+            persistence = weakPersistence.get();
+        }
+        return persistence;
+    }
+
     /**
      * Set persistence used to reserve, free, or delete files (enables dependency injection).
      *
      * @param persistence a persistence used to reserve, free, or delete files
      */
     protected void setPersistence(Persistence persistence) {
-        this.persistence = persistence;
+        this.weakPersistence = new WeakReference<>(persistence);
     }
+
 
     protected int requestCount() {
         return this.requestCount.get();
