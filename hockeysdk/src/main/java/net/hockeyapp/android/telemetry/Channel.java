@@ -109,18 +109,16 @@ class Channel {
     /**
      * Persist all pending items.
      */
-    public void synchronize() {
+    protected void synchronize() {
         String[] data;
-        synchronized (this.LOCK) {
-            if (!queue.isEmpty()) {
-                data = new String[queue.size()];
-                queue.toArray(data);
-                queue.clear();
+        if (!queue.isEmpty()) {
+            data = new String[queue.size()];
+            queue.toArray(data);
+            queue.clear();
 
-                if (data != null) {
-                    if (this.persistence != null) {
-                        this.persistence.persist(data);
-                    }
+            if (data != null) {
+                if (this.persistence != null) {
+                    this.persistence.persist(data);
                 }
             }
         }

@@ -284,7 +284,6 @@ public class TelemetryManager implements Application.ActivityLifecycleCallbacks 
      * @return a base data object containing the telemetry data
      */
     protected Data<Domain> createData(TelemetryData telemetryData) {
-
         Data<Domain> data = new Data<Domain>();
         data.setBaseData(telemetryData);
         data.setBaseType(telemetryData.getBaseType());
