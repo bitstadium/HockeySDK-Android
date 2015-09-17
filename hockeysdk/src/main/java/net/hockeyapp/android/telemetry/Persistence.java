@@ -37,6 +37,8 @@ class Persistence {
      */
     private WeakReference<Context> weakContext;
 
+    protected Sender sender;
+
     protected File telemetryDirectory;
 
     /**
@@ -45,10 +47,11 @@ class Persistence {
      * @param context android Context object
      * @param telemetryDirectory the directory where files should be saved
      */
-    protected Persistence(Context context, File telemetryDirectory) {
+    protected Persistence(Context context, File telemetryDirectory, Sender sender) {
         this.weakContext = new WeakReference<Context>(context);
         this.servedFiles = new ArrayList<File>(51);
         this.telemetryDirectory = telemetryDirectory;
+        this.sender = sender;
         createDirectoriesIfNecessary();
     }
 
@@ -58,7 +61,7 @@ class Persistence {
      * @param context android Context object
      */
     protected Persistence(Context context) {
-        this(context, new File(context.getFilesDir().getPath() + BIT_TELEMETRY_DIRECTORY));
+        this(context, new File(context.getFilesDir().getPath() + BIT_TELEMETRY_DIRECTORY), null);
     }
 
     /**
@@ -69,8 +72,7 @@ class Persistence {
      */
     protected void persist(String[] data) {
         if (!this.isFreeSpaceAvailable()) {
-            Log.w(TAG, "No free space on disk to flush data.");
-            // TODO: Inform sender about available files
+            getSender().triggerSending();
         }else{
             StringBuilder buffer = new StringBuilder();
             Boolean isSuccess;
@@ -83,7 +85,7 @@ class Persistence {
             String serializedData = buffer.toString();
             isSuccess = writeToDisk(serializedData);
             if (isSuccess) {
-                // TODO: Inform sender
+                getSender().triggerSending();
             }
         }
     }
@@ -267,5 +269,12 @@ class Persistence {
         }
 
         return context;
+    }
+
+    private Sender getSender (){
+        if(this.sender == null) {
+            this.sender = new Sender(this);
+        }
+        return this.sender;
     }
 }

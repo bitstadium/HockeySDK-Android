@@ -113,7 +113,7 @@ public class Sender {
 
     protected void send() {
         if (this.persistence != null) {
-            File fileToSend = this.persistence.nextTelemetryFile();
+            File fileToSend = this.persistence.nextAvailableFileInDirectory();
             if (fileToSend != null) {
                 String persistedData = this.persistence.load(fileToSend);
                 if (!persistedData.isEmpty()) {
