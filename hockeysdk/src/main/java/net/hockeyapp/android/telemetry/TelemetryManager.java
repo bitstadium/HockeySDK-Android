@@ -53,9 +53,11 @@ import java.util.concurrent.atomic.AtomicLong;
  *
  * @author Benjamin Reimold
  **/
-
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 public class TelemetryManager implements Application.ActivityLifecycleCallbacks {
+
+    private static final String TAG = "TelemetryManager";
+
     /**
      * The activity counter
      */
@@ -64,12 +66,15 @@ public class TelemetryManager implements Application.ActivityLifecycleCallbacks 
      * The timestamp of the last activity
      */
     protected static final AtomicLong lastBackground = new AtomicLong(getTime());
-    private static final String TAG = "TelemetryManager";
+
     /**
      * Synchronization LOCK for setting static context
      */
     private static final Object LOCK = new Object();
 
+    /**
+     * The only TelemetryManager instance.
+     */
     private static volatile TelemetryManager instance;
 
     /**
@@ -202,7 +207,6 @@ public class TelemetryManager implements Application.ActivityLifecycleCallbacks 
 
     @Override
     public void onActivityResumed(Activity activity) {
-
         sessionManagement();
     }
 
