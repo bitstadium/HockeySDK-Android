@@ -209,6 +209,7 @@ public class TelemetryManager implements Application.ActivityLifecycleCallbacks 
     @Override
     public void onActivityPaused(Activity activity) {// unused but required to implement ActivityLifecycleCallbacks
         // unused but required to implement ActivityLifecycleCallbacks
+        this.lastBackground.set(this.getTime());
     }
 
     @Override
