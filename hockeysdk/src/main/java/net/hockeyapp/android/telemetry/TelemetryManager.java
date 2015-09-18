@@ -53,23 +53,34 @@ import java.util.concurrent.atomic.AtomicLong;
  *
  * @author Benjamin Reimold
  **/
-
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 public class TelemetryManager implements Application.ActivityLifecycleCallbacks {
+
+    private static final String TAG = "TelemetryManager";
+
     /**
      * The activity counter
      */
     protected static final AtomicInteger activityCount = new AtomicInteger(0);
+
+    /**
+     * Background time of the app after which a session gets renewed (in milliseconds).
+     */
+    private static final Integer SESSION_RENEWAL_INTERVAL = 20 * 1000;
+
     /**
      * The timestamp of the last activity
      */
     protected static final AtomicLong lastBackground = new AtomicLong(getTime());
-    private static final String TAG = "TelemetryManager";
+
     /**
      * Synchronization LOCK for setting static context
      */
     private static final Object LOCK = new Object();
 
+    /**
+     * The only TelemetryManager instance.
+     */
     private static volatile TelemetryManager instance;
 
     /**
@@ -228,13 +239,13 @@ public class TelemetryManager implements Application.ActivityLifecycleCallbacks 
 
     @Override
     public void onActivityResumed(Activity activity) {
-
         sessionManagement();
     }
 
     @Override
     public void onActivityPaused(Activity activity) {// unused but required to implement ActivityLifecycleCallbacks
         // unused but required to implement ActivityLifecycleCallbacks
+        this.lastBackground.set(this.getTime());
     }
 
     @Override
@@ -268,7 +279,7 @@ public class TelemetryManager implements Application.ActivityLifecycleCallbacks 
             long now = this.getTime();
             long then = this.lastBackground.getAndSet(getTime());
             //TODO save session intervall in configuration
-            boolean shouldRenew = ((now - then) >= (20 * 1000));
+            boolean shouldRenew = ((now - then) >= SESSION_RENEWAL_INTERVAL);
             Log.d(TAG, "Checking if we have to renew a session, time difference is: " + (now - then));
 
             if (shouldRenew) {
