@@ -11,8 +11,8 @@ import java.io.File;
  */
 public class PublicPersistence extends Persistence {
 
-    public PublicPersistence(Context context) {
-        super(context);
+    public PublicPersistence(Context context, Sender sender) {
+        super(context, sender);
     }
 
     public PublicPersistence(Context context, File directory, Sender sender) {

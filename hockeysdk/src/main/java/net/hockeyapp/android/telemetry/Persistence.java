@@ -2,6 +2,7 @@ package net.hockeyapp.android.telemetry;
 
 import android.content.Context;
 import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -63,21 +64,18 @@ class Persistence {
      * Path for storing telemetry data files.
      */
     private static final String BIT_TELEMETRY_DIRECTORY = "/net.hockeyapp.android/telemetry/";
-
-    /**
-     * Directory of telemetry files.
-     */
-    protected File telemetryDirectory;
-
     /**
      * Maximum numbers of telemetry files on disk.
      */
     private static final Integer MAX_FILE_COUNT = 50;
-
+    /**
+     * Directory of telemetry files.
+     */
+    protected File telemetryDirectory;
     /**
      * Sender module used to send out files.
      */
-    protected Sender sender;
+    protected WeakReference<Sender> weakSender;
 
     /**
      * List with paths of telemetry files which are currently used by the sender.
@@ -92,14 +90,14 @@ class Persistence {
     /**
      * Restrict access to the default constructor
      *
-     * @param context android Context object
+     * @param context            android Context object
      * @param telemetryDirectory the directory where files should be saved
      */
     protected Persistence(Context context, File telemetryDirectory, Sender sender) {
-        this.weakContext = new WeakReference<Context>(context);
-        this.servedFiles = new ArrayList<File>(51);
+        this.weakContext = new WeakReference<>(context);
+        this.servedFiles = new ArrayList<>(51);
         this.telemetryDirectory = telemetryDirectory;
-        this.sender = sender;
+        this.weakSender = new WeakReference<>(sender);
         createDirectoriesIfNecessary();
     }
 
@@ -108,8 +106,9 @@ class Persistence {
      *
      * @param context android Context object
      */
-    protected Persistence(Context context) {
+    protected Persistence(Context context, Sender sender) {
         this(context, new File(context.getFilesDir().getPath() + BIT_TELEMETRY_DIRECTORY), null);
+        this.setSender(sender);
     }
 
     /**
@@ -122,11 +121,11 @@ class Persistence {
         if (!this.isFreeSpaceAvailable()) {
             Log.w(TAG, "Failed to persist file: Too many files on disk.");
             getSender().triggerSending();
-        }else{
+        } else {
             StringBuilder buffer = new StringBuilder();
             Boolean isSuccess;
             for (String aData : data) {
-                if(buffer.length() > 0){
+                if (buffer.length() > 0) {
                     buffer.append('\n');
                 }
                 buffer.append(aData);
@@ -143,7 +142,7 @@ class Persistence {
     /**
      * Saves a string to disk.
      *
-     * @param data         the string to save
+     * @param data the string to save
      * @return true if the operation was successful, false otherwise
      */
     protected boolean writeToDisk(String data) {
@@ -160,8 +159,8 @@ class Persistence {
             isSuccess = true;
         } catch (Exception e) {
             Log.w(TAG, "Failed to save data with exception: " + e.toString());
-        }finally {
-            if(outputStream != null){
+        } finally {
+            if (outputStream != null) {
                 try {
                     outputStream.close();
                 } catch (IOException e) {
@@ -194,16 +193,16 @@ class Persistence {
                 }
             } catch (Exception e) {
                 Log.w(TAG, "Error reading telemetry data from file with exception message "
-                        + e.getMessage());
-            }finally {
+                      + e.getMessage());
+            } finally {
 
-                try{
-                    if(reader != null) {
+                try {
+                    if (reader != null) {
                         reader.close();
                     }
-                }catch (IOException e){
+                } catch (IOException e) {
                     Log.w(TAG, "Error closing stream."
-                            + e.getMessage());
+                          + e.getMessage());
                 }
             }
         }
@@ -234,7 +233,7 @@ class Persistence {
                     }
                 }
             }
-            if(this.telemetryDirectory != null) {
+            if (this.telemetryDirectory != null) {
                 Log.i(TAG, "The directory " + this.telemetryDirectory.toString() + " did not contain any unserved files");
             }
             return null;
@@ -319,11 +318,17 @@ class Persistence {
         return context;
     }
 
-    private Sender getSender (){
-        if(this.sender == null) {
-            // TODO:
-            this.sender = new Sender(this);
+
+    protected Sender getSender() {
+        Sender sender = null;
+        if(weakSender != null) {
+            sender = weakSender.get();
         }
-        return this.sender;
+
+        return sender;
+    }
+
+    protected void setSender(Sender sender) {
+        this.weakSender = new WeakReference<>(sender);
     }
 }

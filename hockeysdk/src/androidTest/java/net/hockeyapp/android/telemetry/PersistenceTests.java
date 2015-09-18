@@ -19,7 +19,9 @@ public class PersistenceTests extends InstrumentationTestCase {
 
         System.setProperty("dexmaker.dexcache", getInstrumentation().getTargetContext().getCacheDir().getPath());
         Context mockContext = getInstrumentation().getContext();
-        sut = new PublicPersistence(mockContext);
+        Sender mockSender = mock(Sender.class);
+        sut = new PublicPersistence(mockContext, mockSender);
+        mockSender.setPersistence(sut);
     }
 
     public void testNewInstanceWasInitialisedCorrectly() {

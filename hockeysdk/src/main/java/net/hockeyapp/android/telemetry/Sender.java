@@ -64,6 +64,7 @@ public class Sender {
     static final int DEFAULT_SENDER_READ_TIMEOUT = 10 * 1000;
     static final int DEFAULT_SENDER_CONNECT_TIMEOUT = 15 * 1000;
     static final int MAX_REQUEST_COUNT = 10;
+
     private static final String TAG = "Sender";
     /**
      * Persistence object used to reserve, free, or delete files.
@@ -74,14 +75,14 @@ public class Sender {
      */
     private AtomicInteger requestCount;
 
+    private String customServerURL;
+
     /**
      * Create a Sender instance
-     *
-     * @param persistence Persistence object used to reserve, free or delete files
+     * Call setPersistence immediately after creating the Sender object
      */
-    protected Sender(Persistence persistence) {
+    protected Sender() {
         this.requestCount = new AtomicInteger(0);
-        this.weakPersistence = new WeakReference<>(persistence);
     }
 
     protected void triggerSending() {
@@ -138,7 +139,12 @@ public class Sender {
         URL url;
         HttpURLConnection connection = null;
         try {
-            url = new URL(DEFAULT_ENDPOINT_URL);
+            if(getCustomServerURL() == null) {
+                url = new URL(DEFAULT_ENDPOINT_URL);
+            }
+            else {
+                url = new URL(this.customServerURL);
+            }
             connection = (HttpURLConnection) url.openConnection();
             connection.setReadTimeout(DEFAULT_SENDER_READ_TIMEOUT);
             connection.setConnectTimeout(DEFAULT_SENDER_CONNECT_TIMEOUT);
@@ -324,5 +330,13 @@ public class Sender {
 
     protected int requestCount() {
         return this.requestCount.get();
+    }
+
+    public String getCustomServerURL() {
+        return customServerURL;
+    }
+
+    public void setCustomServerURL(String customServerURL) {
+        this.customServerURL = customServerURL;
     }
 }

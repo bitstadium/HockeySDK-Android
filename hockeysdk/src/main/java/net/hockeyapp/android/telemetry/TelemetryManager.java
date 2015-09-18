@@ -81,10 +81,19 @@ public class TelemetryManager implements Application.ActivityLifecycleCallbacks 
      * Default is false.
      */
     private volatile boolean sessionTrackingDisabled;
+
     /**
      * A channel for collecting new events before storing and sending them.
      */
     private Channel channel;
+
+    /**
+     * A sender who's responsible to send telemetry to the server
+     * TelemetryManager holds a reference to it because we want the user to easily set the server
+     * url.
+     */
+    private static Sender sender;
+
 
     /**
      * A telemetry context which is used to add meta info to events, before they're sent out.
@@ -99,11 +108,19 @@ public class TelemetryManager implements Application.ActivityLifecycleCallbacks 
      */
     protected TelemetryManager(Context context, TelemetryContext telemetryContext) {
         this.telemetryContext = telemetryContext;
-        this.channel = new Channel(this.telemetryContext, new Persistence(context));
+
+        //Important: create sender and persistence first, wire them up and then create the channel!
+        this.sender = new Sender();
+        Persistence persistence = new Persistence(context, sender);
+        //Link sender
+        sender.setPersistence(persistence);
+
+        //create the channel and wire the persistence to it.
+        this.channel = new Channel(this.telemetryContext, persistence);
     }
 
     protected static void register(Application application, TelemetryContext context) {
-
+        //TODO read app identifier from gradle file
     }
 
     public static void register(Context context, Application application, String appIdentifier) {
@@ -161,6 +178,15 @@ public class TelemetryManager implements Application.ActivityLifecycleCallbacks 
                 }
             }
         }
+    }
+
+    /**
+     * Set the server url if you want telemetry to be sent to your own server
+     *
+     * @param serverURL the URL of your custom telemetry server as a String
+     */
+    public static void setCustomServerURL(String serverURL) {
+        sender.setCustomServerURL(serverURL);
     }
 
     /**
