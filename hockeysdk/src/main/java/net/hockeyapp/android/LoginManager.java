@@ -96,6 +96,23 @@ public class LoginManager {
   private static int mode;
 
   /**
+   * Registers new login manager.
+   * HockeyApp App Identifier is read from configuration values in AndroidManifest.xml.
+   *
+   * @param context The context to use. Usually your Activity object. Has to be
+   *                of class Activity or subclass for interactive login.
+   * @param appSecret The App Secret of your app on HockeyApp.
+   * @param mode The login mode to use.
+   */
+  public static void register(final Context context, String appSecret, int mode) {
+    String appIdentifier = Util.getAppIdentifier(context);
+    if (appIdentifier == null || appIdentifier.length() == 0) {
+      throw new IllegalArgumentException("HockeyApp app identifier was not configured correctly in manifest or build configuration.");
+    }
+    register(context, appIdentifier, appSecret, mode, (Class<?>)null);
+  }
+
+  /**
    * Registers new LoginManager.
    *
    * @param context the context to use. Usually your Activity object.
