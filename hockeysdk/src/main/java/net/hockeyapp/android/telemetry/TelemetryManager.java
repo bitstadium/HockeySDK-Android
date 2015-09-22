@@ -56,294 +56,290 @@ import java.util.concurrent.atomic.AtomicLong;
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
 public class TelemetryManager implements Application.ActivityLifecycleCallbacks {
 
-    private static final String TAG = "TelemetryManager";
+  /**
+   * The activity counter
+   */
+  protected static final AtomicInteger activityCount = new AtomicInteger(0);
+  /**
+   * The timestamp of the last activity
+   */
+  protected static final AtomicLong lastBackground = new AtomicLong(getTime());
+  private static final String TAG = "TelemetryManager";
+  /**
+   * Background time of the app after which a session gets renewed (in milliseconds).
+   */
+  private static final Integer SESSION_RENEWAL_INTERVAL = 20 * 1000;
+  /**
+   * Synchronization LOCK for setting static context
+   */
+  private static final Object LOCK = new Object();
 
-    /**
-     * The activity counter
-     */
-    protected static final AtomicInteger activityCount = new AtomicInteger(0);
+  /**
+   * The only TelemetryManager instance.
+   */
+  private static volatile TelemetryManager instance;
 
-    /**
-     * Background time of the app after which a session gets renewed (in milliseconds).
-     */
-    private static final Integer SESSION_RENEWAL_INTERVAL = 20 * 1000;
-
-    /**
-     * The timestamp of the last activity
-     */
-    protected static final AtomicLong lastBackground = new AtomicLong(getTime());
-
-    /**
-     * Synchronization LOCK for setting static context
-     */
-    private static final Object LOCK = new Object();
-
-    /**
-     * The only TelemetryManager instance.
-     */
-    private static volatile TelemetryManager instance;
-
-    /**
-     * The application needed for auto collecting session data
-     */
-    private static WeakReference<Application> weakApplication;
-    /**
-     * Flag that indicates disabled session tracking.
-     * Default is false.
-     */
-    private volatile boolean sessionTrackingDisabled;
-
-    /**
-     * A channel for collecting new events before storing and sending them.
-     */
-    private Channel channel;
-
-    /**
-     * A sender who's responsible to send telemetry to the server
-     * TelemetryManager holds a reference to it because we want the user to easily set the server
-     * url.
-     */
-    private static Sender sender;
+  /**
+   * The application needed for auto collecting session data
+   */
+  private static WeakReference<Application> weakApplication;
+  /**
+   * A sender who's responsible to send telemetry to the server
+   * TelemetryManager holds a reference to it because we want the user to easily set the server
+   * url.
+   */
+  private static Sender sender;
+  /**
+   * Flag that indicates disabled session tracking.
+   * Default is false.
+   */
+  private volatile boolean sessionTrackingDisabled;
+  /**
+   * A channel for collecting new events before storing and sending them.
+   */
+  private Channel channel;
+  /**
+   * A telemetry context which is used to add meta info to events, before they're sent out.
+   */
+  private TelemetryContext telemetryContext;
 
 
-    /**
-     * A telemetry context which is used to add meta info to events, before they're sent out.
-     */
-    private TelemetryContext telemetryContext;
+  /**
+   * Restrict access to the default constructor
+   * Create a new INSTANCE of the TelemetryManager class
+   */
+  protected TelemetryManager(Context context, TelemetryContext telemetryContext) {
+    this.telemetryContext = telemetryContext;
 
+    //Important: create sender and persistence first, wire them up and then create the channel!
+    this.sender = new Sender();
+    Persistence persistence = new Persistence(context, sender);
+    //Link sender
+    sender.setPersistence(persistence);
 
+    //create the channel and wire the persistence to it.
+    this.channel = new Channel(this.telemetryContext, persistence);
+  }
 
-    /**
-     * Restrict access to the default constructor
-     * Create a new INSTANCE of the TelemetryManager class
-     */
-    protected TelemetryManager(Context context, TelemetryContext telemetryContext) {
-        this.telemetryContext = telemetryContext;
+  /**
+   * Register a new TelemetryManager and collects telemetry information about a user and the
+   * session.
+   * HockeyApp App Identifier is read from configuration values in AndroidManifest.xml
+   *
+   * @param application the Application object which is required to get application lifecycle
+   *                    callbacks
+   * @param context     The context to use. Usually your Activity object.
+   */
+  public static void register(Application application, Context context) {
+    String appIdentifier = Util.getAppIdentifier(context);
+    register(context, application, appIdentifier);
+  }
 
-        //Important: create sender and persistence first, wire them up and then create the channel!
-        this.sender = new Sender();
-        Persistence persistence = new Persistence(context, sender);
-        //Link sender
-        sender.setPersistence(persistence);
-
-        //create the channel and wire the persistence to it.
-        this.channel = new Channel(this.telemetryContext, persistence);
-    }
-
-    /**
-     * Register a new TelemetryManager and collects telemetry information about a user and the
-     * session.
-     * HockeyApp App Identifier is read from configuration values in AndroidManifest.xml
-     *
-     * @param application the Application object which is required to get application lifecycle
-     *                   callbacks
-     * @param context The context to use. Usually your Activity object.
-     */
-    public static void register(Application application, Context context) {
-      String appIdentifier = Util.getAppIdentifier(context);
-      register(context, application, appIdentifier);
-    }
-
-    /**
-     * Register a new TelemetryManager and collects telemetry information about a user and the
-     * session.
-     *
-     * @param application the Application object which is required to get application lifecycle
-     *                   callbacks
-     * @param context The context to use. Usually your Activity object.
-     * @param appIdentifier your HockeyApp App Identifier.
-     */
-    public static void register(Context context, Application application, String appIdentifier) {
-        TelemetryManager result = instance;
+  /**
+   * Register a new TelemetryManager and collects telemetry information about a user and the
+   * session.
+   *
+   * @param application   the Application object which is required to get application lifecycle
+   *                      callbacks
+   * @param context       The context to use. Usually your Activity object.
+   * @param appIdentifier your HockeyApp App Identifier.
+   */
+  public static void register(Context context, Application application, String appIdentifier) {
+    TelemetryManager result = instance;
+    if (result == null) {
+      synchronized (LOCK) {
+        result = instance;        // thread may have instantiated the object.
         if (result == null) {
-            synchronized (LOCK) {
-                result = instance;        // thread may have instantiated the object.
-                if (result == null) {
-                    result = new TelemetryManager(context, new TelemetryContext(context, appIdentifier));
-                    weakApplication = new WeakReference<>(application);
-                }
-                if (Util.sessionTrackingSupported()) {
-                    result.sessionTrackingDisabled = false;
-                } else {
-                    result.sessionTrackingDisabled = true;
-                }
-                instance = result;
-                if(!result.sessionTrackingDisabled){
-                    setSessionTrackingDisabled(false);
-                }
-
-            }
+          result = new TelemetryManager(context, new TelemetryContext(context, appIdentifier));
+          weakApplication = new WeakReference<>(application);
         }
-    }
-
-    /**
-     * Determines if session tracking was enabled.
-     *
-     * @return YES if session tracking is enabled
-     */
-    public static boolean sessionTrackingEnabled() {
-        return !instance.sessionTrackingDisabled;
-    }
-
-    /**
-     * Enable and disable tracking of sessions
-     *
-     * @param disabled flag to indicate
-     */
-    public static void setSessionTrackingDisabled(Boolean disabled) {
-        if (instance == null) {
-            Log.d(TAG, "TelemetryManager hasn't been registered");
-        } else {
-            synchronized (LOCK) {
-                if (Util.sessionTrackingSupported()) {
-                    instance.sessionTrackingDisabled = disabled;
-                    //TODO persist this setting so the dev doesn't have to take care of this
-                    //between launches
-                    if (!disabled) {
-                        getApplication().registerActivityLifecycleCallbacks(instance);
-                    }
-                } else {
-                    instance.sessionTrackingDisabled = true;
-                    getApplication().unregisterActivityLifecycleCallbacks(instance);
-                }
-            }
+        if (Util.sessionTrackingSupported()) {
+          result.sessionTrackingDisabled = false;
         }
-    }
-
-    /**
-     * Set the server url if you want telemetry to be sent to your own server
-     *
-     * @param serverURL the URL of your custom telemetry server as a String
-     */
-    public static void setCustomServerURL(String serverURL) {
-        sender.setCustomServerURL(serverURL);
-    }
-
-    /**
-     * Get the reference to the Application (used for life-cycle tracking)
-     *
-     * @return the reference to the application that was used during initialization of the SDK
-     */
-    private static Application getApplication() {
-        Application application = null;
-        if (weakApplication != null) {
-            application = weakApplication.get();
+        else {
+          result.sessionTrackingDisabled = true;
+        }
+        instance = result;
+        if (!result.sessionTrackingDisabled) {
+          setSessionTrackingDisabled(false);
         }
 
-        return application;
+      }
     }
+  }
 
-    /**
-     * Get the current time
-     *
-     * @return the current time in milliseconds
-     */
-    private static long getTime() {
-        return new Date().getTime();
+  /**
+   * Determines if session tracking was enabled.
+   *
+   * @return YES if session tracking is enabled
+   */
+  public static boolean sessionTrackingEnabled() {
+    return !instance.sessionTrackingDisabled;
+  }
+
+  /**
+   * Enable and disable tracking of sessions
+   *
+   * @param disabled flag to indicate
+   */
+  public static void setSessionTrackingDisabled(Boolean disabled) {
+    if (instance == null) {
+      Log.d(TAG, "TelemetryManager hasn't been registered");
     }
-
-    @Override
-    public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-        // unused but required to implement ActivityLifecycleCallbacks
-        //NOTE:
-        //This callback doesn't work for the starting
-        //activity of the app because the SDK will be setup and initialized in the onCreate, so
-        //we don't get the very first call to an app activity's onCreate.
-    }
-
-    @Override
-    public void onActivityStarted(Activity activity) {
-        // unused but required to implement ActivityLifecycleCallbacks
-    }
-
-    @Override
-    public void onActivityResumed(Activity activity) {
-        updateSession();
-    }
-
-    @Override
-    public void onActivityPaused(Activity activity) {
-        this.lastBackground.set(this.getTime());
-    }
-
-    @Override
-    public void onActivityStopped(Activity activity) {
-        // unused but required to implement ActivityLifecycleCallbacks
-    }
-
-    @Override
-    public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
-        // unused but required to implement ActivityLifecycleCallbacks
-    }
-
-    @Override
-    public void onActivityDestroyed(Activity activity) {
-        // unused but required to implement ActivityLifecycleCallbacks
-    }
-
-    private void updateSession() {
-        int count = this.activityCount.getAndIncrement();
-        if (count == 0) {
-            if (sessionTrackingEnabled()) {
-                Log.d(TAG, "Starting & tracking session");
-                renewSession();
-            } else {
-                Log.d(TAG, "Session management disabled by the developer");
-            }
-        } else {
-            //we should already have a session now
-            //check if the session should be renewed
-            long now = this.getTime();
-            long then = this.lastBackground.getAndSet(getTime());
-            //TODO save session intervall in configuration file?
-            boolean shouldRenew = ((now - then) >= SESSION_RENEWAL_INTERVAL);
-            Log.d(TAG, "Checking if we have to renew a session, time difference is: " + (now - then));
-
-            if (shouldRenew) {
-                Log.d(TAG, "Renewing session");
-                //TODO: renew ID for session
-                renewSession();
-            }
+    else {
+      synchronized (LOCK) {
+        if (Util.sessionTrackingSupported()) {
+          instance.sessionTrackingDisabled = disabled;
+          //TODO persist this setting so the dev doesn't have to take care of this
+          //between launches
+          if (!disabled) {
+            getApplication().registerActivityLifecycleCallbacks(instance);
+          }
         }
+        else {
+          instance.sessionTrackingDisabled = true;
+          getApplication().unregisterActivityLifecycleCallbacks(instance);
+        }
+      }
+    }
+  }
+
+  /**
+   * Set the server url if you want telemetry to be sent to your own server
+   *
+   * @param serverURL the URL of your custom telemetry server as a String
+   */
+  public static void setCustomServerURL(String serverURL) {
+    sender.setCustomServerURL(serverURL);
+  }
+
+  /**
+   * Get the reference to the Application (used for life-cycle tracking)
+   *
+   * @return the reference to the application that was used during initialization of the SDK
+   */
+  private static Application getApplication() {
+    Application application = null;
+    if (weakApplication != null) {
+      application = weakApplication.get();
     }
 
-    protected void renewSession() {
-        String sessionId = UUID.randomUUID().toString();
-        telemetryContext.updateSessionContext(sessionId);
-        trackSessionState(SessionState.START);
-    }
+    return application;
+  }
 
-    /**
-     * Creates and enqueues a session event for the given state.
-     *
-     * @param sessionState value that determines whether the session started or ended
-     */
-    private void trackSessionState(final SessionState sessionState) {
-       AsyncTaskUtils.execute(new AsyncTask<Void, Void, Void>() {
-           @Override
-           protected Void doInBackground(Void... params) {
-               SessionStateData sessionItem = new SessionStateData();
-               sessionItem.setState(sessionState);
-               Data<Domain> data = createData(sessionItem);
-               channel.log(data);
-               return null;
-           }
-       });
-    }
+  /**
+   * Get the current time
+   *
+   * @return the current time in milliseconds
+   */
+  private static long getTime() {
+    return new Date().getTime();
+  }
 
-    /**
-     * Pack and forward the telemetry item to the queue.
-     *
-     * @param telemetryData The telemetry event to be persisted and sent
-     * @return a base data object containing the telemetry data
-     */
-    protected Data<Domain> createData(TelemetryData telemetryData) {
-        Data<Domain> data = new Data<Domain>();
-        data.setBaseData(telemetryData);
-        data.setBaseType(telemetryData.getBaseType());
-        data.QualifiedName = telemetryData.getEnvelopeName();
+  @Override
+  public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+    // unused but required to implement ActivityLifecycleCallbacks
+    //NOTE:
+    //This callback doesn't work for the starting
+    //activity of the app because the SDK will be setup and initialized in the onCreate, so
+    //we don't get the very first call to an app activity's onCreate.
+  }
 
-        return data;
+  @Override
+  public void onActivityStarted(Activity activity) {
+    // unused but required to implement ActivityLifecycleCallbacks
+  }
+
+  @Override
+  public void onActivityResumed(Activity activity) {
+    updateSession();
+  }
+
+  @Override
+  public void onActivityPaused(Activity activity) {
+    this.lastBackground.set(this.getTime());
+  }
+
+  @Override
+  public void onActivityStopped(Activity activity) {
+    // unused but required to implement ActivityLifecycleCallbacks
+  }
+
+  @Override
+  public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
+    // unused but required to implement ActivityLifecycleCallbacks
+  }
+
+  @Override
+  public void onActivityDestroyed(Activity activity) {
+    // unused but required to implement ActivityLifecycleCallbacks
+  }
+
+  private void updateSession() {
+    int count = this.activityCount.getAndIncrement();
+    if (count == 0) {
+      if (sessionTrackingEnabled()) {
+        Log.d(TAG, "Starting & tracking session");
+        renewSession();
+      }
+      else {
+        Log.d(TAG, "Session management disabled by the developer");
+      }
     }
+    else {
+      //we should already have a session now
+      //check if the session should be renewed
+      long now = this.getTime();
+      long then = this.lastBackground.getAndSet(getTime());
+      //TODO save session intervall in configuration file?
+      boolean shouldRenew = ((now - then) >= SESSION_RENEWAL_INTERVAL);
+      Log.d(TAG, "Checking if we have to renew a session, time difference is: " + (now - then));
+
+      if (shouldRenew) {
+        Log.d(TAG, "Renewing session");
+        //TODO: renew ID for session
+        renewSession();
+      }
+    }
+  }
+
+  protected void renewSession() {
+    String sessionId = UUID.randomUUID().toString();
+    telemetryContext.updateSessionContext(sessionId);
+    trackSessionState(SessionState.START);
+  }
+
+  /**
+   * Creates and enqueues a session event for the given state.
+   *
+   * @param sessionState value that determines whether the session started or ended
+   */
+  private void trackSessionState(final SessionState sessionState) {
+    AsyncTaskUtils.execute(new AsyncTask<Void, Void, Void>() {
+      @Override
+      protected Void doInBackground(Void... params) {
+        SessionStateData sessionItem = new SessionStateData();
+        sessionItem.setState(sessionState);
+        Data<Domain> data = createData(sessionItem);
+        channel.log(data);
+        return null;
+      }
+    });
+  }
+
+  /**
+   * Pack and forward the telemetry item to the queue.
+   *
+   * @param telemetryData The telemetry event to be persisted and sent
+   * @return a base data object containing the telemetry data
+   */
+  protected Data<Domain> createData(TelemetryData telemetryData) {
+    Data<Domain> data = new Data<Domain>();
+    data.setBaseData(telemetryData);
+    data.setBaseType(telemetryData.getBaseType());
+    data.QualifiedName = telemetryData.getEnvelopeName();
+
+    return data;
+  }
 }
 
