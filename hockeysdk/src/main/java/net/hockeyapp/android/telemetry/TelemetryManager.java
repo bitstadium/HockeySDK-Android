@@ -130,11 +130,12 @@ public class TelemetryManager implements Application.ActivityLifecycleCallbacks 
         this.channel = new Channel(this.telemetryContext, persistence);
     }
 
-    protected static void register(Application application, TelemetryContext context) {
-        //TODO read app identifier from gradle file
+    public static void register(Application application, Context context) {
+      String appIdentifier = Util.getAppIdentifier(context);
+      register(context, application, appIdentifier);
     }
 
-    public static void register(Context context, Application application, String appIdentifier) {
+    protected static void register(Context context, Application application, String appIdentifier) {
         TelemetryManager result = instance;
         if (result == null) {
             synchronized (LOCK) {
@@ -239,12 +240,11 @@ public class TelemetryManager implements Application.ActivityLifecycleCallbacks 
 
     @Override
     public void onActivityResumed(Activity activity) {
-        sessionManagement();
+        updateSession();
     }
 
     @Override
-    public void onActivityPaused(Activity activity) {// unused but required to implement ActivityLifecycleCallbacks
-        // unused but required to implement ActivityLifecycleCallbacks
+    public void onActivityPaused(Activity activity) {
         this.lastBackground.set(this.getTime());
     }
 
@@ -263,8 +263,7 @@ public class TelemetryManager implements Application.ActivityLifecycleCallbacks 
         // unused but required to implement ActivityLifecycleCallbacks
     }
 
-    // TODO: Change method name to something like updateSession
-    private void sessionManagement() {
+    private void updateSession() {
         int count = this.activityCount.getAndIncrement();
         if (count == 0) {
             if (sessionTrackingEnabled()) {
@@ -278,7 +277,7 @@ public class TelemetryManager implements Application.ActivityLifecycleCallbacks 
             //check if the session should be renewed
             long now = this.getTime();
             long then = this.lastBackground.getAndSet(getTime());
-            //TODO save session intervall in configuration
+            //TODO save session intervall in configuration file?
             boolean shouldRenew = ((now - then) >= SESSION_RENEWAL_INTERVAL);
             Log.d(TAG, "Checking if we have to renew a session, time difference is: " + (now - then));
 
