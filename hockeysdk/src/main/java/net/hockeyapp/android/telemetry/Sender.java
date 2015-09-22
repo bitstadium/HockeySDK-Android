@@ -60,283 +60,299 @@ import java.util.zip.GZIPOutputStream;
  */
 public class Sender {
 
-    static final String DEFAULT_ENDPOINT_URL = "https://dc.services.visualstudio.com/v2/track";
-    static final int DEFAULT_SENDER_READ_TIMEOUT = 10 * 1000;
-    static final int DEFAULT_SENDER_CONNECT_TIMEOUT = 15 * 1000;
-    static final int MAX_REQUEST_COUNT = 10;
+  static final String DEFAULT_ENDPOINT_URL = "https://dc.services.visualstudio.com/v2/track";
+  static final int DEFAULT_SENDER_READ_TIMEOUT = 10 * 1000;
+  static final int DEFAULT_SENDER_CONNECT_TIMEOUT = 15 * 1000;
+  static final int MAX_REQUEST_COUNT = 10;
 
-    private static final String TAG = "Sender";
-    /**
-     * Persistence object used to reserve, free, or delete files.
-     */
-    protected WeakReference<Persistence> weakPersistence;
-    /**
-     * Thread safe counter to keep track of num of operations
-     */
-    private AtomicInteger requestCount;
+  private static final String TAG = "Sender";
+  /**
+   * Persistence object used to reserve, free, or delete files.
+   */
+  protected WeakReference<Persistence> weakPersistence;
+  /**
+   * Thread safe counter to keep track of num of operations
+   */
+  private AtomicInteger requestCount;
 
-    private String customServerURL;
+  private String customServerURL;
 
-    /**
-     * Create a Sender instance
-     * Call setPersistence immediately after creating the Sender object
-     */
-    protected Sender() {
-        this.requestCount = new AtomicInteger(0);
-    }
+  /**
+   * Create a Sender instance
+   * Call setPersistence immediately after creating the Sender object
+   */
+  protected Sender() {
+    this.requestCount = new AtomicInteger(0);
+  }
 
-    protected void triggerSending() {
-        if (requestCount() < MAX_REQUEST_COUNT) {
-            this.requestCount.getAndIncrement();
+  protected void triggerSending() {
+    if (requestCount() < MAX_REQUEST_COUNT) {
+      this.requestCount.getAndIncrement();
 
-            AsyncTaskUtils.execute(
-                  new AsyncTask<Void, Void, Void>() {
-                      @Override
-                      protected Void doInBackground(Void... params) {
-                          // Send the persisted data
-                          send();
-                          return null;
-                      }
-                  }
-            );
-        } else {
-            Log.d(TAG, "We have already 10 pending requests, not sending anything.");
+      AsyncTaskUtils.execute(
+        new AsyncTask<Void, Void, Void>() {
+          @Override
+          protected Void doInBackground(Void... params) {
+            // Send the persisted data
+            send();
+            return null;
+          }
         }
+      );
     }
+    else {
+      Log.d(TAG, "We have already 10 pending requests, not sending anything.");
+    }
+  }
 
-    protected void send() {
-        if (this.getPersistence() != null) {
-            File fileToSend = this.getPersistence().nextAvailableFileInDirectory();
-            if (fileToSend != null) {
-                String persistedData = this.getPersistence().load(fileToSend);
-                if (!persistedData.isEmpty()) {
-                    HttpURLConnection connection = createConnection();
-                    if (connection != null) {
-                        try {
-                            logRequest(connection, persistedData);
-                            // Starts the query
-                            connection.connect();
-                            // read the response code while we're ready to catch the IO exception
-                            int responseCode = connection.getResponseCode();
-                            // process the response
-                            onResponse(connection, responseCode, persistedData, fileToSend);
-                        } catch (IOException e) {
-                            Log.d(TAG, "Couldn't send data with IOException: " + e.toString());
-                            if (this.getPersistence() != null) {
-                                Log.d(TAG, "Persisting because of IOException: We're probably offline =)");
-                                this.getPersistence().makeAvailable(fileToSend); //send again later
-                            }
-                        }
-                    }
-                } else {
-                    this.getPersistence().deleteFile(fileToSend);
-                }
+  protected void send() {
+    if (this.getPersistence() != null) {
+      File fileToSend = this.getPersistence().nextAvailableFileInDirectory();
+      if (fileToSend != null) {
+        String persistedData = this.getPersistence().load(fileToSend);
+        if (!persistedData.isEmpty()) {
+          HttpURLConnection connection = createConnection();
+          if (connection != null) {
+            try {
+              logRequest(connection, persistedData);
+              // Starts the query
+              connection.connect();
+              // read the response code while we're ready to catch the IO exception
+              int responseCode = connection.getResponseCode();
+              // process the response
+              onResponse(connection, responseCode, persistedData, fileToSend);
             }
+            catch (IOException e) {
+              Log.d(TAG, "Couldn't send data with IOException: " + e.toString());
+              if (this.getPersistence() != null) {
+                Log.d(TAG, "Persisting because of IOException: We're probably offline =)");
+                this.getPersistence().makeAvailable(fileToSend); //send again later
+              }
+            }
+          }
         }
+        else {
+          this.getPersistence().deleteFile(fileToSend);
+        }
+      }
     }
+  }
 
-    private HttpURLConnection createConnection() {
-        URL url;
-        HttpURLConnection connection = null;
+  private HttpURLConnection createConnection() {
+    URL url;
+    HttpURLConnection connection = null;
+    try {
+      if (getCustomServerURL() == null) {
+        url = new URL(DEFAULT_ENDPOINT_URL);
+      }
+      else {
+        url = new URL(this.customServerURL);
+      }
+
+      connection = (HttpURLConnection) url.openConnection();
+      connection.setReadTimeout(DEFAULT_SENDER_READ_TIMEOUT);
+      connection.setConnectTimeout(DEFAULT_SENDER_CONNECT_TIMEOUT);
+      connection.setRequestMethod("POST");
+      connection.setRequestProperty("Content-Type", "application/x-json-stream");
+      connection.setDoOutput(true);
+      connection.setDoInput(true);
+      connection.setUseCaches(false);
+    }
+    catch (IOException e) {
+      Log.e(TAG, "Could not open connection for provided URL with exception: ", e);
+    }
+    return connection;
+  }
+
+  private void logRequest(HttpURLConnection connection, String payload) {
+    Writer writer = null;
+    try {
+      Log.d(TAG, "Sending payload:\n" + payload);
+      Log.d(TAG, "Using URL:" + connection.getURL().toString());
+      writer = getWriter(connection);
+      writer.write(payload);
+      writer.flush();
+    }
+    catch (IOException e) {
+      Log.d(TAG, "Couldn't log data with: " + e.toString());
+    } finally {
+      if (writer != null) {
         try {
-            if(getCustomServerURL() == null) {
-                url = new URL(DEFAULT_ENDPOINT_URL);
-            }
-            else {
-                url = new URL(this.customServerURL);
-            }
-            connection = (HttpURLConnection) url.openConnection();
-            connection.setReadTimeout(DEFAULT_SENDER_READ_TIMEOUT);
-            connection.setConnectTimeout(DEFAULT_SENDER_CONNECT_TIMEOUT);
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type", "application/x-json-stream");
-            connection.setDoOutput(true);
-            connection.setDoInput(true);
-            connection.setUseCaches(false);
-        } catch (IOException e) {
-            Log.e(TAG, "Could not open connection for provided URL with exception: ", e);
+          writer.close();
         }
-        return connection;
+        catch (IOException e) {
+          Log.d(TAG, "Couldn't close writer with: " + e.toString());
+        }
+      }
     }
+  }
 
-    private void logRequest(HttpURLConnection connection, String payload) {
-        Writer writer = null;
+  /**
+   * Callback for the http response from the sender
+   *
+   * @param connection   a connection containing a response
+   * @param responseCode the response code from the connection
+   * @param payload      the payload which generated this response
+   * @param fileToSend   reference to the file we want to send
+   */
+  protected void onResponse(HttpURLConnection connection, int responseCode, String payload, File
+    fileToSend) {
+    this.requestCount.getAndDecrement();
+    Log.d(TAG, "response code " + Integer.toString(responseCode));
+
+    boolean isRecoverableError = isRecoverableError(responseCode);
+    if (isRecoverableError) {
+      Log.d(TAG, "Recoverable error (probably a server error), persisting data:\n" + payload);
+      if (this.getPersistence() != null) {
+        this.getPersistence().makeAvailable(fileToSend);
+      }
+    }
+    else {
+      //delete in case of success or unrecoverable errors
+      if (this.getPersistence() != null) {
+        this.getPersistence().deleteFile(fileToSend);
+      }
+
+      //trigger send next file or log unexpected responses
+      StringBuilder builder = new StringBuilder();
+      if (isExpected(responseCode)) {
+        this.onExpected(connection, builder);
+        triggerSending();
+      }
+      else {
+        this.onUnexpected(connection, responseCode, builder);
+      }
+    }
+  }
+
+  protected boolean isRecoverableError(int responseCode) {
+    List<Integer> recoverableCodes = Arrays.asList(408, 429, 500, 503, 511);
+    return recoverableCodes.contains(responseCode);
+  }
+
+  protected boolean isExpected(int responseCode) {
+    return (199 < responseCode && responseCode <= 203);
+  }
+
+  /**
+   * Process the expected response. If {code:TelemetryChannelConfig.isDeveloperMode}, read the
+   * response and log it.
+   *
+   * @param connection a connection containing a response
+   * @param builder    a string builder for storing the response
+   */
+  protected void onExpected(HttpURLConnection connection, StringBuilder builder) {
+    this.readResponse(connection, builder);
+  }
+
+  /**
+   * @param connection   a connection containing a response
+   * @param responseCode the response code from the connection
+   * @param builder      a string builder for storing the response
+   */
+  protected void onUnexpected(HttpURLConnection connection, int responseCode, StringBuilder
+    builder) {
+    String message = String.format(Locale.ROOT, "Unexpected response code: %d", responseCode);
+    builder.append(message);
+    builder.append("\n");
+
+    // log the unexpected response
+    Log.d(TAG, message);
+
+    // attempt to read the response stream
+    this.readResponse(connection, builder);
+  }
+
+  /**
+   * Reads the response from a connection.
+   *
+   * @param connection the connection which will read the response
+   * @param builder    a string builder for storing the response
+   */
+  protected void readResponse(HttpURLConnection connection, StringBuilder builder) {
+    BufferedReader reader = null;
+    try {
+      InputStream inputStream = connection.getErrorStream();
+      if (inputStream == null) {
+        inputStream = connection.getInputStream();
+      }
+
+      if (inputStream != null) {
+        InputStreamReader streamReader = new InputStreamReader(inputStream, "UTF-8");
+        reader = new BufferedReader(streamReader);
+        String responseLine = reader.readLine();
+        while (responseLine != null) {
+          builder.append(responseLine);
+          responseLine = reader.readLine();
+        }
+      }
+      else {
+        builder.append(connection.getResponseMessage());
+      }
+    }
+    catch (IOException e) {
+      Log.e(TAG, e.toString());
+    } finally {
+      if (reader != null) {
         try {
-            Log.d(TAG, "Logging payload:\n" + payload);
-            writer = getWriter(connection);
-            writer.write(payload);
-            writer.flush();
-        } catch (IOException e) {
-            Log.d(TAG, "Couldn't log data with: " + e.toString());
-        } finally {
-            if (writer != null) {
-                try {
-                    writer.close();
-                } catch (IOException e) {
-                    Log.d(TAG, "Couldn't close writer with: " + e.toString());
-                }
-            }
+          reader.close();
         }
-    }
-
-    /**
-     * Callback for the http response from the sender
-     *
-     * @param connection   a connection containing a response
-     * @param responseCode the response code from the connection
-     * @param payload      the payload which generated this response
-     * @param fileToSend   reference to the file we want to send
-     */
-    protected void onResponse(HttpURLConnection connection, int responseCode, String payload, File fileToSend) {
-        this.requestCount.getAndDecrement();
-        Log.d(TAG, "response code " + Integer.toString(responseCode));
-
-        boolean isRecoverableError = isRecoverableError(responseCode);
-        if (isRecoverableError) {
-            Log.d(TAG, "Recoverable error (probably a server error), persisting data:\n" + payload);
-            if (this.getPersistence() != null) {
-                this.getPersistence().makeAvailable(fileToSend);
-            }
-        } else {
-            //delete in case of success or unrecoverable errors
-            if (this.getPersistence() != null) {
-                this.getPersistence().deleteFile(fileToSend);
-            }
-
-            //trigger send next file or log unexpected responses
-            StringBuilder builder = new StringBuilder();
-            if (isExpected(responseCode)) {
-                this.onExpected(connection, builder);
-                triggerSending();
-            } else {
-                this.onUnexpected(connection, responseCode, builder);
-            }
+        catch (IOException e) {
+          Log.e(TAG, e.toString());
         }
+      }
     }
+  }
 
-    protected boolean isRecoverableError(int responseCode) {
-        List<Integer> recoverableCodes = Arrays.asList(408, 429, 500, 503, 511);
-        return recoverableCodes.contains(responseCode);
+  /**
+   * Gets a writer from the connection stream (allows for test hooks into the write stream)
+   *
+   * @param connection the connection to which the stream will be flushed
+   * @return a writer for the given connection stream
+   * @throws java.io.IOException Exception thrown by GZIP (used in SDK 19+)
+   */
+  @TargetApi(Build.VERSION_CODES.KITKAT)
+  protected Writer getWriter(HttpURLConnection connection) throws IOException {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+      // GZIP if we are running SDK 19 or higher
+      connection.addRequestProperty("Content-Encoding", "gzip");
+      connection.setRequestProperty("Content-Type", "application/x-json-stream");
+      GZIPOutputStream gzip = new GZIPOutputStream(connection.getOutputStream(), true);
+      return new OutputStreamWriter(gzip, "UTF-8");
     }
-
-    protected boolean isExpected(int responseCode) {
-        return (199 < responseCode && responseCode <= 203);
+    else {
+      // no GZIP for older devices
+      return new OutputStreamWriter(connection.getOutputStream(), "UTF-8");
     }
+  }
 
-    /**
-     * Process the expected response. If {code:TelemetryChannelConfig.isDeveloperMode}, read the
-     * response and log it.
-     *
-     * @param connection a connection containing a response
-     * @param builder    a string builder for storing the response
-     */
-    protected void onExpected(HttpURLConnection connection, StringBuilder builder) {
-        this.readResponse(connection, builder);
+  protected Persistence getPersistence() {
+    Persistence persistence = null;
+    if (weakPersistence != null) {
+      persistence = weakPersistence.get();
     }
+    return persistence;
+  }
 
-    /**
-     * @param connection   a connection containing a response
-     * @param responseCode the response code from the connection
-     * @param builder      a string builder for storing the response
-     */
-    protected void onUnexpected(HttpURLConnection connection, int responseCode, StringBuilder builder) {
-        String message = String.format(Locale.ROOT, "Unexpected response code: %d", responseCode);
-        builder.append(message);
-        builder.append("\n");
-
-        // log the unexpected response
-        Log.d(TAG, message);
-
-        // attempt to read the response stream
-        this.readResponse(connection, builder);
-    }
-
-    /**
-     * Reads the response from a connection.
-     *
-     * @param connection the connection which will read the response
-     * @param builder    a string builder for storing the response
-     */
-    protected void readResponse(HttpURLConnection connection, StringBuilder builder) {
-        BufferedReader reader = null;
-        try {
-            InputStream inputStream = connection.getErrorStream();
-            if (inputStream == null) {
-                inputStream = connection.getInputStream();
-            }
-
-            if (inputStream != null) {
-                InputStreamReader streamReader = new InputStreamReader(inputStream, "UTF-8");
-                reader = new BufferedReader(streamReader);
-                String responseLine = reader.readLine();
-                while (responseLine != null) {
-                    builder.append(responseLine);
-                    responseLine = reader.readLine();
-                }
-            } else {
-                builder.append(connection.getResponseMessage());
-            }
-        } catch (IOException e) {
-            Log.e(TAG, e.toString());
-        } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    Log.e(TAG, e.toString());
-                }
-            }
-        }
-    }
-
-    /**
-     * Gets a writer from the connection stream (allows for test hooks into the write stream)
-     *
-     * @param connection the connection to which the stream will be flushed
-     * @return a writer for the given connection stream
-     * @throws java.io.IOException Exception thrown by GZIP (used in SDK 19+)
-     */
-    @TargetApi(Build.VERSION_CODES.KITKAT)
-    protected Writer getWriter(HttpURLConnection connection) throws IOException {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            // GZIP if we are running SDK 19 or higher
-            connection.addRequestProperty("Content-Encoding", "gzip");
-            connection.setRequestProperty("Content-Type", "application/x-json-stream");
-            GZIPOutputStream gzip = new GZIPOutputStream(connection.getOutputStream(), true);
-            return new OutputStreamWriter(gzip, "UTF-8");
-        } else {
-            // no GZIP for older devices
-            return new OutputStreamWriter(connection.getOutputStream(), "UTF-8");
-        }
-    }
-
-    protected Persistence getPersistence() {
-        Persistence persistence = null;
-        if (weakPersistence != null) {
-            persistence = weakPersistence.get();
-        }
-        return persistence;
-    }
-
-    /**
-     * Set persistence used to reserve, free, or delete files (enables dependency injection).
-     *
-     * @param persistence a persistence used to reserve, free, or delete files
-     */
-    protected void setPersistence(Persistence persistence) {
-        this.weakPersistence = new WeakReference<>(persistence);
-    }
+  /**
+   * Set persistence used to reserve, free, or delete files (enables dependency injection).
+   *
+   * @param persistence a persistence used to reserve, free, or delete files
+   */
+  protected void setPersistence(Persistence persistence) {
+    this.weakPersistence = new WeakReference<>(persistence);
+  }
 
 
-    protected int requestCount() {
-        return this.requestCount.get();
-    }
+  protected int requestCount() {
+    return this.requestCount.get();
+  }
 
-    public String getCustomServerURL() {
-        return customServerURL;
-    }
+  public String getCustomServerURL() {
+    return customServerURL;
+  }
 
-    public void setCustomServerURL(String customServerURL) {
-        this.customServerURL = customServerURL;
-    }
+  public void setCustomServerURL(String customServerURL) {
+    this.customServerURL = customServerURL;
+  }
 }
