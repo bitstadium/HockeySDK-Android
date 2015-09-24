@@ -308,7 +308,7 @@ public class TelemetryManager implements Application.ActivityLifecycleCallbacks 
       boolean shouldRenew = ((now - then) >= SESSION_RENEWAL_INTERVAL);
       Log.d(TAG, "Checking if we have to renew a session, time difference is: " + (now - then));
 
-      if (shouldRenew) {
+      if (shouldRenew  && sessionTrackingEnabled()) {
         Log.d(TAG, "Renewing session");
         renewSession();
       }
