@@ -60,12 +60,17 @@ import java.util.zip.GZIPOutputStream;
  */
 public class Sender {
 
+  /**
+   * Default endpoint where all data will be send.
+   */
   static final String DEFAULT_ENDPOINT_URL = "https://dc.services.visualstudio.com/v2/track";
+
   static final int DEFAULT_SENDER_READ_TIMEOUT = 10 * 1000;
   static final int DEFAULT_SENDER_CONNECT_TIMEOUT = 15 * 1000;
   static final int MAX_REQUEST_COUNT = 10;
 
   private static final String TAG = "Sender";
+
   /**
    * Persistence object used to reserve, free, or delete files.
    */
@@ -75,6 +80,9 @@ public class Sender {
    */
   private AtomicInteger requestCount;
 
+  /**
+   * Field to hold custom server URL. Will be ignored if null.
+   */
   private String customServerURL;
 
   /**
@@ -85,6 +93,11 @@ public class Sender {
     this.requestCount = new AtomicInteger(0);
   }
 
+  /**
+   * Method that triggers an async task that will check for persisted telemetry and send it to
+   * the server if the number of running requests didn't exceed the maximum number of
+   * running requests as defined in MAX_REQUEST_COUNT.
+   */
   protected void triggerSending() {
     if (requestCount() < MAX_REQUEST_COUNT) {
       this.requestCount.getAndIncrement();
@@ -105,6 +118,9 @@ public class Sender {
     }
   }
 
+  /**
+   * Checks the persistence for available files and sends them.
+   */
   protected void send() {
     if (this.getPersistence() != null) {
       File fileToSend = this.getPersistence().nextAvailableFileInDirectory();
@@ -138,6 +154,12 @@ public class Sender {
     }
   }
 
+  /**
+   * Create a connection to the default or user defined server endpoint. In case creating a
+   * custom URL for the connection fails, a connection to the default endpoint will be created.
+   *
+   * @return connection to the API endpoint
+   */
   private HttpURLConnection createConnection() {
     URL url;
     HttpURLConnection connection = null;
@@ -147,6 +169,9 @@ public class Sender {
       }
       else {
         url = new URL(this.customServerURL);
+        if (url == null) {
+          url = new URL(DEFAULT_ENDPOINT_URL);
+        }
       }
 
       connection = (HttpURLConnection) url.openConnection();
@@ -164,6 +189,12 @@ public class Sender {
     return connection;
   }
 
+  /**
+   * Log information about request/connection/payload to LogCat
+   *
+   * @param connection the connection
+   * @param payload    the payload of telemetry data
+   */
   private void logRequest(HttpURLConnection connection, String payload) {
     Writer writer = null;
     try {
@@ -343,16 +374,25 @@ public class Sender {
     this.weakPersistence = new WeakReference<>(persistence);
   }
 
-
+  /**
+   * Getter for requestCount. Important for unit testing.
+   *
+   * @return the number of running requests
+   */
   protected int requestCount() {
     return this.requestCount.get();
   }
 
-  public String getCustomServerURL() {
+  protected String getCustomServerURL() {
     return customServerURL;
   }
 
-  public void setCustomServerURL(String customServerURL) {
+  /**
+   * Set a custom server URL that will be used to send data to it.
+   *
+   * @param customServerURL
+   */
+  protected void setCustomServerURL(String customServerURL) {
     this.customServerURL = customServerURL;
   }
 }

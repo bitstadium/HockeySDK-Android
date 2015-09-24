@@ -69,6 +69,7 @@ public class TelemetryManager implements Application.ActivityLifecycleCallbacks 
    * Background time of the app after which a session gets renewed (in milliseconds).
    */
   private static final Integer SESSION_RENEWAL_INTERVAL = 20 * 1000;
+
   /**
    * Synchronization LOCK for setting static context
    */
@@ -83,21 +84,25 @@ public class TelemetryManager implements Application.ActivityLifecycleCallbacks 
    * The application needed for auto collecting session data
    */
   private static WeakReference<Application> weakApplication;
+
   /**
    * A sender who's responsible to send telemetry to the server
    * TelemetryManager holds a reference to it because we want the user to easily set the server
    * url.
    */
   private static Sender sender;
+
   /**
    * Flag that indicates disabled session tracking.
    * Default is false.
    */
   private volatile boolean sessionTrackingDisabled;
+
   /**
    * A channel for collecting new events before storing and sending them.
    */
   private Channel channel;
+
   /**
    * A telemetry context which is used to add meta info to events, before they're sent out.
    */
@@ -148,7 +153,7 @@ public class TelemetryManager implements Application.ActivityLifecycleCallbacks 
     TelemetryManager result = instance;
     if (result == null) {
       synchronized (LOCK) {
-        result = instance;        // thread may have instantiated the object.
+        result = instance;        // thread may have instantiated the objectx
         if (result == null) {
           result = new TelemetryManager(context, new TelemetryContext(context, appIdentifier));
           weakApplication = new WeakReference<>(application);
@@ -257,6 +262,8 @@ public class TelemetryManager implements Application.ActivityLifecycleCallbacks 
 
   @Override
   public void onActivityPaused(Activity activity) {
+    //set the timestamp when the app was last send to the background. This will be continuously
+    //updated when the user navigates through the app.
     this.lastBackground.set(this.getTime());
   }
 
@@ -275,6 +282,12 @@ public class TelemetryManager implements Application.ActivityLifecycleCallbacks 
     // unused but required to implement ActivityLifecycleCallbacks
   }
 
+  /**
+   * Updates the session. If session tracking is enabled, a new session will be started for the
+   * first activity.
+   * In case we have already started a session, we determine if we should renew a session.
+   * This is done by comparing NOW with the last time, onPause has been called.
+   */
   private void updateSession() {
     int count = this.activityCount.getAndIncrement();
     if (count == 0) {
@@ -297,11 +310,11 @@ public class TelemetryManager implements Application.ActivityLifecycleCallbacks 
 
       if (shouldRenew) {
         Log.d(TAG, "Renewing session");
-        //TODO: renew ID for session
         renewSession();
       }
     }
   }
+
 
   protected void renewSession() {
     String sessionId = UUID.randomUUID().toString();
