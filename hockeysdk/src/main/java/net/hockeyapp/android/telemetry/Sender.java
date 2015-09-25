@@ -118,40 +118,79 @@ public class Sender {
     }
   }
 
+  protected void triggerSendingForTesting(final HttpURLConnection connection, final File file, final String persistedData) {
+    if(requestCount() < MAX_REQUEST_COUNT) {
+      this.requestCount.getAndIncrement();
+
+      AsyncTaskUtils.execute(
+        new AsyncTask<Void, Void, Void>() {
+          @Override
+          protected Void doInBackground(Void... params) {
+            // Send the persisted data
+            send(connection, file, persistedData);
+            return null;
+          }
+        }
+      );
+    }
+  }
+
   /**
    * Checks the persistence for available files and sends them.
    */
   protected void send() {
     if (this.getPersistence() != null) {
       File fileToSend = this.getPersistence().nextAvailableFileInDirectory();
-      if (fileToSend != null) {
-        String persistedData = this.getPersistence().load(fileToSend);
-        if (!persistedData.isEmpty()) {
-          HttpURLConnection connection = createConnection();
-          if (connection != null) {
-            try {
-              logRequest(connection, persistedData);
-              // Starts the query
-              connection.connect();
-              // read the response code while we're ready to catch the IO exception
-              int responseCode = connection.getResponseCode();
-              // process the response
-              onResponse(connection, responseCode, persistedData, fileToSend);
-            }
-            catch (IOException e) {
-              Log.d(TAG, "Couldn't send data with IOException: " + e.toString());
-              if (this.getPersistence() != null) {
-                Log.d(TAG, "Persisting because of IOException: We're probably offline =)");
-                this.getPersistence().makeAvailable(fileToSend); //send again later
-              }
-            }
-          }
-        }
-        else {
-          this.getPersistence().deleteFile(fileToSend);
+      String persistedData = loadData(fileToSend);
+      HttpURLConnection connection = createConnection();
+
+      if ((persistedData != null) && (connection != null)) {
+       send(connection, fileToSend, persistedData);
+      }
+    }
+  }
+
+  protected void send(HttpURLConnection connection, File file, String persistedData) {
+    logRequest(connection, persistedData);
+    if(connection != null && file != null && persistedData != null) {
+      try {
+        // Starts the query
+        connection.connect();
+        // read the response code while we're ready to catch the IO exception
+        int responseCode = connection.getResponseCode();
+        // process the response
+        onResponse(connection, responseCode, persistedData, file);
+      }
+      catch (IOException e) {
+        //Probably offline
+        Log.d(TAG, "Couldn't send data with IOException: " + e.toString());
+        if (this.getPersistence() != null) {
+          Log.d(TAG, "Persisting because of IOException: We're probably offline =)");
+          this.getPersistence().makeAvailable(file); //send again later
         }
       }
     }
+  }
+
+  /**
+   * Retrieve a specified file from the persistence layer
+   *
+   * @param file the file to load
+   * @return persisted data as String
+   */
+  protected String loadData(File file) {
+    String persistedData = null;
+
+    if (this.getPersistence() != null) {
+      if (file != null) {
+        persistedData = this.getPersistence().load(file);
+        if (persistedData.isEmpty()) {
+          this.getPersistence().deleteFile(file);
+        }
+      }
+    }
+
+    return persistedData;
   }
 
   /**
@@ -160,7 +199,7 @@ public class Sender {
    *
    * @return connection to the API endpoint
    */
-  private HttpURLConnection createConnection() {
+  protected HttpURLConnection createConnection() {
     URL url;
     HttpURLConnection connection = null;
     try {
@@ -187,35 +226,6 @@ public class Sender {
       Log.e(TAG, "Could not open connection for provided URL with exception: ", e);
     }
     return connection;
-  }
-
-  /**
-   * Log information about request/connection/payload to LogCat
-   *
-   * @param connection the connection
-   * @param payload    the payload of telemetry data
-   */
-  private void logRequest(HttpURLConnection connection, String payload) {
-    Writer writer = null;
-    try {
-      Log.d(TAG, "Sending payload:\n" + payload);
-      Log.d(TAG, "Using URL:" + connection.getURL().toString());
-      writer = getWriter(connection);
-      writer.write(payload);
-      writer.flush();
-    }
-    catch (IOException e) {
-      Log.d(TAG, "Couldn't log data with: " + e.toString());
-    } finally {
-      if (writer != null) {
-        try {
-          writer.close();
-        }
-        catch (IOException e) {
-          Log.d(TAG, "Couldn't close writer with: " + e.toString());
-        }
-      }
-    }
   }
 
   /**
@@ -247,7 +257,7 @@ public class Sender {
       //trigger send next file or log unexpected responses
       StringBuilder builder = new StringBuilder();
       if (isExpected(responseCode)) {
-        this.onExpected(connection, builder);
+        this.readResponse(connection, builder);
         triggerSending();
       }
       else {
@@ -266,17 +276,6 @@ public class Sender {
   }
 
   /**
-   * Process the expected response. If {code:TelemetryChannelConfig.isDeveloperMode}, read the
-   * response and log it.
-   *
-   * @param connection a connection containing a response
-   * @param builder    a string builder for storing the response
-   */
-  protected void onExpected(HttpURLConnection connection, StringBuilder builder) {
-    this.readResponse(connection, builder);
-  }
-
-  /**
    * @param connection   a connection containing a response
    * @param responseCode the response code from the connection
    * @param builder      a string builder for storing the response
@@ -292,6 +291,38 @@ public class Sender {
 
     // attempt to read the response stream
     this.readResponse(connection, builder);
+  }
+
+
+  /**
+   * Log information about request/connection/payload to LogCat
+   *
+   * @param connection the connection
+   * @param payload    the payload of telemetry data
+   */
+  private void logRequest(HttpURLConnection connection, String payload) {
+    Writer writer = null;
+    try {
+      if((connection != null) && (payload != null)) {
+        Log.d(TAG, "Sending payload:\n" + payload);
+        Log.d(TAG, "Using URL:" + connection.getURL().toString());
+        writer = getWriter(connection);
+        writer.write(payload);
+        writer.flush();
+      }
+    }
+    catch (IOException e) {
+      Log.d(TAG, "Couldn't log data with: " + e.toString());
+    } finally {
+      if (writer != null) {
+        try {
+          writer.close();
+        }
+        catch (IOException e) {
+          Log.d(TAG, "Couldn't close writer with: " + e.toString());
+        }
+      }
+    }
   }
 
   /**
