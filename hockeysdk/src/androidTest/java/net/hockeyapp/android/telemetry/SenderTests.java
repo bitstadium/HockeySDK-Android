@@ -92,4 +92,17 @@ public class SenderTests extends InstrumentationTestCase {
       assertFalse(sut.isExpected(code));
     }
   }
+
+  public void testFilesGetDeletedAfterUnrecoverable() {
+    File mockFile1 = mock(File.class);
+    sut.onResponse(sut.createConnection(), 501, "test", mockFile1);
+    verify(sut.getPersistence()).deleteFile(mockFile1);
+  }
+
+  public void testFilesGetUnblockedForRecoverableError() {
+    File mockFile = mock(File.class);
+    sut.onResponse(sut.createConnection(), 500, "test", mockFile);
+    verify(sut.getPersistence()).makeAvailable(mockFile);
+  }
+
 }
