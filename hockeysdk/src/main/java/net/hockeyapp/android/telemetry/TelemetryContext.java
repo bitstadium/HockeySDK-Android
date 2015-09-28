@@ -372,16 +372,14 @@ class TelemetryContext {
           .getApplicationInfo(this.context.getPackageName(), PackageManager.GET_META_DATA)
           .metaData;
         if (bundle != null) {
-          // TODO: Change key
-          sdkVersionString = bundle.getString("com.microsoft.applicationinsights.library" +
-            ".sdkVersion");
+          sdkVersionString = bundle.getString("net.hockeyapp.android.sdkVersion");
         }
         else {
-          Log.d(TAG, "Could not load sdk version from gradle.properties or manifest");
+          Log.d(TAG, "Could not load hockey sdk version from gradle.properties or manifest");
         }
       }
       catch (PackageManager.NameNotFoundException exception) {
-        Log.d(TAG, "Error loading SDK version from manifest");
+        Log.d(TAG, "Error loading Hockey SDK version from manifest");
         Log.v(TAG, exception.toString());
       }
     }
