@@ -10,12 +10,12 @@ import android.content.Context;
 public class PublicTelemetryContext extends TelemetryContext {
 
     /**
-     * Constructs a new INSTANCE of the Telemetry telemetryContext tag keys
+     * Constructs a new INSTANCE of TelemetryContext.
      *
-     * @param context            the context for this telemetryContext
-     * @param instrumentationKey the instrumentationkey for this application
+     * @param context       the context for this telemetryContext
+     * @param appIdentifier the app identifier for this application
      */
-    protected PublicTelemetryContext(Context context, String instrumentationKey) {
-        super(context, instrumentationKey);
+    protected PublicTelemetryContext(Context context, String appIdentifier) {
+        super(context, appIdentifier);
     }
 }
