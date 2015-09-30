@@ -91,7 +91,14 @@ public class TelemetryManager implements Application.ActivityLifecycleCallbacks 
    * url.
    */
   private static Sender sender;
-
+  /**
+   * A channel for collecting new events before storing and sending them.
+   */
+  private static Channel channel;
+  /**
+   * A telemetry context which is used to add meta info to events, before they're sent out.
+   */
+  private static TelemetryContext telemetryContext;
   /**
    * Flag that indicates disabled session tracking.
    * Default is false.
@@ -99,36 +106,46 @@ public class TelemetryManager implements Application.ActivityLifecycleCallbacks 
   private volatile boolean sessionTrackingDisabled;
 
   /**
-   * A channel for collecting new events before storing and sending them.
-   */
-  private Channel channel;
-
-  /**
-   * A telemetry context which is used to add meta info to events, before they're sent out.
-   */
-  private TelemetryContext telemetryContext;
-
-
-  /**
    * Restrict access to the default constructor
    * Create a new INSTANCE of the TelemetryManager class
+   * Contains params for unit testing/mocking
+   *
+   * @param context          the context that will be used for the SDK
+   * @param telemetryContext telemetry context, contains meta-information necessary for telemetry
+   *                         feature of the SDK
+   * @param sender           usually null, included for unit testing/dependency injection
+   * @param persistence,     included for unit testing/dependency injection
+   * @param channel,         included for unit testing/dependency injection
    */
-  protected TelemetryManager(Context context, TelemetryContext telemetryContext) {
+  protected TelemetryManager(Context context, TelemetryContext telemetryContext, Sender sender,
+                             Persistence persistence, Channel channel) {
     this.telemetryContext = telemetryContext;
 
     //Important: create sender and persistence first, wire them up and then create the channel!
-    this.sender = new Sender();
-    Persistence persistence = new Persistence(context, sender);
+    if (sender == null) {
+      sender = new Sender();
+    }
+    this.sender = sender;
+
+    if (persistence == null) {
+      persistence = new Persistence(context, sender);
+    }
+
     //Link sender
-    sender.setPersistence(persistence);
+    this.sender.setPersistence(persistence);
 
     //create the channel and wire the persistence to it.
-    this.channel = new Channel(this.telemetryContext, persistence);
+    if (channel == null) {
+      this.channel = new Channel(this.telemetryContext, persistence);
+    }
+    else {
+      this.channel = channel;
+    }
+
   }
 
   /**
-   * Register a new TelemetryManager and collects telemetry information about a user and the
-   * session.
+   * Register a new TelemetryManager and collect telemetry information about user and session.
    * HockeyApp App Identifier is read from configuration values in AndroidManifest.xml
    *
    * @param application the Application object which is required to get application lifecycle
@@ -141,8 +158,7 @@ public class TelemetryManager implements Application.ActivityLifecycleCallbacks 
   }
 
   /**
-   * Register a new TelemetryManager and collects telemetry information about a user and the
-   * session.
+   * Register a new TelemetryManager and collect telemetry information about user and session.
    *
    * @param application   the Application object which is required to get application lifecycle
    *                      callbacks
@@ -150,12 +166,30 @@ public class TelemetryManager implements Application.ActivityLifecycleCallbacks 
    * @param appIdentifier your HockeyApp App Identifier.
    */
   public static void register(Context context, Application application, String appIdentifier) {
+    register(context, application, appIdentifier, null, null, null);
+  }
+
+  /**
+   * Register a new TelemtryManager and collect telemetry information about user and session
+   * Intended to be used for unit testing only, shouldn't be visible outside the SDK   *
+   *
+   * @param context The context to use. Usually your Activity object.
+   * @param application the Application object which is required to get application lifecycle
+   *                      callbacks
+   * @param appIdentifier your HockeyApp App Identifier.
+   * @param sender sender for dependency injection
+   * @param persistence persistence for dependency injection
+   * @param channel channel for dependency injection
+   */
+  protected static void register(Context context, Application application, String appIdentifier,
+                                 Sender sender, Persistence persistence, Channel channel) {
     TelemetryManager result = instance;
     if (result == null) {
       synchronized (LOCK) {
         result = instance;        // thread may have instantiated the objectx
         if (result == null) {
-          result = new TelemetryManager(context, new TelemetryContext(context, appIdentifier));
+          result = new TelemetryManager(context, new TelemetryContext(context, appIdentifier),
+            sender, persistence, channel);
           weakApplication = new WeakReference<>(application);
         }
         if (Util.sessionTrackingSupported()) {
@@ -308,13 +342,12 @@ public class TelemetryManager implements Application.ActivityLifecycleCallbacks 
       boolean shouldRenew = ((now - then) >= SESSION_RENEWAL_INTERVAL);
       Log.d(TAG, "Checking if we have to renew a session, time difference is: " + (now - then));
 
-      if (shouldRenew  && sessionTrackingEnabled()) {
+      if (shouldRenew && sessionTrackingEnabled()) {
         Log.d(TAG, "Renewing session");
         renewSession();
       }
     }
   }
-
 
   protected void renewSession() {
     String sessionId = UUID.randomUUID().toString();
@@ -353,6 +386,26 @@ public class TelemetryManager implements Application.ActivityLifecycleCallbacks 
     data.QualifiedName = telemetryData.getEnvelopeName();
 
     return data;
+  }
+
+  protected static Channel getChannel() {
+    return TelemetryManager.channel;
+  }
+
+  protected void setChannel(Channel channel) {
+    TelemetryManager.channel = channel;
+  }
+
+  protected static Sender getSender() {
+    return TelemetryManager.sender;
+  }
+
+  protected static void setSender(Sender sender) {
+    TelemetryManager.sender = sender;
+  }
+
+  protected static TelemetryManager getInstance() {
+    return instance;
   }
 }
 
