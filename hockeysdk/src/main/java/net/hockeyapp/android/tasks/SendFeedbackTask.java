@@ -70,7 +70,6 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
     private ProgressDialog progressDialog;
     private boolean showProgressDialog;
     private int lastMessageId;
-    private HttpURLConnection urlConnection;
 
     /**
      * Send feedback {@link AsyncTask}.
