@@ -207,9 +207,9 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
       Bundle bundle = new Bundle();
 
       if (result != null) {
-        bundle.putString("request_type", (String) result.get("type"));
-        bundle.putString("feedback_response", (String) result.get("response"));
-        bundle.putString("feedback_status", (String) result.get("status"));
+        bundle.putString("request_type", result.get("type"));
+        bundle.putString("feedback_response", result.get("response"));
+        bundle.putString("feedback_status", result.get("status"));
       }
       else {
         bundle.putString("request_type", "unknown");
