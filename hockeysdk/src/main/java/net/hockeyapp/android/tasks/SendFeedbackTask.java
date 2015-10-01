@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 import net.hockeyapp.android.Constants;
 import net.hockeyapp.android.utils.HttpURLConnectionBuilder;
@@ -55,6 +56,7 @@ import java.util.Map;
  * @author Bogdan Nistor
  **/
 public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String, String>> {
+  private static final String TAG = "SendFeedbackTask";
   private Context context;
   private Handler handler;
   private String urlString;
@@ -149,34 +151,43 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
       return doGet();
     }
     else {
+      /**
+       * If we are sending a feedback do POST, and if we are sending a feedback
+       * to an existing discussion do PUT
+       */
       if (!isFetchMessages) {
-        /**
-         * If we are sending a feedback do POST, and if we are sending a feedback
-         * to an existing discussion do PUT
-         */
         if (attachmentUris.isEmpty()) {
           return doPostPut();
         }
         else {
           HashMap<String, String> result = doPostPutWithAttachments();
-
-          /** Clear temporary folder */
-          String status = result.get("status");
-          if ((status != null) && (status.startsWith("2")) && (context != null)) {
-            File folder = new File(context.getCacheDir(), Constants.TAG);
-            if (folder != null && folder.exists()) {
-              for (File file : folder.listFiles()) {
-                file.delete();
-              }
-            }
+          if (result != null) {
+            clearTemporaryFolder(result);
           }
-
           return result;
         }
       }
+      else {
+        return null;
+      }
     }
+  }
 
-    return null;
+  private void clearTemporaryFolder(HashMap<String, String> result) {
+    String status = result.get("status");
+    if ((status != null) && (status.startsWith("2")) && (context != null)) {
+      File folder = new File(context.getCacheDir(), Constants.TAG);
+      if ((folder != null) && folder.exists()) {
+        for (File file : folder.listFiles()) {
+          if (file != null) {
+            Boolean success = file.delete();
+            if (!success) {
+              Log.d(TAG, "Error deleting file from temporary folder");
+            }
+          }
+        }
+      }
+    }
   }
 
   @Override
