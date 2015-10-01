@@ -54,12 +54,26 @@ public class FeedbackMessageView extends LinearLayout {
   private AttachmentListView attachmentListView;
   
   @SuppressWarnings("unused")
-  private boolean ownMessage;
+  @Deprecated
+  private boolean ownMessage;//TODO why surpress this?! Intended for future use?
 
   public FeedbackMessageView(Context context) {
-    this(context, true);
+    super(context);
+    loadLayoutParams(context);
+    loadAuthorLabel(context);
+    loadDateLabel(context);
+    loadMessageLabel(context);
+    loadAttachmentList(context);
   }
 
+  /**
+   * Creates a FeedbackMessageView.
+   * The constructor is now deprecated
+   * @deprecated
+   * @param context usually your activty
+   * @param ownMessage flag to indicate a custom feedback message
+   */
+  @Deprecated
   public FeedbackMessageView(Context context, boolean ownMessage) {
     super(context);
     
