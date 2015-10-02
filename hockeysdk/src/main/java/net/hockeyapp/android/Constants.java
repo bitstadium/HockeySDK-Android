@@ -1,5 +1,6 @@
 package net.hockeyapp.android;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
@@ -143,7 +144,10 @@ public class Constants {
     File externalStorage = Environment.getExternalStorageDirectory();
 
     File dir = new File(externalStorage.getAbsolutePath() + "/" + Constants.TAG);
-    dir.mkdirs();
+    Boolean success = dir.mkdirs();
+    if(!success) {
+      Log.d(TAG, "Couldn't create HockeyApp Storage dir");
+    }
     return dir;
   }
 
@@ -248,8 +252,16 @@ public class Constants {
    * @param context the context to use. Usually your Activity object.
    */
   private static String createSalt(Context context) {
-    String fingerprint = "HA" + (Build.BOARD.length() % 10) + (Build.BRAND.length() % 10) + (Build.CPU_ABI.length() % 10) + (Build.PRODUCT.length() % 10);
-
+    String abiString;
+    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        abiString = Build.SUPPORTED_ABIS[0];
+    }
+    else {
+      abiString = Build.CPU_ABI;
+    }
+    
+    String fingerprint = "HA" + (Build.BOARD.length() % 10) + (Build.BRAND.length() % 10) +
+      (abiString.length() % 10) + (Build.PRODUCT.length() % 10);
     String serial = "";
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
       try {
