@@ -1,17 +1,24 @@
 package net.hockeyapp.android.utils;
 
-import java.io.UnsupportedEncodingException;
-import java.lang.ref.WeakReference;
-import java.net.URLEncoder;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.Notification;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.text.TextUtils;
+
+import java.io.UnsupportedEncodingException;
+import java.lang.ref.WeakReference;
+import java.lang.reflect.Method;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * <h3>License</h3>
@@ -97,7 +104,7 @@ public class Util {
   @SuppressLint("NewApi")
   public static Boolean fragmentsSupported() {
     try {
-      return (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) && (android.app.Fragment.class != null);
+      return (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) && classExists("android.app.Fragment");
     }
     catch (NoClassDefFoundError e) {
       return false;
@@ -147,5 +154,91 @@ public class Util {
     }
 
     return sAppIdentifier;
+  }
+
+  /**
+   * Converts a map of parameters to a HTML form entity.
+   * @param params the parameters
+   * @return an URL-encoded form string ready for use in a HTTP post
+   * @throws UnsupportedEncodingException when your system does not know how to handle the UTF-8 charset
+   */
+  public static String getFormString(Map<String, String> params) throws UnsupportedEncodingException {
+      List<String> protoList = new ArrayList<String>();
+      for (String key : params.keySet()) {
+          String value = params.get(key);
+          key = URLEncoder.encode(key, "UTF-8");
+          value = URLEncoder.encode(value, "UTF-8");
+          protoList.add(key + "=" + value);
+      }
+      return TextUtils.join("&", protoList);
+  }
+
+  /**
+   * Helper method to safely check whether a class exists at runtime.
+   * @param className the full-qualified class name to check for
+   * @return whether the class exists
+   */
+  public static boolean classExists(String className) {
+    try {
+      return Class.forName(className) != null;
+    } catch (ClassNotFoundException e) {
+      return false;
+    }
+  }
+
+  /**
+   * Checks if the Notification.Builder API is supported.
+   * @return if builder API is supported
+   */
+  public static boolean isNotificationBuilderSupported() {
+    return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) && classExists("android.app.Notification.Builder");
+  }
+
+  /**
+   * Creates a notification on API levels from 9 to 23
+   * @param context the context to use, e.g. your Activity
+   * @param pendingIntent the Intent to call
+   * @param title the title string for the notification
+   * @param text the text content for the notificationcrash
+   * @param iconId the icon resource ID for the notification
+   * @return the created notification
+   */
+  public static Notification createNotification(Context context, PendingIntent pendingIntent, String title, String text, int iconId) {
+    Notification notification;
+    if (Util.isNotificationBuilderSupported()) {
+      notification = buildNotificationWithBuilder(context, pendingIntent, title, text, iconId);
+    } else {
+      notification = buildNotificationPreHoneycomb(context, pendingIntent, title, text, iconId);
+    }
+    return notification;
+  }
+
+  @SuppressWarnings("deprecation")
+  private static Notification buildNotificationPreHoneycomb(Context context, PendingIntent pendingIntent, String title, String text, int iconId) {
+    Notification notification = new Notification(iconId, "", System.currentTimeMillis());
+    try {
+      // try to call "setLatestEventInfo" if available
+      Method m = notification.getClass().getMethod("setLatestEventInfo", Context.class, CharSequence.class, CharSequence.class, PendingIntent.class);
+      m.invoke(notification, context, title, text, pendingIntent);
+    } catch (Exception e) {
+      // do nothing
+    }
+    return notification;
+  }
+
+  @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+  @SuppressWarnings("deprecation")
+  private static Notification buildNotificationWithBuilder(Context context, PendingIntent pendingIntent, String title, String text, int iconId) {
+    android.app.Notification.Builder builder = new android.app.Notification.Builder(context)
+            .setContentTitle(title)
+            .setContentText(text)
+            .setContentIntent(pendingIntent)
+            .setSmallIcon(iconId);
+
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+      return builder.getNotification();
+    } else {
+      return builder.build();
+    }
   }
 }

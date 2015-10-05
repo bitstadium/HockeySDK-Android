@@ -158,14 +158,29 @@ public class Strings {
   /** Resource ID for the message when a generic error has occurred. */
   public final static int FEEDBACK_GENERIC_ERROR_ID          = 0x410;
 
-   /** Resource ID for the message when the name field is not filled out. */
-   public static final int FEEDBACK_VALIDATE_NAME_ERROR_ID = 0x411;
+  /** Resource ID for the message when the name field is not filled out. */
+  public static final int FEEDBACK_VALIDATE_NAME_ERROR_ID = 0x411;
 
-   /** Resource ID for the message when the email field is not filled out. */
-   public static final int FEEDBACK_VALIDATE_EMAIL_EMPTY_ID = 0x412;
+  /** Resource ID for the message when the email field is not filled out. */
+  public static final int FEEDBACK_VALIDATE_EMAIL_EMPTY_ID = 0x412;
 
-   /** Resource ID for the message when the text field is not filled out. */
-   public static final int FEEDBACK_VALIDATE_TEXT_ERROR_ID = 0x413;
+  /** Resource ID for the message when the text field is not filled out. */
+  public static final int FEEDBACK_VALIDATE_TEXT_ERROR_ID = 0x413;
+
+  /** Resource ID for the button to attach a file to the feedback. **/
+  public static final int FEEDBACK_ATTACH_FILE_ID = 0x414;
+
+  /** Resource ID for the button to attach a picture to the feedback. **/
+  public static final int FEEDBACK_ATTACH_PICTURE_ID = 0x415;
+
+  /** Resource ID for the chooser dialog to select an attachment file. **/
+  public static final int FEEDBACK_SELECT_FILE_ID = 0x416;
+
+  /** Resource ID for the chooser dialog to select an attachment picture. **/
+  public static final int FEEDBACK_SELECT_PICTURE_ID = 0x417;
+
+  /** Resource ID for the warning toast of the maximum number of attachments allowed per feedback. **/
+  public static final int FEEDBACK_MAX_ATTACHMENTS_ALLOWED = 0x418;
 
   ///////////////////////////////////////////////////
   // Login Activity
@@ -210,6 +225,38 @@ public class Strings {
 
   /** Resource ID for the positive button label of the dialog when activity is exited with changes. */
   public final static int PAINT_DIALOG_POSITIVE_BUTTON_ID = 0x606;
+
+  ///////////////////////////////////////////////////
+  // Permissions
+  ///////////////////////////////////////////////////
+
+  /** Resource ID for the title of the dialog explaining why permission is necessary. **/
+  public final static int PERMISSION_UPDATE_TITLE_ID = 0x700;
+
+  /** Resource ID for the message of the dialog explaining why permission is necessary **/
+  public final static int PERMISSION_UPDATE_MESSAGE_ID = 0x701;
+
+  /** Resource ID for the cancel button in the dialog. **/
+  public final static int PERMISSION_DIALOG_NEGATIVE_BUTTON_ID = 0x702;
+
+  /** Resource ID for the retry button in the dialog. **/
+  public final static int PERMISSION_DIALOG_POSITIVE_BUTTON_ID = 0x703;
+
+  ///////////////////////////////////////////////////
+  // Dialogs
+  ///////////////////////////////////////////////////
+
+  /** Resource ID for the positive button of generic dialogs. **/
+  public final static int DIALOG_POSITIVE_BUTTON_ID = 0x800;
+
+  /** Resource ID for the negative button of generic dialogs. **/
+  public final static int DIALOG_NEGATIVE_BUTTON_ID = 0x801;
+
+  /** Resource ID for the title of an error dialog. **/
+  public final static int DIALOG_ERROR_TITLE_ID = 0x802;
+
+  /** Resource ID for the message of an error dialog. **/
+  public final static int DIALOG_ERROR_MESSAGE_ID = 0x803;
 
   /**
    * Default strings.
@@ -260,7 +307,12 @@ public class Strings {
     DEFAULT.put(FEEDBACK_VALIDATE_EMAIL_EMPTY_ID,   "Please enter an email address");
     DEFAULT.put(FEEDBACK_VALIDATE_TEXT_ERROR_ID,    "Please enter a feedback text");
     DEFAULT.put(FEEDBACK_VALIDATE_EMAIL_ERROR_ID,   "Message couldn't be posted. Please check the format of your email address.");
-    DEFAULT.put(FEEDBACK_GENERIC_ERROR_ID,          "An error has occured");
+    DEFAULT.put(FEEDBACK_GENERIC_ERROR_ID,          "An error has occurred");
+    DEFAULT.put(FEEDBACK_ATTACH_FILE_ID,            "Attach File");
+    DEFAULT.put(FEEDBACK_ATTACH_PICTURE_ID,         "Attach Picture");
+    DEFAULT.put(FEEDBACK_SELECT_FILE_ID,            "Select File");
+    DEFAULT.put(FEEDBACK_SELECT_PICTURE_ID,         "Select Picture");
+    DEFAULT.put(FEEDBACK_MAX_ATTACHMENTS_ALLOWED,   "Only %s attachments allowed.");
 
     // Login Activity
     DEFAULT.put(LOGIN_HEADLINE_TEXT_ID,             "Please enter your account credentials.");
@@ -277,6 +329,19 @@ public class Strings {
     DEFAULT.put(PAINT_DIALOG_MESSAGE_ID,         "Discard your drawings?");
     DEFAULT.put(PAINT_DIALOG_NEGATIVE_BUTTON_ID, "No");
     DEFAULT.put(PAINT_DIALOG_POSITIVE_BUTTON_ID, "Yes");
+
+    // Permissions
+    DEFAULT.put(PERMISSION_UPDATE_TITLE_ID,           "Need storage access");
+    DEFAULT.put(PERMISSION_UPDATE_MESSAGE_ID,         "In order to download and install app updates you will have to allow the app to access your device storage.");
+    DEFAULT.put(PERMISSION_DIALOG_NEGATIVE_BUTTON_ID, "Cancel");
+    DEFAULT.put(PERMISSION_DIALOG_POSITIVE_BUTTON_ID, "Retry");
+
+    // Dialogs
+    DEFAULT.put(DIALOG_POSITIVE_BUTTON_ID,    "OK");
+    DEFAULT.put(DIALOG_NEGATIVE_BUTTON_ID,    "Cancel");
+    DEFAULT.put(DIALOG_ERROR_TITLE_ID,        "Error");
+    DEFAULT.put(DIALOG_ERROR_MESSAGE_ID,      "An error has occured");
+
   }
 
 

@@ -139,6 +139,7 @@ public class UpdateView extends RelativeLayout {
     LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
     int margin = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float)20.0, getResources().getDisplayMetrics());
     params.setMargins(margin, margin, margin, 0);
+    textView.setBackgroundColor(Color.rgb(230, 236, 239));
     textView.setLayoutParams(params);
     textView.setEllipsize(TruncateAt.END);
     textView.setShadowLayer(1, 0, 1, Color.WHITE);
@@ -159,6 +160,7 @@ public class UpdateView extends RelativeLayout {
     int marginTop = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float)10.0, getResources().getDisplayMetrics());
     params.setMargins(marginSide, marginTop, marginSide, 0);
     params.addRule(RelativeLayout.BELOW, NAME_LABEL_ID);
+    textView.setBackgroundColor(Color.rgb(230, 236, 239));
     textView.setLayoutParams(params);
     textView.setEllipsize(TruncateAt.END);
     textView.setShadowLayer(1, 0, 1, Color.WHITE);

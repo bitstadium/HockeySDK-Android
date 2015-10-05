@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Parcelable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.*;
@@ -20,6 +21,7 @@ import net.hockeyapp.android.adapters.MessagesAdapter;
 import net.hockeyapp.android.objects.ErrorObject;
 import net.hockeyapp.android.objects.FeedbackMessage;
 import net.hockeyapp.android.objects.FeedbackResponse;
+import net.hockeyapp.android.objects.FeedbackUserDataElement;
 import net.hockeyapp.android.tasks.ParseFeedbackTask;
 import net.hockeyapp.android.tasks.SendFeedbackTask;
 import net.hockeyapp.android.utils.AsyncTaskUtils;
@@ -105,7 +107,10 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
   private ParseFeedbackTask parseFeedbackTask;
   private Handler parseFeedbackHandler;
 
-  /** URL for HockeyApp API **/
+  /** Initial attachment uris */
+  private List<Uri> initialAttachments;
+
+    /** URL for HockeyApp API **/
   private String url;
 
   /** Current error for alert dialog **/
@@ -158,7 +163,7 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
       case FeedbackView.ADD_ATTACHMENT_BUTTON_ID:
         ViewGroup attachments = (ViewGroup) findViewById(FeedbackView.WRAPPER_LAYOUT_ATTACHMENTS);
         if (attachments.getChildCount() >= MAX_ATTACHMENTS_PER_MSG) {
-          Toast.makeText(this, "Only " + MAX_ATTACHMENTS_PER_MSG + " attachments allowed.", 1000).show();
+          Toast.makeText(this, String.format("", MAX_ATTACHMENTS_PER_MSG), 1000).show();
         } else {
           openContextMenu(v);
         }
@@ -210,6 +215,14 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
     Bundle extras = getIntent().getExtras();
     if (extras != null) {
       url = extras.getString("url");
+
+      Parcelable[] initialAttachmentsArray = extras.getParcelableArray("initialAttachments");
+      if (initialAttachmentsArray != null) {
+        initialAttachments = new ArrayList<Uri>();
+          for (Parcelable parcelable : initialAttachmentsArray) {
+              initialAttachments.add((Uri) parcelable);
+          }
+      }
     }
 
     if (savedInstanceState != null) {
@@ -237,8 +250,8 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
   public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
     super.onCreateContextMenu(menu, v, menuInfo);
 
-    menu.add(0, ATTACH_FILE, 0, "Attach File");
-    menu.add(0, ATTACH_PICTURE, 0, "Attach Picture");
+    menu.add(0, ATTACH_FILE, 0, Strings.get(Strings.FEEDBACK_ATTACH_FILE_ID));
+    menu.add(0, ATTACH_PICTURE, 0, Strings.get(Strings.FEEDBACK_ATTACH_PICTURE_ID));
   }
 
   @Override
@@ -354,6 +367,12 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
       ViewGroup attachmentListView = (ViewGroup)findViewById(FeedbackView.WRAPPER_LAYOUT_ATTACHMENTS);
       attachmentListView.removeAllViews();
 
+      if (initialAttachments != null) {
+        for (Uri attachmentUri : initialAttachments) {
+            attachmentListView.addView(new AttachmentView(this, attachmentListView, attachmentUri, true));
+        }
+      }
+
       /** Use of context menu needs to be enabled explicitly */
       addAttachmentButton = (Button)findViewById(FeedbackView.ADD_ATTACHMENT_BUTTON_ID);
       addAttachmentButton.setOnClickListener(this);
@@ -363,6 +382,13 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
       sendFeedbackButton.setOnClickListener(this);
   	}
   }
+
+ /**
+  * Called when the request for sending the feedback has finished.
+  *
+  * @param success is true if the sending of the feedback was successful
+  */
+  protected void onSendFeedbackResult(final boolean success) {}
 
   /**
    * Called when picture or file was chosen.
@@ -414,11 +440,11 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
     switch(id) {
       case DIALOG_ERROR_ID:
         return new AlertDialog.Builder(this)
-          .setMessage("An error has occured")
+          .setMessage(Strings.get(Strings.DIALOG_ERROR_MESSAGE_ID))
           .setCancelable(false)
-          .setTitle("Error")
+          .setTitle(Strings.get(Strings.DIALOG_ERROR_TITLE_ID))
           .setIcon(android.R.drawable.ic_dialog_alert)
-          .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+          .setPositiveButton(Strings.get(Strings.DIALOG_POSITIVE_BUTTON_ID), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
               error = null;
               dialog.cancel();
@@ -488,14 +514,14 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
       Intent intent = new Intent();
       intent.setType("*/*");
       intent.setAction(Intent.ACTION_GET_CONTENT);
-      startActivityForResult(Intent.createChooser(intent, "Select File"), ATTACH_FILE);
+      startActivityForResult(Intent.createChooser(intent, Strings.get(Strings.FEEDBACK_SELECT_FILE_ID)), ATTACH_FILE);
       return true;
 
     } else if (request == ATTACH_PICTURE) {
       Intent intent = new Intent();
       intent.setType("image/*");
       intent.setAction(Intent.ACTION_GET_CONTENT);
-      startActivityForResult(Intent.createChooser(intent, "Select Picture"), ATTACH_PICTURE);
+      startActivityForResult(Intent.createChooser(intent, Strings.get(Strings.FEEDBACK_SELECT_PICTURE_ID)), ATTACH_PICTURE);
       return true;
 
     } else return false;
@@ -577,6 +603,8 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
             }
           });
         }
+
+        onSendFeedbackResult(success);
       }
     };
   }
@@ -656,7 +684,7 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
     			/** Set the lastUpdatedTextView text as the date of the latest feedback message */
     			try {
     				date = format.parse(feedbackMessages.get(0).getCreatedAt());
-    				lastUpdatedTextView.setText(String.format("Last Updated: %s", formatNew.format(date)));
+    				lastUpdatedTextView.setText(String.format(Strings.get(Strings.FEEDBACK_LAST_UPDATED_TEXT_ID) + " %s", formatNew.format(date)));
     			}
     			catch (ParseException e1) {
     				e1.printStackTrace();
@@ -714,16 +742,16 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
       subjectInput.setVisibility(View.VISIBLE);
       setError(subjectInput, Strings.FEEDBACK_VALIDATE_SUBJECT_ERROR_ID);
     }
-    else if (TextUtils.isEmpty(name)) {
+    else if (FeedbackManager.getRequireUserName() == FeedbackUserDataElement.REQUIRED && TextUtils.isEmpty(name)) {
       setError(nameInput, Strings.FEEDBACK_VALIDATE_NAME_ERROR_ID);
     }
-    else if (TextUtils.isEmpty(email)) {
+    else if (FeedbackManager.getRequireUserEmail() == FeedbackUserDataElement.REQUIRED && TextUtils.isEmpty(email)) {
       setError(emailInput, Strings.FEEDBACK_VALIDATE_EMAIL_EMPTY_ID);
     }
     else if(TextUtils.isEmpty(text)) {
       setError(textInput, Strings.FEEDBACK_VALIDATE_TEXT_ERROR_ID);
     }
-  	else if (!Util.isValidEmail(email)) {
+  	else if (FeedbackManager.getRequireUserEmail() == FeedbackUserDataElement.REQUIRED && !Util.isValidEmail(email)) {
       setError(emailInput, Strings.FEEDBACK_VALIDATE_EMAIL_ERROR_ID);
   	}
   	else {

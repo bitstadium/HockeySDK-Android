@@ -18,6 +18,7 @@ import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
+import net.hockeyapp.android.objects.FeedbackUserDataElement;
 import net.hockeyapp.android.tasks.ParseFeedbackTask;
 import net.hockeyapp.android.tasks.SendFeedbackTask;
 import net.hockeyapp.android.utils.AsyncTaskUtils;
@@ -101,7 +102,17 @@ public class FeedbackManager {
    * URL of HockeyApp service.
    */
   private static String urlString = null;
-  
+
+  /**
+   * Whether the user's name is required.
+   */
+  private static FeedbackUserDataElement requireUserName;
+
+  /**
+   * Whether the user's email is required.
+   */
+  private static FeedbackUserDataElement requireUserEmail;
+
   /**
    * Last listener instance.
    */
@@ -141,7 +152,7 @@ public class FeedbackManager {
       FeedbackManager.identifier = Util.sanitizeAppIdentifier(appIdentifier);
       FeedbackManager.urlString = urlString;
       FeedbackManager.lastListener = listener;
-    
+
       Constants.loadFromContext(context);
     }
   }
@@ -156,8 +167,18 @@ public class FeedbackManager {
   /**
    * Starts the {@link FeedbackActivity}
    * @param context {@link Context} object
+   * @param attachments the optional attachment {@link Uri}s
    */
-  public static void showFeedbackActivity(Context context) {
+  public static void showFeedbackActivity(Context context, Uri... attachments) {
+    showFeedbackActivity(context, null, attachments);
+  }
+  /**
+   * Starts the {@link FeedbackActivity}
+   * @param context {@link Context} object
+   * @param attachments the optional attachment {@link Uri}s
+   * @param extras a bundle to be added to the Intent that starts the FeedbackActivity instance
+   */
+  public static void showFeedbackActivity(Context context, Bundle extras, Uri... attachments) {
     if (context != null) {
       Class<?> activityClass = null;
       if (lastListener != null) {
@@ -168,9 +189,13 @@ public class FeedbackManager {
       }
       
       Intent intent = new Intent();
+      if (extras != null && !extras.isEmpty()) {
+        intent.putExtras(extras);
+      }
       intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
       intent.setClass(context, activityClass);
       intent.putExtra("url", getURLString(context));
+      intent.putExtra("initialAttachments", attachments);
       context.startActivity(intent);
     }
   }
@@ -224,6 +249,38 @@ public class FeedbackManager {
    */
   private static String getURLString(Context context) {
     return urlString + "api/2/apps/" + identifier + "/feedback/";
+  }
+
+  /**
+   * Returns the required setting for the user name property.
+   * @return required setting for name
+   */
+  public static FeedbackUserDataElement getRequireUserName() {
+    return requireUserName;
+  }
+
+  /**
+   * Sets the required setting for the user name property
+   * @param requireUserName whether the user name property should be required
+   */
+  public static void setRequireUserName(FeedbackUserDataElement requireUserName) {
+    FeedbackManager.requireUserName = requireUserName;
+  }
+
+  /**
+   * Returns the required setting for the user email property.
+   * @return required setting for email
+   */
+  public static FeedbackUserDataElement getRequireUserEmail() {
+    return requireUserEmail;
+  }
+
+  /**
+   * Sets the required setting for the user email property
+   * @param requireUserEmail whether the user email property should be required
+   */
+  public static void setRequireUserEmail(FeedbackUserDataElement requireUserEmail) {
+    FeedbackManager.requireUserEmail = requireUserEmail;
   }
 
   /**
@@ -312,12 +369,13 @@ public class FeedbackManager {
     NotificationManager notificationManager = (NotificationManager) currentActivity.getSystemService(Context.NOTIFICATION_SERVICE);
 
     int iconId = currentActivity.getResources().getIdentifier("ic_menu_camera", "drawable", "android");
-    Notification notification = new Notification(iconId, "", System.currentTimeMillis());
 
     Intent intent =  new Intent();
     intent.setAction(BROADCAST_ACTION);
     PendingIntent pendingIntent = PendingIntent.getBroadcast(currentActivity, BROADCAST_REQUEST_CODE, intent, PendingIntent.FLAG_ONE_SHOT);
-    notification.setLatestEventInfo(currentActivity, "HockeyApp Feedback", "Take a screenshot for your feedback.", pendingIntent);
+
+    Notification notification = Util.createNotification(currentActivity, pendingIntent, "HockeyApp Feedback", "Take a screenshot for your feedback.", iconId);
+
     notificationManager.notify(SCREENSHOT_NOTIFICATION_ID, notification);
 
     if (receiver == null) {
@@ -330,6 +388,8 @@ public class FeedbackManager {
     }
     currentActivity.registerReceiver(receiver, new IntentFilter(BROADCAST_ACTION));
   }
+
+
 
   private static void endNotification() {
     notificationActive = false;

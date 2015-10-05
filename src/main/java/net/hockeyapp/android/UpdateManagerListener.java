@@ -1,5 +1,8 @@
 package net.hockeyapp.android;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import org.json.JSONArray;
 
 import java.util.Date;
@@ -72,6 +75,13 @@ public abstract class UpdateManagerListener extends StringListener {
   }
 
   /**
+   * Called when the user dismisses the update dialog.
+   */
+  public void onCancel() {
+    // Do nothing
+  }
+
+  /**
    * Called when the update manager found an update.
    * @param data Information about the update.
    * @param url Link to apk file update.
@@ -110,5 +120,14 @@ public abstract class UpdateManagerListener extends StringListener {
   public boolean canUpdateInMarket() {
     return false;
   }
+
+  /**
+   * Called when the update permissions had not been granted.
+   * Implement your custom action to override the default behavior.
+   */
+  public void onUpdatePermissionsNotGranted() {
+    // Do nothing
+  }
+
 }
   
