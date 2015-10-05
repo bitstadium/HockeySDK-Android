@@ -9,7 +9,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.hockeyapp.android</groupId>
   <artifactId>HockeySDK</artifactId>
-  <version>3.6.0-b.1</version>
+  <version>3.6.1-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>HockeySDK</name>
 
