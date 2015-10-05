@@ -1,4 +1,4 @@
-## Version 3.6.0 Beta 1
+## Version 3.6.0
 
 ## Introduction
 
@@ -50,7 +50,7 @@ Please see the "[How to create a new app](http://support.hockeyapp.net/kb/about-
 Add the SDK to your app module's dependencies in Android Studio by adding the following line to your `dependencies { ... }` configuration:
 
 ```groovy
-  compile 'net.hockeyapp.android:HockeySDK:3.6.0-rc.1'
+  compile 'net.hockeyapp.android:HockeySDK:3.6.0'
 ```
 also make sure your repository configuration contains
 
