@@ -77,7 +77,7 @@ public class PrefsUtil {
       if (feedbackTokenPrefs != null) {
         feedbackTokenPrefsEditor = feedbackTokenPrefs.edit();
         feedbackTokenPrefsEditor.putString(Util.PREFS_KEY_FEEDBACK_TOKEN, token);
-        applyChanges(feedbackTokenPrefsEditor);
+        feedbackTokenPrefsEditor.apply();
       }
     }
   }
@@ -121,7 +121,7 @@ public class PrefsUtil {
               name, email, subject));
         }
         
-        applyChanges(nameEmailSubjectPrefsEditor);
+        nameEmailSubjectPrefsEditor.apply();
       }
     }
   }
@@ -145,32 +145,4 @@ public class PrefsUtil {
     return nameEmailSubjectPrefs.getString(Util.PREFS_KEY_NAME_EMAIL_SUBJECT, null);
   }
   
-  /**
-   * Apply SharedPreferences.Editor changes. If the code runs on API level 9 or higher,
-   * the asynchronous method apply is used, otherwise commit.
-   *
-   * @param editor the editor that should be commited
-   */
-  public static void applyChanges(Editor editor) {
-    if (applySupported()) {
-      editor.apply();
-    }
-    else {
-      editor.commit();
-    }
-  }
-  
-  /**
-   * Returns true if SharedPreferences.Editor.apply is supported.
-   *
-   * @return true if SharedPreferences.Editor.apply is supported
-   */
-  public static Boolean applySupported() {
-    try {
-      return (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.GINGERBREAD);
-    }
-    catch (NoClassDefFoundError e) {
-      return false;
-    }
-  }
 }

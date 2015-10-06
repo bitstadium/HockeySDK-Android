@@ -199,10 +199,11 @@ public class LoginManager {
     SharedPreferences prefs = context.getSharedPreferences("net.hockeyapp.android.login", 0);
     int currentMode = prefs.getInt("mode", -1);
     if (currentMode != mode) {
-      PrefsUtil.applyChanges(prefs.edit()
-          .remove("auid")
-          .remove("iuid")
-          .putInt("mode", mode));
+      prefs.edit()
+              .remove("auid")
+              .remove("iuid")
+              .putInt("mode", mode)
+              .apply();
     }
 
     String auid = prefs.getString("auid", null);

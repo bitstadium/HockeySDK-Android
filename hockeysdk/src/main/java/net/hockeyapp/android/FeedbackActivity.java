@@ -714,10 +714,11 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
       public void run() {
         PrefsUtil.getInstance().saveFeedbackTokenToPrefs(FeedbackActivity.this, null);
 
-        SharedPreferences preferences = getSharedPreferences(ParseFeedbackTask.PREFERENCES_NAME, 0);
-        PrefsUtil.applyChanges(preferences.edit()
-            .remove(ParseFeedbackTask.ID_LAST_MESSAGE_SEND)
-            .remove(ParseFeedbackTask.ID_LAST_MESSAGE_PROCESSED));
+        getSharedPreferences(ParseFeedbackTask.PREFERENCES_NAME, 0)
+                .edit()
+                .remove(ParseFeedbackTask.ID_LAST_MESSAGE_SEND)
+                .remove(ParseFeedbackTask.ID_LAST_MESSAGE_PROCESSED)
+                .apply();
 
         configureFeedbackView(false);
       }
