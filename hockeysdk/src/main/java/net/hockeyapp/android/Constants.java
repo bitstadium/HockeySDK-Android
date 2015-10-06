@@ -263,14 +263,12 @@ public class Constants {
     String fingerprint = "HA" + (Build.BOARD.length() % 10) + (Build.BRAND.length() % 10) +
       (abiString.length() % 10) + (Build.PRODUCT.length() % 10);
     String serial = "";
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-      try {
-        serial = android.os.Build.class.getField("SERIAL").get(null).toString();
-      }
-      catch (Throwable t) {
-      }
+    try {
+      serial = android.os.Build.class.getField("SERIAL").get(null).toString();
     }
-    
+    catch (Throwable t) {
+    }
+
     return fingerprint + ":" + serial;
   }
 

@@ -89,14 +89,8 @@ public class Util {
    * @param value a string
    * @return true if value is a valid email
    */
-  @TargetApi(Build.VERSION_CODES.FROYO)
   public final static boolean isValidEmail(String value) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
-      return !TextUtils.isEmpty(value) && android.util.Patterns.EMAIL_ADDRESS.matcher(value).matches();
-    }
-    else {
-      return !TextUtils.isEmpty(value);
-    }
+    return !TextUtils.isEmpty(value) && android.util.Patterns.EMAIL_ADDRESS.matcher(value).matches();
   }
 
   /**
@@ -163,7 +157,7 @@ public class Util {
    * Converts a map of parameters to a HTML form entity.
    * @param params the parameters
    * @return an URL-encoded form string ready for use in a HTTP post
-   * @throws UnsupportedEncodingException
+   * @throws UnsupportedEncodingException when your system does not know how to handle the UTF-8 charset
    */
   public static String getFormString(Map<String, String> params) throws UnsupportedEncodingException {
       List<String> protoList = new ArrayList<String>();
@@ -202,9 +196,9 @@ public class Util {
    * @param context the context to use, e.g. your Activity
    * @param pendingIntent the Intent to call
    * @param title the title string for the notification
-   * @param text the text content for the notification
+   * @param text the text content for the notificationcrash
    * @param iconId the icon resource ID for the notification
-   * @return
+   * @return the created notification
    */
   public static Notification createNotification(Context context, PendingIntent pendingIntent, String title, String text, int iconId) {
     Notification notification;

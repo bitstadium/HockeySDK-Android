@@ -122,9 +122,10 @@ public class ParseFeedbackTask extends AsyncTask<Void, Void, FeedbackResponse> {
     SharedPreferences preferences = context.getSharedPreferences(PREFERENCES_NAME, 0);
 
     if (requestType.equals("send")) {
-      PrefsUtil.applyChanges(preferences.edit()
-          .putInt(ID_LAST_MESSAGE_SEND, idLatestMessage)
-          .putInt(ID_LAST_MESSAGE_PROCESSED, idLatestMessage));
+      preferences.edit()
+              .putInt(ID_LAST_MESSAGE_SEND, idLatestMessage)
+              .putInt(ID_LAST_MESSAGE_PROCESSED, idLatestMessage)
+              .apply();
     }
     else if (requestType.equals("fetch")) {
       int idLastMessageSend = preferences.getInt(ID_LAST_MESSAGE_SEND, -1);
@@ -132,7 +133,9 @@ public class ParseFeedbackTask extends AsyncTask<Void, Void, FeedbackResponse> {
 
       if (idLatestMessage != idLastMessageSend && idLatestMessage != idLastMessageProcessed) {
         // We have a new answer here.
-        PrefsUtil.applyChanges(preferences.edit().putInt(ID_LAST_MESSAGE_PROCESSED, idLatestMessage));
+        preferences.edit()
+                .putInt(ID_LAST_MESSAGE_PROCESSED, idLatestMessage)
+                .apply();
         boolean eventHandled = false;
 
         FeedbackManagerListener listener = FeedbackManager.getLastListener();
