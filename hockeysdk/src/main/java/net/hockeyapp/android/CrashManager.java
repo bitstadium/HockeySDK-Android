@@ -715,7 +715,7 @@ public class CrashManager {
           SharedPreferences preferences = context.getSharedPreferences("HockeySDK", Context.MODE_PRIVATE);
           Editor editor = preferences.edit();
           editor.putString("ConfirmedFilenames", joinArray(filenames, "|"));
-          PrefsUtil.applyChanges(editor);
+          editor.apply();
         }
         catch (Exception e) {
           // Just in case, we catch all exceptions here

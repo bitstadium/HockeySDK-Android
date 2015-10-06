@@ -65,7 +65,7 @@ public class Tracking {
     
     SharedPreferences.Editor editor = getPreferences(activity).edit();
     editor.putLong(START_TIME_KEY + activity.hashCode(), now);
-    PrefsUtil.applyChanges(editor);
+    editor.apply();
   }
 
   /**
@@ -96,7 +96,7 @@ public class Tracking {
       
       SharedPreferences.Editor editor = preferences.edit();
       editor.putLong(USAGE_TIME_KEY + Constants.APP_VERSION, sum + duration);
-      PrefsUtil.applyChanges(editor);
+      editor.apply();
     }
   }
 
