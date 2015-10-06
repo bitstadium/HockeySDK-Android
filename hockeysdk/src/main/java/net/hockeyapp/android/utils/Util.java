@@ -89,14 +89,8 @@ public class Util {
    * @param value a string
    * @return true if value is a valid email
    */
-  @TargetApi(Build.VERSION_CODES.FROYO)
   public final static boolean isValidEmail(String value) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
-      return !TextUtils.isEmpty(value) && android.util.Patterns.EMAIL_ADDRESS.matcher(value).matches();
-    }
-    else {
-      return !TextUtils.isEmpty(value);
-    }
+    return !TextUtils.isEmpty(value) && android.util.Patterns.EMAIL_ADDRESS.matcher(value).matches();
   }
 
   /**
