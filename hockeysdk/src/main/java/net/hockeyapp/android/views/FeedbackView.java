@@ -159,7 +159,7 @@ public class FeedbackView extends LinearLayout {
     
     LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
     int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 10.0, getResources().getDisplayMetrics());
-    params.gravity = Gravity.LEFT;
+    params.gravity = Gravity.START;
     
     wrapperLayoutFeedback.setLayoutParams(params);
     wrapperLayoutFeedback.setPadding(padding, padding, padding, padding);
@@ -191,7 +191,7 @@ public class FeedbackView extends LinearLayout {
     
     LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
     int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 10.0, getResources().getDisplayMetrics());
-    params.gravity = Gravity.LEFT;
+    params.gravity = Gravity.START;
     
     wrapperLayoutButtons.setLayoutParams(params);
     wrapperLayoutButtons.setPadding(0, padding, 0, padding);
@@ -336,7 +336,7 @@ public class FeedbackView extends LinearLayout {
 
     LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
     int paddingTopBottom = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 10.0, getResources().getDisplayMetrics());
-    params.gravity = Gravity.LEFT;
+    params.gravity = Gravity.START;
 
     wrapperLayoutAttachments.setLayoutParams(params);
     wrapperLayoutAttachments.setPadding(0, 0, 0, paddingTopBottom);

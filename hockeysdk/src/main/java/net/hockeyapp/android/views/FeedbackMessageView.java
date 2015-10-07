@@ -88,7 +88,7 @@ public class FeedbackMessageView extends LinearLayout {
 
   private void loadLayoutParams(Context context) {
     setOrientation(LinearLayout.VERTICAL);
-    setGravity(Gravity.LEFT);
+    setGravity(Gravity.START);
     setBackgroundColor(Color.LTGRAY);
   }
 
