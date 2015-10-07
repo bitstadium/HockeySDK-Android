@@ -1,5 +1,6 @@
 package net.hockeyapp.android;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
@@ -251,6 +252,8 @@ public class Constants {
    * 
    * @param context the context to use. Usually your Activity object.
    */
+  @SuppressLint("InlinedApi")
+  @SuppressWarnings("deprecation")
   private static String createSalt(Context context) {
     String abiString;
     if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
