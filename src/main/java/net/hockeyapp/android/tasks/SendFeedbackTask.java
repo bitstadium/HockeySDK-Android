@@ -124,6 +124,9 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
 
     public void detach() {
         context = null;
+        if (progressDialog != null) {
+            progressDialog.dismiss();
+        }
         progressDialog = null;
     }
 
