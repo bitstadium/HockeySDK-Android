@@ -1,5 +1,7 @@
 package net.hockeyapp.android;
 
+import android.util.SparseArray;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -261,7 +263,7 @@ public class Strings {
   /**
    * Default strings.
    */
-  private final static Map<Integer, String> DEFAULT = new HashMap<Integer, String>();
+  private final static SparseArray<String> DEFAULT = new SparseArray<>();
   static {
     // Crash Dialog
     DEFAULT.put(CRASH_DIALOG_TITLE_ID,           "Crash Data");
