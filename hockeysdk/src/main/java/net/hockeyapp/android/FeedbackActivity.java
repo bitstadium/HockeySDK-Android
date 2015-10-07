@@ -1,5 +1,6 @@
 package net.hockeyapp.android;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -665,6 +666,7 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
    * Load the feedback messages fetched from server
    * @param feedbackResponse	{@link FeedbackResponse} object
    */
+  @SuppressLint("SimpleDateFormat")
   private void loadFeedbackMessages(final FeedbackResponse feedbackResponse) {
     runOnUiThread(new Runnable() {
 
