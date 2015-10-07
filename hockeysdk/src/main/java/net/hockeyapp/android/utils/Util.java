@@ -69,6 +69,7 @@ public class Util {
   public static final String APP_IDENTIFIER_PATTERN = "[0-9a-f]+";
   public static final int APP_IDENTIFIER_LENGTH = 32;
   public static final String APP_IDENTIFIER_KEY = "net.hockeyapp.android.appIdentifier";
+
   public static final String LOG_IDENTIFIER = "HockeyApp";
 
   private static final Pattern appIdentifierPattern = Pattern.compile(APP_IDENTIFIER_PATTERN,
@@ -105,15 +106,8 @@ public class Util {
    * @param value a string
    * @return true if value is a valid email
    */
-  @TargetApi(Build.VERSION_CODES.FROYO)
   public final static boolean isValidEmail(String value) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
-      return !TextUtils.isEmpty(value) && android.util.Patterns.EMAIL_ADDRESS.matcher(value)
-        .matches();
-    }
-    else {
-      return !TextUtils.isEmpty(value);
-    }
+    return !TextUtils.isEmpty(value) && android.util.Patterns.EMAIL_ADDRESS.matcher(value).matches();
   }
 
   /**
@@ -188,7 +182,7 @@ public class Util {
    *
    * @param params the parameters
    * @return an URL-encoded form string ready for use in a HTTP post
-   * @throws UnsupportedEncodingException
+   * @throws UnsupportedEncodingException when your system does not know how to handle the UTF-8 charset
    */
   public static String getFormString(Map<String, String> params) throws
     UnsupportedEncodingException {
@@ -243,7 +237,7 @@ public class Util {
    * @param title         the title string for the notification
    * @param text          the text content for the notification
    * @param iconId        the icon resource ID for the notification
-   * @return
+   * @return the created notification
    */
   public static Notification createNotification(Context context, PendingIntent pendingIntent,
                                                 String title, String text, int iconId) {

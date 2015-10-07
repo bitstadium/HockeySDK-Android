@@ -90,6 +90,12 @@ public class LocaleManager {
     loadFromResources("hockeyapp_feedback_validate_name_error", Strings.FEEDBACK_VALIDATE_NAME_ERROR_ID, context);
     loadFromResources("hockeyapp_feedback_validate_text_error", Strings.FEEDBACK_VALIDATE_TEXT_ERROR_ID, context);
     loadFromResources("hockeyapp_feedback_generic_error", Strings.FEEDBACK_GENERIC_ERROR_ID, context);
+    loadFromResources("hockeyapp_feedback_attach_file", Strings.FEEDBACK_ATTACH_FILE_ID, context);
+    loadFromResources("hockeyapp_feedback_attach_picture", Strings.FEEDBACK_ATTACH_PICTURE_ID, context);
+    loadFromResources("hockeyapp_feedback_select_file", Strings.FEEDBACK_SELECT_FILE_ID, context);
+    loadFromResources("hockeyapp_feedback_select_picture", Strings.FEEDBACK_SELECT_PICTURE_ID, context);
+    loadFromResources("hockeyapp_feedback_max_attachments_allowed", Strings.FEEDBACK_MAX_ATTACHMENTS_ALLOWED, context);
+
 
     // Login Activity
     loadFromResources("hockeyapp_login_headline_text", Strings.LOGIN_HEADLINE_TEXT_ID, context);
@@ -106,6 +112,18 @@ public class LocaleManager {
     loadFromResources("hockeyapp_paint_dialog_message", Strings.PAINT_DIALOG_MESSAGE_ID, context);
     loadFromResources("hockeyapp_paint_dialog_negative_button", Strings.PAINT_DIALOG_NEGATIVE_BUTTON_ID, context);
     loadFromResources("hockeyapp_paint_dialog_positive_button", Strings.PAINT_DIALOG_POSITIVE_BUTTON_ID, context);
+
+    // Permissions
+    loadFromResources("hockeyapp_permission_update_title", Strings.PERMISSION_UPDATE_TITLE_ID, context);
+    loadFromResources("hockeyapp_permission_update_message", Strings.PERMISSION_UPDATE_MESSAGE_ID, context);
+    loadFromResources("hockeyapp_permission_dialog_negative_button", Strings.PERMISSION_DIALOG_NEGATIVE_BUTTON_ID, context);
+    loadFromResources("hockeyapp_permission_dialog_positive_button", Strings.PERMISSION_DIALOG_POSITIVE_BUTTON_ID, context);
+
+    // Dialogs
+    loadFromResources("hockeyapp_dialog_positive_button", Strings.DIALOG_POSITIVE_BUTTON_ID, context);
+    loadFromResources("hockeyapp_dialog_negative_button", Strings.DIALOG_NEGATIVE_BUTTON_ID, context);
+    loadFromResources("hockeyapp_dialog_error_title", Strings.DIALOG_ERROR_TITLE_ID, context);
+    loadFromResources("hockeyapp_dialog_error_message", Strings.DIALOG_ERROR_MESSAGE_ID, context);
   }
 
   private static void loadFromResources(String name, int resourceId, Context context) {

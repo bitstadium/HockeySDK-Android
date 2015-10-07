@@ -163,7 +163,7 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
       case FeedbackView.ADD_ATTACHMENT_BUTTON_ID:
         ViewGroup attachments = (ViewGroup) findViewById(FeedbackView.WRAPPER_LAYOUT_ATTACHMENTS);
         if (attachments.getChildCount() >= MAX_ATTACHMENTS_PER_MSG) {
-          Toast.makeText(this, "Only " + MAX_ATTACHMENTS_PER_MSG + " attachments allowed.", 1000).show();
+          Toast.makeText(this, String.format("", MAX_ATTACHMENTS_PER_MSG), 1000).show();
         } else {
           openContextMenu(v);
         }
@@ -250,8 +250,8 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
   public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
     super.onCreateContextMenu(menu, v, menuInfo);
 
-    menu.add(0, ATTACH_FILE, 0, "Attach File");
-    menu.add(0, ATTACH_PICTURE, 0, "Attach Picture");
+    menu.add(0, ATTACH_FILE, 0, Strings.get(Strings.FEEDBACK_ATTACH_FILE_ID));
+    menu.add(0, ATTACH_PICTURE, 0, Strings.get(Strings.FEEDBACK_ATTACH_PICTURE_ID));
   }
 
   @Override
@@ -440,11 +440,11 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
     switch(id) {
       case DIALOG_ERROR_ID:
         return new AlertDialog.Builder(this)
-          .setMessage("An error has occured")
+          .setMessage(Strings.get(Strings.DIALOG_ERROR_MESSAGE_ID))
           .setCancelable(false)
-          .setTitle("Error")
+          .setTitle(Strings.get(Strings.DIALOG_ERROR_TITLE_ID))
           .setIcon(android.R.drawable.ic_dialog_alert)
-          .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+          .setPositiveButton(Strings.get(Strings.DIALOG_POSITIVE_BUTTON_ID), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
               error = null;
               dialog.cancel();
@@ -514,14 +514,14 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
       Intent intent = new Intent();
       intent.setType("*/*");
       intent.setAction(Intent.ACTION_GET_CONTENT);
-      startActivityForResult(Intent.createChooser(intent, "Select File"), ATTACH_FILE);
+      startActivityForResult(Intent.createChooser(intent, Strings.get(Strings.FEEDBACK_SELECT_FILE_ID)), ATTACH_FILE);
       return true;
 
     } else if (request == ATTACH_PICTURE) {
       Intent intent = new Intent();
       intent.setType("image/*");
       intent.setAction(Intent.ACTION_GET_CONTENT);
-      startActivityForResult(Intent.createChooser(intent, "Select Picture"), ATTACH_PICTURE);
+      startActivityForResult(Intent.createChooser(intent, Strings.get(Strings.FEEDBACK_SELECT_PICTURE_ID)), ATTACH_PICTURE);
       return true;
 
     } else return false;
@@ -684,7 +684,7 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
     			/** Set the lastUpdatedTextView text as the date of the latest feedback message */
     			try {
     				date = format.parse(feedbackMessages.get(0).getCreatedAt());
-    				lastUpdatedTextView.setText(String.format("Last Updated: %s", formatNew.format(date)));
+    				lastUpdatedTextView.setText(String.format(Strings.get(Strings.FEEDBACK_LAST_UPDATED_TEXT_ID) + " %s", formatNew.format(date)));
     			}
     			catch (ParseException e1) {
     				e1.printStackTrace();
@@ -714,10 +714,11 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
       public void run() {
         PrefsUtil.getInstance().saveFeedbackTokenToPrefs(FeedbackActivity.this, null);
 
-        SharedPreferences preferences = getSharedPreferences(ParseFeedbackTask.PREFERENCES_NAME, 0);
-        PrefsUtil.applyChanges(preferences.edit()
-            .remove(ParseFeedbackTask.ID_LAST_MESSAGE_SEND)
-            .remove(ParseFeedbackTask.ID_LAST_MESSAGE_PROCESSED));
+        getSharedPreferences(ParseFeedbackTask.PREFERENCES_NAME, 0)
+                .edit()
+                .remove(ParseFeedbackTask.ID_LAST_MESSAGE_SEND)
+                .remove(ParseFeedbackTask.ID_LAST_MESSAGE_PROCESSED)
+                .apply();
 
         configureFeedbackView(false);
       }

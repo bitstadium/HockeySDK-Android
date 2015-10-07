@@ -209,7 +209,9 @@ public class LoginTask extends ConnectionTask<Void, Void, Boolean> {
         if (status.equals("identified")) {
           String iuid = response.getString("iuid");
           if (!TextUtils.isEmpty(iuid)) {
-            PrefsUtil.applyChanges(prefs.edit().putString("iuid", iuid));
+            prefs.edit()
+                    .putString("iuid", iuid)
+                    .apply();
             return true;
           }
         }
@@ -218,7 +220,9 @@ public class LoginTask extends ConnectionTask<Void, Void, Boolean> {
         if (status.equals("authorized")) {
           String auid = response.getString("auid");
           if (!TextUtils.isEmpty(auid)) {
-            PrefsUtil.applyChanges(prefs.edit().putString("auid", auid));
+            prefs.edit()
+                    .putString("auid", auid)
+                    .apply();
             return true;
           }
         }
@@ -228,7 +232,10 @@ public class LoginTask extends ConnectionTask<Void, Void, Boolean> {
           return true;
         }
         else {
-          PrefsUtil.applyChanges(prefs.edit().remove("iuid").remove("auid"));
+          prefs.edit()
+                  .remove("iuid")
+                  .remove("auid")
+                  .apply();
         }
       }
       else {

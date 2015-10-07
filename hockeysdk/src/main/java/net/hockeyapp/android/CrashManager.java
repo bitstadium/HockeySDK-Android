@@ -15,6 +15,7 @@ import net.hockeyapp.android.utils.PrefsUtil;
 
 import net.hockeyapp.android.utils.Util;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -98,7 +99,9 @@ public class CrashManager {
   }
 
   /**
-   * Registers new crash manager and handles existing crash logs.
+   * Registers new crash manager and handles existing crash logs. If 
+   * context is not an instance of Activity (or a subclass of it), 
+   * crashes will be sent automatically.
    * 
    * @param context The context to use. Usually your Activity object.
    * @param appIdentifier App ID of your app on HockeyApp.
@@ -108,7 +111,9 @@ public class CrashManager {
   }
 
   /**
-   * Registers new crash manager and handles existing crash logs.
+   * Registers new crash manager and handles existing crash logs. If 
+   * context is not an instance of Activity (or a subclass of it), 
+   * crashes will be sent automatically.
    * 
    * @param context The context to use. Usually your Activity object.
    * @param appIdentifier App ID of your app on HockeyApp.
@@ -119,7 +124,9 @@ public class CrashManager {
   }
 
   /**
-   * Registers new crash manager and handles existing crash logs.
+   * Registers new crash manager and handles existing crash logs. If 
+   * context is not an instance of Activity (or a subclass of it), 
+   * crashes will be sent automatically.
    * 
    * @param context The context to use. Usually your Activity object.
    * @param urlString URL of the HockeyApp server.
@@ -162,7 +169,8 @@ public class CrashManager {
 
   /**
    * Executes the crash manager. You need to call this method if you have used
-   * the method 'initialize' before.
+   * the method 'initialize' before. If context is not an instance of Activity 
+   * (or a subclass of it), crashes will be sent automatically.
    * 
    * @param context The context to use. Usually your Activity object.
    * @param listener Implement for callback functions.
@@ -174,7 +182,7 @@ public class CrashManager {
     
     int foundOrSend = hasStackTraces(weakContext);
     if (foundOrSend == 1) {
-      Boolean autoSend = false;
+      Boolean autoSend = !(context instanceof Activity);
       SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
       autoSend |= prefs.getBoolean(ALWAYS_SEND_KEY, false);
 
@@ -707,7 +715,7 @@ public class CrashManager {
           SharedPreferences preferences = context.getSharedPreferences("HockeySDK", Context.MODE_PRIVATE);
           Editor editor = preferences.edit();
           editor.putString("ConfirmedFilenames", joinArray(filenames, "|"));
-          PrefsUtil.applyChanges(editor);
+          editor.apply();
         }
         catch (Exception e) {
           // Just in case, we catch all exceptions here

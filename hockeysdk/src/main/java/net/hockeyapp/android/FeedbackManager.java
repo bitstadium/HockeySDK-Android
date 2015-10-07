@@ -166,7 +166,7 @@ public class FeedbackManager {
       FeedbackManager.identifier = Util.sanitizeAppIdentifier(appIdentifier);
       FeedbackManager.urlString = urlString;
       FeedbackManager.lastListener = listener;
-    
+
       Constants.loadFromContext(context);
     }
   }
@@ -184,6 +184,15 @@ public class FeedbackManager {
    * @param attachments the optional attachment {@link Uri}s
    */
   public static void showFeedbackActivity(Context context, Uri... attachments) {
+    showFeedbackActivity(context, null, attachments);
+  }
+  /**
+   * Starts the {@link FeedbackActivity}
+   * @param context {@link Context} object
+   * @param attachments the optional attachment {@link Uri}s
+   * @param extras a bundle to be added to the Intent that starts the FeedbackActivity instance
+   */
+  public static void showFeedbackActivity(Context context, Bundle extras, Uri... attachments) {
     if (context != null) {
       Class<?> activityClass = null;
       if (lastListener != null) {
@@ -194,6 +203,9 @@ public class FeedbackManager {
       }
       
       Intent intent = new Intent();
+      if (extras != null && !extras.isEmpty()) {
+        intent.putExtras(extras);
+      }
       intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
       intent.setClass(context, activityClass);
       intent.putExtra("url", getURLString(context));
