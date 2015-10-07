@@ -255,6 +255,15 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
   }
 
   @Override
+  protected void onStop() {
+    super.onStop();
+
+    if (sendFeedbackTask != null) {
+      sendFeedbackTask.detach();
+    }
+  }
+
+  @Override
   public boolean onKeyDown(int keyCode, KeyEvent event)  {
     if (keyCode == KeyEvent.KEYCODE_BACK) {
       if (inSendFeedback) {
