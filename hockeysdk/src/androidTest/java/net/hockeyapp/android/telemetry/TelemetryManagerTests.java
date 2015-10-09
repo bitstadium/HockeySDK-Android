@@ -39,7 +39,7 @@ public class TelemetryManagerTests extends InstrumentationTestCase {
     Sender mockSender = mock(PublicSender.class);
     Application mockApplication = mock(Application.class);
 
-    TelemetryManager.register(getInstrumentation().getContext(), mockApplication, "1234",
+    TelemetryManager.register(getInstrumentation().getContext(), mockApplication, "12345678901234567890123456789032",
       mockSender, mockPersistence, mockChannel);
 
     assertNotNull(TelemetryManager.getSender());
