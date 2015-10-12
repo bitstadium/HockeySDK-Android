@@ -1,5 +1,6 @@
 package net.hockeyapp.android;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -79,11 +80,11 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
   private static final int MAX_ATTACHMENTS_PER_MSG = 3;
 
   /** ID of error dialog **/
-  private final int DIALOG_ERROR_ID = 0;
+  private static final int DIALOG_ERROR_ID = 0;
   /** Activity request constants for ContextMenu and Chooser Intent */
-  private final int ATTACH_PICTURE = 1;
-  private final int ATTACH_FILE = 2;
-  private final int PAINT_IMAGE = 3;
+  private static final int ATTACH_PICTURE = 1;
+  private static final int ATTACH_FILE = 2;
+  private static final int PAINT_IMAGE = 3;
   /** Reference to this **/
   private Context context;
   /** Widgets and layout **/
@@ -163,7 +164,8 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
       case FeedbackView.ADD_ATTACHMENT_BUTTON_ID:
         ViewGroup attachments = (ViewGroup) findViewById(FeedbackView.WRAPPER_LAYOUT_ATTACHMENTS);
         if (attachments.getChildCount() >= MAX_ATTACHMENTS_PER_MSG) {
-          Toast.makeText(this, String.format("", MAX_ATTACHMENTS_PER_MSG), 1000).show();
+          //TODO should we add some more text here?
+          Toast.makeText(this, String.valueOf(MAX_ATTACHMENTS_PER_MSG), Toast.LENGTH_SHORT).show();
         } else {
           openContextMenu(v);
         }
@@ -476,9 +478,11 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
         /** If the ErrorObject is null, display the general error message */
         messageDialogError.setMessage(Strings.get(Strings.FEEDBACK_GENERIC_ERROR_ID));
       }
-
       break;
+      default:
+        break;
     }
+
   }
 
   /**
@@ -671,6 +675,7 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
    * Load the feedback messages fetched from server
    * @param feedbackResponse	{@link FeedbackResponse} object
    */
+  @SuppressLint("SimpleDateFormat")
   private void loadFeedbackMessages(final FeedbackResponse feedbackResponse) {
     runOnUiThread(new Runnable() {
 

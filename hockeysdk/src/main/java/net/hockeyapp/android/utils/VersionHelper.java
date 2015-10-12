@@ -1,5 +1,6 @@
 package net.hockeyapp.android.utils;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -112,6 +113,7 @@ public class VersionHelper {
     return failSafeGetStringFromJSON(newest, "shortversion", "") + " (" + failSafeGetStringFromJSON(newest, "version", "") + ")";
   }
   
+  @SuppressLint("SimpleDateFormat")
   public String getFileDateString() {
     long timestamp = failSafeGetLongFromJSON(newest, "timestamp", 0L);
     Date date = new Date(timestamp * 1000L);

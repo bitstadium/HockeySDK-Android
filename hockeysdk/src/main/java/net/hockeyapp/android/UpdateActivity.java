@@ -1,5 +1,6 @@
 package net.hockeyapp.android;
 
+import android.annotation.SuppressLint;
 import android.os.Build;
 import android.util.Log;
 import net.hockeyapp.android.listeners.DownloadFileListener;
@@ -322,6 +323,7 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
    *
    * @return
    */
+  @SuppressLint("InlinedApi")
   @SuppressWarnings("deprecation")
   private boolean isUnknownSourcesChecked() {
     try {

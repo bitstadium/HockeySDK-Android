@@ -362,7 +362,8 @@ public class FeedbackManager {
       @Override
       protected void onPostExecute(Boolean success) {
         if (success == false) {
-          Toast.makeText(context, "Screenshot could not be created. Sorry.", 2000).show();
+          Toast.makeText(context, "Screenshot could not be created. Sorry.", Toast.LENGTH_LONG)
+            .show();
         }
       }
     }.execute(result);
@@ -373,7 +374,8 @@ public class FeedbackManager {
     client.setConnection(connection);
     connection.connect();
 
-    Toast.makeText(context, "Screenshot '" + result.getName() + "' is available in gallery.", 2000).show();
+    Toast.makeText(context, "Screenshot '" + result.getName() + "' is available in gallery.",
+      Toast.LENGTH_LONG).show();
   }
 
   @SuppressWarnings("deprecation")

@@ -435,7 +435,7 @@ public class CrashManager {
         }
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        prefs.edit().putBoolean(ALWAYS_SEND_KEY, true).commit();
+        prefs.edit().putBoolean(ALWAYS_SEND_KEY, true).apply();
 
         sendCrashes(weakContext, listener, ignoreDefaultHandler, userProvidedMetaData);
         return true;
@@ -461,7 +461,7 @@ public class CrashManager {
 
       if (context != null) {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        prefs.edit().remove(ALWAYS_SEND_KEY).commit();
+        prefs.edit().remove(ALWAYS_SEND_KEY).apply();
       }
     }
   }
@@ -616,7 +616,7 @@ public class CrashManager {
         }
         else {
           editor.putInt("RETRY_COUNT: "+ filename, retryCounter + 1);
-          editor.commit();
+          editor.apply();
         }
       }
     }
@@ -634,7 +634,7 @@ public class CrashManager {
         SharedPreferences preferences = context.getSharedPreferences("HockeySDK", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.remove("RETRY_COUNT: "+ filename);
-        editor.commit();
+        editor.apply();
       }
     }
   }
