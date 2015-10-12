@@ -1,3 +1,83 @@
 <resources>
-    <string name="app_name">HockeySDK</string>
+
+    <!-- Crash Dialog -->
+    <string name="hockeyapp_crash_dialog_title">Crash Data</string>
+    <string name="hockeyapp_crash_dialog_message">The app found information about previous crashes. Would you like to send this data to the developer?</string>
+    <string name="hockeyapp_crash_dialog_negative_button">Dismiss</string>
+    <string name="hockeyapp_crash_dialog_neutral_button">Always send</string>
+    <string name="hockeyapp_crash_dialog_positive_button">Send</string>
+
+    <!-- Download Failed -->
+    <string name="hockeyapp_download_failed_dialog_title">Download Failed</string>
+    <string name="hockeyapp_download_failed_dialog_message">The update could not be downloaded. Would you like to try again?</string>
+    <string name="hockeyapp_download_failed_dialog_negative_button">Cancel</string>
+    <string name="hockeyapp_download_failed_dialog_positive_button">Retry</string>
+
+    <!-- Update -->
+    <string name="hockeyapp_update_mandatory_toast">Please install the latest version to continue to use this app.</string>
+    <string name="hockeyapp_update_dialog_title">Update Available</string>
+    <string name="hockeyapp_update_dialog_message">Show information about the new update?</string>
+    <string name="hockeyapp_update_dialog_negative_button">Dismiss</string>
+    <string name="hockeyapp_update_dialog_positive_button">Show</string>
+
+    <!-- Expiry Info -->
+    <string name="hockeyapp_expiry_info_title">Build Expired</string>
+    <string name="hockeyapp_expiry_info_text">This has build has expired. Please check HockeyApp for any updates.</string>
+
+    <!-- Feedback Activity -->
+    <string name="hockeyapp_feedback_failed_title">Feedback Failed</string>
+    <string name="hockeyapp_feedback_failed_text">Would you like to send your feedback again?</string>
+    <string name="hockeyapp_feedback_name_hint">Name</string>
+    <string name="hockeyapp_feedback_email_hint">Email</string>
+    <string name="hockeyapp_feedback_subject_hint">Subject</string>
+    <string name="hockeyapp_feedback_message_hint">Message</string>
+    <string name="hockeyapp_feedback_last_updated_text">Last Updated: </string>
+    <string name="hockeyapp_feedback_attachment_button_text">Add Attachment</string>
+    <string name="hockeyapp_feedback_send_button_text">Send Feedback</string>
+    <string name="hockeyapp_feedback_response_button_text">Add a Response</string>
+    <string name="hockeyapp_feedback_refresh_button_text">Refresh</string>
+    <string name="hockeyapp_feedback_title">Feedback</string>
+    <string name="hockeyapp_feedback_send_generic_error">Message couldn\'t be posted. Please check your input values and your connection, then try again.</string>
+    <string name="hockeyapp_feedback_send_network_error">No response from server. Please check your connection, then try again.</string>
+    <string name="hockeyapp_feedback_validate_subject_error">Please enter a subject</string>
+    <string name="hockeyapp_feedback_validate_email_error">Please enter a name</string>
+    <string name="hockeyapp_feedback_validate_email_empty">Please enter an email address</string>
+    <string name="hockeyapp_feedback_validate_name_error">Please enter a feedback text</string>
+    <string name="hockeyapp_feedback_validate_text_error">Message couldn\'t be posted. Please check the format of your email address.</string>
+    <string name="hockeyapp_feedback_generic_error">An error has occurred</string>
+    <string name="hockeyapp_feedback_attach_file">Attach File</string>
+    <string name="hockeyapp_feedback_attach_picture">Attach Picture</string>
+    <string name="hockeyapp_feedback_select_file">Select File</string>
+    <string name="hockeyapp_feedback_select_picture">Select Picture</string>
+    <string name="hockeyapp_feedback_max_attachments_allowed">Only %s attachments allowed.</string>
+
+
+    <!-- Login Activity -->
+    <string name="hockeyapp_login_headline_text">Please enter your account credentials.</string>
+    <string name="hockeyapp_login_missing_credentials_toast">Please fill in the missing account credentials.</string>
+    <string name="hockeyapp_login_email_hint">Email</string>
+    <string name="hockeyapp_login_password_hint">Password</string>
+    <string name="hockeyapp_login_login_button_text">Login</string>
+
+    <!-- Paint Activity -->
+    <string name="hockeyapp_paint_indicator_toast">Draw something!</string>
+    <string name="hockeyapp_paint_menu_save">Save</string>
+    <string name="hockeyapp_paint_menu_undo">Undo</string>
+    <string name="hockeyapp_paint_menu_clear">Clear</string>
+    <string name="hockeyapp_paint_dialog_message">Discard your drawings?</string>
+    <string name="hockeyapp_paint_dialog_negative_button">No</string>
+    <string name="hockeyapp_paint_dialog_positive_button">Yes</string>
+
+    <!-- Permissions -->
+    <string name="hockeyapp_permission_update_title">Need storage access</string>
+    <string name="hockeyapp_permission_update_message">In order to download and install app updates you will have to allow the app to access your device storage.</string>
+    <string name="hockeyapp_permission_dialog_negative_button">Cancel</string>
+    <string name="hockeyapp_permission_dialog_positive_button">Retry</string>
+
+    <!-- Dialogs -->
+    <string name="hockeyapp_dialog_positive_button">OK</string>
+    <string name="hockeyapp_dialog_negative_button">Cancel</string>
+    <string name="hockeyapp_dialog_error_title">Error</string>
+    <string name="hockeyapp_dialog_error_message">An error has occurred</string>
+
 </resources>

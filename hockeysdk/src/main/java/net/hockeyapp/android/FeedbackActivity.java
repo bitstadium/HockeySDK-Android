@@ -209,7 +209,7 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
 
     setContentView(getLayoutView());
 
-    setTitle(Strings.get(Strings.FEEDBACK_TITLE_ID));
+    setTitle(getString(R.string.hockeyapp_feedback_title));
     context = this;
 
     Bundle extras = getIntent().getExtras();
@@ -250,8 +250,8 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
   public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
     super.onCreateContextMenu(menu, v, menuInfo);
 
-    menu.add(0, ATTACH_FILE, 0, Strings.get(Strings.FEEDBACK_ATTACH_FILE_ID));
-    menu.add(0, ATTACH_PICTURE, 0, Strings.get(Strings.FEEDBACK_ATTACH_PICTURE_ID));
+    menu.add(0, ATTACH_FILE, 0, getString(R.string.hockeyapp_feedback_attach_file));
+    menu.add(0, ATTACH_PICTURE, 0, getString(R.string.hockeyapp_feedback_attach_picture));
   }
 
   @Override
@@ -449,11 +449,11 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
     switch(id) {
       case DIALOG_ERROR_ID:
         return new AlertDialog.Builder(this)
-          .setMessage(Strings.get(Strings.DIALOG_ERROR_MESSAGE_ID))
+          .setMessage(getString(R.string.hockeyapp_dialog_error_message))
           .setCancelable(false)
-          .setTitle(Strings.get(Strings.DIALOG_ERROR_TITLE_ID))
+          .setTitle(getString(R.string.hockeyapp_dialog_error_title))
           .setIcon(android.R.drawable.ic_dialog_alert)
-          .setPositiveButton(Strings.get(Strings.DIALOG_POSITIVE_BUTTON_ID), new DialogInterface.OnClickListener() {
+          .setPositiveButton(getString(R.string.hockeyapp_dialog_positive_button), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
               error = null;
               dialog.cancel();
@@ -474,7 +474,7 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
         messageDialogError.setMessage(error.getMessage());
       } else {
         /** If the ErrorObject is null, display the general error message */
-        messageDialogError.setMessage(Strings.get(Strings.FEEDBACK_GENERIC_ERROR_ID));
+        messageDialogError.setMessage(getString(R.string.hockeyapp_feedback_generic_error));
       }
 
       break;
@@ -523,14 +523,14 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
       Intent intent = new Intent();
       intent.setType("*/*");
       intent.setAction(Intent.ACTION_GET_CONTENT);
-      startActivityForResult(Intent.createChooser(intent, Strings.get(Strings.FEEDBACK_SELECT_FILE_ID)), ATTACH_FILE);
+      startActivityForResult(Intent.createChooser(intent, getString(R.string.hockeyapp_feedback_select_file)), ATTACH_FILE);
       return true;
 
     } else if (request == ATTACH_PICTURE) {
       Intent intent = new Intent();
       intent.setType("image/*");
       intent.setAction(Intent.ACTION_GET_CONTENT);
-      startActivityForResult(Intent.createChooser(intent, Strings.get(Strings.FEEDBACK_SELECT_PICTURE_ID)), ATTACH_PICTURE);
+      startActivityForResult(Intent.createChooser(intent, getString(R.string.hockeyapp_feedback_select_picture)), ATTACH_PICTURE);
       return true;
 
     } else return false;
@@ -582,7 +582,7 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
           String requestType = bundle.getString("request_type");
           if ((requestType.equals("send") && ((responseString == null) || (Integer.parseInt(statusCode) != 201)))) {
             // Send feedback went wrong if response is empty or status code != 201
-            error.setMessage(Strings.get(Strings.FEEDBACK_SEND_GENERIC_ERROR_ID));
+            error.setMessage(getString(R.string.hockeyapp_feedback_send_generic_error));
           }
           else if ((requestType.equals("fetch") && (statusCode != null) && ((Integer.parseInt(statusCode) == 404) || (Integer.parseInt(statusCode) == 422)))) {
             // Fetch feedback went wrong if status code is 404 or 422
@@ -594,11 +594,11 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
             success = true;
           }
           else {
-            error.setMessage(Strings.get(Strings.FEEDBACK_SEND_NETWORK_ERROR_ID));
+            error.setMessage(getString(R.string.hockeyapp_feedback_send_network_error));
           }
         }
         else {
-          error.setMessage(Strings.get(Strings.FEEDBACK_SEND_GENERIC_ERROR_ID));
+          error.setMessage(getString(R.string.hockeyapp_feedback_send_generic_error));
         }
 
         if (!success) {
@@ -693,7 +693,7 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
     			/** Set the lastUpdatedTextView text as the date of the latest feedback message */
     			try {
     				date = format.parse(feedbackMessages.get(0).getCreatedAt());
-    				lastUpdatedTextView.setText(String.format(Strings.get(Strings.FEEDBACK_LAST_UPDATED_TEXT_ID) + " %s", formatNew.format(date)));
+    				lastUpdatedTextView.setText(String.format(getString(R.string.hockeyapp_feedback_last_updated_text) + " %s", formatNew.format(date)));
     			}
     			catch (ParseException e1) {
     				e1.printStackTrace();
@@ -750,19 +750,19 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
 
     if(TextUtils.isEmpty(subject)){
       subjectInput.setVisibility(View.VISIBLE);
-      setError(subjectInput, Strings.FEEDBACK_VALIDATE_SUBJECT_ERROR_ID);
+      setError(subjectInput, R.string.hockeyapp_feedback_validate_subject_error);
     }
     else if (FeedbackManager.getRequireUserName() == FeedbackUserDataElement.REQUIRED && TextUtils.isEmpty(name)) {
-      setError(nameInput, Strings.FEEDBACK_VALIDATE_NAME_ERROR_ID);
+      setError(nameInput, R.string.hockeyapp_feedback_validate_name_error);
     }
     else if (FeedbackManager.getRequireUserEmail() == FeedbackUserDataElement.REQUIRED && TextUtils.isEmpty(email)) {
-      setError(emailInput, Strings.FEEDBACK_VALIDATE_EMAIL_EMPTY_ID);
+      setError(emailInput, R.string.hockeyapp_feedback_validate_email_empty);
     }
     else if(TextUtils.isEmpty(text)) {
-      setError(textInput, Strings.FEEDBACK_VALIDATE_TEXT_ERROR_ID);
+      setError(textInput, R.string.hockeyapp_feedback_validate_text_error);
     }
   	else if (FeedbackManager.getRequireUserEmail() == FeedbackUserDataElement.REQUIRED && !Util.isValidEmail(email)) {
-      setError(emailInput, Strings.FEEDBACK_VALIDATE_EMAIL_ERROR_ID);
+      setError(emailInput, R.string.hockeyapp_feedback_validate_email_error);
   	}
   	else {
   		/** Save Name and Email to {@link SharedPreferences} */
@@ -778,7 +778,7 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
   }
 
    private void setError(EditText inputField, int feedbackStringId) {
-      inputField.setError(Strings.get(feedbackStringId));
+      inputField.setError(getString(feedbackStringId));
       enableDisableSendFeedbackButton(true);
    }
 

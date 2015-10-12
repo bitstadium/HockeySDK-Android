@@ -79,7 +79,7 @@ public class PaintActivity extends Activity {
     hLayout.addView(paintView);
     setContentView(vLayout);
 
-    Toast toast = Toast.makeText(this, Strings.get(Strings.PAINT_INDICATOR_TOAST_ID), 1000);
+    Toast toast = Toast.makeText(this, getString(R.string.hockeyapp_paint_indicator_toast), 1000);
     toast.show();
   }
 
@@ -87,9 +87,9 @@ public class PaintActivity extends Activity {
   public boolean onCreateOptionsMenu(Menu menu) {
     super.onCreateOptionsMenu(menu);
 
-    menu.add(0, MENU_SAVE_ID,  0, Strings.get(Strings.PAINT_MENU_SAVE_ID));
-    menu.add(0, MENU_UNDO_ID,  0, Strings.get(Strings.PAINT_MENU_UNDO_ID));
-    menu.add(0, MENU_CLEAR_ID, 0, Strings.get(Strings.PAINT_MENU_CLEAR_ID));
+    menu.add(0, MENU_SAVE_ID,  0, getString(R.string.hockeyapp_paint_menu_save));
+    menu.add(0, MENU_UNDO_ID,  0, getString(R.string.hockeyapp_paint_menu_undo));
+    menu.add(0, MENU_CLEAR_ID, 0, getString(R.string.hockeyapp_paint_menu_clear));
 
     return true;
   }
@@ -138,9 +138,9 @@ public class PaintActivity extends Activity {
         };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(Strings.get(Strings.PAINT_DIALOG_MESSAGE_ID))
-               .setPositiveButton(Strings.get(Strings.PAINT_DIALOG_POSITIVE_BUTTON_ID), dialogClickListener)
-               .setNegativeButton(Strings.get(Strings.PAINT_DIALOG_NEGATIVE_BUTTON_ID), dialogClickListener)
+        builder.setMessage(R.string.hockeyapp_paint_dialog_message)
+               .setPositiveButton(R.string.hockeyapp_paint_dialog_positive_button, dialogClickListener)
+               .setNegativeButton(R.string.hockeyapp_paint_dialog_negative_button, dialogClickListener)
                .show();
         return true;
       }

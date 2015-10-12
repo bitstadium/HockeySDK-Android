@@ -157,7 +157,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
       AsyncTaskUtils.execute(loginTask);
     }
     else {
-      Toast.makeText(this, Strings.get(Strings.LOGIN_MISSING_CREDENTIALS_TOAST_ID), 1000).show();
+      Toast.makeText(this, getString(R.string.hockeyapp_login_missing_credentials_toast), 1000).show();
     }
   }
 

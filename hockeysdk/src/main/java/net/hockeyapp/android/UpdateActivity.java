@@ -202,13 +202,13 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
         } else {
           final UpdateActivity updateActivity = this;
           new AlertDialog.Builder(context)
-                  .setTitle(Strings.get(Strings.PERMISSION_UPDATE_TITLE_ID))
-                  .setMessage(Strings.get(Strings.PERMISSION_UPDATE_MESSAGE_ID))
-                  .setNegativeButton(Strings.get(Strings.PERMISSION_DIALOG_NEGATIVE_BUTTON_ID), null)
-                  .setPositiveButton(Strings.get(Strings.PERMISSION_DIALOG_POSITIVE_BUTTON_ID), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                      updateActivity.prepareDownload();
-                    }
+                  .setTitle(getString(R.string.hockeyapp_permission_update_title))
+                  .setMessage(getString(R.string.hockeyapp_permission_update_message))
+                  .setNegativeButton(getString(R.string.hockeyapp_permission_dialog_negative_button), null)
+                  .setPositiveButton(getString(R.string.hockeyapp_permission_dialog_positive_button), new DialogInterface.OnClickListener() {
+                      public void onClick(DialogInterface dialog, int which) {
+                          updateActivity.prepareDownload();
+                      }
                   })
                   .create()
                   .show();
@@ -235,16 +235,6 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
         }
         else {
           enableUpdateButton();
-        }
-      }
-      
-      public String getStringForResource(int resourceID) {
-        UpdateManagerListener listener = UpdateManager.getLastListener();
-        if (listener != null) {
-          return listener.getStringForResource(resourceID);
-        }
-        else {
-          return null;
         }
       }
     });

@@ -509,22 +509,22 @@ public class CrashManager {
     }
 
     AlertDialog.Builder builder = new AlertDialog.Builder(context);
-    builder.setTitle(Strings.get(listener, Strings.CRASH_DIALOG_TITLE_ID));
-    builder.setMessage(Strings.get(listener, Strings.CRASH_DIALOG_MESSAGE_ID));
+    builder.setTitle(R.string.hockeyapp_crash_dialog_title);
+    builder.setMessage(R.string.hockeyapp_crash_dialog_message);
 
-    builder.setNegativeButton(Strings.get(listener, Strings.CRASH_DIALOG_NEGATIVE_BUTTON_ID), new DialogInterface.OnClickListener() {
+    builder.setNegativeButton(R.string.hockeyapp_crash_dialog_negative_button, new DialogInterface.OnClickListener() {
       public void onClick(DialogInterface dialog, int which) {
         handleUserInput(CrashManagerUserInput.CrashManagerUserInputDontSend, null, listener, weakContext, ignoreDefaultHandler);
       }
     });
 
-    builder.setNeutralButton(Strings.get(listener, Strings.CRASH_DIALOG_NEUTRAL_BUTTON_ID), new DialogInterface.OnClickListener() {
+    builder.setNeutralButton(R.string.hockeyapp_crash_dialog_neutral_button, new DialogInterface.OnClickListener() {
       public void onClick(DialogInterface dialog, int which) {
         handleUserInput(CrashManagerUserInput.CrashManagerUserInputAlwaysSend, null, listener, weakContext, ignoreDefaultHandler);
       }
     });
 
-    builder.setPositiveButton(Strings.get(listener, Strings.CRASH_DIALOG_POSITIVE_BUTTON_ID), new DialogInterface.OnClickListener() {
+    builder.setPositiveButton(R.string.hockeyapp_dialog_positive_button, new DialogInterface.OnClickListener() {
       public void onClick(DialogInterface dialog, int which) {
         handleUserInput(CrashManagerUserInput.CrashManagerUserInputSend, null, listener,
             weakContext, ignoreDefaultHandler);

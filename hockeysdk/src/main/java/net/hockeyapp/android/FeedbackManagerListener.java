@@ -36,7 +36,7 @@ import net.hockeyapp.android.objects.FeedbackMessage;
  *
  * @author Bogdan Nistor
  **/
-public abstract class FeedbackManagerListener extends StringListener {
+public abstract class FeedbackManagerListener {
   /**
    * Return your own subclass of FeedbackActivity for customization. 
    *

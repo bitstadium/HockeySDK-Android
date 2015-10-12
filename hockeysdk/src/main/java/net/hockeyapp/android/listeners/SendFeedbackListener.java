@@ -1,6 +1,5 @@
 package net.hockeyapp.android.listeners;
 
-import net.hockeyapp.android.StringListener;
 import net.hockeyapp.android.tasks.SendFeedbackTask;
 
 /**
@@ -37,7 +36,7 @@ import net.hockeyapp.android.tasks.SendFeedbackTask;
  *
  * @author Bogdan Nistor
  **/
-public abstract class SendFeedbackListener extends StringListener {
+public abstract class SendFeedbackListener {
 	
   public void feedbackSuccessful(SendFeedbackTask task) {
   }
