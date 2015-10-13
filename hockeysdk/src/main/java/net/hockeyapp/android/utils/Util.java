@@ -8,6 +8,8 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -255,5 +257,14 @@ public class Util {
       throw new RuntimeException(e);
     }
     return bundle;
+  }
+
+  public static boolean isConnectedToNetwork(Context context) {
+    ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+    if (connectivityManager != null) {
+      NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
+      return activeNetwork != null && activeNetwork.isConnected();
+    }
+    return false;
   }
 }

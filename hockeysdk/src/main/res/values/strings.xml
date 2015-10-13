@@ -80,4 +80,7 @@
     <string name="hockeyapp_dialog_error_title">Error</string>
     <string name="hockeyapp_dialog_error_message">An error has occurred</string>
 
+    <!-- Misc -->
+    <string name="hockeyapp_error_no_network_message">Your device is not connected to the internet. Please resolve connectivity issues and try again.</string>
+
 </resources>
