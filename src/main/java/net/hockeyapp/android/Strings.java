@@ -258,6 +258,15 @@ public class Strings {
   /** Resource ID for the message of an error dialog. **/
   public final static int DIALOG_ERROR_MESSAGE_ID = 0x803;
 
+  ///////////////////////////////////////////////////
+  // Misc
+  ///////////////////////////////////////////////////
+
+  /**
+   * Resource ID for the generic no network error message.
+   **/
+  public final static int ERROR_NO_NETWORK_MESSAGE_ID = 0x900;
+
   /**
    * Default strings.
    */
@@ -341,6 +350,9 @@ public class Strings {
     DEFAULT.put(DIALOG_NEGATIVE_BUTTON_ID,    "Cancel");
     DEFAULT.put(DIALOG_ERROR_TITLE_ID,        "Error");
     DEFAULT.put(DIALOG_ERROR_MESSAGE_ID,      "An error has occured");
+
+    // Misc
+    DEFAULT.put(ERROR_NO_NETWORK_MESSAGE_ID,  "Your device is not connected to the internet. Please resolve connectivity issues and try again.");
 
   }
 

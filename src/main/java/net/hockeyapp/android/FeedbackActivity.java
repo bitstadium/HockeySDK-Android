@@ -737,6 +737,12 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
    * Send feedback to HockeyApp.
    */
   private void sendFeedback() {
+    if (!Util.isConnectedToNetwork(this)) {
+      Toast errorToast = Toast.makeText(this, Strings.get(Strings.ERROR_NO_NETWORK_MESSAGE_ID), Toast.LENGTH_LONG);
+      errorToast.show();
+      return;
+    }
+
   	enableDisableSendFeedbackButton(false);
   	hideKeyboard();
 

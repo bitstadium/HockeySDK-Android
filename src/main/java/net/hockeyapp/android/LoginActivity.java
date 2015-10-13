@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 import net.hockeyapp.android.tasks.LoginTask;
 import net.hockeyapp.android.utils.AsyncTaskUtils;
+import net.hockeyapp.android.utils.Util;
 import net.hockeyapp.android.views.LoginView;
 
 import java.security.MessageDigest;
@@ -135,6 +136,12 @@ public class LoginActivity extends Activity implements View.OnClickListener {
   }
 
   private void performAuthentication() {
+    if (!Util.isConnectedToNetwork(this)) {
+      Toast errorToast = Toast.makeText(this, Strings.get(Strings.ERROR_NO_NETWORK_MESSAGE_ID), Toast.LENGTH_LONG);
+      errorToast.show();
+      return;
+    }
+
     String email = ((EditText) findViewById(LoginView.EMAIL_INPUT_ID)).getText().toString();
     String password = ((EditText) findViewById(LoginView.PASSWORD_INPUT_ID)).getText().toString();
 
