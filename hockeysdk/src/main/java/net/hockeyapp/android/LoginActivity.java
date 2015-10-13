@@ -128,7 +128,8 @@ public class LoginActivity extends Activity implements View.OnClickListener {
           }
         }
         else {
-          Toast.makeText(LoginActivity.this, "Login failed. Check your credentials.", 2000).show();
+          Toast.makeText(LoginActivity.this, "Login failed. Check your credentials.", Toast.LENGTH_LONG)
+            .show();
         }
       }
     };
@@ -157,7 +158,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
       AsyncTaskUtils.execute(loginTask);
     }
     else {
-      Toast.makeText(this, getString(R.string.hockeyapp_login_missing_credentials_toast), 1000).show();
+      Toast.makeText(this, getString(R.string.hockeyapp_login_missing_credentials_toast), Toast.LENGTH_LONG).show();
     }
   }
 

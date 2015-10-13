@@ -2,6 +2,7 @@ package net.hockeyapp.android.views;
 
 import android.content.Context;
 import android.net.Uri;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -43,6 +44,8 @@ import java.util.ArrayList;
  */
 public class AttachmentListView extends ViewGroup {
 
+  private static final String TAG = "AttachmentListView";
+
   private int line_height;
 
   public AttachmentListView(Context context) {
@@ -66,7 +69,10 @@ public class AttachmentListView extends ViewGroup {
 
   @Override
   protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-    assert (MeasureSpec.getMode(widthMeasureSpec) != MeasureSpec.UNSPECIFIED);
+    if ((MeasureSpec.getMode(widthMeasureSpec) == MeasureSpec.UNSPECIFIED)) {
+      Log.d(TAG, "Width is unspecified");
+      //throw new AssertionError();
+    }
 
     final int width = MeasureSpec.getSize(widthMeasureSpec);
     final int count = getChildCount();

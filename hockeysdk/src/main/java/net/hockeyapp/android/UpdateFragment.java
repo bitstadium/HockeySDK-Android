@@ -1,6 +1,7 @@
 package net.hockeyapp.android;
 
 import android.*;
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
@@ -66,6 +67,7 @@ import android.widget.TextView;
  *
  * @author Thomas Dohmke
  **/
+@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class UpdateFragment extends DialogFragment implements OnClickListener, UpdateInfoListener {
   /**
    * Task to download the .apk file.

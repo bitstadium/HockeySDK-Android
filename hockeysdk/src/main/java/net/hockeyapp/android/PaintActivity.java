@@ -79,7 +79,7 @@ public class PaintActivity extends Activity {
     hLayout.addView(paintView);
     setContentView(vLayout);
 
-    Toast toast = Toast.makeText(this, getString(R.string.hockeyapp_paint_indicator_toast), 1000);
+    Toast toast = Toast.makeText(this, getString(R.string.hockeyapp_paint_indicator_toast), Toast.LENGTH_LONG);
     toast.show();
   }
 
