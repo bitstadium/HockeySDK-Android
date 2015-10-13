@@ -534,6 +534,12 @@ public class CrashManager {
     saveConfirmedStackTraces(weakContext);
     registerHandler(weakContext, listener, ignoreDefaultHandler);
 
+    Context ctx = weakContext.get();
+    if (ctx != null && !Util.isConnectedToNetwork(ctx)) {
+      // Not connected to network, not trying to submit stack traces
+      return;
+    }
+
     if (!submitting) {
       submitting = true;
 
