@@ -1,4 +1,4 @@
-## Version 3.6.1
+## Version 3.6.2
 
 ## Introduction
 
@@ -50,7 +50,7 @@ Please see the "[How to create a new app](http://support.hockeyapp.net/kb/about-
 Add the SDK to your app module's dependencies in Android Studio by adding the following line to your `dependencies { ... }` configuration:
 
 ```groovy
-  compile 'net.hockeyapp.android:HockeySDK:3.6.1'
+  compile 'net.hockeyapp.android:HockeySDK:3.6.2'
 ```
 also make sure your repository configuration contains
 
@@ -65,6 +65,7 @@ also make sure your repository configuration contains
 2. Add the `INTERNET` permission to your manifest:
 
   ```xml
+    <uses-permission android:name="ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
   ```
 2. If you also want in-app updates:
