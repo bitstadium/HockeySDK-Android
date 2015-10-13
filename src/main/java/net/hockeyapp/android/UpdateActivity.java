@@ -7,6 +7,7 @@ import net.hockeyapp.android.objects.ErrorObject;
 import net.hockeyapp.android.tasks.DownloadFileTask;
 import net.hockeyapp.android.tasks.GetFileSizeTask;
 import net.hockeyapp.android.utils.AsyncTaskUtils;
+import net.hockeyapp.android.utils.Util;
 import net.hockeyapp.android.utils.VersionHelper;
 import net.hockeyapp.android.views.UpdateView;
 import android.Manifest;
@@ -346,6 +347,19 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
   }
 
   protected void prepareDownload() {
+    if (!Util.isConnectedToNetwork(context)) {
+      error = new ErrorObject();
+      error.setMessage(Strings.get(Strings.ERROR_NO_NETWORK_MESSAGE_ID));
+
+      runOnUiThread(new Runnable() {
+        @SuppressWarnings("deprecation")
+        public void run() {
+          showDialog(DIALOG_ERROR_ID);
+        }
+      });
+
+      return;
+    }
     if (!isWriteExternalStorageSet(context)) {
 
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

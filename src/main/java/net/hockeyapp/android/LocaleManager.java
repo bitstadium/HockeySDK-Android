@@ -124,6 +124,9 @@ public class LocaleManager {
     loadFromResources("hockeyapp_dialog_negative_button", Strings.DIALOG_NEGATIVE_BUTTON_ID, context);
     loadFromResources("hockeyapp_dialog_error_title", Strings.DIALOG_ERROR_TITLE_ID, context);
     loadFromResources("hockeyapp_dialog_error_message", Strings.DIALOG_ERROR_MESSAGE_ID, context);
+
+    // Misc
+    loadFromResources("hockeyapp_error_no_network_message", Strings.ERROR_NO_NETWORK_MESSAGE_ID, context);
   }
 
   private static void loadFromResources(String name, int resourceId, Context context) {
