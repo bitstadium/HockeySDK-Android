@@ -2,16 +2,10 @@
 
 buildscript {
     repositories {
-        mavenCentral()
         jcenter()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:1.3.0'
-    }
-}
-
-allprojects {
-    repositories {
-        jcenter()
+        classpath 'com.novoda:bintray-release:0.3.4'
     }
 }
