@@ -65,7 +65,7 @@ also make sure your repository configuration contains
 2. Add the `INTERNET` permission to your manifest:
 
   ```xml
-    <uses-permission android:name="ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
   ```
 2. If you also want in-app updates:
