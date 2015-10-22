@@ -164,13 +164,13 @@ public class FeedbackActivity extends Activity implements FeedbackActivityInterf
       case FeedbackView.ADD_ATTACHMENT_BUTTON_ID:
         ViewGroup attachments = (ViewGroup) findViewById(FeedbackView.WRAPPER_LAYOUT_ATTACHMENTS);
         if (attachments.getChildCount() >= MAX_ATTACHMENTS_PER_MSG) {
-          //TODO should we add some more text here?
-          Toast.makeText(this, String.valueOf(MAX_ATTACHMENTS_PER_MSG), Toast.LENGTH_SHORT).show();
+          String message = getString(R.string.hockeyapp_feedback_max_attachments_allowed);
+          String text = String.format(message, String.valueOf(MAX_ATTACHMENTS_PER_MSG));
+          Toast.makeText(this, text, Toast.LENGTH_LONG).show();
         } else {
           openContextMenu(v);
         }
         break;
-
   	  case FeedbackView.ADD_RESPONSE_BUTTON_ID:
   	    configureFeedbackView(false);
   	    inSendFeedback = true;

@@ -1,0 +1,98 @@
+<resources>
+
+    <!-- Crash Dialog -->
+    <string name="hockeyapp_crash_dialog_app_name_fallback">Die App</string>
+    <string name="hockeyapp_crash_dialog_title">%@ wurde unerwartet beendet.</string>
+    <string name="hockeyapp_crash_dialog_message">Möchten Sie einen Bericht senden, sodass wir das Problem beheben können?</string>
+    <string name="hockeyapp_crash_dialog_negative_button">Nicht senden</string>
+    <string name="hockeyapp_crash_dialog_neutral_button">Immer senden</string>
+    <string name="hockeyapp_crash_dialog_positive_button">Bericht senden</string>
+
+    <!-- Download Failed -->
+    <string name="hockeyapp_download_failed_dialog_title">Download fehlgeschlagen</string>
+    <string name="hockeyapp_download_failed_dialog_message">Das Update konnte nicht
+        heruntergeladen werden. Möchten Sie es erneut versuchen?</string>
+    <string name="hockeyapp_download_failed_dialog_negative_button">Abbrechen</string>
+    <string name="hockeyapp_download_failed_dialog_positive_button">Erneut versuchen</string>
+
+    <!-- Update -->
+    <string name="hockeyapp_update_mandatory_toast">%s ist verfügbar. Dies ist ein verpflichtendes Update!</string>
+    <string name="hockeyapp_update_dialog_title">Update verfügbar</string>
+    <string name="hockeyapp_update_dialog_message">Informationen über das Update anzeigen?</string>
+    <string name="hockeyapp_update_dialog_negative_button">Ignorieren</string>
+    <string name="hockeyapp_update_dialog_positive_button">Anzeigen</string>
+
+    <!-- Expiry Info -->
+    <string name="hockeyapp_expiry_info_title">Build Expired</string>
+    <string name="hockeyapp_expiry_info_text">%s ist abgelaufen und kann nicht mehr verwendet
+        werden.</string>
+
+    <!-- Feedback Activity -->
+    <string name="hockeyapp_feedback_failed_title">Versand ausstehend</string>
+    <string name="hockeyapp_feedback_failed_text">Möchten Sie das Feedback erneut senden?</string>
+    <string name="hockeyapp_feedback_name_hint">Name</string>
+    <string name="hockeyapp_feedback_email_hint">E-Mail</string>
+    <string name="hockeyapp_feedback_subject_hint">Titel</string>
+    <string name="hockeyapp_feedback_message_hint">Nachricht</string>
+    <string name="hockeyapp_feedback_last_updated_text">Letztes Update: </string>
+    <string name="hockeyapp_feedback_attachment_button_text">Anhang hinzufügen</string>
+    <string name="hockeyapp_feedback_send_button_text">Feedback senden</string>
+    <string name="hockeyapp_feedback_response_button_text">Antworten</string>
+    <string name="hockeyapp_feedback_refresh_button_text">Aktualisieren</string>
+    <string name="hockeyapp_feedback_title">Feedback</string>
+    <string name="hockeyapp_feedback_send_generic_error">Die Nachricht konnte nicht
+        übermittelt werden. Bitte überprüfen Sie ihre Eingaben und ihre Internetverbindung.</string>
+    <string name="hockeyapp_feedback_send_network_error">Keine Antwort vom Server. Bitte
+        überprüfen Sie Ihre Internetverbindung und versuchen es erneut.</string>
+    <string name="hockeyapp_feedback_validate_subject_error">Geben Sie Sie bitte einen
+        Titel ein.</string>
+    <string name="hockeyapp_feedback_validate_email_error">Bitte geben Sie einen Namen an.</string>
+    <string name="hockeyapp_feedback_validate_email_empty">Bitte geben Sie eine gültige
+        E-Mail-Adresse an.</string>
+    <string name="hockeyapp_feedback_validate_name_error">Bitte geben Sie Ihr Feedback ein.</string>
+    <string name="hockeyapp_feedback_validate_text_error">Die Nachricht konnte nicht Übertragen
+        werden. Überprüfen Sie bitte Ihre E-Mail-Adresse</string>
+    <string name="hockeyapp_feedback_generic_error">Es ist ein Fehler aufgetreten.</string>
+    <string name="hockeyapp_feedback_attach_file">Datei anhängen</string>
+    <string name="hockeyapp_feedback_attach_picture">Bild anhängen</string>
+    <string name="hockeyapp_feedback_select_file">Datei auswählen</string>
+    <string name="hockeyapp_feedback_select_picture">Bild auswählen</string>
+    <string name="hockeyapp_feedback_max_attachments_allowed">Es sind maximal %s Anhänge
+        möglich.</string>
+
+
+    <!-- Login Activity -->
+    <string name="hockeyapp_login_headline_text">Geben Sie die E-Mail-Adresse und das Kennwort Ihres HockeyApp-Accounts ein, um Zugriff auf diese App zu erhalten.</string>
+    <string name="hockeyapp_login_missing_credentials_toast">Geben Sie bitte die fehlenden
+        Anmeldeinformationen ein.</string>
+    <string name="hockeyapp_login_email_hint">E-Mail</string>
+    <string name="hockeyapp_login_password_hint">Passwort</string>
+    <string name="hockeyapp_login_login_button_text">Anmelden</string>
+
+    <!-- Paint Activity -->
+    <string name="hockeyapp_paint_indicator_toast">Zeichnen Sie etwas!</string>
+    <string name="hockeyapp_paint_menu_save">Speichern</string>
+    <string name="hockeyapp_paint_menu_undo">Rückgängig</string>
+    <string name="hockeyapp_paint_menu_clear">Leeren</string>
+    <string name="hockeyapp_paint_dialog_message">Zeichnungen verwerfen?</string>
+    <string name="hockeyapp_paint_dialog_negative_button">Nein</string>
+    <string name="hockeyapp_paint_dialog_positive_button">Ja</string>
+
+    <!-- Permissions -->
+    <string name="hockeyapp_permission_update_title">Zugriffsrechte benötigt</string>
+    <string name="hockeyapp_permission_update_message">Um Updates herunterladen und installieren
+        zu können, müssen Sie der App erlauben auf ihren Gerätespeicher zuzugreifen.</string>
+    <string name="hockeyapp_permission_dialog_negative_button">Abbreichen</string>
+    <string name="hockeyapp_permission_dialog_positive_button">Nochmal versuchen</string>
+
+    <!-- Dialogs -->
+    <string name="hockeyapp_dialog_positive_button">OK</string>
+    <string name="hockeyapp_dialog_negative_button">Abbrechen</string>
+    <string name="hockeyapp_dialog_error_title">Fehler</string>
+    <string name="hockeyapp_dialog_error_message">Esist ein Fehler aufgetreten.</string>
+
+    <!-- Misc -->
+    <string name="hockeyapp_error_no_network_message">Ihr Gerät ist offline. Stellen Sie eine
+        Internetverbindung her und versuchen es erneut.</string>
+
+</resources>

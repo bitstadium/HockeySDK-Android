@@ -1,9 +1,11 @@
 package net.hockeyapp.android;
 
-import net.hockeyapp.android.views.ExpiryInfoView;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
+
+import net.hockeyapp.android.utils.Util;
+import net.hockeyapp.android.views.ExpiryInfoView;
 
 /**
  * <h3>Description</h3>
@@ -61,7 +63,9 @@ public class ExpiryInfoActivity extends Activity {
    * @return Instance of UpdateView
    */
   protected View getLayoutView() {
-    return new ExpiryInfoView(this, getString(R.string.hockeyapp_expiry_info_text));
+    String appName = Util.getAppName(this);
+    String text = String.format(getString(R.string.hockeyapp_expiry_info_text), appName);
+    return new ExpiryInfoView(this, text);
   }
   
 }

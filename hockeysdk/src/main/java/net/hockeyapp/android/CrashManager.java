@@ -1,27 +1,32 @@
 package net.hockeyapp.android;
 
-import java.io.*;
-import java.lang.Thread.UncaughtExceptionHandler;
-import java.lang.ref.WeakReference;
-import java.net.HttpURLConnection;
-import java.util.*;
-
-
-import android.preference.PreferenceManager;
-import net.hockeyapp.android.objects.CrashManagerUserInput;
-import net.hockeyapp.android.objects.CrashMetaData;
-import net.hockeyapp.android.utils.HttpURLConnectionBuilder;
-import net.hockeyapp.android.utils.PrefsUtil;
-
-import net.hockeyapp.android.utils.Util;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.preference.PreferenceManager;
 import android.util.Log;
+
+import net.hockeyapp.android.objects.CrashManagerUserInput;
+import net.hockeyapp.android.objects.CrashMetaData;
+import net.hockeyapp.android.utils.HttpURLConnectionBuilder;
+import net.hockeyapp.android.utils.Util;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.lang.Thread.UncaughtExceptionHandler;
+import java.lang.ref.WeakReference;
+import java.net.HttpURLConnection;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <h3>Description</h3>
@@ -509,7 +514,8 @@ public class CrashManager {
     }
 
     AlertDialog.Builder builder = new AlertDialog.Builder(context);
-    builder.setTitle(R.string.hockeyapp_crash_dialog_title);
+    String alertTitle = getAlertTitle(context);
+    builder.setTitle(alertTitle);
     builder.setMessage(R.string.hockeyapp_crash_dialog_message);
 
     builder.setNegativeButton(R.string.hockeyapp_crash_dialog_negative_button, new DialogInterface.OnClickListener() {
@@ -532,6 +538,13 @@ public class CrashManager {
     });
 
     builder.create().show();
+  }
+
+  private static String getAlertTitle(Context context) {
+    String appTitle = Util.getAppName(context);
+
+    String message = context.getString(R.string.hockeyapp_crash_dialog_title);
+    return String.format(message, appTitle);
   }
 
   /**

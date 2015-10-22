@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.ConnectivityManager;
@@ -13,6 +14,8 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
+
+import net.hockeyapp.android.R;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
@@ -26,10 +29,10 @@ import java.util.regex.Pattern;
 
 /**
  * <h3>License</h3>
- * 
+ *
  * <pre>
  * Copyright (c) 2011-2014 Bit Stadium GmbH
- * 
+ *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without
@@ -38,10 +41,10 @@ import java.util.regex.Pattern;
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -77,14 +80,14 @@ public class Util {
   public static String encodeParam(String param) {
     try {
       return URLEncoder.encode(param, "UTF-8");
-    } 
+    }
     catch (UnsupportedEncodingException e) {
       // UTF-8 should be available, so just in case
       e.printStackTrace();
       return "";
     }
   }
-  
+
   /**
    * Returns true if value is a valid email.
    *
@@ -111,7 +114,7 @@ public class Util {
   }
 
   /**
-   * Returns true if the app runs on large or very large screens (i.e. tablets). 
+   * Returns true if the app runs on large or very large screens (i.e. tablets).
    *
    * @param weakActivity the context to use
    * @return true if the app runs on large or very large screens
@@ -121,12 +124,12 @@ public class Util {
       Activity activity = weakActivity.get();
       if (activity != null) {
         Configuration configuration = activity.getResources().getConfiguration();
-        
-        return (((configuration.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE) || 
+
+        return (((configuration.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE) ||
                 ((configuration.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_XLARGE));
       }
     }
-    
+
     return false;
   }
 
@@ -266,5 +269,22 @@ public class Util {
       return activeNetwork != null && activeNetwork.isConnected();
     }
     return false;
+  }
+
+  public static String getAppName(Context context) {
+    if(context == null) {
+      return "";
+    }
+
+    PackageManager packageManager = context.getPackageManager();
+    ApplicationInfo applicationInfo = null;
+    try {
+      applicationInfo = packageManager.getApplicationInfo(context.getApplicationInfo().packageName, 0);
+    }
+    catch (final PackageManager.NameNotFoundException e) {
+    }
+    String appTitle =  (applicationInfo != null ? (String)packageManager.getApplicationLabel(applicationInfo)
+      : context.getString(R.string.hockeyapp_crash_dialog_app_name_fallback));
+    return appTitle;
   }
 }

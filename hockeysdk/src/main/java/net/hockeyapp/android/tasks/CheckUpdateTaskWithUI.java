@@ -136,7 +136,10 @@ public class CheckUpdateTaskWithUI extends CheckUpdateTask {
       dialog.show();
     }
     else {
-      Toast.makeText(activity, R.string.hockeyapp_update_mandatory_toast, Toast.LENGTH_LONG).show();
+      String appName = Util.getAppName(activity);
+      String toast = String.format(activity.getString(R.string.hockeyapp_update_mandatory_toast),
+        appName);
+      Toast.makeText(activity, toast, Toast.LENGTH_LONG).show();
       startUpdateIntent(updateInfo, true);
     }
   }
