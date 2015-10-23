@@ -1,19 +1,13 @@
-# Java
-bin
-target
-local.properties
-BuildConfig.java
-
-# OS X Noise
+.idea/
+bin/
+gen/
+gen-external-apklibs/
+out/
+target/
 .DS_Store
-*.swp
-*.orig
-
-#IntelliJ IDEA
-.idea
-gen
 *.iml
-
-#Gradle
-.gradle
-build
+.gradle/
+build/
+/*/build/
+local.properties
+*.log
