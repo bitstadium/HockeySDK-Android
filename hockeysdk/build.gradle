@@ -25,7 +25,7 @@ android {
 publish {
     userOrg = 'hockeyapp'
     groupId = 'net.hockeyapp.android'
-    artifactId = 'hockeysdk'
+    artifactId = 'HockeySDK'
     publishVersion = hockeySdkVersion
     desc = 'HockeySDK-Android implements support for using HockeyApp in your Android application. The following features are currently supported:\n' +
             '\n' +
