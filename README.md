@@ -1,4 +1,4 @@
-## Version 3.6.2
+## Version 3.7.0-beta.1
 
 ## Introduction
 
@@ -32,14 +32,14 @@ This document contains the following sections:
 ## 1. Requirements
 
 1. We assume that you already have an Android project in Android Studio or another Android IDE.
-2. The SDK runs on devices with Android 2.1 or later, but you need to build your app with Android SDK 3.0 (Level 11) or later for the integration with HockeySDK.
+2. The SDK runs on devices with Android 2.3 or later, but you need to build your app with Android SDK 3.0 (Level 11) or later for the integration with HockeySDK.
 
 <a id="setup"></a>
 ## 2. Setup
 
 We recommend integration of our compiled library into your project using Android Studio.
 For other ways to setup the SDK, see [Advanced Setup](#advancedsetup).
-A sample integration can be found in [this GitHub repository](https://github.com/akoscz/HockeyAppSample).
+A sample integration can be found in [this GitHub repository](https://github.com/bitstadium/HockeySDK-AndroidDemo).
 
 ### 2.1 Obtain an App Identifier
 
@@ -50,7 +50,7 @@ Please see the "[How to create a new app](http://support.hockeyapp.net/kb/about-
 Add the SDK to your app module's dependencies in Android Studio by adding the following line to your `dependencies { ... }` configuration:
 
 ```groovy
-  compile 'net.hockeyapp.android:HockeySDK:3.6.2'
+  compile 'net.hockeyapp.android:HockeySDK:3.7.0-beta.1'
 ```
 also make sure your repository configuration contains
 
@@ -61,27 +61,24 @@ also make sure your repository configuration contains
 <a id="setup-modifycode"></a>
 ### 2.3 Modify Code
 
-1. Open your AndroidManifest.xml file.
-2. Add the `INTERNET` permission to your manifest:
-
-  ```xml
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.INTERNET" />
+1. Open your module's build.gradle file.
+2. Add the following manifest placeholder to your configuration (typically the `defaultConfig`):
+  
+  ```groovy
+  manifestPlaceholders = [HOCKEYAPP_APP_ID: "$APP_ID"]
   ```
-2. If you also want in-app updates:
-    * Add the following line as a child element of `<application>`:
 
-    ```xml
-      <activity android:name="net.hockeyapp.android.UpdateActivity" />
-    ```
-    * Add the following permission to your manifest:
+3. The param APP_ID has to be replaced by your HockeyApp App Identifier. The app identifier can be found on the app's page in the "Overview" section of the HockeyApp backend.
+4. Save your build.gradle file.
+5. Open your AndroidManifest.xml file.
+  
+  ```xml
+  <meta-data android:name="net.hockeyapp.android.appIdentifier" android:value="${HOCKEYAPP_APP_ID}" />
+  ```
 
-    ```xml
-      <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    ```
-4. Save your AndroidManifest.xml file.
-5. Open your main activity or the activity in which you want to integrate the update process and crash reporting.
-6. Add the following lines:
+6. Save your AndroidManifest.xml file.
+7. Open your main activity or the activity in which you want to integrate the update process and crash reporting.
+8. Add the following lines:
 
 ```java
 import net.hockeyapp.android.CrashManager;
@@ -116,12 +113,12 @@ public class YourActivity extends Activity {
   }
   
   private void checkForCrashes() {
-    CrashManager.register(this, APP_ID);
+    CrashManager.register(this);
   }
   
   private void checkForUpdates() {
     // Remove this for store builds!
-    UpdateManager.register(this, APP_ID);
+    UpdateManager.register(this);
   }
   
   private void unregisterManagers() {
@@ -133,9 +130,8 @@ public class YourActivity extends Activity {
 }
 ```
 
-7. If you only want crash reporting but no in-app updates leave out all the `UpdateManager`-related lines.
-8. The param APP_ID has to be replaced by your HockeyApp App Identifier. The app identifier can be found on the app's page in the "Overview" section of the HockeyApp backend.
-9. Always make sure to balance `register(...)` calls to SDK managers with `unregister()` calls in the corresponding lifecycle callbacks.
+9. If you only want crash reporting but no in-app updates leave out all the `UpdateManager`-related lines.
+10. Always make sure to balance `register(...)` calls to SDK managers with `unregister()` calls in the corresponding lifecycle callbacks.
 
 The above code does two things: 
 
@@ -156,8 +152,8 @@ If you don't want to use Android Studio, Gradle, or Maven you can also manually 
 
 1. Download the latest release from [here](http://hockeyapp.net/releases/#android).
 2. Unzip the file.
-3. Copy the file libs/HockeySDK.jar to the libs folder of your Android project.
-4. If you use Eclipse with ADT 16 or older, then add the .jar file to your classpath. With ADT 17 or newer, this is done automatically.
+3. Copy the file libs/HockeySDK-$version.aar to the libs folder of your Android project.
+4. Configure your development tools to use the aar-file in the libs folder.
 
 Then proceed with [Modifying your Code](#setup-modifycode).
 
@@ -166,33 +162,17 @@ Then proceed with [Modifying your Code](#setup-modifycode).
 
 Starting with HockeySDK 3.0, you can integrate a feedback view in your app, so your users can send textual feedback or even create screenshots and upload them to HockeyApp:
 
-1. Open your AndroidManifest.xml.
-2. Add the following lines as child elements of your `<application>`: 
-
-  ```xml
-    <activity android:name="net.hockeyapp.android.FeedbackActivity" />
-    <activity android:name="net.hockeyapp.android.PaintActivity" />
-  ```
-
-3. If not already present, add the `INTERNET`-permission:
-
-  ```xml
-    <uses-permission android:name="android.permission.INTERNET" />
-  ```
-
-4. Save the AndroidManifest.xml.
-5. Open the activity from which you want to show the feedback view.
-6. Add the following method:
+1. Open the activity from which you want to show the feedback view.
+2. Add the following method:
 
   ```java
     public void showFeedbackActivity() {
-      FeedbackManager.register(this, APP_ID, null);
+      FeedbackManager.register(this);
       FeedbackManager.showFeedbackActivity(this);
     }
   ```
 
-7. Replace APP_ID with your app's identifier.
-8. Call the method `showFeedbackActivity()` in an `onClick`, `onMenuItemSelected`, or `onOptionsItemSelected` listener method.
+3. Call the method `showFeedbackActivity()` in an `onClick`, `onMenuItemSelected`, or `onOptionsItemSelected` listener method.
 
 <a id="crashreporting"></a> 
 ### 3.3 Crash Reporting
