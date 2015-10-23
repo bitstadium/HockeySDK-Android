@@ -13,6 +13,7 @@
         <activity android:name=".UpdateActivity" />
         <activity android:name=".FeedbackActivity" />
         <activity android:name=".PaintActivity" />
+        <activity android:name=".LoginActivity" />
 
     </application>
 

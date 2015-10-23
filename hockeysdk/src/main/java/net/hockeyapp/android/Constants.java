@@ -113,7 +113,7 @@ public class Constants {
   /**
    * Version of this SDK.
    */
-  public static final String SDK_VERSION = "3.6.0";
+  public static final String SDK_VERSION = "3.7.0-b.1";
 
   /**
    * Permissions request for the update task.
