@@ -80,15 +80,20 @@ repositories {
 
 3. The param $APP_ID must be replaced by your HockeyApp App Identifier. The app identifier can be found on the app's page in the "Overview" section of the HockeyApp backend.
 4. Save your build.gradle file and make sure to trigger a gradle sync.
-5. Open your AndroidManifest.xml file.
-  
-  ```xml
-  <meta-data android:name="net.hockeyapp.android.appIdentifier" android:value="${HOCKEYAPP_APP_ID}" />
-  ```
+5. Open your AndroidManifest.xml file and add a `meta-data`-tag for the HockeySDK.
+	
+	```xml
+	<application> 
+		//your activity declarations and other stuff
+	 
+		<meta-data android:name="net.hockeyapp.android.appIdentifier" android:value="${HOCKEYAPP_APP_ID}" />
+			
+	</application>  
+```
 
 6. Save your AndroidManifest.xml file.
 7. Open your main activity or the activity in which you want to integrate the update process and crash reporting.
-8. Add the following lines:
+8. Add the following lines and make sure to always make sure to balance `register(...)` calls to SDK managers with `unregister()` calls in the corresponding lifecycle callbacks.
 
 ```java
 import net.hockeyapp.android.CrashManager;
@@ -140,9 +145,6 @@ public class YourActivity extends Activity {
 }
 ```
 
-9. Always make sure to balance `register(...)` calls to SDK managers with `unregister()` calls in the corresponding lifecycle callbacks.
-
-
 The above code does two things: 
 
 1. When the activity is created, the update manager checks for new updates in the background. If it finds a new update, an alert dialog is shown and if the user presses Show, they will be taken to the update activity.
@@ -156,7 +158,18 @@ The reason for the two different entry points is that the update check causes ne
 ### 2.4 Crash Reporting without in-app-updates
 If you want crash reporting but no in-app updates, leave out all the `UpdateManager`-related lines.
 
+### 2.5 Upgrading from 3.6.X to 3.7.0-beta.1
+We didn't introduce any breaking changes except that we have raised the minimum API level to 9.
+If you integrate the SDK using gradle, you can remove the previously required activities from your manifest file.
 
+```xml
+ <!-- HockeySDK Activities – no longer required as of 3.7.0-beta.1! -->
+ <activity android:name="net.hockeyapp.android.UpdateActivity" />
+ <activity android:name="net.hockeyapp.android.FeedbackActivity" />
+ <activity android:name="net.hockeyapp.android.PaintActivity" />
+```
+
+Also consider switching to our new register-calls and adding your appID to your configuration as described above.  
 
 <a id="advancedsetup"></a> 
 ## 3. Advanced Setup
@@ -200,7 +213,6 @@ To configure a custom `CrashManagerListener` use the following `register()` meth
 ```java
   CrashManager.register(context, APP_ID, new MyCustomCrashManagerListener());
 ```
-
 
 #### 3.3.1 Autosend crash reports
 
