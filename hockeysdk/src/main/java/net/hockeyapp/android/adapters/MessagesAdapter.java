@@ -1,5 +1,6 @@
 package net.hockeyapp.android.adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,6 +57,7 @@ public class MessagesAdapter extends BaseAdapter {
   private TextView messageTextView;
   private AttachmentListView attachmentListView;
 
+  @SuppressLint("SimpleDateFormat")
   public MessagesAdapter(Context context, ArrayList<FeedbackMessage> messagesList) {
     this.context = context;
     this.messagesList = messagesList;

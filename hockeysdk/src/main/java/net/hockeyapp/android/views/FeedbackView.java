@@ -15,7 +15,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.*;
 import net.hockeyapp.android.FeedbackManager;
-import net.hockeyapp.android.Strings;
+import net.hockeyapp.android.R;
 import net.hockeyapp.android.objects.FeedbackUserDataElement;
 
 /**
@@ -159,7 +159,7 @@ public class FeedbackView extends LinearLayout {
     
     LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
     int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 10.0, getResources().getDisplayMetrics());
-    params.gravity = Gravity.LEFT;
+    params.gravity = Gravity.START;
     
     wrapperLayoutFeedback.setLayoutParams(params);
     wrapperLayoutFeedback.setPadding(padding, padding, padding, padding);
@@ -191,7 +191,7 @@ public class FeedbackView extends LinearLayout {
     
     LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
     int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 10.0, getResources().getDisplayMetrics());
-    params.gravity = Gravity.LEFT;
+    params.gravity = Gravity.START;
     
     wrapperLayoutButtons.setLayoutParams(params);
     wrapperLayoutButtons.setPadding(0, padding, 0, padding);
@@ -230,7 +230,7 @@ public class FeedbackView extends LinearLayout {
     editText.setTextColor(Color.GRAY);
     editText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
     editText.setTypeface(null, Typeface.NORMAL);
-    editText.setHint(Strings.get(Strings.FEEDBACK_NAME_INPUT_HINT_ID));
+    editText.setHint(R.string.hockeyapp_feedback_name_hint);
     editText.setHintTextColor(Color.LTGRAY);
     setEditTextBackground(context, editText);
 
@@ -254,7 +254,7 @@ public class FeedbackView extends LinearLayout {
     editText.setTextColor(Color.GRAY);
     editText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
     editText.setTypeface(null, Typeface.NORMAL);
-    editText.setHint(Strings.get(Strings.FEEDBACK_EMAIL_INPUT_HINT_ID));
+    editText.setHint(R.string.hockeyapp_feedback_email_hint);
     editText.setHintTextColor(Color.LTGRAY);
     setEditTextBackground(context, editText);
     editText.setVisibility(FeedbackManager.getRequireUserEmail() == FeedbackUserDataElement.DONT_SHOW ? GONE : VISIBLE);
@@ -277,7 +277,7 @@ public class FeedbackView extends LinearLayout {
     editText.setTextColor(Color.GRAY);
     editText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
     editText.setTypeface(null, Typeface.NORMAL);
-    editText.setHint(Strings.get(Strings.FEEDBACK_SUBJECT_INPUT_HINT_ID));
+    editText.setHint(R.string.hockeyapp_feedback_subject_hint);
     editText.setHintTextColor(Color.LTGRAY);
     setEditTextBackground(context, editText);
     
@@ -302,7 +302,7 @@ public class FeedbackView extends LinearLayout {
     editText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
     editText.setTypeface(null, Typeface.NORMAL);
     editText.setMinimumHeight(minEditTextHeight);
-    editText.setHint(Strings.get(Strings.FEEDBACK_MESSAGE_INPUT_HINT_ID));
+    editText.setHint(R.string.hockeyapp_feedback_message_hint);
     editText.setHintTextColor(Color.LTGRAY);
     setEditTextBackground(context, editText);
     
@@ -322,7 +322,7 @@ public class FeedbackView extends LinearLayout {
     textView.setEllipsize(TruncateAt.END);
     textView.setShadowLayer(1, 0, 1, Color.WHITE);
     textView.setSingleLine(true);
-    textView.setText(Strings.get(Strings.FEEDBACK_LAST_UPDATED_TEXT_ID));
+    textView.setText(R.string.hockeyapp_feedback_last_updated_text);
     textView.setTextColor(Color.GRAY);
     textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
     textView.setTypeface(null, Typeface.NORMAL);
@@ -336,7 +336,7 @@ public class FeedbackView extends LinearLayout {
 
     LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
     int paddingTopBottom = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 10.0, getResources().getDisplayMetrics());
-    params.gravity = Gravity.LEFT;
+    params.gravity = Gravity.START;
 
     wrapperLayoutAttachments.setLayoutParams(params);
     wrapperLayoutAttachments.setPadding(0, 0, 0, paddingTopBottom);
@@ -361,7 +361,7 @@ public class FeedbackView extends LinearLayout {
     button.setLayoutParams(params);
     button.setBackgroundDrawable(getButtonSelector());
     button.setPadding(paddingLeftRight, paddingTopBottom, paddingLeftRight, paddingTopBottom);
-    button.setText(Strings.get(Strings.FEEDBACK_ATTACHMENT_BUTTON_TEXT_ID));
+    button.setText(R.string.hockeyapp_feedback_attachment_button_text);
     button.setTextColor(Color.WHITE);
     button.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
 
@@ -385,7 +385,7 @@ public class FeedbackView extends LinearLayout {
     button.setLayoutParams(params);
     button.setBackgroundDrawable(getButtonSelector());
     button.setPadding(paddingLeftRight, paddingTopBottom, paddingLeftRight, paddingTopBottom);
-    button.setText(Strings.get(Strings.FEEDBACK_SEND_BUTTON_TEXT_ID));
+    button.setText(R.string.hockeyapp_feedback_send_button_text);
     button.setTextColor(Color.WHITE);
     button.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
     
@@ -411,7 +411,7 @@ public class FeedbackView extends LinearLayout {
     button.setBackgroundDrawable(getButtonSelector());
     button.setPadding(0, paddingTopBottom, 0, paddingTopBottom);
     button.setGravity(Gravity.CENTER);
-    button.setText(Strings.get(Strings.FEEDBACK_RESPONSE_BUTTON_TEXT_ID));
+    button.setText(R.string.hockeyapp_feedback_response_button_text);
     button.setTextColor(Color.WHITE);
     button.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
     
@@ -436,7 +436,7 @@ public class FeedbackView extends LinearLayout {
     button.setBackgroundDrawable(getButtonSelector());
     button.setPadding(0, paddingTopBottom, 0, paddingTopBottom);
     button.setGravity(Gravity.CENTER);
-    button.setText(Strings.get(Strings.FEEDBACK_REFRESH_BUTTON_TEXT_ID));
+    button.setText(R.string.hockeyapp_feedback_refresh_button_text);
     button.setTextColor(Color.WHITE);
     button.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
     params.weight = 1.0f;

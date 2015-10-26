@@ -1,9 +1,11 @@
 package net.hockeyapp.android;
 
-import net.hockeyapp.android.views.ExpiryInfoView;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
+
+import net.hockeyapp.android.utils.Util;
+import net.hockeyapp.android.views.ExpiryInfoView;
 
 /**
  * <h3>Description</h3>
@@ -51,7 +53,7 @@ public class ExpiryInfoActivity extends Activity {
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
-    setTitle(getStringResource(Strings.EXPIRY_INFO_TITLE_ID));
+    setTitle(getString(R.string.hockeyapp_expiry_info_title));
     setContentView(getLayoutView());
   }
 
@@ -61,17 +63,9 @@ public class ExpiryInfoActivity extends Activity {
    * @return Instance of UpdateView
    */
   protected View getLayoutView() {
-    return new ExpiryInfoView(this, getStringResource(Strings.EXPIRY_INFO_TEXT_ID));
+    String appName = Util.getAppName(this);
+    String text = String.format(getString(R.string.hockeyapp_expiry_info_text), appName);
+    return new ExpiryInfoView(this, text);
   }
   
-  /**
-   * Returns the string for a given resource ID.
-   * 
-   * @param resourceID The string's resource ID.
-   * @return Instance of String
-   */
-  protected String getStringResource(int resourceID) {
-    UpdateManagerListener listener = UpdateManager.getLastListener();
-    return Strings.get(listener, resourceID);
-  }
 }

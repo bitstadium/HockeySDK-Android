@@ -1,10 +1,5 @@
 package net.hockeyapp.android.views;
 
-import java.io.File;
-
-import net.hockeyapp.android.Constants;
-import net.hockeyapp.android.objects.FeedbackAttachment;
-import net.hockeyapp.android.utils.ImageUtils;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -12,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
@@ -24,16 +20,21 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import net.hockeyapp.android.Constants;
+import net.hockeyapp.android.objects.FeedbackAttachment;
+import net.hockeyapp.android.utils.ImageUtils;
+
+import java.io.File;
+
 /**
  * <h3>Description</h3>
- * 
+ * <p>
  * The view for an attachment.
- * 
+ * </p>
  * <h3>License</h3>
- * 
  * <pre>
  * Copyright (c) 2011-2014 Bit Stadium GmbH
- * 
+ *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without
@@ -42,10 +43,10 @@ import android.widget.TextView;
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -106,28 +107,30 @@ public class AttachmentView extends FrameLayout {
     new AsyncTask<Void, Void, Bitmap>() {
       @Override
       protected Bitmap doInBackground(Void... args) {
-        Bitmap bitmap = loadImageThumbnail();
-        return bitmap;
+        return loadImageThumbnail();
       }
-        
+
       @Override
       protected void onPostExecute(Bitmap bitmap) {
         if (bitmap != null) {
           configureViewForThumbnail(bitmap, false);
-        } else {
+        }
+        else {
           configureViewForPlaceholder(false);
         }
       }
     }.execute();
   }
 
-  public AttachmentView(Context context, ViewGroup parent, FeedbackAttachment attachment, boolean removable) {
+  public AttachmentView(Context context, ViewGroup parent, FeedbackAttachment attachment, boolean
+    removable) {
     super(context);
 
     this.context = context;
     this.parent = parent;
     this.attachment = attachment;
-    this.attachmentUri = Uri.fromFile(new File(Constants.getHockeyAppStorageDir(), attachment.getCacheId()));
+    this.attachmentUri = Uri.fromFile(new File(Constants.getHockeyAppStorageDir(), attachment
+      .getCacheId()));
     this.filename = attachment.getFilename();
 
     calculateDimensions(30);
@@ -142,17 +145,29 @@ public class AttachmentView extends FrameLayout {
     return attachment;
   }
 
-  public Uri getAttachmentUri() { return attachmentUri; }
+  public Uri getAttachmentUri() {
+    return attachmentUri;
+  }
 
-  public int getWidthPortrait() { return widthPortrait; }
+  public int getWidthPortrait() {
+    return widthPortrait;
+  }
 
-  public int getMaxHeightPortrait() { return maxHeightPortrait; }
+  public int getMaxHeightPortrait() {
+    return maxHeightPortrait;
+  }
 
-  public int getWidthLandscape() { return widthLandscape; }
+  public int getWidthLandscape() {
+    return widthLandscape;
+  }
 
-  public int getMaxHeightLandscape() { return maxHeightLandscape; }
+  public int getMaxHeightLandscape() {
+    return maxHeightLandscape;
+  }
 
-  public int getGap() { return gap; }
+  public int getGap() {
+    return gap;
+  }
 
   public int getEffectiveMaxHeight() {
     return orientation == ImageUtils.ORIENTATION_LANDSCAPE ? maxHeightLandscape : maxHeightPortrait;
@@ -169,7 +184,8 @@ public class AttachmentView extends FrameLayout {
     if (bitmap == null) {
       configureViewForPlaceholder(true);
 
-    } else {
+    }
+    else {
       configureViewForThumbnail(bitmap, true);
     }
   }
@@ -182,21 +198,26 @@ public class AttachmentView extends FrameLayout {
     DisplayMetrics metrics = getResources().getDisplayMetrics();
     this.gap = Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10.0f, metrics));
 
-    int layoutMargin = Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, marginDip, metrics));
+    int layoutMargin = Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+      marginDip, metrics));
     int displayWidth = metrics.widthPixels;
 
-    int parentWidthPortrait  = displayWidth - (2 * layoutMargin) - ((IMAGES_PER_ROW_PORTRAIT  - 1) * gap);
-    int parentWidthLandscape = displayWidth - (2 * layoutMargin) - ((IMAGES_PER_ROW_LANDSCAPE - 1) * gap);
+    int parentWidthPortrait = displayWidth - (2 * layoutMargin) - ((IMAGES_PER_ROW_PORTRAIT -
+      1) * this.gap);
+    // (IMAGES_PER_ROW_LANDSCAPE - 1) * this.gap == 1, so just using this.gap
+    int parentWidthLandscape = displayWidth - (2 * layoutMargin) - this.gap;
 
-    this.widthPortrait  = parentWidthPortrait / IMAGES_PER_ROW_PORTRAIT;
+    this.widthPortrait = parentWidthPortrait / IMAGES_PER_ROW_PORTRAIT;
     this.widthLandscape = parentWidthLandscape / IMAGES_PER_ROW_LANDSCAPE;
 
-    this.maxHeightPortrait  = widthPortrait * 2;
+    this.maxHeightPortrait = widthPortrait * 2;
+    //noinspection SuspiciousNameCombination
     this.maxHeightLandscape = widthLandscape;
   }
 
   private void initializeView(Context context, boolean removable) {
-    setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, Gravity.BOTTOM));
+    setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT,
+      Gravity.BOTTOM));
     setPadding(0, gap, 0, 0);
 
     // ImageView
@@ -204,14 +225,16 @@ public class AttachmentView extends FrameLayout {
 
     // LinearLayout
     LinearLayout bottomView = new LinearLayout(context);
-    bottomView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, Gravity.BOTTOM));
-    bottomView.setGravity(Gravity.LEFT);
+    bottomView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams
+      .WRAP_CONTENT, Gravity.BOTTOM));
+    bottomView.setGravity(Gravity.START);
     bottomView.setOrientation(LinearLayout.VERTICAL);
     bottomView.setBackgroundColor(Color.parseColor("#80262626"));
 
     // TextView
     textView = new TextView(context);
-    textView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, Gravity.CENTER));
+    textView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams
+      .WRAP_CONTENT, Gravity.CENTER));
     textView.setGravity(Gravity.CENTER);
     textView.setTextColor(Color.parseColor("#FFFFFF"));
     textView.setSingleLine();
@@ -220,7 +243,8 @@ public class AttachmentView extends FrameLayout {
     // Remove Button
     if (removable) {
       ImageButton imageButton = new ImageButton(context);
-      imageButton.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, Gravity.BOTTOM));
+      imageButton.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams
+        .WRAP_CONTENT, Gravity.BOTTOM));
       imageButton.setAdjustViewBounds(true);
       imageButton.setImageDrawable(getSystemIcon("ic_menu_delete"));
       imageButton.setBackgroundResource(0);
@@ -240,13 +264,15 @@ public class AttachmentView extends FrameLayout {
   }
 
   private void configureViewForThumbnail(Bitmap bitmap, final boolean openOnClick) {
-    int width  = orientation == ImageUtils.ORIENTATION_LANDSCAPE ? widthLandscape : widthPortrait;
-    int height = orientation == ImageUtils.ORIENTATION_LANDSCAPE ? maxHeightLandscape : maxHeightPortrait;
+    int width = orientation == ImageUtils.ORIENTATION_LANDSCAPE ? widthLandscape : widthPortrait;
+    int height = orientation == ImageUtils.ORIENTATION_LANDSCAPE ? maxHeightLandscape :
+      maxHeightPortrait;
 
     textView.setMaxWidth(width);
     textView.setMinWidth(width);
 
-    imageView.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+    imageView.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams
+      .WRAP_CONTENT));
     imageView.setAdjustViewBounds(true);
     imageView.setMinimumWidth(width);
     imageView.setMaxWidth(width);
@@ -272,10 +298,11 @@ public class AttachmentView extends FrameLayout {
     textView.setMaxWidth(widthPortrait);
     textView.setMinWidth(widthPortrait);
 
-    imageView.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+    imageView.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams
+      .WRAP_CONTENT));
     imageView.setAdjustViewBounds(false);
     imageView.setBackgroundColor(Color.parseColor("#eeeeee"));
-    imageView.setMinimumHeight((int)(widthPortrait * 1.2f));
+    imageView.setMinimumHeight((int) (widthPortrait * 1.2f));
     imageView.setMinimumWidth(widthPortrait);
     imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
     imageView.setImageDrawable(getSystemIcon("ic_menu_attachment"));
@@ -297,8 +324,9 @@ public class AttachmentView extends FrameLayout {
   private Bitmap loadImageThumbnail() {
     try {
       orientation = ImageUtils.determineOrientation(context, attachmentUri);
-      int width  = orientation == ImageUtils.ORIENTATION_LANDSCAPE ? widthLandscape : widthPortrait;
-      int height = orientation == ImageUtils.ORIENTATION_LANDSCAPE ? maxHeightLandscape : maxHeightPortrait;
+      int width = orientation == ImageUtils.ORIENTATION_LANDSCAPE ? widthLandscape : widthPortrait;
+      int height = orientation == ImageUtils.ORIENTATION_LANDSCAPE ? maxHeightLandscape :
+        maxHeightPortrait;
 
       return ImageUtils.decodeSampledBitmap(context, attachmentUri, width, height);
     }
@@ -307,7 +335,14 @@ public class AttachmentView extends FrameLayout {
     }
   }
 
+  @SuppressWarnings("deprecation")
   private Drawable getSystemIcon(String name) {
-    return getResources().getDrawable(getResources().getIdentifier(name, "drawable", "android"));
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+      return getResources().getDrawable(getResources().getIdentifier(name, "drawable", "android")
+        , context.getTheme());
+    }
+    else {
+      return getResources().getDrawable(getResources().getIdentifier(name, "drawable", "android"));
+    }
   }
 }

@@ -1,5 +1,7 @@
 package net.hockeyapp.android;
 
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
@@ -111,7 +113,7 @@ public class Constants {
   /**
    * Version of this SDK.
    */
-  public static final String SDK_VERSION = "3.6.0";
+  public static final String SDK_VERSION = "3.7.0-b.1";
 
   /**
    * Permissions request for the update task.
@@ -143,7 +145,10 @@ public class Constants {
     File externalStorage = Environment.getExternalStorageDirectory();
 
     File dir = new File(externalStorage.getAbsolutePath() + "/" + Constants.TAG);
-    dir.mkdirs();
+    Boolean success = dir.mkdirs();
+    if(!success) {
+      Log.d(TAG, "Couldn't create HockeyApp Storage dir");
+    }
     return dir;
   }
 
@@ -247,9 +252,19 @@ public class Constants {
    * 
    * @param context the context to use. Usually your Activity object.
    */
+  @SuppressLint("InlinedApi")
+  @SuppressWarnings("deprecation")
   private static String createSalt(Context context) {
-    String fingerprint = "HA" + (Build.BOARD.length() % 10) + (Build.BRAND.length() % 10) + (Build.CPU_ABI.length() % 10) + (Build.PRODUCT.length() % 10);
-
+    String abiString;
+    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        abiString = Build.SUPPORTED_ABIS[0];
+    }
+    else {
+      abiString = Build.CPU_ABI;
+    }
+    
+    String fingerprint = "HA" + (Build.BOARD.length() % 10) + (Build.BRAND.length() % 10) +
+      (abiString.length() % 10) + (Build.PRODUCT.length() % 10);
     String serial = "";
     try {
       serial = android.os.Build.class.getField("SERIAL").get(null).toString();

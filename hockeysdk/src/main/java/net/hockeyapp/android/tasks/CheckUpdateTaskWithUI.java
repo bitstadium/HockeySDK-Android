@@ -12,11 +12,7 @@ import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
 
-import net.hockeyapp.android.Constants;
-import net.hockeyapp.android.Strings;
-import net.hockeyapp.android.UpdateActivity;
-import net.hockeyapp.android.UpdateFragment;
-import net.hockeyapp.android.UpdateManagerListener;
+import net.hockeyapp.android.*;
 import net.hockeyapp.android.utils.Util;
 import net.hockeyapp.android.utils.VersionCache;
 
@@ -107,12 +103,11 @@ public class CheckUpdateTaskWithUI extends CheckUpdateTask {
     }
 
     AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-    builder.setTitle(Strings.get(listener, Strings.UPDATE_DIALOG_TITLE_ID));
+    builder.setTitle(R.string.hockeyapp_update_dialog_title);
 
     if (!mandatory) {
-      builder.setMessage(Strings.get(listener, Strings.UPDATE_DIALOG_MESSAGE_ID));
-
-      builder.setNegativeButton(Strings.get(listener, Strings.UPDATE_DIALOG_NEGATIVE_BUTTON_ID), new DialogInterface.OnClickListener() {
+      builder.setMessage(R.string.hockeyapp_update_dialog_message);
+      builder.setNegativeButton(R.string.hockeyapp_update_dialog_negative_button, new DialogInterface.OnClickListener() {
         public void onClick(DialogInterface dialog, int which) {
           cleanUp();
           if (null != listener) {
@@ -121,7 +116,7 @@ public class CheckUpdateTaskWithUI extends CheckUpdateTask {
         }
       });
 
-      builder.setPositiveButton(Strings.get(listener, Strings.UPDATE_DIALOG_POSITIVE_BUTTON_ID), new DialogInterface.OnClickListener() {
+      builder.setPositiveButton(R.string.hockeyapp_update_dialog_positive_button, new DialogInterface.OnClickListener() {
         public void onClick(DialogInterface dialog, int which) {
           if (getCachingEnabled()) {
             VersionCache.setVersionInfo(activity, "[]");
@@ -141,7 +136,10 @@ public class CheckUpdateTaskWithUI extends CheckUpdateTask {
       dialog.show();
     }
     else {
-      Toast.makeText(activity, Strings.get(listener, Strings.UPDATE_MANDATORY_TOAST_ID), Toast.LENGTH_LONG).show();
+      String appName = Util.getAppName(activity);
+      String toast = String.format(activity.getString(R.string.hockeyapp_update_mandatory_toast),
+        appName);
+      Toast.makeText(activity, toast, Toast.LENGTH_LONG).show();
       startUpdateIntent(updateInfo, true);
     }
   }

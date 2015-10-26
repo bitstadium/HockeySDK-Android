@@ -1,4 +1,4 @@
-## Version 3.6.1
+## Version 3.7.0-beta.1
 
 ## Introduction
 
@@ -6,8 +6,8 @@ HockeySDK-Android implements support for using HockeyApp in your Android applica
 
 The following features are currently supported:
 
-1. **Collect crash reports:** If your app crashes, a crash log is written to the device's storage. If the user starts the app again, he is asked to submit the crash report to HockeyApp. This works for both beta and live apps, i.e. those submitted to Google Play or other app stores!
-I
+1. **Collect crash reports:** If your app crashes, a crash log is written to the device's storage. If the user starts the app again, she will be asked asked to submit the crash report to HockeyApp. This works for both beta and live apps, i.e. those submitted to Google Play or other app stores!
+
 2. **Update Alpha/Beta apps:** The app will check with HockeyApp if a new version for your alpha/beta build is available. If yes, it will show a dialog to the user and let him see the release notes, the version history and start the installation process right away. 
 
 3. **Feedback:** Collect feedback from your users from within your app and communicate directly with them using the HockeyApp backend.
@@ -32,55 +32,68 @@ This document contains the following sections:
 ## 1. Requirements
 
 1. We assume that you already have an Android project in Android Studio or another Android IDE.
-2. The SDK runs on devices with Android 2.1 or later, but you need to build your app with Android SDK 3.0 (Level 11) or later for the integration with HockeySDK.
+2. The SDK runs on devices with Android 2.3 or later, but you need to build your app with Android SDK 3.0 (Level 11) or later for the integration with HockeySDK.
 
 <a id="setup"></a>
 ## 2. Setup
 
-We recommend integration of our compiled library into your project using Android Studio.
+We recommend integration of our compiled library into your project using Android Studio and gradle.
 For other ways to setup the SDK, see [Advanced Setup](#advancedsetup).
-A sample integration can be found in [this GitHub repository](https://github.com/akoscz/HockeyAppSample).
+A sample integration can be found in [this GitHub repository](https://github.com/bitstadium/HockeySDK-AndroidDemo).
 
 ### 2.1 Obtain an App Identifier
 
-Please see the "[How to create a new app](http://support.hockeyapp.net/kb/about-general-faq/how-to-create-a-new-app)" tutorial. This will provide you with an HockeyApp specific App Identifier to be used to initialize the SDK.
+Please see the "[How to create a new app](http://support.hockeyapp.net/kb/about-general-faq/how-to-create-a-new-app)" tutorial. This will provide you with an HockeyApp-specific App Identifier to be used to initialize the SDK.
 
 ### 2.2 Download the SDK
 
 Add the SDK to your app module's dependencies in Android Studio by adding the following line to your `dependencies { ... }` configuration:
 
 ```groovy
-  compile 'net.hockeyapp.android:HockeySDK:3.6.1'
+  compile 'net.hockeyapp.android:HockeySDK:3.7.0-beta.1'
 ```
 also make sure your repository configuration contains
 
 ```java
+repositories {
   mavenCentral()
+}
+```
+
+or
+
+```java
+repositories {
+  jcenter()
+}
 ```
 
 <a id="setup-modifycode"></a>
 ### 2.3 Modify Code
 
-1. Open your AndroidManifest.xml file.
-2. Add the `INTERNET` permission to your manifest:
-
-  ```xml
-    <uses-permission android:name="android.permission.INTERNET" />
+1. Open your module's build.gradle file.
+2. Add the following manifest placeholder to your configuration (typically the `defaultConfig`):
+  
+  ```groovy
+  manifestPlaceholders = [HOCKEYAPP_APP_ID: "$APP_ID"]
   ```
-2. If you also want in-app updates:
-    * Add the following line as a child element of `<application>`:
 
-    ```xml
-      <activity android:name="net.hockeyapp.android.UpdateActivity" />
-    ```
-    * Add the following permission to your manifest:
+3. The param $APP_ID must be replaced by your HockeyApp App Identifier. The app identifier can be found on the app's page in the "Overview" section of the HockeyApp backend.
+4. Save your build.gradle file and make sure to trigger a gradle sync.
+5. Open your AndroidManifest.xml file and add a `meta-data`-tag for the HockeySDK.
+	
+	```xml
+	<application> 
+		//your activity declarations and other stuff
+	 
+		<meta-data android:name="net.hockeyapp.android.appIdentifier" android:value="${HOCKEYAPP_APP_ID}" />
+			
+	</application>  
+```
 
-    ```xml
-      <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    ```
-4. Save your AndroidManifest.xml file.
-5. Open your main activity or the activity in which you want to integrate the update process and crash reporting.
-6. Add the following lines:
+6. Save your AndroidManifest.xml file.
+7. Open your main activity or the activity in which you want to integrate the update process and crash reporting.
+8. Add the following lines and make sure to always make sure to balance `register(...)` calls to SDK managers with `unregister()` calls in the corresponding lifecycle callbacks.
 
 ```java
 import net.hockeyapp.android.CrashManager;
@@ -115,12 +128,12 @@ public class YourActivity extends Activity {
   }
   
   private void checkForCrashes() {
-    CrashManager.register(this, APP_ID);
+    CrashManager.register(this);
   }
   
   private void checkForUpdates() {
     // Remove this for store builds!
-    UpdateManager.register(this, APP_ID);
+    UpdateManager.register(this);
   }
   
   private void unregisterManagers() {
@@ -132,10 +145,6 @@ public class YourActivity extends Activity {
 }
 ```
 
-7. If you only want crash reporting but no in-app updates leave out all the `UpdateManager`-related lines.
-8. The param APP_ID has to be replaced by your HockeyApp App Identifier. The app identifier can be found on the app's page in the "Overview" section of the HockeyApp backend.
-9. Always make sure to balance `register(...)` calls to SDK managers with `unregister()` calls in the corresponding lifecycle callbacks.
-
 The above code does two things: 
 
 1. When the activity is created, the update manager checks for new updates in the background. If it finds a new update, an alert dialog is shown and if the user presses Show, they will be taken to the update activity.
@@ -143,7 +152,24 @@ The above code does two things:
 
 The reason for the two different entry points is that the update check causes network traffic and therefore potential costs for your users. In contrast, the crash manager only searches for new files in the file system, i.e. the call is pretty fast. 
 
-**Congratulation, now you're all set to use HockeySDK!**
+**Congratulation, now you're all set to use HockeyApp!**
+
+
+### 2.4 Crash Reporting without in-app-updates
+If you want crash reporting but no in-app updates, leave out all the `UpdateManager`-related lines.
+
+### 2.5 Upgrading from 3.6.X to 3.7.0-beta.1
+We didn't introduce any breaking changes except that we have raised the minimum API level to 9.
+If you integrate the SDK using gradle, you can remove the previously required activities from your manifest file.
+
+```xml
+ <!-- HockeySDK Activities – no longer required as of 3.7.0-beta.1! -->
+ <activity android:name="net.hockeyapp.android.UpdateActivity" />
+ <activity android:name="net.hockeyapp.android.FeedbackActivity" />
+ <activity android:name="net.hockeyapp.android.PaintActivity" />
+```
+
+Also consider switching to our new register-calls and adding your appID to your configuration as described above.  
 
 <a id="advancedsetup"></a> 
 ## 3. Advanced Setup
@@ -151,12 +177,12 @@ The reason for the two different entry points is that the update check causes ne
 <a id="manualdependency"></a> 
 ### 3.2 Manual Library Dependency
 
-If you don't want to use Android Studio, Gradle, or Maven you can also manually download and add the library manually.
+If you don't want to use Android Studio, Gradle, or Maven you can also download and add the library manually.
 
 1. Download the latest release from [here](http://hockeyapp.net/releases/#android).
 2. Unzip the file.
-3. Copy the file libs/HockeySDK.jar to the libs folder of your Android project.
-4. If you use Eclipse with ADT 16 or older, then add the .jar file to your classpath. With ADT 17 or newer, this is done automatically.
+3. Copy the file libs/HockeySDK-$version.aar to the libs folder of your Android project. (`$version` is the version of the downloaded SDK)
+4. Configure your development tools to use the aar-file in the libs folder.
 
 Then proceed with [Modifying your Code](#setup-modifycode).
 
@@ -165,33 +191,17 @@ Then proceed with [Modifying your Code](#setup-modifycode).
 
 Starting with HockeySDK 3.0, you can integrate a feedback view in your app, so your users can send textual feedback or even create screenshots and upload them to HockeyApp:
 
-1. Open your AndroidManifest.xml.
-2. Add the following lines as child elements of your `<application>`: 
-
-  ```xml
-    <activity android:name="net.hockeyapp.android.FeedbackActivity" />
-    <activity android:name="net.hockeyapp.android.PaintActivity" />
-  ```
-
-3. If not already present, add the `INTERNET`-permission:
-
-  ```xml
-    <uses-permission android:name="android.permission.INTERNET" />
-  ```
-
-4. Save the AndroidManifest.xml.
-5. Open the activity from which you want to show the feedback view.
-6. Add the following method:
+1. Open the activity from which you want to show the feedback view.
+2. Add the following method:
 
   ```java
     public void showFeedbackActivity() {
-      FeedbackManager.register(this, APP_ID, null);
+      FeedbackManager.register(this);
       FeedbackManager.showFeedbackActivity(this);
     }
   ```
 
-7. Replace APP_ID with your app's identifier.
-8. Call the method `showFeedbackActivity()` in an `onClick`, `onMenuItemSelected`, or `onOptionsItemSelected` listener method.
+3. Call the method `showFeedbackActivity()` in an `onClick`, `onMenuItemSelected`, or `onOptionsItemSelected` listener method.
 
 <a id="crashreporting"></a> 
 ### 3.3 Crash Reporting
@@ -204,10 +214,9 @@ To configure a custom `CrashManagerListener` use the following `register()` meth
   CrashManager.register(context, APP_ID, new MyCustomCrashManagerListener());
 ```
 
-
 #### 3.3.1 Autosend crash reports
 
-Crashes are sent the next time the app starts. If your custom crash manager listener returns `true` for `shouldAutoUploadCrashes()`, crashes will be sent without any user interaction, otherwise a dialog will appear allowing the user to decide whether they want to send the report or not.
+Crashes are sent the next time the app starts. If your custom crash manager listener returns `true` for `shouldAutoUploadCrashes()`, crashes will be sent without any user interaction, otherwise a dialog will appear allowing the user to decide whether she want to send the report or not.
 
 ```java
 
@@ -222,7 +231,7 @@ public class MyCustomCrashManagerListener extends CrashManagerListener {
 
 #### 3.3.2 Attach additional meta data
 
-Starting with HockeyApp 3.6.0 you can add additional meta data (e.g. user-provided information) to a crash report. 
+Starting with HockeyApp 3.6.0, you can add additional meta data (e.g. user-provided information) to a crash report. 
 To achieve this call `CrashManager.handleUserInput()` and provide an instance of `net.hockeyapp.android.objects.CrashMetaData`.
 
 <a id="documentation"></a>
@@ -235,9 +244,9 @@ Our documentation can be found on [HockeyApp](http://hockeyapp.net/help/sdk/andr
 
 1. Check if the APP_ID matches the App ID in HockeyApp.
 
-2. Check if the `applicationId` in your `build.gradle` file matches the Bundle Identifier of the app in HockeyApp. HockeyApp accepts crashes only if both the App ID and the bundle identifier equal their corresponding values in your app. Please note that the package value in your `AndroidManifest.xml` file might differ from the bundle identifier.
+2. Check if the `applicationId` in your `build.gradle` file matches the Bundle Identifier of the app in HockeyApp. HockeyApp accepts crashes only if both the App ID and the bundle identifier match their corresponding values in your app. Please note that the package value in your `AndroidManifest.xml` file might differ from the bundle identifier.
 
-3. If your app crashes and you start it again, is the dialog shown which asks the user to send the crash report? If not, please crash your app again, then connect the debugger and set a break point in CrashManager.java, method [register](https://github.com/bitstadium/HockeySDK-Android/blob/master/src/main/java/net/hockeyapp/android/CrashManager.java#L100) to see why the dialog is not shown.
+3. If your app crashes and you start it again, does the dialog show up which asks the user to send the crash report? If not, please crash your app again, then connect the debugger and set a break point in CrashManager.java, method [register](https://github.com/bitstadium/HockeySDK-Android/blob/master/src/main/java/net/hockeyapp/android/CrashManager.java#L100) to see why the dialog is not shown.
 
 4. If it still does not work, please [contact us](http://support.hockeyapp.net/discussion/new).
 

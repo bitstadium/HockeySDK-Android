@@ -41,7 +41,7 @@ import java.util.Date;
  *
  * @author Thomas Dohmke
  **/
-public abstract class UpdateManagerListener extends StringListener {
+public abstract class UpdateManagerListener {
   /**
    * Return your own subclass of UpdateActivity for customization. 
    *

@@ -1,5 +1,6 @@
 package net.hockeyapp.android;
 
+import android.annotation.SuppressLint;
 import android.os.Build;
 import android.util.Log;
 import net.hockeyapp.android.listeners.DownloadFileListener;
@@ -7,6 +8,7 @@ import net.hockeyapp.android.objects.ErrorObject;
 import net.hockeyapp.android.tasks.DownloadFileTask;
 import net.hockeyapp.android.tasks.GetFileSizeTask;
 import net.hockeyapp.android.utils.AsyncTaskUtils;
+import net.hockeyapp.android.utils.Util;
 import net.hockeyapp.android.utils.VersionHelper;
 import net.hockeyapp.android.views.UpdateView;
 import android.Manifest;
@@ -202,13 +204,13 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
         } else {
           final UpdateActivity updateActivity = this;
           new AlertDialog.Builder(context)
-                  .setTitle(Strings.get(Strings.PERMISSION_UPDATE_TITLE_ID))
-                  .setMessage(Strings.get(Strings.PERMISSION_UPDATE_MESSAGE_ID))
-                  .setNegativeButton(Strings.get(Strings.PERMISSION_DIALOG_NEGATIVE_BUTTON_ID), null)
-                  .setPositiveButton(Strings.get(Strings.PERMISSION_DIALOG_POSITIVE_BUTTON_ID), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                      updateActivity.prepareDownload();
-                    }
+                  .setTitle(getString(R.string.hockeyapp_permission_update_title))
+                  .setMessage(getString(R.string.hockeyapp_permission_update_message))
+                  .setNegativeButton(getString(R.string.hockeyapp_permission_dialog_negative_button), null)
+                  .setPositiveButton(getString(R.string.hockeyapp_permission_dialog_positive_button), new DialogInterface.OnClickListener() {
+                      public void onClick(DialogInterface dialog, int which) {
+                          updateActivity.prepareDownload();
+                      }
                   })
                   .create()
                   .show();
@@ -235,16 +237,6 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
         }
         else {
           enableUpdateButton();
-        }
-      }
-      
-      public String getStringForResource(int resourceID) {
-        UpdateManagerListener listener = UpdateManager.getLastListener();
-        if (listener != null) {
-          return listener.getStringForResource(resourceID);
-        }
-        else {
-          return null;
         }
       }
     });
@@ -322,6 +314,7 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
    *
    * @return
    */
+  @SuppressLint("InlinedApi")
   @SuppressWarnings("deprecation")
   private boolean isUnknownSourcesChecked() {
     try {
@@ -346,6 +339,19 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
   }
 
   protected void prepareDownload() {
+    if (!Util.isConnectedToNetwork(context)) {
+      error = new ErrorObject();
+      error.setMessage(getString(R.string.hockeyapp_error_no_network_message));
+
+      runOnUiThread(new Runnable() {
+        @SuppressWarnings("deprecation")
+        public void run() {
+          showDialog(DIALOG_ERROR_ID);
+        }
+      });
+
+      return;
+    }
     if (!isWriteExternalStorageSet(context)) {
 
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

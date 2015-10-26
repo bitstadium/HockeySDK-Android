@@ -1,5 +1,7 @@
 package net.hockeyapp.android.utils;
 
+import android.util.Log;
+
 import java.io.UnsupportedEncodingException;
 
 /**
@@ -28,6 +30,8 @@ import java.io.UnsupportedEncodingException;
  *
  */
 public class Base64 {
+  private static final String TAG = "BASE64";
+
   /**
    * Default values for encoder/decoder flags.
    */
@@ -537,7 +541,9 @@ public class Base64 {
     encoder.output = new byte[output_len];
     encoder.process(input, offset, len, true);
 
-    assert encoder.op == output_len;
+    if (encoder.op != output_len) {
+      throw new AssertionError();
+    }
 
     return encoder.output;
   }
@@ -631,7 +637,7 @@ public class Base64 {
                 ((input[p++] & 0xff) << 8) |
                 (input[p++] & 0xff);
             tailLen = 0;
-          };
+          }
           break;
 
         case 2:
@@ -719,8 +725,14 @@ public class Base64 {
           output[op++] = '\n';
         }
 
-        assert tailLen == 0;
-        assert p == len;
+        if (tailLen != 0) {
+          Log.e(TAG, "Error during encoding");
+          //throw new AssertionError();
+        }
+        if (p != len) {
+          Log.e(TAG, "Error during encoding");
+          //throw new AssertionError();
+        }
       } else {
         // Save the leftovers in tail to be consumed on the next
         // call to encodeInternal.

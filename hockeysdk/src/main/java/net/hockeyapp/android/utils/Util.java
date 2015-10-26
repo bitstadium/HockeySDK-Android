@@ -6,11 +6,16 @@ import android.app.Activity;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
+
+import net.hockeyapp.android.R;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
@@ -93,7 +98,8 @@ public class Util {
   public static String encodeParam(String param) {
     try {
       return URLEncoder.encode(param, "UTF-8");
-    } catch (UnsupportedEncodingException e) {
+    }
+    catch (UnsupportedEncodingException e) {
       // UTF-8 should be available, so just in case
       e.printStackTrace();
       return "";
@@ -107,7 +113,8 @@ public class Util {
    * @return true if value is a valid email
    */
   public final static boolean isValidEmail(String value) {
-    return !TextUtils.isEmpty(value) && android.util.Patterns.EMAIL_ADDRESS.matcher(value).matches();
+    return !TextUtils.isEmpty(value) && android.util.Patterns.EMAIL_ADDRESS.matcher(value)
+      .matches();
   }
 
   /**
@@ -120,7 +127,8 @@ public class Util {
     try {
       return (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) &&
         classExists("android.app.Fragment");
-    } catch (NoClassDefFoundError e) {
+    }
+    catch (NoClassDefFoundError e) {
       return false;
     }
   }
@@ -182,7 +190,8 @@ public class Util {
    *
    * @param params the parameters
    * @return an URL-encoded form string ready for use in a HTTP post
-   * @throws UnsupportedEncodingException when your system does not know how to handle the UTF-8 charset
+   * @throws UnsupportedEncodingException when your system does not know how to handle the UTF-8
+   * charset
    */
   public static String getFormString(Map<String, String> params) throws
     UnsupportedEncodingException {
@@ -205,7 +214,8 @@ public class Util {
   public static boolean classExists(String className) {
     try {
       return Class.forName(className) != null;
-    } catch (ClassNotFoundException e) {
+    }
+    catch (ClassNotFoundException e) {
       return false;
     }
   }
@@ -260,7 +270,8 @@ public class Util {
       Method m = notification.getClass().getMethod("setLatestEventInfo", Context.class,
         CharSequence.class, CharSequence.class, PendingIntent.class);
       m.invoke(notification, context, title, text, pendingIntent);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       // do nothing
     }
     return notification;
@@ -297,10 +308,41 @@ public class Util {
     try {
       bundle = context.getPackageManager().getApplicationInfo(context.getPackageName(),
         PackageManager.GET_META_DATA).metaData;
-    } catch (PackageManager.NameNotFoundException e) {
+    }
+    catch (PackageManager.NameNotFoundException e) {
       throw new RuntimeException(e);
     }
     return bundle;
+  }
+
+  public static boolean isConnectedToNetwork(Context context) {
+    ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService
+      (Context.CONNECTIVITY_SERVICE);
+    if (connectivityManager != null) {
+      NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
+      return activeNetwork != null && activeNetwork.isConnected();
+    }
+    return false;
+  }
+
+  public static String getAppName(Context context) {
+    if (context == null) {
+      return "";
+    }
+
+    PackageManager packageManager = context.getPackageManager();
+    ApplicationInfo applicationInfo = null;
+
+    try {
+      applicationInfo = packageManager.getApplicationInfo(context.getApplicationInfo()
+        .packageName, 0);
+    }
+    catch (final PackageManager.NameNotFoundException e) {
+    }
+    String appTitle = (applicationInfo != null ? (String) packageManager.getApplicationLabel
+      (applicationInfo)
+      : context.getString(R.string.hockeyapp_crash_dialog_app_name_fallback));
+    return appTitle;
   }
 
   /**
@@ -342,7 +384,8 @@ public class Util {
       }
 
       return new String(hexChars);
-    } catch (NoSuchAlgorithmException e) {
+    }
+    catch (NoSuchAlgorithmException e) {
       // All android devices should support SHA256, but if unavailable return ""
       return "";
     }
@@ -371,11 +414,14 @@ public class Util {
     IllegalArgumentException {
     String sanitizedAppIdentifier = null;
     String guid = null;
+
     try {
       sanitizedAppIdentifier = sanitizeAppIdentifier(appIdentifier);
-    } catch (IllegalArgumentException e) {
+    }
+    catch (IllegalArgumentException e) {
       throw e;
     }
+
     if (sanitizedAppIdentifier != null) {
       StringBuffer idBuf = new StringBuffer(sanitizedAppIdentifier);
       idBuf.insert(20, '-');
@@ -384,6 +430,7 @@ public class Util {
       idBuf.insert(8, '-');
       guid = idBuf.toString();
     }
+
     return guid;
   }
 }

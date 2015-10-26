@@ -9,7 +9,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
-import net.hockeyapp.android.Strings;
+import net.hockeyapp.android.R;
 import net.hockeyapp.android.listeners.DownloadFileListener;
 
 import java.io.*;
@@ -212,24 +212,24 @@ public class DownloadFileTask extends AsyncTask<Void, Integer, Long> {
     else {
       try {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle(Strings.get(notifier, Strings.DOWNLOAD_FAILED_DIALOG_TITLE_ID));
+        builder.setTitle(R.string.hockeyapp_download_failed_dialog_title);
 
         String message;
         if (downloadErrorMessage == null) {
-          message = Strings.get(notifier, Strings.DOWNLOAD_FAILED_DIALOG_MESSAGE_ID);
+          message = context.getString(R.string.hockeyapp_download_failed_dialog_message);
         }
         else {
           message = downloadErrorMessage;
         }
         builder.setMessage(message);
 
-        builder.setNegativeButton(Strings.get(notifier, Strings.DOWNLOAD_FAILED_DIALOG_NEGATIVE_BUTTON_ID), new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(R.string.hockeyapp_download_failed_dialog_negative_button, new DialogInterface.OnClickListener() {
           public void onClick(DialogInterface dialog, int which) {
             notifier.downloadFailed(DownloadFileTask.this, false);
           } 
         });
 
-        builder.setPositiveButton(Strings.get(notifier, Strings.DOWNLOAD_FAILED_DIALOG_POSITIVE_BUTTON_ID), new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.hockeyapp_download_failed_dialog_positive_button, new DialogInterface.OnClickListener() {
           public void onClick(DialogInterface dialog, int which) {
             notifier.downloadFailed(DownloadFileTask.this, true);
           } 

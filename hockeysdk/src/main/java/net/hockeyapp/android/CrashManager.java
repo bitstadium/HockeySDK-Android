@@ -1,27 +1,32 @@
 package net.hockeyapp.android;
 
-import java.io.*;
-import java.lang.Thread.UncaughtExceptionHandler;
-import java.lang.ref.WeakReference;
-import java.net.HttpURLConnection;
-import java.util.*;
-
-
-import android.preference.PreferenceManager;
-import net.hockeyapp.android.objects.CrashManagerUserInput;
-import net.hockeyapp.android.objects.CrashMetaData;
-import net.hockeyapp.android.utils.HttpURLConnectionBuilder;
-import net.hockeyapp.android.utils.PrefsUtil;
-
-import net.hockeyapp.android.utils.Util;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.preference.PreferenceManager;
 import android.util.Log;
+
+import net.hockeyapp.android.objects.CrashManagerUserInput;
+import net.hockeyapp.android.objects.CrashMetaData;
+import net.hockeyapp.android.utils.HttpURLConnectionBuilder;
+import net.hockeyapp.android.utils.Util;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.lang.Thread.UncaughtExceptionHandler;
+import java.lang.ref.WeakReference;
+import java.net.HttpURLConnection;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <h3>Description</h3>
@@ -435,7 +440,7 @@ public class CrashManager {
         }
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        prefs.edit().putBoolean(ALWAYS_SEND_KEY, true).commit();
+        prefs.edit().putBoolean(ALWAYS_SEND_KEY, true).apply();
 
         sendCrashes(weakContext, listener, ignoreDefaultHandler, userProvidedMetaData);
         return true;
@@ -461,7 +466,7 @@ public class CrashManager {
 
       if (context != null) {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        prefs.edit().remove(ALWAYS_SEND_KEY).commit();
+        prefs.edit().remove(ALWAYS_SEND_KEY).apply();
       }
     }
   }
@@ -509,22 +514,23 @@ public class CrashManager {
     }
 
     AlertDialog.Builder builder = new AlertDialog.Builder(context);
-    builder.setTitle(Strings.get(listener, Strings.CRASH_DIALOG_TITLE_ID));
-    builder.setMessage(Strings.get(listener, Strings.CRASH_DIALOG_MESSAGE_ID));
+    String alertTitle = getAlertTitle(context);
+    builder.setTitle(alertTitle);
+    builder.setMessage(R.string.hockeyapp_crash_dialog_message);
 
-    builder.setNegativeButton(Strings.get(listener, Strings.CRASH_DIALOG_NEGATIVE_BUTTON_ID), new DialogInterface.OnClickListener() {
+    builder.setNegativeButton(R.string.hockeyapp_crash_dialog_negative_button, new DialogInterface.OnClickListener() {
       public void onClick(DialogInterface dialog, int which) {
         handleUserInput(CrashManagerUserInput.CrashManagerUserInputDontSend, null, listener, weakContext, ignoreDefaultHandler);
       }
     });
 
-    builder.setNeutralButton(Strings.get(listener, Strings.CRASH_DIALOG_NEUTRAL_BUTTON_ID), new DialogInterface.OnClickListener() {
+    builder.setNeutralButton(R.string.hockeyapp_crash_dialog_neutral_button, new DialogInterface.OnClickListener() {
       public void onClick(DialogInterface dialog, int which) {
         handleUserInput(CrashManagerUserInput.CrashManagerUserInputAlwaysSend, null, listener, weakContext, ignoreDefaultHandler);
       }
     });
 
-    builder.setPositiveButton(Strings.get(listener, Strings.CRASH_DIALOG_POSITIVE_BUTTON_ID), new DialogInterface.OnClickListener() {
+    builder.setPositiveButton(R.string.hockeyapp_dialog_positive_button, new DialogInterface.OnClickListener() {
       public void onClick(DialogInterface dialog, int which) {
         handleUserInput(CrashManagerUserInput.CrashManagerUserInputSend, null, listener,
             weakContext, ignoreDefaultHandler);
@@ -532,6 +538,13 @@ public class CrashManager {
     });
 
     builder.create().show();
+  }
+
+  private static String getAlertTitle(Context context) {
+    String appTitle = Util.getAppName(context);
+
+    String message = context.getString(R.string.hockeyapp_crash_dialog_title);
+    return String.format(message, appTitle);
   }
 
   /**
@@ -549,6 +562,12 @@ public class CrashManager {
   private static void sendCrashes(final WeakReference<Context> weakContext, final CrashManagerListener listener, final boolean ignoreDefaultHandler, final CrashMetaData crashMetaData) {
     saveConfirmedStackTraces(weakContext);
     registerHandler(weakContext, listener, ignoreDefaultHandler);
+
+    Context ctx = weakContext.get();
+    if (ctx != null && !Util.isConnectedToNetwork(ctx)) {
+      // Not connected to network, not trying to submit stack traces
+      return;
+    }
 
     if (!submitting) {
       submitting = true;
@@ -616,7 +635,7 @@ public class CrashManager {
         }
         else {
           editor.putInt("RETRY_COUNT: "+ filename, retryCounter + 1);
-          editor.commit();
+          editor.apply();
         }
       }
     }
@@ -634,7 +653,7 @@ public class CrashManager {
         SharedPreferences preferences = context.getSharedPreferences("HockeySDK", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.remove("RETRY_COUNT: "+ filename);
-        editor.commit();
+        editor.apply();
       }
     }
   }

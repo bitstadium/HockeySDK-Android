@@ -2,16 +2,94 @@
 
 buildscript {
     repositories {
-        mavenCentral()
         jcenter()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:1.3.0'
+        classpath 'com.novoda:bintray-release:0.3.4'
     }
 }
 
-allprojects {
-    repositories {
-        jcenter()
+
+//The bintray-release plugin doesn't write the following attributes to the artifact's pom.xml:
+//Project name, project description,Project URL, License information,SCM URL and Developer information
+//These attributes are not required for publishing on bintray/jcenter but they are mandatory
+//for publishing on maven central.
+//the following ext{} defines variables that will be used in the hook defined for all subprojects
+//
+//The Hook
+//...will generate a new pom.xml after the generatePomFileForMavenPublication-task and BEFORE the
+// bintrayUpload-task. We can than sync from bintray to maven central using the bintray web-UI.
+//as described in https://github.com/novoda/bintray-release/issues/19
+
+ext {
+    BINTRAY_KEY = HOCKEYAPP_BINTRAY_KEY
+
+    VERSION_NAME = '3.7.0-beta.1'
+    VERSION_CODE = 2
+    SITE_URL = 'https://github.com/bitstadium/hockeysdk-android'
+    GIT_URL = 'https://github.com/bitstadium/HockeySDK-Android.git'
+    BINTRAY_USER = HOCKEYAPP_BINTRAY_USER
+    GROUP_NAME = 'net.hockeyapp.android'
+    COMPILE_SDK = 23
+    BUILD_TOOLS = '23.0.1'
+    IS_UPLOADING = project.getGradle().startParameter.taskNames.any{it.contains('bintrayUpload')}
+    DESCRIPTION = 'HockeySDK-Android implements support for using HockeyApp in your Android application. The following features are currently supported:\n' +
+            '\n' +
+            'Collect crash reports: If your app crashes, a crash log is written to the device\'s storage. If the user starts the app again, he is asked to submit the crash report to HockeyApp. This works for both beta and live apps, i.e. those submitted to Google Play or other app stores! I\n' +
+            'Update Alpha/Beta apps: The app will check with HockeyApp if a new version for your alpha/beta build is available. If yes, it will show a dialog to the user and let him see the release notes, the version history and start the installation process right away.\n' +
+            '\n' +
+            'Feedback: Collect feedback from your users from within your app and communicate directly with them using the HockeyApp backend.\n' +
+            '\n' +
+            'Authenticate: Identify and authenticate users against your registered testers with the HockeyApp backend'
+}
+
+subprojects {
+    group = GROUP_NAME
+    version = VERSION_NAME
+
+    if (IS_UPLOADING && project.name in ['hockeysdk']) {
+        println project.name
+        apply plugin: 'maven'
+
+        gradle.taskGraph.whenReady { taskGraph ->
+            taskGraph.getAllTasks().find {
+                it.path == ":$project.name:generatePomFileForMavenPublication"
+            }.doLast {
+                file("build/publications/maven/pom-default.xml").delete()
+                println 'Overriding pom-file to make sure we can sync to maven central!'
+                pom {
+                    //noinspection GroovyAssignabilityCheck
+                    project {
+                        name "$project.name"
+                        artifactId "HockeySDK"
+                        packaging project.name == 'compiler' ? 'jar' : 'aar'
+                        description DESCRIPTION
+                        url SITE_URL
+                        version VERSION_NAME
+
+                        scm {
+                            url GIT_URL
+                            connection GIT_URL
+                            developerConnection GIT_URL
+                        }
+
+                        licenses {
+                            license {
+                                name 'MIT'
+                            }
+                        }
+
+                        developers {
+                            developer {
+                                id 'HockeyApp'
+                                name 'BitStadium GmbH'
+                                email 'support@hockeyapp.net'
+                            }
+                        }
+                    }
+                }.writeTo("build/publications/maven/pom-default.xml")
+            }
+        }
     }
 }

@@ -1,6 +1,7 @@
 package net.hockeyapp.android;
 
 import android.*;
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
@@ -66,6 +67,7 @@ import android.widget.TextView;
  *
  * @author Thomas Dohmke
  **/
+@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class UpdateFragment extends DialogFragment implements OnClickListener, UpdateInfoListener {
   /**
    * Task to download the .apk file.
@@ -221,10 +223,10 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
         } else {
           final UpdateFragment updateFragment = this;
           new AlertDialog.Builder(getActivity())
-                  .setTitle(Strings.get(Strings.PERMISSION_UPDATE_TITLE_ID))
-                  .setMessage(Strings.get(Strings.PERMISSION_UPDATE_MESSAGE_ID))
-                  .setNegativeButton(Strings.get(Strings.PERMISSION_DIALOG_NEGATIVE_BUTTON_ID), null)
-                  .setPositiveButton(Strings.get(Strings.PERMISSION_DIALOG_POSITIVE_BUTTON_ID), new DialogInterface.OnClickListener() {
+                  .setTitle(getString(R.string.hockeyapp_permission_update_title))
+                  .setMessage(getString(R.string.hockeyapp_permission_update_message))
+                  .setNegativeButton(getString(R.string.hockeyapp_permission_dialog_negative_button), null)
+                  .setPositiveButton(getString(R.string.hockeyapp_permission_dialog_positive_button), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                       updateFragment.prepareDownload();
                     }
@@ -252,15 +254,6 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
         // Do nothing as the fragment is already dismissed
       }
       
-      public String getStringForResource(int resourceID) {
-        UpdateManagerListener listener = UpdateManager.getLastListener();
-        if (listener != null) {
-          return listener.getStringForResource(resourceID);
-        }
-        else {
-          return null;
-        }
-      }
     });
     AsyncTaskUtils.execute(downloadTask);
   }

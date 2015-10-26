@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 import net.hockeyapp.android.tasks.LoginTask;
 import net.hockeyapp.android.utils.AsyncTaskUtils;
+import net.hockeyapp.android.utils.Util;
 import net.hockeyapp.android.views.LoginView;
 
 import java.security.MessageDigest;
@@ -128,13 +129,20 @@ public class LoginActivity extends Activity implements View.OnClickListener {
           }
         }
         else {
-          Toast.makeText(LoginActivity.this, "Login failed. Check your credentials.", 2000).show();
+          Toast.makeText(LoginActivity.this, "Login failed. Check your credentials.", Toast.LENGTH_LONG)
+            .show();
         }
       }
     };
   }
 
   private void performAuthentication() {
+    if (!Util.isConnectedToNetwork(this)) {
+      Toast errorToast = Toast.makeText(this, R.string.hockeyapp_error_no_network_message, Toast.LENGTH_LONG);
+      errorToast.show();
+      return;
+    }
+
     String email = ((EditText) findViewById(LoginView.EMAIL_INPUT_ID)).getText().toString();
     String password = ((EditText) findViewById(LoginView.PASSWORD_INPUT_ID)).getText().toString();
 
@@ -157,7 +165,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
       AsyncTaskUtils.execute(loginTask);
     }
     else {
-      Toast.makeText(this, Strings.get(Strings.LOGIN_MISSING_CREDENTIALS_TOAST_ID), 1000).show();
+      Toast.makeText(this, getString(R.string.hockeyapp_login_missing_credentials_toast), Toast.LENGTH_LONG).show();
     }
   }
 
