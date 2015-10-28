@@ -1,7 +1,6 @@
 package net.hockeyapp.android;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
@@ -109,11 +108,6 @@ public class Constants {
    * Name of this SDK.
    */
   public static final String SDK_NAME = "HockeySDK";
-  
-  /**
-   * Version of this SDK.
-   */
-  public static final String SDK_VERSION = "3.7.0-b.1";
 
   /**
    * Permissions request for the update task.

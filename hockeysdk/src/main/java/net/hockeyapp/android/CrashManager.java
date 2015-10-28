@@ -67,6 +67,7 @@ import java.util.Map;
  * @author Thomas Dohmke
  **/
 public class CrashManager {
+  private static final String TAG = "CrashManager";
   /**
    * App identifier from HockeyApp.
    */
@@ -330,7 +331,8 @@ public class CrashManager {
             parameters.put("contact", contact);
             parameters.put("description", description);
             parameters.put("sdk", Constants.SDK_NAME);
-            parameters.put("sdk_version", Constants.SDK_VERSION);
+            parameters.put("sdk_version", Util.getSdkVersionFromManifest(weakContext.get()));
+            Log.d(TAG, parameters.toString());
 
             urlConnection = new HttpURLConnectionBuilder(getURLString())
                     .setRequestMethod("POST")
@@ -340,7 +342,6 @@ public class CrashManager {
             int responseCode = urlConnection.getResponseCode();
 
             successful = (responseCode == HttpURLConnection.HTTP_ACCEPTED || responseCode == HttpURLConnection.HTTP_CREATED);
-
           }
         }
         catch (Exception e) {
@@ -370,6 +371,7 @@ public class CrashManager {
       }
     }
   }
+
 
   /**
    * Deletes all stack traces and meta files from files dir.

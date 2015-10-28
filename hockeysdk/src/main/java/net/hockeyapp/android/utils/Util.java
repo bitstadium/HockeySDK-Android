@@ -84,6 +84,8 @@ public class Util {
   private static final DateFormat DATE_FORMAT =
     new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.ROOT);
 
+  private static final String SDK_VERSION_KEY = "net.hockeyapp.android.sdkVersion";
+
   static {
     TimeZone timeZone = TimeZone.getTimeZone("UTC");
     DATE_FORMAT.setTimeZone(timeZone);
@@ -432,5 +434,9 @@ public class Util {
     }
 
     return guid;
+  }
+
+  public static String getSdkVersionFromManifest(Context context) {
+    return getManifestString(context, SDK_VERSION_KEY);
   }
 }

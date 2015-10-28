@@ -4,16 +4,25 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.provider.Settings;
+import android.util.Log;
+
 import net.hockeyapp.android.Constants;
 import net.hockeyapp.android.Tracking;
 import net.hockeyapp.android.UpdateManagerListener;
+import net.hockeyapp.android.utils.Util;
 import net.hockeyapp.android.utils.VersionCache;
 import net.hockeyapp.android.utils.VersionHelper;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
 import java.net.URL;
 import java.net.URLConnection;
@@ -61,8 +70,9 @@ public class CheckUpdateTask extends AsyncTask<Void, String, JSONArray>{
 	protected static final String APK = "apk";
 	protected static final String INTENT_EXTRA_URL = "url";
 	protected static final String INTENT_EXTRA_JSON = "json";
+  private static final String TAG = "CheckUpdateTask";
 
-	protected String urlString = null;
+  protected String urlString = null;
   protected String appIdentifier = null;
 
   private Context context = null;
@@ -132,7 +142,9 @@ public class CheckUpdateTask extends AsyncTask<Void, String, JSONArray>{
       InputStream inputStream = new BufferedInputStream(connection.getInputStream());
       String jsonString = convertStreamToString(inputStream);
       inputStream.close();
-      
+
+      Log.d(TAG, jsonString);
+
       json = new JSONArray(jsonString);
       if (findNewVersion(json, versionCode)) {
         json = limitResponseSize(json);
@@ -231,7 +243,7 @@ public class CheckUpdateTask extends AsyncTask<Void, String, JSONArray>{
     builder.append("&oem=" + encodeParam(Constants.PHONE_MANUFACTURER));
     builder.append("&app_version=" + encodeParam(Constants.APP_VERSION));
     builder.append("&sdk=" + encodeParam(Constants.SDK_NAME));
-    builder.append("&sdk_version=" + encodeParam(Constants.SDK_VERSION));
+    builder.append("&sdk_version=" + encodeParam(Util.getSdkVersionFromManifest(context)));
     builder.append("&lang=" + encodeParam(Locale.getDefault().getLanguage()));
     builder.append("&usage_time=" + usageTime);
     

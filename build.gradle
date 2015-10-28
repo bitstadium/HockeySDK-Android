@@ -25,7 +25,7 @@ buildscript {
 ext {
     BINTRAY_KEY = HOCKEYAPP_BINTRAY_KEY
 
-    VERSION_NAME = '3.7.0-beta.1'
+    VERSION_NAME = HOCKEY_SDK_VERSION
     VERSION_CODE = 2
     SITE_URL = 'https://github.com/bitstadium/hockeysdk-android'
     GIT_URL = 'https://github.com/bitstadium/HockeySDK-Android.git'
