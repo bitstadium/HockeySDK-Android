@@ -21,7 +21,7 @@ android {
     }
 }
 
-//Upload to Bintray
+//Upload to Bintray/jcenter
 publish {
     userOrg = 'hockeyapp'
     groupId = 'net.hockeyapp.android'
@@ -42,3 +42,5 @@ publish {
     bintrayKey = HOCKEYAPP_BINTRAY_KEY
     dryRun = false
 }
+
+
