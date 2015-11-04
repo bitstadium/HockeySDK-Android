@@ -1,4 +1,8 @@
 language: android
+
+git:
+  submodules: false
+
 android:
   components:
     # Use the latest platform tools
