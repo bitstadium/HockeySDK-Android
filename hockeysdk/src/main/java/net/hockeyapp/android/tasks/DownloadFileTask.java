@@ -9,10 +9,16 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
+
 import net.hockeyapp.android.R;
 import net.hockeyapp.android.listeners.DownloadFileListener;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
@@ -20,16 +26,16 @@ import java.util.UUID;
 
 /**
  * <h3>Description</h3>
- * 
+ * <p/>
  * Internal helper class. Downloads an .apk from HockeyApp and stores
- * it on external storage. If the download was successful, the file 
- * is then opened to trigger the installation. 
- * 
+ * it on external storage. If the download was successful, the file
+ * is then opened to trigger the installation.
+ * <p/>
  * <h3>License</h3>
- * 
+ * <p/>
  * <pre>
  * Copyright (c) 2011-2014 Bit Stadium GmbH
- * 
+ *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without
@@ -38,10 +44,10 @@ import java.util.UUID;
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -85,6 +91,9 @@ public class DownloadFileTask extends AsyncTask<Void, Integer, Long> {
 
   @Override
   protected Long doInBackground(Void... args) {
+    InputStream input = null;
+    OutputStream output = null;
+
     try {
       URL url = new URL(getURLString());
       URLConnection connection = createConnection(url, MAX_REDIRECTS);
@@ -106,8 +115,8 @@ public class DownloadFileTask extends AsyncTask<Void, Integer, Long> {
       }
       File file = new File(dir, this.filename);
 
-      InputStream input = new BufferedInputStream(connection.getInputStream());
-      OutputStream output = new FileOutputStream(file);
+      input = new BufferedInputStream(connection.getInputStream());
+      output = new FileOutputStream(file);
 
       byte data[] = new byte[1024];
       int count;
@@ -119,14 +128,24 @@ public class DownloadFileTask extends AsyncTask<Void, Integer, Long> {
       }
 
       output.flush();
-      output.close();
-      input.close();
 
       return total;
-    } 
+    }
     catch (Exception e) {
       e.printStackTrace();
       return 0L;
+    } finally {
+      try {
+        if (output != null) {
+          output.close();
+        }
+        if (input != null) {
+          input.close();
+        }
+      }
+      catch (IOException e) {
+        e.printStackTrace();
+      }
     }
   }
 
@@ -142,11 +161,11 @@ public class DownloadFileTask extends AsyncTask<Void, Integer, Long> {
 
   /**
    * Recursive method for resolving redirects. Resolves at most MAX_REDIRECTS times.
-   * 
-   * @param url a URL
+   *
+   * @param url                a URL
    * @param remainingRedirects loop counter
-   * @throws IOException if connection fails
    * @return instance of URLConnection
+   * @throws IOException if connection fails
    */
   protected URLConnection createConnection(URL url, int remainingRedirects) throws IOException {
     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -154,8 +173,8 @@ public class DownloadFileTask extends AsyncTask<Void, Integer, Long> {
 
     int code = connection.getResponseCode();
     if (code == HttpURLConnection.HTTP_MOVED_PERM ||
-        code == HttpURLConnection.HTTP_MOVED_TEMP ||
-        code == HttpURLConnection.HTTP_SEE_OTHER) {
+      code == HttpURLConnection.HTTP_MOVED_TEMP ||
+      code == HttpURLConnection.HTTP_SEE_OTHER) {
 
       if (remainingRedirects == 0) {
         // Stop redirecting.
@@ -205,7 +224,8 @@ public class DownloadFileTask extends AsyncTask<Void, Integer, Long> {
       notifier.downloadSuccessful(this);
 
       Intent intent = new Intent(Intent.ACTION_VIEW);
-      intent.setDataAndType(Uri.fromFile(new File(this.filePath, this.filename)), "application/vnd.android.package-archive");
+      intent.setDataAndType(Uri.fromFile(new File(this.filePath, this.filename)),
+        "application/vnd.android.package-archive");
       intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
       context.startActivity(intent);
     }
@@ -223,16 +243,18 @@ public class DownloadFileTask extends AsyncTask<Void, Integer, Long> {
         }
         builder.setMessage(message);
 
-        builder.setNegativeButton(R.string.hockeyapp_download_failed_dialog_negative_button, new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(R.string.hockeyapp_download_failed_dialog_negative_button, new
+          DialogInterface.OnClickListener() {
           public void onClick(DialogInterface dialog, int which) {
             notifier.downloadFailed(DownloadFileTask.this, false);
-          } 
+          }
         });
 
-        builder.setPositiveButton(R.string.hockeyapp_download_failed_dialog_positive_button, new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.hockeyapp_download_failed_dialog_positive_button, new
+          DialogInterface.OnClickListener() {
           public void onClick(DialogInterface dialog, int which) {
             notifier.downloadFailed(DownloadFileTask.this, true);
-          } 
+          }
         });
 
         builder.create().show();
@@ -244,6 +266,6 @@ public class DownloadFileTask extends AsyncTask<Void, Integer, Long> {
   }
 
   protected String getURLString() {
-    return urlString + "&type=apk";      
+    return urlString + "&type=apk";
   }
 }

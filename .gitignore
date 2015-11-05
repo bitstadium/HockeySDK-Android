@@ -11,3 +11,4 @@ build/
 /*/build/
 local.properties
 *.log
+infer-out

@@ -1,15 +1,16 @@
 package net.hockeyapp.android;
 
+import android.util.Log;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.Date;
 import java.util.UUID;
-
-import android.util.Log;
 
 /**
  * <h3>Description</h3>
@@ -71,7 +72,7 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
     final Date now = new Date();
     final Writer result = new StringWriter();
     final PrintWriter printWriter = new PrintWriter(result);
-
+    BufferedWriter writer = null;
     exception.printStackTrace(printWriter);
 
     try {
@@ -81,37 +82,48 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
       Log.d(Constants.TAG, "Writing unhandled exception to: " + path);
       
       // Write the stacktrace to disk
-      BufferedWriter write = new BufferedWriter(new FileWriter(path));
+      writer = new BufferedWriter(new FileWriter(path));
       
       // HockeyApp expects the package name in the first line!
-      write.write("Package: " + Constants.APP_PACKAGE + "\n");
-      write.write("Version Code: " + Constants.APP_VERSION + "\n");
-      write.write("Version Name: " + Constants.APP_VERSION_NAME + "\n");
+      writer.write("Package: " + Constants.APP_PACKAGE + "\n");
+      writer.write("Version Code: " + Constants.APP_VERSION + "\n");
+      writer.write("Version Name: " + Constants.APP_VERSION_NAME + "\n");
       
       if ((listener == null) || (listener.includeDeviceData())) {
-        write.write("Android: " + Constants.ANDROID_VERSION + "\n");
-        write.write("Manufacturer: " + Constants.PHONE_MANUFACTURER + "\n");
-        write.write("Model: " + Constants.PHONE_MODEL + "\n");
+        writer.write("Android: " + Constants.ANDROID_VERSION + "\n");
+        writer.write("Manufacturer: " + Constants.PHONE_MANUFACTURER + "\n");
+        writer.write("Model: " + Constants.PHONE_MODEL + "\n");
       }
       
       if (Constants.CRASH_IDENTIFIER != null && (listener == null || listener.includeDeviceIdentifier())) {
-        write.write("CrashReporter Key: " + Constants.CRASH_IDENTIFIER + "\n");
+        writer.write("CrashReporter Key: " + Constants.CRASH_IDENTIFIER + "\n");
       }
       
-      write.write("Date: " + now + "\n");
-      write.write("\n");
-      write.write(result.toString());
-      write.flush();
-      write.close();
-      
+      writer.write("Date: " + now + "\n");
+      writer.write("\n");
+      writer.write(result.toString());
+      writer.flush();
+
       if (listener != null) {
         writeValueToFile(limitedString(listener.getUserID()), filename + ".user");
         writeValueToFile(limitedString(listener.getContact()), filename + ".contact");
         writeValueToFile(listener.getDescription(), filename + ".description");
       }
-    } 
+    }
     catch (Exception another) {
       Log.e(Constants.TAG, "Error saving exception stacktrace!\n", another);
+    }
+    finally {
+      try {
+        if(writer != null) {
+          writer.close();
+        }
+      }
+      catch (IOException e) {
+        Log.e(Constants.TAG, "Error saving exception stacktrace!\n", e);
+        e.printStackTrace();
+      }
+
     }
   }
   
@@ -134,17 +146,22 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
     }
   }
 
-  private static void writeValueToFile(String value, String filename) {
+  private static void writeValueToFile(String value, String filename) throws IOException {
+    BufferedWriter writer = null;
     try {
       String path = Constants.FILES_PATH + "/" + filename;
       if (value.trim().length() > 0) {
-        BufferedWriter writer = new BufferedWriter(new FileWriter(path));
+        writer = new BufferedWriter(new FileWriter(path));
         writer.write(value);
         writer.flush();
-        writer.close();
       }
     }
     catch (Exception e) {
+    }
+    finally {
+      if(writer != null) {
+        writer.close();
+      }
     }
   }
 
