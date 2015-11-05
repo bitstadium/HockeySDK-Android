@@ -11,8 +11,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="center"
         android:paddingBottom="10dp"
-        android:paddingTop="10dp"
-        android:visibility="gone">
+        android:paddingTop="10dp">
 
         <LinearLayout
             android:id="@+id/wrapper_feedback"
@@ -73,7 +72,8 @@
                 style="@style/HockeyApp.ButtonStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/hockeyapp_feedback_send_button_text" />
+                android:text="@string/hockeyapp_feedback_send_button_text"
+                android:layout_marginTop="10dp" />
 
         </LinearLayout>
 
