@@ -22,7 +22,7 @@
 
     <!-- Expiry Info -->
     <string name="hockeyapp_expiry_info_title">Build Expired</string>
-    <string name="hockeyapp_expiry_info_text">This has build has expired. Please check HockeyApp for any updates.</string>
+    <string name="hockeyapp_expiry_info_text">This build has expired. Please check HockeyApp for any updates.</string>
 
     <!-- Feedback Activity -->
     <string name="hockeyapp_feedback_failed_title">Feedback Failed</string>
