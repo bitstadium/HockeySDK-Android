@@ -7,11 +7,7 @@ import android.app.Dialog;
 import android.app.NotificationManager;
 import android.content.*;
 import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.os.Parcelable;
+import android.os.*;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.*;
@@ -30,7 +26,6 @@ import net.hockeyapp.android.utils.PrefsUtil;
 import net.hockeyapp.android.utils.Util;
 import net.hockeyapp.android.views.AttachmentListView;
 import net.hockeyapp.android.views.AttachmentView;
-import net.hockeyapp.android.views.FeedbackView;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -527,7 +522,7 @@ public class FeedbackActivity extends Activity implements OnClickListener {
     /** Try to retrieve the Feedback Token from {@link SharedPreferences} */
     token = PrefsUtil.getInstance().getFeedbackTokenFromPrefs(this);
     if ((token == null) || (inSendFeedback)) {
-      /** If Feedback Token is NULL, show the usual {@link FeedbackView} */
+      /** If Feedback Token is NULL, show the usual feedback view */
       configureFeedbackView(false);
     }
     else {
