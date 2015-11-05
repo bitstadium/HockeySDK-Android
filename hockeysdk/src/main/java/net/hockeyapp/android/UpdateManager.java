@@ -51,6 +51,7 @@ import android.text.TextUtils;
  * @author Thomas Dohmke
  **/
 public class UpdateManager {
+  public static final String INSTALLER_ADB = "adb";
   /**
    * Singleton for update task.
    */
@@ -243,7 +244,7 @@ public class UpdateManager {
     if (context != null) {
       try {
         String installer = context.getPackageManager().getInstallerPackageName(context.getPackageName());
-        result = !TextUtils.isEmpty(installer);
+        result = !TextUtils.isEmpty(installer) || !TextUtils.equals(installer, INSTALLER_ADB);
       }
       catch (Throwable e) {
       }
