@@ -1,5 +1,6 @@
 package net.hockeyapp.android.views;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -50,7 +51,9 @@ import java.util.Date;
  **/
 public class FeedbackMessageView extends LinearLayout {
 
+  @SuppressLint("SimpleDateFormat")
   private final static SimpleDateFormat DATE_FORMAT_IN = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+  @SuppressLint("SimpleDateFormat")
   private final static SimpleDateFormat DATE_FORMAT_OUT = new SimpleDateFormat("d MMM h:mm a");
 
   private TextView authorTextView;
