@@ -2,6 +2,7 @@
 <resources>
     <color name="background_white">#ffffff</color>
     <color name="background_light">#cccccc</color>
+    <color name="background_header">#e6ecef</color>
     <color name="text_normal">#888888</color>
     <color name="text_light">#cccccc</color>
     <color name="text_white">#ffffff</color>

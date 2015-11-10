@@ -16,6 +16,7 @@
     <!-- Update -->
     <string name="hockeyapp_update_mandatory_toast">Please install the latest version to continue to use this app.</string>
     <string name="hockeyapp_update_dialog_title">Update Available</string>
+    <string name="hockeyapp_update_button">Update</string>
     <string name="hockeyapp_update_dialog_message">Show information about the new update?</string>
     <string name="hockeyapp_update_dialog_negative_button">Dismiss</string>
     <string name="hockeyapp_update_dialog_positive_button">Show</string>
