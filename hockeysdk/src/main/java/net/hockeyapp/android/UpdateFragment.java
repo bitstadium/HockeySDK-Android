@@ -91,6 +91,7 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
    * @param urlString HockeyApp URL as a string.
    * @return Instance of Fragment
    */
+  @SuppressWarnings("unused")
   static public UpdateFragment newInstance(final JSONArray versionInfo, String urlString) {
     Bundle state = new Bundle();
     state.putString("url", urlString);
