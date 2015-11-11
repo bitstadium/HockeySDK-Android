@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/bitstadium/HockeySDK-Android.svg?branch=develop)](https://travis-ci.org/bitstadium/HockeySDK-Android)
+
 ## Version 3.7.0-beta.1
 
 ## Introduction

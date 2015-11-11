@@ -1,0 +1,27 @@
+language: android
+
+# Run on new travis infrastructure
+sudo: false
+
+# Don't check out submodules for faster builds with less dependencies
+git:
+  submodules: false
+
+android:
+  components:
+    # Use the latest platform tools
+    - platform-tools
+    - tools
+
+    # Use the desired build tools
+    - build-tools-23.0.1
+
+    # Project target SDK
+    - android-23
+
+    # Project extra configuration
+    - extra-google-m2repository
+    - extra-android-m2repository
+
+script:
+  - ./gradlew assemble lint
