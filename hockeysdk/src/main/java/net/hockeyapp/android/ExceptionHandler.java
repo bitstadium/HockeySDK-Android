@@ -66,8 +66,13 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
   public void setListener(CrashManagerListener listener) {
     this.listener = listener;
   }
-  
+
+  @Deprecated
   public static void saveException(Throwable exception, CrashManagerListener listener) {
+    saveException(exception, null, listener);
+  }
+  
+  public static void saveException(Throwable exception, Thread thread, CrashManagerListener listener) {
     final Date now = new Date();
     final Writer result = new StringWriter();
     final PrintWriter printWriter = new PrintWriter(result);
@@ -92,6 +97,10 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
         write.write("Android: " + Constants.ANDROID_VERSION + "\n");
         write.write("Manufacturer: " + Constants.PHONE_MANUFACTURER + "\n");
         write.write("Model: " + Constants.PHONE_MODEL + "\n");
+      }
+
+      if (thread != null && ((listener == null) || (listener.includeThreadDetails()))) {
+        write.write("Thread: " + thread.getName() + "-" + thread.getId() + "\n");
       }
       
       if (Constants.CRASH_IDENTIFIER != null && (listener == null || listener.includeDeviceIdentifier())) {
@@ -122,7 +131,7 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
       defaultExceptionHandler.uncaughtException(thread, exception);
     }
     else {
-      saveException(exception, listener);
+      saveException(exception, thread, listener);
 
       if (!ignoreDefaultHandler) {
         defaultExceptionHandler.uncaughtException(thread, exception);
