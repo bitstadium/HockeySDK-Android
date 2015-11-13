@@ -51,6 +51,8 @@
     <string name="hockeyapp_feedback_select_file">Select File</string>
     <string name="hockeyapp_feedback_select_picture">Select Picture</string>
     <string name="hockeyapp_feedback_max_attachments_allowed">Only %s attachments allowed.</string>
+    <string name="hockeyapp_feedback_attachment_loading">Loading…</string>
+    <string name="hockeyapp_feedback_attachment_error">Error</string>
 
 
     <!-- Login Activity -->
