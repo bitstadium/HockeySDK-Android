@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/bitstadium/HockeySDK-Android.svg?branch=develop)](https://travis-ci.org/bitstadium/HockeySDK-Android)
 
-## Version 3.7.0-beta.1
+## Version 3.7.0-beta.2
 
 ## Introduction
 
@@ -52,7 +52,7 @@ Please see the "[How to create a new app](http://support.hockeyapp.net/kb/about-
 Add the SDK to your app module's dependencies in Android Studio by adding the following line to your `dependencies { ... }` configuration:
 
 ```groovy
-  compile 'net.hockeyapp.android:HockeySDK:3.7.0-beta.1'
+  compile 'net.hockeyapp.android:HockeySDK:3.7.0-beta.2'
 ```
 also make sure your repository configuration contains
 
@@ -160,7 +160,7 @@ The reason for the two different entry points is that the update check causes ne
 ### 2.4 Crash Reporting without in-app-updates
 If you want crash reporting but no in-app updates, leave out all the `UpdateManager`-related lines.
 
-### 2.5 Upgrading from 3.6.X to 3.7.0-beta.1
+### 2.5 Upgrading from 3.6.X to 3.7.0-beta.2
 We didn't introduce any breaking changes except that we have raised the minimum API level to 9.
 If you integrate the SDK using gradle, you can remove the previously required activities from your manifest file.
 
