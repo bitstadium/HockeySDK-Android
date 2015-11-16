@@ -11,7 +11,6 @@
         android:layout_centerInParent="true"
         android:layout_margin="20dp"
         android:gravity="center"
-        android:text="@string/hockeyapp_expiry_info_text"
         android:textColor="@color/text_black" />
 
 </RelativeLayout>
