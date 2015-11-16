@@ -21,6 +21,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import net.hockeyapp.android.Constants;
+import net.hockeyapp.android.R;
 import net.hockeyapp.android.objects.FeedbackAttachment;
 import net.hockeyapp.android.utils.ImageUtils;
 
@@ -137,7 +138,7 @@ public class AttachmentView extends FrameLayout {
     initializeView(context, removable);
 
     orientation = ImageUtils.ORIENTATION_PORTRAIT;
-    textView.setText("Loading...");
+    textView.setText(R.string.hockeyapp_feedback_attachment_loading);
     configureViewForPlaceholder(false);
   }
 
@@ -191,7 +192,7 @@ public class AttachmentView extends FrameLayout {
   }
 
   public void signalImageLoadingError() {
-    textView.setText("Error");
+    textView.setText(R.string.hockeyapp_feedback_attachment_error);
   }
 
   private void calculateDimensions(int marginDip) {
@@ -215,6 +216,7 @@ public class AttachmentView extends FrameLayout {
     this.maxHeightLandscape = widthLandscape;
   }
 
+  @SuppressWarnings("deprecation")
   private void initializeView(Context context, boolean removable) {
     setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT,
       Gravity.BOTTOM));
@@ -236,7 +238,7 @@ public class AttachmentView extends FrameLayout {
     textView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams
       .WRAP_CONTENT, Gravity.CENTER));
     textView.setGravity(Gravity.CENTER);
-    textView.setTextColor(Color.parseColor("#FFFFFF"));
+    textView.setTextColor(context.getResources().getColor(R.color.text_white));
     textView.setSingleLine();
     textView.setEllipsize(TextUtils.TruncateAt.MIDDLE);
 
