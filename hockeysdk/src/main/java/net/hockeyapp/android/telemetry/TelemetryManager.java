@@ -147,12 +147,11 @@ public class TelemetryManager implements Application.ActivityLifecycleCallbacks 
   /**
    * Register a new TelemetryManager and collect telemetry information about user and session.
    * HockeyApp App Identifier is read from configuration values in AndroidManifest.xml
-   *
+   * @param context     The context to use. Usually your Activity object.
    * @param application the Application object which is required to get application lifecycle
    *                    callbacks
-   * @param context     The context to use. Usually your Activity object.
    */
-  public static void register(Application application, Context context) {
+  public static void register(Context context, Application application) {
     String appIdentifier = Util.getAppIdentifier(context);
     register(context, application, appIdentifier);
   }
