@@ -20,12 +20,12 @@ import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * <h3>Description</h3>
- * <p/>
+ * <p>
  * The TelemetryManager provides functionality to gather telemetry information about your users,
  * sessions, and – eventually – events and pageviews.
- * <p/>
+ * </p>
  * <h3>License</h3>
- * <p/>
+ *
  * <pre>
  * Copyright (c) 2011-2015 Bit Stadium GmbH
  *

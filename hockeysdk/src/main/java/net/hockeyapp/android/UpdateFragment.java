@@ -1,36 +1,31 @@
 package net.hockeyapp.android;
 
-import android.*;
 import android.annotation.TargetApi;
-import android.app.AlertDialog;
-import android.app.Fragment;
-import android.content.DialogInterface;
-import android.os.Build;
-import android.util.Log;
-import net.hockeyapp.android.listeners.DownloadFileListener;
-import net.hockeyapp.android.objects.ErrorObject;
-import net.hockeyapp.android.tasks.DownloadFileTask;
-import net.hockeyapp.android.tasks.GetFileSizeTask;
-import net.hockeyapp.android.utils.AsyncTaskUtils;
-import net.hockeyapp.android.utils.VersionHelper;
-import net.hockeyapp.android.views.UpdateView;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DialogFragment;
+import android.content.DialogInterface;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import net.hockeyapp.android.listeners.DownloadFileListener;
+import net.hockeyapp.android.tasks.DownloadFileTask;
+import net.hockeyapp.android.tasks.GetFileSizeTask;
+import net.hockeyapp.android.utils.AsyncTaskUtils;
+import net.hockeyapp.android.utils.VersionHelper;
+import org.json.JSONArray;
+import org.json.JSONException;
 
 /**
  * <h3>Description</h3>
@@ -96,6 +91,7 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
    * @param urlString HockeyApp URL as a string.
    * @return Instance of Fragment
    */
+  @SuppressWarnings("unused")
   static public UpdateFragment newInstance(final JSONArray versionInfo, String urlString) {
     Bundle state = new Bundle();
     state.putString("url", urlString);
@@ -141,10 +137,10 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
 
     versionHelper = new VersionHelper(getActivity(), versionInfo.toString(), this);
 
-    TextView nameLabel = (TextView)view.findViewById(UpdateView.NAME_LABEL_ID);
+    TextView nameLabel = (TextView)view.findViewById(R.id.label_title);
     nameLabel.setText(getAppName());
     
-    final TextView versionLabel = (TextView)view.findViewById(UpdateView.VERSION_LABEL_ID);
+    final TextView versionLabel = (TextView)view.findViewById(R.id.label_version);
     final String versionString = "Version " + versionHelper.getVersionString();
     final String fileDate = versionHelper.getFileDateString();
 
@@ -168,10 +164,10 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
     }
     versionLabel.setText(versionString + "\n" + fileDate + " - " + appSizeString);
 
-    Button updateButton = (Button)view.findViewById(UpdateView.UPDATE_BUTTON_ID);
+    Button updateButton = (Button)view.findViewById(R.id.button_update);
     updateButton.setOnClickListener(this);
     
-    WebView webView = (WebView)view.findViewById(UpdateView.WEB_VIEW_ID);
+    WebView webView = (WebView)view.findViewById(R.id.web_update_details);
     webView.clearCache(true);
     webView.destroyDrawingCache();
     webView.loadDataWithBaseURL(Constants.BASE_URL, versionHelper.getReleaseNotes(false), "text/html", "utf-8", null);
@@ -296,11 +292,13 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
   }
   
   /**
-   * Creates and returns a new instance of UpdateView.
+   * Creates and returns a new instance of the update view.
    * 
-   * @return Instance of UpdateView
+   * @return Update view
    */
   public View getLayoutView() {
-    return new UpdateView(getActivity(), false, true);
+    LinearLayout layout = new LinearLayout(getActivity());
+    LayoutInflater.from(getActivity()).inflate(R.layout.fragment_update, layout);
+    return layout;
   }
 }

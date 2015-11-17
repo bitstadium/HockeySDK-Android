@@ -1,17 +1,7 @@
 package net.hockeyapp.android;
 
-import android.annotation.SuppressLint;
-import android.os.Build;
-import android.util.Log;
-import net.hockeyapp.android.listeners.DownloadFileListener;
-import net.hockeyapp.android.objects.ErrorObject;
-import net.hockeyapp.android.tasks.DownloadFileTask;
-import net.hockeyapp.android.tasks.GetFileSizeTask;
-import net.hockeyapp.android.utils.AsyncTaskUtils;
-import net.hockeyapp.android.utils.Util;
-import net.hockeyapp.android.utils.VersionHelper;
-import net.hockeyapp.android.views.UpdateView;
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -20,14 +10,25 @@ import android.content.DialogInterface;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import net.hockeyapp.android.listeners.DownloadFileListener;
+import net.hockeyapp.android.objects.ErrorObject;
+import net.hockeyapp.android.tasks.DownloadFileTask;
+import net.hockeyapp.android.tasks.GetFileSizeTask;
+import net.hockeyapp.android.utils.AsyncTaskUtils;
+import net.hockeyapp.android.utils.Util;
+import net.hockeyapp.android.utils.VersionHelper;
 
 /**
  * <h3>Description</h3>
@@ -109,10 +110,10 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
    * and the listener for the download button. 
    */
   protected void configureView() {
-    TextView nameLabel = (TextView)findViewById(UpdateView.NAME_LABEL_ID);
+    TextView nameLabel = (TextView) findViewById(R.id.label_title);
     nameLabel.setText(getAppName());
     
-    final TextView versionLabel = (TextView)findViewById(UpdateView.VERSION_LABEL_ID);
+    final TextView versionLabel = (TextView)findViewById(R.id.label_version);
     final String versionString = "Version " + versionHelper.getVersionString();
     final String fileDate = versionHelper.getFileDateString();
 
@@ -136,10 +137,10 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
     }
     versionLabel.setText(versionString + "\n" + fileDate + " - " + appSizeString);
     
-    Button updateButton = (Button)findViewById(UpdateView.UPDATE_BUTTON_ID);
+    Button updateButton = (Button)findViewById(R.id.button_update);
     updateButton.setOnClickListener(this);
     
-    WebView webView = (WebView)findViewById(UpdateView.WEB_VIEW_ID);
+    WebView webView = (WebView)findViewById(R.id.web_update_details);
     webView.clearCache(true);
     webView.destroyDrawingCache();
     webView.loadDataWithBaseURL(Constants.BASE_URL, getReleaseNotes(), "text/html", "utf-8", null);
@@ -251,7 +252,7 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
    * Enables the download button.
    */
   public void enableUpdateButton() {
-    View updateButton = findViewById(UpdateView.UPDATE_BUTTON_ID);
+    View updateButton = findViewById(R.id.button_update);
     updateButton.setEnabled(true);
   }
   
@@ -273,12 +274,14 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
   }
   
   /**
-   * Creates and returns a new instance of UpdateView.
+   * Creates and returns a new instance of the update view.
    * 
-   * @return Instance of UpdateView
+   * @return Update view
    */
   public ViewGroup getLayoutView() {
-    return new UpdateView(this);
+    LinearLayout layout = new LinearLayout(this);
+    LayoutInflater.from(this).inflate(R.layout.activity_update, layout);
+    return layout;
   }
 
   /**

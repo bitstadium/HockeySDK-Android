@@ -14,7 +14,7 @@ android:
     - tools
 
     # Use the desired build tools
-    - build-tools-23.0.1
+    - build-tools-23.0.2
 
     # Project target SDK
     - android-23

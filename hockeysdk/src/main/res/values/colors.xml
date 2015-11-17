@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="background_white">#ffffff</color>
+    <color name="background_light">#cccccc</color>
+    <color name="background_header">#e6ecef</color>
+    <color name="text_normal">#888888</color>
+    <color name="text_light">#cccccc</color>
+    <color name="text_white">#ffffff</color>
+    <color name="text_black">#000000</color>
+    <color name="button_background">#000000</color>
+    <color name="button_background_selected">#444444</color>
+    <color name="button_background_pressed">#888888</color>
+</resources>

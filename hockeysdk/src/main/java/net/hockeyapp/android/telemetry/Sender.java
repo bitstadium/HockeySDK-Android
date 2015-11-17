@@ -25,12 +25,12 @@ import java.util.zip.GZIPOutputStream;
 
 /**
  * <h3>Description</h3>
- * <p/>
+ * <p>
  * Either calls execute or executeOnExecutor on an AsyncTask depending on the
  * API level.
- * <p/>
+ * </p>
  * <h3>License</h3>
- * <p/>
+ *
  * <pre>
  * Copyright (c) 2011-2015 Bit Stadium GmbH
  *
