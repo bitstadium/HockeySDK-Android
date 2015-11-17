@@ -26,17 +26,18 @@ This document contains the following sections:
   4. [Add Crash Reporting](#crashreporting)
   5. [Add Update Distribution](#updatedistribution)
   6. [Add In-App Feedback](#feedback)
+  7. [Add Authentication](#authentication)
 3. [Changelog](#changelog)
 4. [Advanced Setup](#advancedsetup) 
   1. [Manual Library Dependency](#manualdependency)
   2. [Crash Reporting](#crashreporting-advanced)
   3. [Update Distribution](#updatedistribution-advanced)
   4. [In-App Feedback](#feedback-advanced)
-4. [Documentation](#documentation)
-5. [Troubleshooting](#troubleshooting)
-6. [Contributing](#contributing)
-7. [Contributor License](#contributorlicense)
-8. [Contact](#contact)
+5. [Documentation](#documentation)
+6. [Troubleshooting](#troubleshooting)
+7. [Contributing](#contributing)
+8. [Contributor License](#contributorlicense)
+9. [Contact](#contact)
 
 <a id="requirements"></a> 
 ## 1. Requirements
@@ -213,6 +214,32 @@ public class YourActivity extends Activitiy {
 
 When the user taps on the feedback button it will launch the feedback interface of the HockeySDK, where the user can create a new feedback discussion, add screenshots or other files for reference, and act on their previous feedback conversations.
 
+<a id="authentication"></a>
+### 2.7 Add Authentication
+You can force authentication of your users through the `LoginManager` class. This will show a login screen to users if they are not fully authenticated to protect your app.
+
+1. Retrieve your app secret from the HockeyApp backend. You can find this on the app details page in the backend right next to the "App ID" value. Click "Show" to access it. 
+2. Open the activity you want to protect, if you want to protect all of your app this will be your main activity.
+3. Add the following lines to this activity:
+
+```java
+import net.hockeyapp.android.LoginManager;
+
+public class YourActivity extends Activity {
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    // Your own code to create the view
+    // ...
+
+    LoginManager.register(this, APP_SECRET, LoginManager.LOGIN_MODE_EMAIL_PASSWORD, YourActivity.class);
+    LoginManager.verifyLogin(this, getIntent());
+  }
+}
+```
+
+Make sure to replace `APP_SECRET` with the value retrieved in step 1. This will launch the login activity every time a user launches your app.
+
 <a id="changelog"></a>
 ## 3. Changelog
 You can access the full changelog in our [releases-section](https://github.com/bitstadium/HockeySDK-Android/releases). The following paragraphs contain information what you might need to change when upgrading to the different new versions.
@@ -235,7 +262,6 @@ You can access the full changelog in our [releases-section](https://github.com/b
 
 <a id="manualdependency"></a> 
 ### 4.1 Manual Library Dependency
-
 If you don't want to use Android Studio, Gradle, or Maven you can also download and add the library manually.
 
 1. Download the latest release from [here](http://hockeyapp.net/releases/#android).
@@ -255,10 +281,7 @@ To configure a custom `CrashManagerListener` use the following `register()` meth
   CrashManager.register(context, APP_ID, new MyCustomCrashManagerListener());
 ```
 
-Where APP_ID is your HockeyApp app identifier and `MyCustomCrashManagerListener` is a class extending `CrashManagerListener` or an anonymous class.
-
 #### 4.2.1 Autosend crash reports
-
 Crashes are usually sent the next time the app starts. If your custom crash manager listener returns `true` for `shouldAutoUploadCrashes()`, crashes will be sent without any user interaction, otherwise a dialog will appear allowing the user to decide whether they want to send the report or not.
 
 ```java
@@ -271,18 +294,40 @@ public class MyCustomCrashManagerListener extends CrashManagerListener {
 ```
 
 #### 4.2.2 Attach additional meta data
-
 Starting with HockeyApp 3.6.0, you can add additional meta data (e.g. user-provided information) to a crash report. 
 To achieve this call `CrashManager.handleUserInput()` and provide an instance of `net.hockeyapp.android.objects.CrashMetaData`.
 
 
 <a id="updatedistribution-advanced"></a>
 ### 4.3 Update Distribution
+You can customize the behavior of the in-app update process in several ways. The main class to look at is `net.hockeyapp.android.UpdateManagerListener` in our [documentation](#documentation).
+
+To configure a custom `UpdateManagerListener` use the following `register()` method when configuring the manager:
+
+```java
+  UpdateManager.register(context, APP_ID, new MyCustomUpdateManagerListener());
+```
+
+### 4.3.1 Providing your own user interface for the update process
+The `UpdateManager` will select a suitable activity or fragment depending on the availability of the feature. You can also supply your own by implementing the respective methods:
+
+```
+public class MyCustomUpdateManagerListener extends UpdateManagerListener {
+  @Override
+  public Class<? extends UpdateActivity> getUpdateActivityClass() {
+    return MyCustomUpdateActivity.class;
+  }
+
+  @Override
+  public Class<? extends UpdateFragment> getUpdateFragmentClass() {
+    return MyCustomUpdateFragment.class;
+  }
+}
+```
 
 <a id="feedback-advanced"></a> 
 ### 4.4 In-App Feedback
-
-As stated in the setup guide steps you'll typically want to show the feedback interface typically from an `onClick`, `onMenuItemSelected`, or `onOptionsItemSelected` listener method.
+As stated in the setup guide you'll typically want to show the feedback interface from an `onClick`, `onMenuItemSelected`, or `onOptionsItemSelected` listener method.
 
 ### 4.4.1 Capturing a screenshot for feedback
 You can configure a notification to show to the user. When they select the notification the SDK will create a screenshot from the app in its current state and create a new feedback draft from it.
@@ -295,12 +340,12 @@ You can configure a notification to show to the user. When they select the notif
 ```
 
 <a id="documentation"></a>
-## 4. Documentation
+## 5. Documentation
 
-Our documentation can be found on [HockeyApp](http://hockeyapp.net/help/sdk/android/3.6/index.html).
+Our documentation can be found on [HockeyApp](http://hockeyapp.net/help/sdk/android/3.7.0-beta.2/index.html).
 
 <a id="troubleshooting"></a>
-## 5.Troubleshooting
+## 6.Troubleshooting
 
 1. Check if the APP_ID matches the App ID in HockeyApp.
 
@@ -311,7 +356,7 @@ Our documentation can be found on [HockeyApp](http://hockeyapp.net/help/sdk/andr
 4. If it still does not work, please [contact us](http://support.hockeyapp.net/discussion/new).
 
 <a id="contributing"></a>
-## 6. Contributing
+## 7. Contributing
 
 We're looking forward to your contributions via pull requests.
 
@@ -320,11 +365,11 @@ We're looking forward to your contributions via pull requests.
 * Mac/Linux/Windows machine running the latest version of [Android Studio and the Android SDK](https://developer.android.com/sdk/index.html)
 
 <a id="contributorlicense"></a>
-## 7. Contributor License
+## 8. Contributor License
 
 You must sign a [Contributor License Agreement](https://cla.microsoft.com/) before submitting your pull request. To complete the Contributor License Agreement (CLA), you will need to submit a request via the [form](https://cla.microsoft.com/) and then electronically sign the CLA when you receive the email containing the link to the document. You need to sign the CLA only once to cover submission to any Microsoft OSS project. 
 
 <a id="contact"></a>
-## 8. Contact
+## 9. Contact
 
 If you have further questions or are running into trouble that cannot be resolved by any of the steps here, feel free to open a GitHub issue here or contact us at [support@hockeyapp.net](mailto:support@hockeyapp.net)
