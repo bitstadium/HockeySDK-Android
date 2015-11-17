@@ -232,7 +232,7 @@ public class YourActivity extends Activity {
     // Your own code to create the view
     // ...
 
-    LoginManager.register(this, APP_SECRET, LoginManager.LOGIN_MODE_EMAIL_PASSWORD, YourActivity.class);
+    LoginManager.register(this, APP_SECRET, LoginManager.LOGIN_MODE_EMAIL_PASSWORD);
     LoginManager.verifyLogin(this, getIntent());
   }
 }
