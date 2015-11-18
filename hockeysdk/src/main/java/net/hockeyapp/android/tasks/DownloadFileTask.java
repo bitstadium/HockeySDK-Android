@@ -26,13 +26,13 @@ import java.util.UUID;
 
 /**
  * <h3>Description</h3>
- * <p/>
+ * <p>
  * Internal helper class. Downloads an .apk from HockeyApp and stores
  * it on external storage. If the download was successful, the file
  * is then opened to trigger the installation.
- * <p/>
+ * </p>
  * <h3>License</h3>
- * <p/>
+ *
  * <pre>
  * Copyright (c) 2011-2014 Bit Stadium GmbH
  *

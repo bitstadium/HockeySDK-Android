@@ -52,6 +52,8 @@ import java.util.UUID;
  * @author Evan Charlton
  * @author Peter Hewitt
  * @author Thomas Dohmke
+ * @author Matthias Wenz
+ * @author Benjamin Reimold
  **/
 public class ExceptionHandler implements UncaughtExceptionHandler {
   private boolean ignoreDefaultHandler = false;
@@ -92,12 +94,12 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
 
       // Write the stacktrace to disk
       writer = new BufferedWriter(new FileWriter(path));
-      
+
       // HockeyApp expects the package name in the first line!
       writer.write("Package: " + Constants.APP_PACKAGE + "\n");
       writer.write("Version Code: " + Constants.APP_VERSION + "\n");
       writer.write("Version Name: " + Constants.APP_VERSION_NAME + "\n");
-      
+
       if ((listener == null) || (listener.includeDeviceData())) {
         writer.write("Android: " + Constants.ANDROID_VERSION + "\n");
         writer.write("Manufacturer: " + Constants.PHONE_MANUFACTURER + "\n");
@@ -136,10 +138,9 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
         Log.e(Constants.TAG, "Error saving exception stacktrace!\n", e);
         e.printStackTrace();
       }
-
     }
   }
-
+  
   public void uncaughtException(Thread thread, Throwable exception) {
     if (Constants.FILES_PATH == null) {
       // If the files path is null, the exception can't be stored
