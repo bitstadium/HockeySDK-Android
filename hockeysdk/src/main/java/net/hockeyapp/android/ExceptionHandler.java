@@ -14,13 +14,13 @@ import java.util.UUID;
 
 /**
  * <h3>Description</h3>
- * 
+ *
  * Helper class to catch exceptions. Saves the stack trace
- * as a file and executes callback methods to ask the app for 
- * additional information and meta data (see CrashManagerListener). 
- * 
+ * as a file and executes callback methods to ask the app for
+ * additional information and meta data (see CrashManagerListener).
+ *
  * <h3>License</h3>
- * 
+ *
  * <pre>
  * Copyright (c) 2009 nullwire aps
  * Copyright (c) 2011-2014 Bit Stadium GmbH
@@ -33,10 +33,10 @@ import java.util.UUID;
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -67,8 +67,17 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
   public void setListener(CrashManagerListener listener) {
     this.listener = listener;
   }
-  
+
+  @Deprecated
+  /*
+  * @deprecated in 3.7.0-beta.2. Use saveException(Throwable exception, Thread thread,
+  * CrashManagerListener listener) instead.
+  */
   public static void saveException(Throwable exception, CrashManagerListener listener) {
+    saveException(exception, null, listener);
+  }
+
+  public static void saveException(Throwable exception, Thread thread, CrashManagerListener listener) {
     final Date now = new Date();
     final Writer result = new StringWriter();
     final PrintWriter printWriter = new PrintWriter(result);
@@ -80,7 +89,7 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
       String filename = UUID.randomUUID().toString();
       String path = Constants.FILES_PATH + "/" + filename + ".stacktrace";
       Log.d(Constants.TAG, "Writing unhandled exception to: " + path);
-      
+
       // Write the stacktrace to disk
       writer = new BufferedWriter(new FileWriter(path));
       
@@ -94,11 +103,15 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
         writer.write("Manufacturer: " + Constants.PHONE_MANUFACTURER + "\n");
         writer.write("Model: " + Constants.PHONE_MODEL + "\n");
       }
-      
+
+      if (thread != null && ((listener == null) || (listener.includeThreadDetails()))) {
+        writer.write("Thread: " + thread.getName() + "-" + thread.getId() + "\n");
+      }
+
       if (Constants.CRASH_IDENTIFIER != null && (listener == null || listener.includeDeviceIdentifier())) {
         writer.write("CrashReporter Key: " + Constants.CRASH_IDENTIFIER + "\n");
       }
-      
+
       writer.write("Date: " + now + "\n");
       writer.write("\n");
       writer.write(result.toString());
@@ -126,7 +139,7 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
 
     }
   }
-  
+
   public void uncaughtException(Thread thread, Throwable exception) {
     if (Constants.FILES_PATH == null) {
       // If the files path is null, the exception can't be stored
@@ -134,7 +147,7 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
       defaultExceptionHandler.uncaughtException(thread, exception);
     }
     else {
-      saveException(exception, listener);
+      saveException(exception, thread, listener);
 
       if (!ignoreDefaultHandler) {
         defaultExceptionHandler.uncaughtException(thread, exception);
