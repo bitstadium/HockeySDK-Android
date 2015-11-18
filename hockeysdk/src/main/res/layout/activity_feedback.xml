@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_white"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:id="@+id/wrapper_feedback_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp">
+
+        <LinearLayout
+            android:id="@+id/wrapper_feedback"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <EditText
+                android:id="@+id/input_name"
+                style="@style/HockeyApp.SingleLineInputStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/hockeyapp_feedback_name_hint"
+                android:inputType="text|textCapSentences" />
+
+            <EditText
+                android:id="@+id/input_email"
+                style="@style/HockeyApp.SingleLineInputStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/hockeyapp_feedback_email_hint"
+                android:inputType="textEmailAddress" />
+
+            <EditText
+                android:id="@+id/input_subject"
+                style="@style/HockeyApp.SingleLineInputStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/hockeyapp_feedback_subject_hint"
+                android:inputType="text|textEmailSubject|textCapSentences" />
+
+            <EditText
+                android:id="@+id/input_message"
+                style="@style/HockeyApp.EditTextStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/hockeyapp_feedback_message_hint"
+                android:minHeight="100dp" />
+
+            <net.hockeyapp.android.views.AttachmentListView
+                android:id="@+id/wrapper_attachments"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="start"
+                android:paddingBottom="10dp" />
+
+            <Button
+                android:id="@+id/button_attachment"
+                style="@style/HockeyApp.ButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/hockeyapp_feedback_attachment_button_text" />
+
+            <Button
+                android:id="@+id/button_send"
+                style="@style/HockeyApp.ButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/hockeyapp_feedback_send_button_text"
+                android:layout_marginTop="10dp" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/wrapper_messages"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="top"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/label_last_updated"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:ellipsize="end"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:shadowColor="@color/background_white"
+            android:shadowDy="1"
+            android:shadowRadius="1"
+            android:singleLine="true"
+            android:text="@string/hockeyapp_feedback_last_updated_text"
+            android:textColor="@color/text_normal"
+            android:textSize="15sp"
+            android:typeface="normal" />
+
+        <LinearLayout
+            android:id="@+id/wrapper_messages_buttons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:orientation="horizontal"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp">
+
+            <Button
+                android:id="@+id/button_add_response"
+                style="@style/HockeyApp.ButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="10dp"
+                android:layout_marginRight="5dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="@string/hockeyapp_feedback_response_button_text" />
+
+            <Button
+                android:id="@+id/button_refresh"
+                style="@style/HockeyApp.ButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="5dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/hockeyapp_feedback_refresh_button_text" />
+
+
+        </LinearLayout>
+
+        <ListView
+            android:id="@+id/list_feedback_messages"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp" />
+
+
+    </LinearLayout>
+
+</LinearLayout>

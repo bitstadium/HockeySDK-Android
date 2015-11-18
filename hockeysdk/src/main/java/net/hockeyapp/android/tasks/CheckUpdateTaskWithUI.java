@@ -176,7 +176,6 @@ public class CheckUpdateTaskWithUI extends CheckUpdateTask {
     }
   }
 
-  @TargetApi(Build.VERSION_CODES.HONEYCOMB)
   private void startUpdateIntent(final JSONArray updateInfo, Boolean finish) {
     Class<?> activityClass = null;
     if (listener != null) {

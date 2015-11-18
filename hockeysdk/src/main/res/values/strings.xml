@@ -14,16 +14,16 @@
     <string name="hockeyapp_download_failed_dialog_positive_button">Retry</string>
 
     <!-- Update -->
-    <string name="hockeyapp_update_mandatory_toast">%s is available and is a mandatory
-        update!</string>
+    <string name="hockeyapp_update_mandatory_toast">%s is available and is a mandatory update!</string>
     <string name="hockeyapp_update_dialog_title">Update Available</string>
+    <string name="hockeyapp_update_button">Update</string>
     <string name="hockeyapp_update_dialog_message">Show information about the new update?</string>
     <string name="hockeyapp_update_dialog_negative_button">Ignore</string>
     <string name="hockeyapp_update_dialog_positive_button">Show</string>
 
     <!-- Expiry Info -->
     <string name="hockeyapp_expiry_info_title">Build Expired</string>
-    <string name="hockeyapp_expiry_info_text">%s is expired and can not be used any longer.</string>
+    <string name="hockeyapp_expiry_info_text">%s has expired. Please check HockeyApp for any updates.</string>
 
     <!-- Feedback Activity -->
     <string name="hockeyapp_feedback_failed_title">Pending</string>
@@ -51,11 +51,11 @@
     <string name="hockeyapp_feedback_select_file">Select File</string>
     <string name="hockeyapp_feedback_select_picture">Select Picture</string>
     <string name="hockeyapp_feedback_max_attachments_allowed">Only %s attachments allowed.</string>
-
+    <string name="hockeyapp_feedback_attachment_loading">Loading…</string>
+    <string name="hockeyapp_feedback_attachment_error">Error</string>
 
     <!-- Login Activity -->
-    <string name="hockeyapp_login_headline_text">Please enter your HockeyApp account\'s email
-        address and password to authorize access to this app.</string>
+    <string name="hockeyapp_login_headline_text">Please enter your HockeyApp account\'s email address and password to authorize access to this app.</string>
     <string name="hockeyapp_login_missing_credentials_toast">Please fill in the missing account credentials.</string>
     <string name="hockeyapp_login_email_hint">Email</string>
     <string name="hockeyapp_login_password_hint">Password</string>

@@ -67,6 +67,15 @@ public abstract class CrashManagerListener {
   }
 
   /**
+   * Return true to include information about the crashed thread if available.
+   *
+   * @return if true, the crash report will include thread id and name if available
+   */
+  public boolean includeThreadDetails() {
+    return true;
+  }
+
+  /**
    * Return contact data or similar; note that this has privacy implications,
    * so you might want to return nil for release builds! The string will be
    * limited to 255 characters.

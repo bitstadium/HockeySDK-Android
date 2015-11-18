@@ -2,6 +2,7 @@ package net.hockeyapp.android.views;
 
 import android.content.Context;
 import android.net.Uri;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,6 +51,10 @@ public class AttachmentListView extends ViewGroup {
 
   public AttachmentListView(Context context) {
     super(context);
+  }
+
+  public AttachmentListView(Context context, AttributeSet attrs) {
+    super(context, attrs);
   }
 
   /**

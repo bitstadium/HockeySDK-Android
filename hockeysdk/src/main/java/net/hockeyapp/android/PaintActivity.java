@@ -52,6 +52,7 @@ public class PaintActivity extends Activity {
                                                             ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
 
     int desiredOrientation = PaintView.determineOrientation(getContentResolver(), imageUri);
+    //noinspection ResourceType
     setRequestedOrientation(desiredOrientation);
 
     if (currentOrientation != desiredOrientation) {

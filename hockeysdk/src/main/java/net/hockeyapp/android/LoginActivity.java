@@ -14,7 +14,6 @@ import android.widget.Toast;
 import net.hockeyapp.android.tasks.LoginTask;
 import net.hockeyapp.android.utils.AsyncTaskUtils;
 import net.hockeyapp.android.utils.Util;
-import net.hockeyapp.android.views.LoginView;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -55,7 +54,7 @@ import java.util.Map;
  *
  * @author Patrick Eschenbach
  **/
-public class LoginActivity extends Activity implements View.OnClickListener {
+public class LoginActivity extends Activity {
   /**
    * URL for HockeyApp API
    */
@@ -81,10 +80,15 @@ public class LoginActivity extends Activity implements View.OnClickListener {
    */
   private Handler loginHandler;
 
+  /**
+   * The Login button.
+   */
+  private Button buttonLogin;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(new LoginView(this));
+    setContentView(R.layout.activity_login);
 
     Bundle extras = getIntent().getExtras();
     if (extras != null) {
@@ -106,12 +110,17 @@ public class LoginActivity extends Activity implements View.OnClickListener {
 
   private void configureView() {
     if (mode == LoginManager.LOGIN_MODE_EMAIL_ONLY) {
-      EditText passwordInput = (EditText) findViewById(LoginView.PASSWORD_INPUT_ID);
+      EditText passwordInput = (EditText) findViewById(R.id.input_password);
       passwordInput.setVisibility(View.INVISIBLE);
     }
 
-    Button loginButton = (Button) findViewById(LoginView.LOGIN_BUTTON_ID);
-    loginButton.setOnClickListener(this);
+    buttonLogin = (Button) findViewById(R.id.button_login);
+    buttonLogin.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        performAuthentication();
+      }
+    });
   }
 
   private void initLoginHandler() {
@@ -143,8 +152,8 @@ public class LoginActivity extends Activity implements View.OnClickListener {
       return;
     }
 
-    String email = ((EditText) findViewById(LoginView.EMAIL_INPUT_ID)).getText().toString();
-    String password = ((EditText) findViewById(LoginView.PASSWORD_INPUT_ID)).getText().toString();
+    String email = ((EditText) findViewById(R.id.input_email)).getText().toString();
+    String password = ((EditText) findViewById(R.id.input_password)).getText().toString();
 
     boolean ready = false;
     Map<String, String> params = new HashMap<String, String>();
@@ -190,18 +199,6 @@ public class LoginActivity extends Activity implements View.OnClickListener {
       e.printStackTrace();
     }
     return "";
-  }
-
-  @Override
-  public void onClick(View v) {
-    switch (v.getId()) {
-      case LoginView.LOGIN_BUTTON_ID:
-        performAuthentication();
-        break;
-
-      default:
-        break;
-    }
   }
 
   @Override
