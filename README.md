@@ -138,7 +138,7 @@ When the activity is resumed, the crash manager is triggered and checks if a new
 This will add the in-app update mechanism to your app. For more configuration options of the update manager module see [Advanced Setup](#advancedsetup).
 
 1. Open the activity where you want to inform the user about eventual updates. We'll assume you want to do this on startup of your main activity.
-2. Add the following lines and make sure to always make sure to balance `register(...)` calls to SDK managers with `unregister()` calls in the corresponding lifecycle callbacks:
+2. Add the following lines and make sure to always balance `register(...)` calls to SDK managers with `unregister()` calls in the corresponding lifecycle callbacks:
 
 ```java
 import net.hockeyapp.android.UpdateManager;
