@@ -267,9 +267,35 @@ If you don't want to use Android Studio, Gradle, or Maven you can also download 
 1. Download the latest release from [here](http://hockeyapp.net/releases/#android).
 2. Unzip the file.
 3. Copy the file libs/HockeySDK-$version.aar to the libs folder of your Android project. (`$version` is the version of the downloaded SDK)
-4. Configure your development tools to use the aar-file in the libs folder.
+4. Configure your development tools to use the aar-file in the libs-folder. The easiest way to do this doing it with Android Studio.
+5. In Android Studio, create a new module (it's under `File > New > New Module`)
+6. Select **Import .JAR/.AAR Package**.
+7. In the next menu select the .aar-file you just copied to the libs-folder. You can rename the module to whatever you want, but we in general reccomend not doing it. If you don't rename the module, it will match the name of the .aar file, in this case **HockeySDK-3.7.0-beta.2**.
+8. Make sure Android Studio added the necessary code to integrate the HockeySDK.
 
-Then proceed with [the SDK integration](#setup-modifycode).
+Head over to your apps's `build.gradle` to verify that the dependency was added correctly. It should look like this:
+
+```groovy
+dependencies {
+	//your other dependencies
+	//...
+	
+    compile project(':HockeySDK-3.7.0-beta.2')
+}
+```
+Next, make sure your `settings.gradle` contain the new module:
+
+```groovy
+include ':app', ':HockeySDK-3.7.0-beta.2'
+```
+
+Finally, check the `build.gradle` of the newly added module:
+```groovy
+configurations.maybeCreate("default")
+artifacts.add("default", file('HockeySDK-3.7.0-beta.2.aar'))
+```
+
+Once you have verified that everything that's necessary has been added, proceed with [the SDK integration](#setup-modifycode).
 
 <a id="crashreporting-advanced"></a>
 ### 4.2 Crash Reporting
