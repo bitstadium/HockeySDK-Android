@@ -244,7 +244,7 @@ public class UpdateManager {
     if (context != null) {
       try {
         String installer = context.getPackageManager().getInstallerPackageName(context.getPackageName());
-        result = !TextUtils.isEmpty(installer) || !TextUtils.equals(installer, INSTALLER_ADB);
+        result = !TextUtils.isEmpty(installer) || (installer != null && !TextUtils.equals(installer, INSTALLER_ADB));
       }
       catch (Throwable e) {
       }
