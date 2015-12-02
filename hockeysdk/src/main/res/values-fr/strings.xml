@@ -1,7 +1,7 @@
 <resources>
     <!-- Crash Dialog -->
-    <string name="hockeyapp_crash_dialog_app_name_fallback">Cette application</string>
-    <string name="hockeyapp_crash_dialog_title">%s a quitté inopinément.</string>
+    <string name="hockeyapp_crash_dialog_app_name_fallback">Arrêt de l\'application</string>
+    <string name="hockeyapp_crash_dialog_title">%s imprévu</string>
     <string name="hockeyapp_crash_dialog_message">Voulez-vous envoyer un rapport anonyme pour nous aider à corriger le problème?</string>
     <string name="hockeyapp_crash_dialog_negative_button">Ne pas envoyer</string>
     <string name="hockeyapp_crash_dialog_neutral_button">Toujours envoyer</string>
@@ -17,13 +17,13 @@
     <string name="hockeyapp_update_mandatory_toast">%s est disponible. Cette mise à jour est obligatoire!</string>
     <string name="hockeyapp_update_dialog_title">Mise à jour disponible</string>
     <string name="hockeyapp_update_button">Mise à jour</string>
-    <string name="hockeyapp_update_dialog_message">Afficher des informations sur la mise à jour?</string>
+    <string name="hockeyapp_update_dialog_message">Afficher les informations sur la mise à jour?</string>
     <string name="hockeyapp_update_dialog_negative_button">Ignorer</string>
     <string name="hockeyapp_update_dialog_positive_button">Afficher</string>
 
     <!-- Expiry Info -->
-    <string name="hockeyapp_expiry_info_title">Version abgelaufen</string>
-    <string name="hockeyapp_expiry_info_text">%s a expiré. Recherchez des mises à jour en HockeyApp s\'il vous plaît.</string>
+    <string name="hockeyapp_expiry_info_title">Version expirée</string>
+    <string name="hockeyapp_expiry_info_text">%s a expiré. Vueillez rechercher les mises à jour d\'HockeyApp.</string>
 
     <!-- Feedback Activity -->
     <string name="hockeyapp_feedback_failed_title">En attente</string>
@@ -32,7 +32,7 @@
     <string name="hockeyapp_feedback_email_hint">Adresse</string>
     <string name="hockeyapp_feedback_subject_hint">Sujet</string>
     <string name="hockeyapp_feedback_message_hint">Message</string>
-    <string name="hockeyapp_feedback_last_updated_text">Dernière mise à jour:</string>
+    <string name="hockeyapp_feedback_last_updated_text">Dernière mise à jour :</string>
     <string name="hockeyapp_feedback_attachment_button_text">Ajouter un fichier</string>
     <string name="hockeyapp_feedback_send_button_text">Envoyez vos commentaires</string>
     <string name="hockeyapp_feedback_response_button_text">Ajouter une réponse</string>
@@ -63,16 +63,16 @@
 
     <!-- Paint Activity -->
     <string name="hockeyapp_paint_indicator_toast">Dessinez quelque chose!</string>
-    <string name="hockeyapp_paint_menu_save">Souveguarder</string>
-    <string name="hockeyapp_paint_menu_undo">Défaire</string>
+    <string name="hockeyapp_paint_menu_save">Sauveguarder</string>
+    <string name="hockeyapp_paint_menu_undo">Annuler</string>
     <string name="hockeyapp_paint_menu_clear">Nettoyer</string>
-    <string name="hockeyapp_paint_dialog_message">Jetter dessins?</string>
+    <string name="hockeyapp_paint_dialog_message">Effacer les dessins?</string>
     <string name="hockeyapp_paint_dialog_negative_button">Non</string>
     <string name="hockeyapp_paint_dialog_positive_button">Oui</string>
 
     <!-- Permissions -->
     <string name="hockeyapp_permission_update_title">Besoin d\'accès à la memoire</string>
-    <string name="hockeyapp_permission_update_message">Pour télécharger et installer les mises à jour, vous devez autoriser l\'application à accéder à la mémoire de votre appareil.</string>
+    <string name="hockeyapp_permission_update_message">Pour télécharger et installer les mises à jour, vous devez autoriser à l\'application l\'accés à la mémoire de votre appareil.</string>
     <string name="hockeyapp_permission_dialog_negative_button">Annuler</string>
     <string name="hockeyapp_permission_dialog_positive_button">Réessayez</string>
 
