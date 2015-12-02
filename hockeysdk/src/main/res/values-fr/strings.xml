@@ -2,22 +2,22 @@
     <!-- Crash Dialog -->
     <string name="hockeyapp_crash_dialog_app_name_fallback">Arrêt de l\'application</string>
     <string name="hockeyapp_crash_dialog_title">%s imprévu</string>
-    <string name="hockeyapp_crash_dialog_message">Voulez-vous envoyer un rapport anonyme pour nous aider à corriger le problème ?</string>
+    <string name="hockeyapp_crash_dialog_message">Voulez-vous envoyer un rapport anonyme pour nous aider à corriger le problème?</string>
     <string name="hockeyapp_crash_dialog_negative_button">Ne pas envoyer</string>
     <string name="hockeyapp_crash_dialog_neutral_button">Toujours envoyer</string>
     <string name="hockeyapp_crash_dialog_positive_button">Envoyer</string>
 
     <!-- Download Failed -->
     <string name="hockeyapp_download_failed_dialog_title">Erreur pendant le téléchargement</string>
-    <string name="hockeyapp_download_failed_dialog_message">La mise à jour pas pu être téléchargé. Souhaitez-vous essayer à nouveau ?</string>
+    <string name="hockeyapp_download_failed_dialog_message">La mise à jour pas pu être téléchargé. Souhaitez-vous essayer à nouveau?</string>
     <string name="hockeyapp_download_failed_dialog_negative_button">Annuler</string>
-    <string name="hockeyapp_download_failed_dialog_positive_button">Réessayez ?</string>
+    <string name="hockeyapp_download_failed_dialog_positive_button">Réessayez?</string>
 
     <!-- Update -->
     <string name="hockeyapp_update_mandatory_toast">%s est disponible. Cette mise à jour est obligatoire!</string>
     <string name="hockeyapp_update_dialog_title">Mise à jour disponible</string>
     <string name="hockeyapp_update_button">Mise à jour</string>
-    <string name="hockeyapp_update_dialog_message">Afficher les informations sur la mise à jour ?</string>
+    <string name="hockeyapp_update_dialog_message">Afficher les informations sur la mise à jour?</string>
     <string name="hockeyapp_update_dialog_negative_button">Ignorer</string>
     <string name="hockeyapp_update_dialog_positive_button">Afficher</string>
 
@@ -27,7 +27,7 @@
 
     <!-- Feedback Activity -->
     <string name="hockeyapp_feedback_failed_title">En attente</string>
-    <string name="hockeyapp_feedback_failed_text">Voulez-vous envoyer vos commentaires à nouveau ?</string>
+    <string name="hockeyapp_feedback_failed_text">Voulez-vous envoyer vos commentaires à nouveau?</string>
     <string name="hockeyapp_feedback_name_hint">Nom</string>
     <string name="hockeyapp_feedback_email_hint">Adresse</string>
     <string name="hockeyapp_feedback_subject_hint">Sujet</string>
@@ -62,11 +62,11 @@
     <string name="hockeyapp_login_login_button_text">Connectez-vous</string>
 
     <!-- Paint Activity -->
-    <string name="hockeyapp_paint_indicator_toast">Dessinez quelque chose !</string>
+    <string name="hockeyapp_paint_indicator_toast">Dessinez quelque chose!</string>
     <string name="hockeyapp_paint_menu_save">Sauveguarder</string>
     <string name="hockeyapp_paint_menu_undo">Annuler</string>
     <string name="hockeyapp_paint_menu_clear">Nettoyer</string>
-    <string name="hockeyapp_paint_dialog_message">Effacer les dessins ?</string>
+    <string name="hockeyapp_paint_dialog_message">Effacer les dessins?</string>
     <string name="hockeyapp_paint_dialog_negative_button">Non</string>
     <string name="hockeyapp_paint_dialog_positive_button">Oui</string>
 
