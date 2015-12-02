@@ -66,9 +66,10 @@
     <string name="hockeyapp_paint_menu_save">Sauveguarder</string>
     <string name="hockeyapp_paint_menu_undo">Annuler</string>
     <string name="hockeyapp_paint_menu_clear">Nettoyer</string>
-    <string name="hockeyapp_paint_dialog_message">Effacer les dessins?</string>
-    <string name="hockeyapp_paint_dialog_negative_button">Non</string>
+    <string name="hockeyapp_paint_dialog_message">Sauveguarder les dessins?</string>
+    <string name="hockeyapp_paint_dialog_negative_button">Jeter</string>
     <string name="hockeyapp_paint_dialog_positive_button">Oui</string>
+    <string name="hockeyapp_paint_dialog_neutral_button">Annuler</string>
 
     <!-- Permissions -->
     <string name="hockeyapp_permission_update_title">Besoin d\'accès à la memoire</string>
