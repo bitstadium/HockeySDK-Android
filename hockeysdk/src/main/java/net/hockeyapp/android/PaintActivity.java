@@ -126,12 +126,16 @@ public class PaintActivity extends Activity {
         DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
           @Override
           public void onClick(DialogInterface dialog, int which) {
-            switch (which){
+            switch (which) {
               case DialogInterface.BUTTON_POSITIVE:
-                PaintActivity.this.finish();
+                makeResult();
                 break;
 
               case DialogInterface.BUTTON_NEGATIVE:
+                PaintActivity.this.finish();
+                break;
+
+              case DialogInterface.BUTTON_NEUTRAL:
                 /* No action. */
                 break;
             }
@@ -140,9 +144,10 @@ public class PaintActivity extends Activity {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(R.string.hockeyapp_paint_dialog_message)
-               .setPositiveButton(R.string.hockeyapp_paint_dialog_positive_button, dialogClickListener)
-               .setNegativeButton(R.string.hockeyapp_paint_dialog_negative_button, dialogClickListener)
-               .show();
+              .setPositiveButton(R.string.hockeyapp_paint_dialog_positive_button, dialogClickListener)
+              .setNegativeButton(R.string.hockeyapp_paint_dialog_negative_button, dialogClickListener)
+              .setNeutralButton(R.string.hockeyapp_paint_dialog_neutral_button, dialogClickListener)
+              .show();
         return true;
       }
     }
