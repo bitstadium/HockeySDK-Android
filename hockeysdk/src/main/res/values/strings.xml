@@ -66,9 +66,10 @@
     <string name="hockeyapp_paint_menu_save">Save</string>
     <string name="hockeyapp_paint_menu_undo">Undo</string>
     <string name="hockeyapp_paint_menu_clear">Clear</string>
-    <string name="hockeyapp_paint_dialog_message">Discard your drawings?</string>
-    <string name="hockeyapp_paint_dialog_negative_button">No</string>
-    <string name="hockeyapp_paint_dialog_positive_button">Yes</string>
+    <string name="hockeyapp_paint_dialog_message">Do you want to save your drawings?</string>
+    <string name="hockeyapp_paint_dialog_negative_button">Discard</string>
+    <string name="hockeyapp_paint_dialog_positive_button">Save</string>
+    <string name="hockeyapp_paint_dialog_neutral_button">Cancel</string>
 
     <!-- Permissions -->
     <string name="hockeyapp_permission_update_title">Need storage access</string>
