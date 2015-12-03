@@ -2,11 +2,11 @@ package net.hockeyapp.android.objects;
 
 /**
  * <h3>Description</h3>
- *
+ * <p/>
  * Activity to show the feedback form.
- *
+ * <p/>
  * <h3>License</h3>
- *
+ * <p/>
  * <pre>
  * Copyright (c) 2011-2014 Bit Stadium GmbH
  *
@@ -37,16 +37,16 @@ package net.hockeyapp.android.objects;
  */
 public enum FeedbackUserDataElement {
 
-  DONT_SHOW(0), OPTIONAL(1), REQUIRED(2);
+    DONT_SHOW(0), OPTIONAL(1), REQUIRED(2);
 
-  private final int value;
+    private final int value;
 
-  private FeedbackUserDataElement(int value) {
-    this.value = value;
-  }
+    private FeedbackUserDataElement(int value) {
+        this.value = value;
+    }
 
-  public int getValue() {
-    return value;
-  }
+    public int getValue() {
+        return value;
+    }
 
 }

@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+
 import net.hockeyapp.android.tasks.LoginTask;
 import net.hockeyapp.android.utils.AsyncTaskUtils;
 import net.hockeyapp.android.utils.PrefsUtil;
@@ -17,11 +18,11 @@ import java.util.Map;
 
 /**
  * <h3>Description</h3>
- *
+ * <p/>
  * The LoginManager displays the auth activity.
- *
+ * <p/>
  * <h3>License</h3>
- *
+ * <p/>
  * <pre>
  * Copyright (c) 2011-2014 Bit Stadium GmbH
  *
@@ -50,211 +51,208 @@ import java.util.Map;
  * @author Patrick Eschenbach
  **/
 public class LoginManager {
-  public static final int LOGIN_MODE_ANONYMOUS      = 0;
-  public static final int LOGIN_MODE_EMAIL_ONLY     = 1;
-  public static final int LOGIN_MODE_EMAIL_PASSWORD = 2;
-  public static final int LOGIN_MODE_VALIDATE       = 3;
+    public static final int LOGIN_MODE_ANONYMOUS = 0;
+    public static final int LOGIN_MODE_EMAIL_ONLY = 1;
+    public static final int LOGIN_MODE_EMAIL_PASSWORD = 2;
+    public static final int LOGIN_MODE_VALIDATE = 3;
 
-  /**
-   * The key for the intent of the main activity.
-   */
-  static final String LOGIN_EXIT_KEY = "net.hockeyapp.android.EXIT";
+    /**
+     * The key for the intent of the main activity.
+     */
+    static final String LOGIN_EXIT_KEY = "net.hockeyapp.android.EXIT";
 
-  /**
-   * The entry activity of this app.
-   */
-  static Class<?> mainActivity;
+    /**
+     * The entry activity of this app.
+     */
+    static Class<?> mainActivity;
 
-  /**
-   * Optional listener to handler callbacks.
-   */
-  static LoginManagerListener listener;
+    /**
+     * Optional listener to handler callbacks.
+     */
+    static LoginManagerListener listener;
 
-  /**
-   * App identifier from HockeyApp.
-   */
-  private static String identifier = null;
+    /**
+     * App identifier from HockeyApp.
+     */
+    private static String identifier = null;
 
-  /**
-   * App secret from HockeyApp.
-   */
-  private static String secret = null;
+    /**
+     * App secret from HockeyApp.
+     */
+    private static String secret = null;
 
-  /**
-   * Handler for uid validation.
-   */
-  private static Handler validateHandler = null;
+    /**
+     * Handler for uid validation.
+     */
+    private static Handler validateHandler = null;
 
-  /**
-   * URL of HockeyApp service
-   */
-  private static String urlString = null;
+    /**
+     * URL of HockeyApp service
+     */
+    private static String urlString = null;
 
-  /**
-   * The Login Mode.
-   */
-  private static int mode;
+    /**
+     * The Login Mode.
+     */
+    private static int mode;
 
-  /**
-   * Registers new login manager.
-   * HockeyApp App Identifier is read from configuration values in AndroidManifest.xml.
-   *
-   * @param context The context to use. Usually your Activity object. Has to be
-   *                of class Activity or subclass for interactive login.
-   * @param appSecret The App Secret of your app on HockeyApp.
-   * @param mode The login mode to use.
-   */
-  public static void register(final Context context, String appSecret, int mode) {
-    String appIdentifier = Util.getAppIdentifier(context);
-    if (appIdentifier == null || appIdentifier.length() == 0) {
-      throw new IllegalArgumentException("HockeyApp app identifier was not configured correctly in manifest or build configuration.");
+    /**
+     * Registers new login manager.
+     * HockeyApp App Identifier is read from configuration values in AndroidManifest.xml.
+     *
+     * @param context   The context to use. Usually your Activity object. Has to be
+     *                  of class Activity or subclass for interactive login.
+     * @param appSecret The App Secret of your app on HockeyApp.
+     * @param mode      The login mode to use.
+     */
+    public static void register(final Context context, String appSecret, int mode) {
+        String appIdentifier = Util.getAppIdentifier(context);
+        if (appIdentifier == null || appIdentifier.length() == 0) {
+            throw new IllegalArgumentException("HockeyApp app identifier was not configured correctly in manifest or build configuration.");
+        }
+        register(context, appIdentifier, appSecret, mode, (Class<?>) null);
     }
-    register(context, appIdentifier, appSecret, mode, (Class<?>)null);
-  }
 
-  /**
-   * Registers new LoginManager.
-   *
-   * @param context the context to use. Usually your Activity object.
-   * @param appIdentifier the App ID of your app on HockeyApp.
-   * @param appSecret the App Secret of your app on HockeyApp.
-   * @param mode the login mode.
-   * @param listener instance of LoginListener
-   */
-  public static void register(final Context context, String appIdentifier, String appSecret, int mode, LoginManagerListener listener) {
-    LoginManager.listener = listener;
-    register(context, appIdentifier, appSecret, mode, (Class<?>)null);
-  }
+    /**
+     * Registers new LoginManager.
+     *
+     * @param context       the context to use. Usually your Activity object.
+     * @param appIdentifier the App ID of your app on HockeyApp.
+     * @param appSecret     the App Secret of your app on HockeyApp.
+     * @param mode          the login mode.
+     * @param listener      instance of LoginListener
+     */
+    public static void register(final Context context, String appIdentifier, String appSecret, int mode, LoginManagerListener listener) {
+        LoginManager.listener = listener;
+        register(context, appIdentifier, appSecret, mode, (Class<?>) null);
+    }
 
-  /**
-   * Registers new LoginManager.
-   *
-   * @param context       The context to use. Usually your Activity object.
-   * @param appIdentifier App ID of your app on HockeyApp.
-   * @param appSecret     The App Secret of your app on HockeyApp.
-   * @param mode          The Login Mode.
-   * @param activity      The first activity to be started by your app.
-   */
-  public static void register(final Context context, String appIdentifier, String appSecret, int mode, Class<?> activity) {
-    register(context, appIdentifier, appSecret, Constants.BASE_URL, mode, activity);
-  }
+    /**
+     * Registers new LoginManager.
+     *
+     * @param context       The context to use. Usually your Activity object.
+     * @param appIdentifier App ID of your app on HockeyApp.
+     * @param appSecret     The App Secret of your app on HockeyApp.
+     * @param mode          The Login Mode.
+     * @param activity      The first activity to be started by your app.
+     */
+    public static void register(final Context context, String appIdentifier, String appSecret, int mode, Class<?> activity) {
+        register(context, appIdentifier, appSecret, Constants.BASE_URL, mode, activity);
+    }
 
-  /**
-   * Registers new LoginManager.
-   *
-   * @param context The context to use. Usually your Activity object.
-   * @param appIdentifier App ID of your app on HockeyApp.
-   * @param appSecret The App Secret of your app on HockeyApp.
-   * @param urlString The URL of the HockeyApp service
-   * @param mode The Login Mode.
-   * @param activity The first activity to be started by your app.
-   */
-  public static void register(final Context context, String appIdentifier, String appSecret, String urlString, int mode, Class<?> activity) {
-    if (context != null) {
-      LoginManager.identifier = Util.sanitizeAppIdentifier(appIdentifier);
-      LoginManager.secret = appSecret;
-      LoginManager.urlString = urlString;
-      LoginManager.mode = mode;
-      LoginManager.mainActivity = activity;
+    /**
+     * Registers new LoginManager.
+     *
+     * @param context       The context to use. Usually your Activity object.
+     * @param appIdentifier App ID of your app on HockeyApp.
+     * @param appSecret     The App Secret of your app on HockeyApp.
+     * @param urlString     The URL of the HockeyApp service
+     * @param mode          The Login Mode.
+     * @param activity      The first activity to be started by your app.
+     */
+    public static void register(final Context context, String appIdentifier, String appSecret, String urlString, int mode, Class<?> activity) {
+        if (context != null) {
+            LoginManager.identifier = Util.sanitizeAppIdentifier(appIdentifier);
+            LoginManager.secret = appSecret;
+            LoginManager.urlString = urlString;
+            LoginManager.mode = mode;
+            LoginManager.mainActivity = activity;
 
-      if (LoginManager.validateHandler == null) {
-        LoginManager.validateHandler = new Handler() {
-          @Override
-          public void handleMessage(Message msg) {
-            Bundle bundle = msg.getData();
-            boolean success = bundle.getBoolean("success");
+            if (LoginManager.validateHandler == null) {
+                LoginManager.validateHandler = new Handler() {
+                    @Override
+                    public void handleMessage(Message msg) {
+                        Bundle bundle = msg.getData();
+                        boolean success = bundle.getBoolean("success");
 
-            if (!success) {
-              startLoginActivity(context);
+                        if (!success) {
+                            startLoginActivity(context);
+                        }
+                    }
+                };
             }
-          }
-        };
-      }
 
-      Constants.loadFromContext(context);
-    }
-  }
-
-  /**
-   * Checks the authentication status. If not authenticated at all it will start the LoginActivity,
-   * otherwise it will verify if the user is still allowed to use this app. Also exits the app if the
-   * LoginActivity is exited with the back button.
-   *
-   * @param context The activity from which this method is called.
-   * @param intent The intent that the activity has been created with.
-   */
-  public static void verifyLogin(Activity context, Intent intent) {
-    // Check if application needs to be exited.
-    if (intent != null) {
-      if (intent.getBooleanExtra(LOGIN_EXIT_KEY, false)) {
-        context.finish();
-        return;
-      }
+            Constants.loadFromContext(context);
+        }
     }
 
-    if (context == null || mode == LOGIN_MODE_ANONYMOUS || mode == LOGIN_MODE_VALIDATE) {
-      return;
+    /**
+     * Checks the authentication status. If not authenticated at all it will start the LoginActivity,
+     * otherwise it will verify if the user is still allowed to use this app. Also exits the app if the
+     * LoginActivity is exited with the back button.
+     *
+     * @param context The activity from which this method is called.
+     * @param intent  The intent that the activity has been created with.
+     */
+    public static void verifyLogin(Activity context, Intent intent) {
+        // Check if application needs to be exited.
+        if (intent != null) {
+            if (intent.getBooleanExtra(LOGIN_EXIT_KEY, false)) {
+                context.finish();
+                return;
+            }
+        }
+
+        if (context == null || mode == LOGIN_MODE_ANONYMOUS || mode == LOGIN_MODE_VALIDATE) {
+            return;
+        }
+
+        SharedPreferences prefs = context.getSharedPreferences("net.hockeyapp.android.login", 0);
+        int currentMode = prefs.getInt("mode", -1);
+        if (currentMode != mode) {
+            prefs.edit()
+                    .remove("auid")
+                    .remove("iuid")
+                    .putInt("mode", mode)
+                    .apply();
+        }
+
+        String auid = prefs.getString("auid", null);
+        String iuid = prefs.getString("iuid", null);
+
+        boolean notAuthenticated = auid == null && iuid == null;
+        boolean auidMissing = auid == null && mode == LOGIN_MODE_EMAIL_PASSWORD;
+        boolean iuidMissing = iuid == null && mode == LOGIN_MODE_EMAIL_ONLY;
+
+        if (notAuthenticated || auidMissing || iuidMissing) {
+            startLoginActivity(context);
+            return;
+        }
+
+        Map<String, String> params = new HashMap<String, String>();
+        if (auid != null) {
+            params.put("type", "auid");
+            params.put("id", auid);
+        } else if (iuid != null) {
+            params.put("type", "iuid");
+            params.put("id", iuid);
+        }
+
+        LoginTask verifyTask = new LoginTask(context, validateHandler, getURLString(LOGIN_MODE_VALIDATE), LOGIN_MODE_VALIDATE, params);
+        verifyTask.setShowProgressDialog(false);
+        AsyncTaskUtils.execute(verifyTask);
     }
 
-    SharedPreferences prefs = context.getSharedPreferences("net.hockeyapp.android.login", 0);
-    int currentMode = prefs.getInt("mode", -1);
-    if (currentMode != mode) {
-      prefs.edit()
-              .remove("auid")
-              .remove("iuid")
-              .putInt("mode", mode)
-              .apply();
+    private static void startLoginActivity(Context context) {
+        Intent intent = new Intent();
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY);
+        intent.setClass(context, LoginActivity.class);
+        intent.putExtra("url", getURLString(mode));
+        intent.putExtra("mode", mode);
+        intent.putExtra("secret", secret);
+        context.startActivity(intent);
     }
 
-    String auid = prefs.getString("auid", null);
-    String iuid = prefs.getString("iuid", null);
+    private static String getURLString(int mode) {
+        String suffix = "";
+        if (mode == LOGIN_MODE_EMAIL_PASSWORD) {
+            suffix = "authorize";
+        } else if (mode == LOGIN_MODE_EMAIL_ONLY) {
+            suffix = "check";
+        } else if (mode == LOGIN_MODE_VALIDATE) {
+            suffix = "validate";
+        }
 
-    boolean notAuthenticated = auid == null && iuid == null;
-    boolean auidMissing      = auid == null && mode == LOGIN_MODE_EMAIL_PASSWORD;
-    boolean iuidMissing      = iuid == null && mode == LOGIN_MODE_EMAIL_ONLY;
-
-    if (notAuthenticated || auidMissing || iuidMissing) {
-      startLoginActivity(context);
-      return;
+        return urlString + "api/3/apps/" + identifier + "/identity/" + suffix;
     }
-
-    Map<String, String> params = new HashMap<String, String>();
-    if (auid != null) {
-      params.put("type", "auid");
-      params.put("id", auid);
-    }
-    else if (iuid != null) {
-      params.put("type", "iuid");
-      params.put("id", iuid);
-    }
-
-    LoginTask verifyTask = new LoginTask(context, validateHandler, getURLString(LOGIN_MODE_VALIDATE), LOGIN_MODE_VALIDATE, params);
-    verifyTask.setShowProgressDialog(false);
-    AsyncTaskUtils.execute(verifyTask);
-  }
-
-  private static void startLoginActivity(Context context) {
-    Intent intent = new Intent();
-    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY);
-    intent.setClass(context, LoginActivity.class);
-    intent.putExtra("url", getURLString(mode));
-    intent.putExtra("mode", mode);
-    intent.putExtra("secret", secret);
-    context.startActivity(intent);
-  }
-
-  private static String getURLString(int mode) {
-    String suffix = "";
-    if (mode == LOGIN_MODE_EMAIL_PASSWORD) {
-      suffix = "authorize";
-    }
-    else if (mode == LOGIN_MODE_EMAIL_ONLY) {
-      suffix = "check";
-    }
-    else if (mode == LOGIN_MODE_VALIDATE) {
-      suffix = "validate";
-    }
-
-    return urlString + "api/3/apps/" + identifier + "/identity/" + suffix;
-  }
 }

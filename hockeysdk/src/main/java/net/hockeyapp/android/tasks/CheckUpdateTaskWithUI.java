@@ -23,12 +23,12 @@ import java.lang.reflect.Method;
 
 /**
  * <h3>Description</h3>
- *
+ * <p/>
  * Internal helper class. Checks if a new update is available by
  * fetching version data from Hockeyapp.
- *
+ * <p/>
  * <h3>License</h3>
- *
+ * <p/>
  * <pre>
  * Copyright (c) 2011-2014 Bit Stadium GmbH
  *
@@ -58,152 +58,149 @@ import java.lang.reflect.Method;
  **/
 public class CheckUpdateTaskWithUI extends CheckUpdateTask {
 
-  private Activity activity = null;
-  private AlertDialog dialog = null;
-  protected boolean isDialogRequired = false;
+    private Activity activity = null;
+    private AlertDialog dialog = null;
+    protected boolean isDialogRequired = false;
 
-  public CheckUpdateTaskWithUI(WeakReference<Activity> weakActivity, String urlString, String appIdentifier, UpdateManagerListener listener, boolean isDialogRequired) {
-    super(weakActivity, urlString, appIdentifier, listener);
+    public CheckUpdateTaskWithUI(WeakReference<Activity> weakActivity, String urlString, String appIdentifier, UpdateManagerListener listener, boolean isDialogRequired) {
+        super(weakActivity, urlString, appIdentifier, listener);
 
-    if (weakActivity != null) {
-      activity = weakActivity.get();
-    }
-
-    this.isDialogRequired = isDialogRequired;
-  }
-
-  @Override
-  public void detach() {
-    super.detach();
-    
-    activity = null;
-    
-    if (dialog != null) {
-      dialog.dismiss();
-      dialog = null;
-    }
-  }
-
-  @Override
-  protected void onPostExecute(JSONArray updateInfo) {
-    super.onPostExecute(updateInfo);
-    if ((updateInfo != null) && (isDialogRequired)) {
-      showDialog(updateInfo);
-    }
-  }
-
-  @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-  private void showDialog(final JSONArray updateInfo) {
-    if (getCachingEnabled()) {
-      VersionCache.setVersionInfo(activity, updateInfo.toString());
-    }
-
-    if ((activity == null) || (activity.isFinishing())) {
-      return;
-    }
-
-    AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-    builder.setTitle(R.string.hockeyapp_update_dialog_title);
-
-    if (!mandatory) {
-      builder.setMessage(R.string.hockeyapp_update_dialog_message);
-      builder.setNegativeButton(R.string.hockeyapp_update_dialog_negative_button, new DialogInterface.OnClickListener() {
-        public void onClick(DialogInterface dialog, int which) {
-          cleanUp();
-          if (null != listener) {
-            listener.onCancel();
-          }
+        if (weakActivity != null) {
+            activity = weakActivity.get();
         }
-      });
 
-      builder.setPositiveButton(R.string.hockeyapp_update_dialog_positive_button, new DialogInterface.OnClickListener() {
-        public void onClick(DialogInterface dialog, int which) {
-          if (getCachingEnabled()) {
-            VersionCache.setVersionInfo(activity, "[]");
-          }
+        this.isDialogRequired = isDialogRequired;
+    }
 
-          WeakReference<Activity> weakActivity = new WeakReference<Activity>(activity);
-          if ((Util.fragmentsSupported()) && (Util.runsOnTablet(weakActivity))) {
-            showUpdateFragment(updateInfo);
-          }
-          else {
-            startUpdateIntent(updateInfo, false);
-          }
+    @Override
+    public void detach() {
+        super.detach();
+
+        activity = null;
+
+        if (dialog != null) {
+            dialog.dismiss();
+            dialog = null;
         }
-      });
-
-      dialog = builder.create();
-      dialog.show();
-    }
-    else {
-      String appName = Util.getAppName(activity);
-      String toast = String.format(activity.getString(R.string.hockeyapp_update_mandatory_toast),
-        appName);
-      Toast.makeText(activity, toast, Toast.LENGTH_LONG).show();
-      startUpdateIntent(updateInfo, true);
-    }
-  }
-
-  @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-  private void showUpdateFragment(final JSONArray updateInfo) {
-    if (activity != null) {
-      FragmentTransaction fragmentTransaction = activity.getFragmentManager().beginTransaction();
-      fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-
-      Fragment existingFragment = activity.getFragmentManager().findFragmentByTag("hockey_update_dialog");
-      if (existingFragment != null) {
-        fragmentTransaction.remove(existingFragment);
-      }
-      fragmentTransaction.addToBackStack(null);
-
-      // Create and show the dialog
-      Class<? extends UpdateFragment> fragmentClass = UpdateFragment.class;
-      if (listener != null) {
-        fragmentClass = listener.getUpdateFragmentClass();
-      }
-
-      try {
-        Method method = fragmentClass.getMethod("newInstance", JSONArray.class, String.class);
-        DialogFragment updateFragment = (DialogFragment)method.invoke(null, updateInfo, getURLString("apk"));
-        updateFragment.show(fragmentTransaction, "hockey_update_dialog");
-      }
-      catch (Exception e) {
-        Log.d(Constants.TAG, "An exception happened while showing the update fragment:");
-        e.printStackTrace();
-        Log.d(Constants.TAG, "Showing update activity instead.");
-        startUpdateIntent(updateInfo, false);
-      }
-    }
-  }
-
-  private void startUpdateIntent(final JSONArray updateInfo, Boolean finish) {
-    Class<?> activityClass = null;
-    if (listener != null) {
-      activityClass = listener.getUpdateActivityClass();
-    }
-    if (activityClass == null) {
-      activityClass = UpdateActivity.class;
     }
 
-    if (activity != null) {
-      Intent intent = new Intent();
-      intent.setClass(activity, activityClass);
-      intent.putExtra(INTENT_EXTRA_JSON, updateInfo.toString());
-      intent.putExtra(INTENT_EXTRA_URL, getURLString(APK));
-      activity.startActivity(intent);
-
-      if (finish) {
-        activity.finish();
-      }
+    @Override
+    protected void onPostExecute(JSONArray updateInfo) {
+        super.onPostExecute(updateInfo);
+        if ((updateInfo != null) && (isDialogRequired)) {
+            showDialog(updateInfo);
+        }
     }
 
-    cleanUp();
-  }
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    private void showDialog(final JSONArray updateInfo) {
+        if (getCachingEnabled()) {
+            VersionCache.setVersionInfo(activity, updateInfo.toString());
+        }
 
-  @Override
-  protected void cleanUp() {
-    super.cleanUp();
-    activity = null;
-    dialog = null;
-  }
+        if ((activity == null) || (activity.isFinishing())) {
+            return;
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setTitle(R.string.hockeyapp_update_dialog_title);
+
+        if (!mandatory) {
+            builder.setMessage(R.string.hockeyapp_update_dialog_message);
+            builder.setNegativeButton(R.string.hockeyapp_update_dialog_negative_button, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    cleanUp();
+                    if (null != listener) {
+                        listener.onCancel();
+                    }
+                }
+            });
+
+            builder.setPositiveButton(R.string.hockeyapp_update_dialog_positive_button, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    if (getCachingEnabled()) {
+                        VersionCache.setVersionInfo(activity, "[]");
+                    }
+
+                    WeakReference<Activity> weakActivity = new WeakReference<Activity>(activity);
+                    if ((Util.fragmentsSupported()) && (Util.runsOnTablet(weakActivity))) {
+                        showUpdateFragment(updateInfo);
+                    } else {
+                        startUpdateIntent(updateInfo, false);
+                    }
+                }
+            });
+
+            dialog = builder.create();
+            dialog.show();
+        } else {
+            String appName = Util.getAppName(activity);
+            String toast = String.format(activity.getString(R.string.hockeyapp_update_mandatory_toast),
+                    appName);
+            Toast.makeText(activity, toast, Toast.LENGTH_LONG).show();
+            startUpdateIntent(updateInfo, true);
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    private void showUpdateFragment(final JSONArray updateInfo) {
+        if (activity != null) {
+            FragmentTransaction fragmentTransaction = activity.getFragmentManager().beginTransaction();
+            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+
+            Fragment existingFragment = activity.getFragmentManager().findFragmentByTag("hockey_update_dialog");
+            if (existingFragment != null) {
+                fragmentTransaction.remove(existingFragment);
+            }
+            fragmentTransaction.addToBackStack(null);
+
+            // Create and show the dialog
+            Class<? extends UpdateFragment> fragmentClass = UpdateFragment.class;
+            if (listener != null) {
+                fragmentClass = listener.getUpdateFragmentClass();
+            }
+
+            try {
+                Method method = fragmentClass.getMethod("newInstance", JSONArray.class, String.class);
+                DialogFragment updateFragment = (DialogFragment) method.invoke(null, updateInfo, getURLString("apk"));
+                updateFragment.show(fragmentTransaction, "hockey_update_dialog");
+            } catch (Exception e) {
+                Log.d(Constants.TAG, "An exception happened while showing the update fragment:");
+                e.printStackTrace();
+                Log.d(Constants.TAG, "Showing update activity instead.");
+                startUpdateIntent(updateInfo, false);
+            }
+        }
+    }
+
+    private void startUpdateIntent(final JSONArray updateInfo, Boolean finish) {
+        Class<?> activityClass = null;
+        if (listener != null) {
+            activityClass = listener.getUpdateActivityClass();
+        }
+        if (activityClass == null) {
+            activityClass = UpdateActivity.class;
+        }
+
+        if (activity != null) {
+            Intent intent = new Intent();
+            intent.setClass(activity, activityClass);
+            intent.putExtra(INTENT_EXTRA_JSON, updateInfo.toString());
+            intent.putExtra(INTENT_EXTRA_URL, getURLString(APK));
+            activity.startActivity(intent);
+
+            if (finish) {
+                activity.finish();
+            }
+        }
+
+        cleanUp();
+    }
+
+    @Override
+    protected void cleanUp() {
+        super.cleanUp();
+        activity = null;
+        dialog = null;
+    }
 }

@@ -5,10 +5,10 @@ import android.graphics.drawable.GradientDrawable;
 
 /**
  * <h3>License</h3>
- * 
+ * <p/>
  * <pre>
  * Copyright (c) 2011-2014 Bit Stadium GmbH
- * 
+ *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without
@@ -17,10 +17,10 @@ import android.graphics.drawable.GradientDrawable;
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -30,12 +30,11 @@ import android.graphics.drawable.GradientDrawable;
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  * </pre>
- *
  */
 public class ViewHelper {
-  public static Drawable getGradient() {
-    int colors[] = { 0xff000000, 0x00000000 };
-    GradientDrawable gradient = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, colors);
-    return gradient;
-  }
+    public static Drawable getGradient() {
+        int colors[] = {0xff000000, 0x00000000};
+        GradientDrawable gradient = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, colors);
+        return gradient;
+    }
 }

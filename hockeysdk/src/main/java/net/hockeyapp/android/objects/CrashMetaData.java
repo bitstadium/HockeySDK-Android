@@ -2,6 +2,7 @@ package net.hockeyapp.android.objects;
 
 /**
  * This class provides properties that can be attached to a crash report via a custom alert view flow
+ *
  * @author Andreas Wörner
  */
 public class CrashMetaData {
@@ -36,9 +37,9 @@ public class CrashMetaData {
     @Override
     public String toString() {
         return "\n" + CrashMetaData.class.getSimpleName()
-            + "\n" + "userDescription " + userDescription
-            + "\n" + "userEmail       " + userEmail
-            + "\n" + "userID          " + userID
-            ;
+                + "\n" + "userDescription " + userDescription
+                + "\n" + "userEmail       " + userEmail
+                + "\n" + "userID          " + userID
+                ;
     }
 }
