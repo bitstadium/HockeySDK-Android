@@ -103,6 +103,12 @@ public class FeedbackActivity extends Activity implements OnClickListener {
   private ParseFeedbackTask parseFeedbackTask;
   private Handler parseFeedbackHandler;
 
+  /** Initial user's name to pre-fill the feedback form with */
+  private String initialUserName;
+
+  /** Initial user's e-mail to pre-fill the feedback form with */
+  private String initialUserEmail;
+
   /** Initial attachment uris */
   private List<Uri> initialAttachments;
 
@@ -193,6 +199,8 @@ public class FeedbackActivity extends Activity implements OnClickListener {
 
     Bundle extras = getIntent().getExtras();
     if (extras != null) {
+      initialUserName = extras.getString("initialUserName");
+      initialUserEmail = extras.getString("initialUserEmail");
       url = extras.getString("url");
 
       Parcelable[] initialAttachmentsArray = extras.getParcelableArray("initialAttachments");
@@ -328,11 +336,17 @@ public class FeedbackActivity extends Activity implements OnClickListener {
           }
         }
         else {
-          /** We dont have Name and Email. Reset those fields */
-          nameInput.setText("");
-          emailInput.setText("");
+          /** We dont have Name and Email. Check if initial values  were provided */
+          nameInput.setText(initialUserName);
+          emailInput.setText(initialUserEmail);
           subjectInput.setText("");
-          nameInput.requestFocus();
+          if (TextUtils.isEmpty(initialUserName)) {
+            nameInput.requestFocus();
+          } else if (TextUtils.isEmpty(initialUserEmail)) {
+            emailInput.requestFocus();
+          } else {
+            subjectInput.requestFocus();
+          }
         }
 
         feedbackViewInitialized = true;
@@ -428,11 +442,11 @@ public class FeedbackActivity extends Activity implements OnClickListener {
     switch(id) {
       case DIALOG_ERROR_ID:
         return new AlertDialog.Builder(this)
-          .setMessage(getString(R.string.hockeyapp_dialog_error_message))
-          .setCancelable(false)
-          .setTitle(getString(R.string.hockeyapp_dialog_error_title))
-          .setIcon(android.R.drawable.ic_dialog_alert)
-          .setPositiveButton(getString(R.string.hockeyapp_dialog_positive_button), new DialogInterface.OnClickListener() {
+                .setMessage(getString(R.string.hockeyapp_dialog_error_message))
+                .setCancelable(false)
+                .setTitle(getString(R.string.hockeyapp_dialog_error_title))
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton(getString(R.string.hockeyapp_dialog_positive_button), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
               error = null;
               dialog.cancel();
@@ -663,7 +677,7 @@ public class FeedbackActivity extends Activity implements OnClickListener {
     		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
     		SimpleDateFormat formatNew = new SimpleDateFormat("d MMM h:mm a");
 
-    		Date date = null;
+          Date date = null;
     		if (feedbackResponse != null && feedbackResponse.getFeedback() != null &&
     				feedbackResponse.getFeedback().getMessages() != null && feedbackResponse.
     				getFeedback().getMessages().size() > 0) {
