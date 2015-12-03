@@ -336,7 +336,7 @@ public class FeedbackActivity extends Activity implements OnClickListener {
           }
         }
         else {
-          /** We dont have Name and Email. Check if initial values  were provided */
+          /** We dont have Name and Email. Check if initial values were provided */
           nameInput.setText(initialUserName);
           emailInput.setText(initialUserEmail);
           subjectInput.setText("");
@@ -442,11 +442,11 @@ public class FeedbackActivity extends Activity implements OnClickListener {
     switch(id) {
       case DIALOG_ERROR_ID:
         return new AlertDialog.Builder(this)
-                .setMessage(getString(R.string.hockeyapp_dialog_error_message))
-                .setCancelable(false)
-                .setTitle(getString(R.string.hockeyapp_dialog_error_title))
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setPositiveButton(getString(R.string.hockeyapp_dialog_positive_button), new DialogInterface.OnClickListener() {
+          .setMessage(getString(R.string.hockeyapp_dialog_error_message))
+          .setCancelable(false)
+          .setTitle(getString(R.string.hockeyapp_dialog_error_title))
+          .setIcon(android.R.drawable.ic_dialog_alert)
+          .setPositiveButton(getString(R.string.hockeyapp_dialog_positive_button), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
               error = null;
               dialog.cancel();
@@ -677,7 +677,7 @@ public class FeedbackActivity extends Activity implements OnClickListener {
     		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
     		SimpleDateFormat formatNew = new SimpleDateFormat("d MMM h:mm a");
 
-          Date date = null;
+            Date date = null;
     		if (feedbackResponse != null && feedbackResponse.getFeedback() != null &&
     				feedbackResponse.getFeedback().getMessages() != null && feedbackResponse.
     				getFeedback().getMessages().size() > 0) {
