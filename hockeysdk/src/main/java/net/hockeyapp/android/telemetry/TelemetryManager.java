@@ -248,7 +248,12 @@ public class TelemetryManager implements Application.ActivityLifecycleCallbacks 
    * @param serverURL the URL of your custom telemetry server as a String
    */
   public static void setCustomServerURL(String serverURL) {
-    sender.setCustomServerURL(serverURL);
+    if(sender != null) {
+      sender.setCustomServerURL(serverURL);
+    }
+    else {
+      Log.w(TAG, "HockeyApp couldn't set the custom server url. Please register(...) the TelemetryManager before setting the server URL.");
+    }
   }
 
   /**
