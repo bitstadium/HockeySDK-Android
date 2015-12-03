@@ -113,7 +113,7 @@ public class Constants {
   /**
    * Version of this SDK.
    */
-  public static final String SDK_VERSION = "3.7.0-b.1";
+  public static final String SDK_VERSION = BuildConfig.VERSION_NAME;
 
   /**
    * Permissions request for the update task.

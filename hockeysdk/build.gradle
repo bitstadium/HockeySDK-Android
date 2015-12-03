@@ -1,7 +1,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.novoda.bintray-release' // must be applied after your artifact generating plugin (eg. java / com.android.library)
 
-def hockeySdkVersion = "3.7.0-beta.2"
+def hockeySdkVersion = "3.7.0-rc.1"
 
 android {
     compileSdkVersion 23
@@ -10,7 +10,7 @@ android {
     defaultConfig {
         minSdkVersion 9
         targetSdkVersion 23
-        versionCode 3
+        versionCode 4
         versionName hockeySdkVersion
     }
     buildTypes {
