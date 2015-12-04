@@ -67,19 +67,19 @@ import net.hockeyapp.android.utils.VersionHelper;
  * @author Thomas Dohmke
  **/
 public class UpdateActivity extends Activity implements UpdateActivityInterface, UpdateInfoListener, OnClickListener {
-    private final int DIALOG_ERROR_ID = 0;
-    private ErrorObject error;
-    private Context context;
+    private static final int DIALOG_ERROR_ID = 0;
+    private ErrorObject mError;
+    private Context mContext;
 
     /**
      * Task to download the .apk file.
      */
-    protected DownloadFileTask downloadTask;
+    protected DownloadFileTask mDownloadTask;
 
     /**
      * Helper for version management.
      */
-    protected VersionHelper versionHelper;
+    protected VersionHelper mVersionHelper;
 
     /**
      * Called when the activity is starting. Sets the title and content view.
@@ -96,13 +96,13 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
         setTitle("App Update");
         setContentView(getLayoutView());
 
-        context = this;
-        versionHelper = new VersionHelper(this, getIntent().getStringExtra("json"), this);
+        mContext = this;
+        mVersionHelper = new VersionHelper(this, getIntent().getStringExtra("json"), this);
         configureView();
 
-        downloadTask = (DownloadFileTask) getLastNonConfigurationInstance();
-        if (downloadTask != null) {
-            downloadTask.attach(this);
+        mDownloadTask = (DownloadFileTask) getLastNonConfigurationInstance();
+        if (mDownloadTask != null) {
+            mDownloadTask.attach(this);
         }
     }
 
@@ -115,11 +115,11 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
         nameLabel.setText(getAppName());
 
         final TextView versionLabel = (TextView) findViewById(R.id.label_version);
-        final String versionString = "Version " + versionHelper.getVersionString();
-        final String fileDate = versionHelper.getFileDateString();
+        final String versionString = "Version " + mVersionHelper.getVersionString();
+        final String fileDate = mVersionHelper.getFileDateString();
 
         String appSizeString = "Unknown size";
-        long appSize = versionHelper.getFileSizeBytes();
+        long appSize = mVersionHelper.getFileSizeBytes();
         if (appSize >= 0L) {
             appSizeString = String.format("%.2f", appSize / (1024.0f * 1024.0f)) + " MB";
         } else {
@@ -152,7 +152,7 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
      * @return String with release notes.
      */
     protected String getReleaseNotes() {
-        return versionHelper.getReleaseNotes(false);
+        return mVersionHelper.getReleaseNotes(false);
     }
 
     /**
@@ -164,10 +164,10 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
      */
     @Override
     public Object onRetainNonConfigurationInstance() {
-        if (downloadTask != null) {
-            downloadTask.detach();
+        if (mDownloadTask != null) {
+            mDownloadTask.detach();
         }
-        return downloadTask;
+        return mDownloadTask;
     }
 
     /**
@@ -204,7 +204,7 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
                     listener.onUpdatePermissionsNotGranted();
                 } else {
                     final UpdateActivity updateActivity = this;
-                    new AlertDialog.Builder(context)
+                    new AlertDialog.Builder(mContext)
                             .setTitle(getString(R.string.hockeyapp_permission_update_title))
                             .setMessage(getString(R.string.hockeyapp_permission_update_message))
                             .setNegativeButton(getString(R.string.hockeyapp_permission_dialog_negative_button), null)
@@ -240,11 +240,11 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
                 }
             }
         });
-        AsyncTaskUtils.execute(downloadTask);
+        AsyncTaskUtils.execute(mDownloadTask);
     }
 
     protected void createDownloadTask(String url, DownloadFileListener listener) {
-        downloadTask = new DownloadFileTask(this, url, listener);
+        mDownloadTask = new DownloadFileTask(this, url, listener);
     }
 
     /**
@@ -339,9 +339,9 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
     }
 
     protected void prepareDownload() {
-        if (!Util.isConnectedToNetwork(context)) {
-            error = new ErrorObject();
-            error.setMessage(getString(R.string.hockeyapp_error_no_network_message));
+        if (!Util.isConnectedToNetwork(mContext)) {
+            mError = new ErrorObject();
+            mError.setMessage(getString(R.string.hockeyapp_error_no_network_message));
 
             runOnUiThread(new Runnable() {
                 @SuppressWarnings("deprecation")
@@ -352,7 +352,7 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
 
             return;
         }
-        if (!isWriteExternalStorageSet(context)) {
+        if (!isWriteExternalStorageSet(mContext)) {
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 // Only if we're running on Android M or later we can request permissions at runtime
@@ -360,8 +360,8 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
                 return;
             }
 
-            error = new ErrorObject();
-            error.setMessage("The permission to access the external storage permission is not set. Please contact the developer.");
+            mError = new ErrorObject();
+            mError.setMessage("The permission to access the external storage permission is not set. Please contact the developer.");
 
             runOnUiThread(new Runnable() {
                 @SuppressWarnings("deprecation")
@@ -375,8 +375,8 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
         }
 
         if (!isUnknownSourcesChecked()) {
-            error = new ErrorObject();
-            error.setMessage("The installation from unknown sources is not enabled. Please check the device settings.");
+            mError = new ErrorObject();
+            mError.setMessage("The installation from unknown sources is not enabled. Please check the device settings.");
 
             runOnUiThread(new Runnable() {
                 @SuppressWarnings("deprecation")
@@ -408,7 +408,7 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                error = null;
+                                mError = null;
                                 dialog.cancel();
                             }
                         }).create();
@@ -422,9 +422,9 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
         switch (id) {
             case DIALOG_ERROR_ID:
                 AlertDialog messageDialogError = (AlertDialog) dialog;
-                if (error != null) {
+                if (mError != null) {
                     /** If the ErrorObject is not null, display the ErrorObject message */
-                    messageDialogError.setMessage(error.getMessage());
+                    messageDialogError.setMessage(mError.getMessage());
                 } else {
                     /** If the ErrorObject is null, display the general error message */
                     messageDialogError.setMessage("An unknown error has occured.");

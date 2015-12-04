@@ -59,32 +59,32 @@ public class LoginActivity extends Activity {
     /**
      * URL for HockeyApp API
      */
-    private String url;
+    private String mUrl;
 
     /**
-     * The APP secret.
+     * The APP mSecret.
      */
-    private String secret;
+    private String mSecret;
 
     /**
      * The Login Mode.
      */
-    private int mode;
+    private int mMode;
 
     /**
      * The LoginTask.
      */
-    private LoginTask loginTask;
+    private LoginTask mLoginTask;
 
     /**
      * The Handler for the LoginTask.
      */
-    private Handler loginHandler;
+    private Handler mLoginHandler;
 
     /**
      * The Login button.
      */
-    private Button buttonLogin;
+    private Button mButtonLogin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,9 +93,9 @@ public class LoginActivity extends Activity {
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            url = extras.getString("url");
-            secret = extras.getString("secret");
-            mode = extras.getInt("mode");
+            mUrl = extras.getString("url");
+            mSecret = extras.getString("secret");
+            mMode = extras.getInt("mode");
         }
 
         configureView();
@@ -104,19 +104,19 @@ public class LoginActivity extends Activity {
         @SuppressWarnings("deprecation")
         Object object = getLastNonConfigurationInstance();
         if (object != null) {
-            loginTask = (LoginTask) object;
-            loginTask.attach(this, loginHandler);
+            mLoginTask = (LoginTask) object;
+            mLoginTask.attach(this, mLoginHandler);
         }
     }
 
     private void configureView() {
-        if (mode == LoginManager.LOGIN_MODE_EMAIL_ONLY) {
+        if (mMode == LoginManager.LOGIN_MODE_EMAIL_ONLY) {
             EditText passwordInput = (EditText) findViewById(R.id.input_password);
             passwordInput.setVisibility(View.INVISIBLE);
         }
 
-        buttonLogin = (Button) findViewById(R.id.button_login);
-        buttonLogin.setOnClickListener(new View.OnClickListener() {
+        mButtonLogin = (Button) findViewById(R.id.button_login);
+        mButtonLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 performAuthentication();
@@ -125,7 +125,7 @@ public class LoginActivity extends Activity {
     }
 
     private void initLoginHandler() {
-        loginHandler = new Handler() {
+        mLoginHandler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
                 Bundle bundle = msg.getData();
@@ -158,19 +158,19 @@ public class LoginActivity extends Activity {
         boolean ready = false;
         Map<String, String> params = new HashMap<String, String>();
 
-        if (mode == LoginManager.LOGIN_MODE_EMAIL_ONLY) {
+        if (mMode == LoginManager.LOGIN_MODE_EMAIL_ONLY) {
             ready = !TextUtils.isEmpty(email);
             params.put("email", email);
-            params.put("authcode", md5(secret + email));
-        } else if (mode == LoginManager.LOGIN_MODE_EMAIL_PASSWORD) {
+            params.put("authcode", md5(mSecret + email));
+        } else if (mMode == LoginManager.LOGIN_MODE_EMAIL_PASSWORD) {
             ready = !TextUtils.isEmpty(email) && !TextUtils.isEmpty(password);
             params.put("email", email);
             params.put("password", password);
         }
 
         if (ready) {
-            loginTask = new LoginTask(this, loginHandler, url, mode, params);
-            AsyncTaskUtils.execute(loginTask);
+            mLoginTask = new LoginTask(this, mLoginHandler, mUrl, mMode, params);
+            AsyncTaskUtils.execute(mLoginTask);
         } else {
             Toast.makeText(this, getString(R.string.hockeyapp_login_missing_credentials_toast), Toast.LENGTH_LONG).show();
         }
@@ -225,10 +225,10 @@ public class LoginActivity extends Activity {
      */
     @Override
     public Object onRetainNonConfigurationInstance() {
-        if (loginTask != null) {
-            loginTask.detach();
+        if (mLoginTask != null) {
+            mLoginTask.detach();
         }
 
-        return loginTask;
+        return mLoginTask;
     }
 }

@@ -69,22 +69,22 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
     /**
      * Task to download the .apk file.
      */
-    private DownloadFileTask downloadTask;
+    private DownloadFileTask mDownloadTask;
 
     /**
      * JSON array with a JSON object for each version.
      */
-    private JSONArray versionInfo;
+    private JSONArray mVersionInfo;
 
     /**
      * HockeyApp URL as a string.
      */
-    private String urlString;
+    private String mUrlString;
 
     /**
      * Helper for version management.
      */
-    private VersionHelper versionHelper;
+    private VersionHelper mVersionHelper;
 
     /**
      * Creates a new instance of the fragment.
@@ -116,8 +116,8 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
         super.onCreate(savedInstanceState);
 
         try {
-            this.urlString = getArguments().getString("url");
-            this.versionInfo = new JSONArray(getArguments().getString("versionInfo"));
+            this.mUrlString = getArguments().getString("url");
+            this.mVersionInfo = new JSONArray(getArguments().getString("versionInfo"));
         } catch (JSONException e) {
             dismiss();
             return;
@@ -136,21 +136,21 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = getLayoutView();
 
-        versionHelper = new VersionHelper(getActivity(), versionInfo.toString(), this);
+        mVersionHelper = new VersionHelper(getActivity(), mVersionInfo.toString(), this);
 
         TextView nameLabel = (TextView) view.findViewById(R.id.label_title);
         nameLabel.setText(getAppName());
 
         final TextView versionLabel = (TextView) view.findViewById(R.id.label_version);
-        final String versionString = "Version " + versionHelper.getVersionString();
-        final String fileDate = versionHelper.getFileDateString();
+        final String versionString = "Version " + mVersionHelper.getVersionString();
+        final String fileDate = mVersionHelper.getFileDateString();
 
         String appSizeString = "Unknown size";
-        long appSize = versionHelper.getFileSizeBytes();
+        long appSize = mVersionHelper.getFileSizeBytes();
         if (appSize >= 0L) {
             appSizeString = String.format("%.2f", appSize / (1024.0f * 1024.0f)) + " MB";
         } else {
-            GetFileSizeTask task = new GetFileSizeTask(getActivity(), urlString, new DownloadFileListener() {
+            GetFileSizeTask task = new GetFileSizeTask(getActivity(), mUrlString, new DownloadFileListener() {
                 @Override
                 public void downloadSuccessful(DownloadFileTask task) {
                     if (task instanceof GetFileSizeTask) {
@@ -170,7 +170,7 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
         WebView webView = (WebView) view.findViewById(R.id.web_update_details);
         webView.clearCache(true);
         webView.destroyDrawingCache();
-        webView.loadDataWithBaseURL(Constants.BASE_URL, versionHelper.getReleaseNotes(false), "text/html", "utf-8", null);
+        webView.loadDataWithBaseURL(Constants.BASE_URL, mVersionHelper.getReleaseNotes(false), "text/html", "utf-8", null);
 
         return view;
     }
@@ -239,7 +239,7 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
      * download, a failed download, and configuration strings.
      */
     private void startDownloadTask(final Activity activity) {
-        downloadTask = new DownloadFileTask(activity, urlString, new DownloadFileListener() {
+        mDownloadTask = new DownloadFileTask(activity, mUrlString, new DownloadFileListener() {
             public void downloadFailed(DownloadFileTask task, Boolean userWantsRetry) {
                 if (userWantsRetry) {
                     startDownloadTask(activity);
@@ -251,7 +251,7 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
             }
 
         });
-        AsyncTaskUtils.execute(downloadTask);
+        AsyncTaskUtils.execute(mDownloadTask);
     }
 
     /**

@@ -34,18 +34,18 @@ public class PaintActivity extends Activity {
     private static final int MENU_UNDO_ID = Menu.FIRST + 1;
     private static final int MENU_CLEAR_ID = Menu.FIRST + 2;
 
-    private PaintView paintView;
-    private String imageName;
+    private PaintView mPaintView;
+    private String mImageName;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-    /* Get image path. */
+        /* Get image path. */
         Bundle extras = getIntent().getExtras();
         Uri imageUri = extras.getParcelable("imageUri");
 
-        imageName = determineFilename(imageUri, imageUri.getLastPathSegment());
+        mImageName = determineFilename(imageUri, imageUri.getLastPathSegment());
 
         int displayWidth = getResources().getDisplayMetrics().widthPixels;
         int displayHeight = getResources().getDisplayMetrics().heightPixels;
@@ -63,7 +63,7 @@ public class PaintActivity extends Activity {
         }
 
     /* Create view and find out which orientation is needed. */
-        paintView = new PaintView(this, imageUri, displayWidth, displayHeight);
+        mPaintView = new PaintView(this, imageUri, displayWidth, displayHeight);
 
         LinearLayout vLayout = new LinearLayout(this);
         LinearLayout.LayoutParams vParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
@@ -78,7 +78,7 @@ public class PaintActivity extends Activity {
         hLayout.setOrientation(LinearLayout.HORIZONTAL);
 
         vLayout.addView(hLayout);
-        hLayout.addView(paintView);
+        hLayout.addView(mPaintView);
         setContentView(vLayout);
 
         Toast toast = Toast.makeText(this, getString(R.string.hockeyapp_paint_indicator_toast), Toast.LENGTH_LONG);
@@ -110,11 +110,11 @@ public class PaintActivity extends Activity {
                 return true;
 
             case MENU_UNDO_ID:
-                paintView.undo();
+                mPaintView.undo();
                 return true;
 
             case MENU_CLEAR_ID:
-                paintView.clearImage();
+                mPaintView.clearImage();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -123,7 +123,7 @@ public class PaintActivity extends Activity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (!paintView.isClear()) {
+            if (!mPaintView.isClear()) {
                 DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -160,17 +160,17 @@ public class PaintActivity extends Activity {
         File hockeyAppCache = new File(getCacheDir(), Constants.TAG);
         hockeyAppCache.mkdir();
 
-        String filename = imageName + ".jpg";
+        String filename = mImageName + ".jpg";
         File result = new File(hockeyAppCache, filename);
 
         int suffix = 1;
         while (result.exists()) {
-            result = new File(hockeyAppCache, imageName + "_" + suffix + ".jpg");
+            result = new File(hockeyAppCache, mImageName + "_" + suffix + ".jpg");
             suffix++;
         }
 
-        paintView.setDrawingCacheEnabled(true);
-        final Bitmap bitmap = paintView.getDrawingCache();
+        mPaintView.setDrawingCacheEnabled(true);
+        final Bitmap bitmap = mPaintView.getDrawingCache();
         new AsyncTask<File, Void, Void>() {
             @Override
             protected Void doInBackground(File... args) {

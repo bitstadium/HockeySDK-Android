@@ -56,25 +56,26 @@ import java.util.UUID;
  * @author Benjamin Reimold
  **/
 public class ExceptionHandler implements UncaughtExceptionHandler {
-    private boolean ignoreDefaultHandler = false;
-    private CrashManagerListener listener;
-    private UncaughtExceptionHandler defaultExceptionHandler;
+    private boolean mIgnoreDefaultHandler = false;
+    private CrashManagerListener mCrashManagerListener;
+    private UncaughtExceptionHandler mDefaultExceptionHandler;
 
     public ExceptionHandler(UncaughtExceptionHandler defaultExceptionHandler, CrashManagerListener listener, boolean ignoreDefaultHandler) {
-        this.defaultExceptionHandler = defaultExceptionHandler;
-        this.ignoreDefaultHandler = ignoreDefaultHandler;
-        this.listener = listener;
+        mDefaultExceptionHandler = defaultExceptionHandler;
+        mIgnoreDefaultHandler = ignoreDefaultHandler;
+        mCrashManagerListener = listener;
     }
 
     public void setListener(CrashManagerListener listener) {
-        this.listener = listener;
+        mCrashManagerListener = listener;
     }
 
+    /**
+     * @deprecated in 3.7.0-beta.2. Use saveException(Throwable exception, Thread thread,
+     * CrashManagerListener listener) instead.
+     */
     @Deprecated
-  /*
-  * @deprecated in 3.7.0-beta.2. Use saveException(Throwable exception, Thread thread,
-  * CrashManagerListener listener) instead.
-  */
+    @SuppressWarnings("unused")
     public static void saveException(Throwable exception, CrashManagerListener listener) {
         saveException(exception, null, listener);
     }
@@ -142,12 +143,12 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
         if (Constants.FILES_PATH == null) {
             // If the files path is null, the exception can't be stored
             // Always call the default handler instead
-            defaultExceptionHandler.uncaughtException(thread, exception);
+            mDefaultExceptionHandler.uncaughtException(thread, exception);
         } else {
-            saveException(exception, thread, listener);
+            saveException(exception, thread, mCrashManagerListener);
 
-            if (!ignoreDefaultHandler) {
-                defaultExceptionHandler.uncaughtException(thread, exception);
+            if (!mIgnoreDefaultHandler) {
+                mDefaultExceptionHandler.uncaughtException(thread, exception);
             } else {
                 android.os.Process.killProcess(android.os.Process.myPid());
                 System.exit(10);
@@ -165,6 +166,7 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
                 writer.flush();
             }
         } catch (Exception e) {
+            // TODO: Handle exception here
         } finally {
             if (writer != null) {
                 writer.close();
