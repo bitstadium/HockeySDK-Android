@@ -54,13 +54,35 @@ public class FeedbackMessage implements Serializable {
     private String mName;
     private String mAppId;
     private List<FeedbackAttachment> mFeedbackAttachments;
+
+    /**
+     * @return
+     * @deprecated as of 3.7.0, replaced by {@link #getSubject()}
+     */
+    @Deprecated
+    @SuppressWarnings("unused")
     public String getSubjec() {
         return mSubject;
     }
 
+    /**
+     * @param subjec
+     * @deprecated as of 3.7.0, replaced by {@link #setSubject(String)}
+     */
+    @Deprecated
+    @SuppressWarnings("unused")
     public void setSubjec(String subjec) {
         this.mSubject = subjec;
     }
+
+    public String getSubject() {
+        return mSubject;
+    }
+
+    public void setSubject(String subjec) {
+        this.mSubject = subjec;
+    }
+
 
     public String getText() {
         return mText;
