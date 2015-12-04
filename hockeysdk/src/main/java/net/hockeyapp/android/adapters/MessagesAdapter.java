@@ -39,25 +39,25 @@ import java.util.ArrayList;
  * </pre>
  */
 public class MessagesAdapter extends BaseAdapter {
-    private Context context;
-    private ArrayList<FeedbackMessage> messagesList;
+    private Context mContext;
+    private ArrayList<FeedbackMessage> mMessagesList;
 
     public MessagesAdapter(Context context, ArrayList<FeedbackMessage> messagesList) {
-        this.context = context;
-        this.messagesList = messagesList;
+        this.mContext = context;
+        this.mMessagesList = messagesList;
     }
 
     public int getCount() {
-        return this.messagesList.size();
+        return this.mMessagesList.size();
     }
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-        final FeedbackMessage feedbackMessage = messagesList.get(position);
+        final FeedbackMessage feedbackMessage = mMessagesList.get(position);
         FeedbackMessageView view;
 
         if (convertView == null) {
-            view = new FeedbackMessageView(context, null);
+            view = new FeedbackMessageView(mContext, null);
         } else {
             view = (FeedbackMessageView) convertView;
         }
@@ -73,7 +73,7 @@ public class MessagesAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int position) {
-        return messagesList.get(position);
+        return mMessagesList.get(position);
     }
 
     @Override
@@ -82,14 +82,14 @@ public class MessagesAdapter extends BaseAdapter {
     }
 
     public void clear() {
-        if (messagesList != null) {
-            messagesList.clear();
+        if (mMessagesList != null) {
+            mMessagesList.clear();
         }
     }
 
     public void add(FeedbackMessage message) {
-        if (message != null && messagesList != null) {
-            messagesList.add(message);
+        if (message != null && mMessagesList != null) {
+            mMessagesList.add(message);
         }
     }
 }

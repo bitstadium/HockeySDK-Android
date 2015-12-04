@@ -6,40 +6,40 @@ package net.hockeyapp.android.objects;
  * @author Andreas Wörner
  */
 public class CrashMetaData {
-    private String userDescription;
-    private String userEmail;
-    private String userID;
+    private String mUserDescription;
+    private String mUserEmail;
+    private String mUserID;
 
     public String getUserDescription() {
-        return userDescription;
+        return mUserDescription;
     }
 
     public void setUserDescription(final String userDescription) {
-        this.userDescription = userDescription;
+        this.mUserDescription = userDescription;
     }
 
     public String getUserEmail() {
-        return userEmail;
+        return mUserEmail;
     }
 
     public void setUserEmail(final String userEmail) {
-        this.userEmail = userEmail;
+        this.mUserEmail = userEmail;
     }
 
     public String getUserID() {
-        return userID;
+        return mUserID;
     }
 
     public void setUserID(final String userID) {
-        this.userID = userID;
+        this.mUserID = userID;
     }
 
     @Override
     public String toString() {
         return "\n" + CrashMetaData.class.getSimpleName()
-                + "\n" + "userDescription " + userDescription
-                + "\n" + "userEmail       " + userEmail
-                + "\n" + "userID          " + userID
+                + "\n" + "userDescription " + mUserDescription
+                + "\n" + "userEmail       " + mUserEmail
+                + "\n" + "userID          " + mUserID
                 ;
     }
 }

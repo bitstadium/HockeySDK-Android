@@ -44,59 +44,59 @@ public class FeedbackAttachment implements Serializable {
 
     private static final long serialVersionUID = 5059651319640956830L;
 
-    private int id;
-    private int messageId;
-    private String filename;
-    private String url;
-    private String createdAt;
-    private String updatedAt;
+    private int mId;
+    private int mMessageId;
+    private String mFilename;
+    private String mUrl;
+    private String mCreatedAt;
+    private String mUpdatedAt;
 
     public int getId() {
-        return id;
+        return mId;
     }
 
     public void setId(int id) {
-        this.id = id;
+        this.mId = id;
     }
 
     public int getMessageId() {
-        return messageId;
+        return mMessageId;
     }
 
     public void setMessageId(int messageId) {
-        this.messageId = messageId;
+        this.mMessageId = messageId;
     }
 
     public String getFilename() {
-        return filename;
+        return mFilename;
     }
 
     public void setFilename(String filename) {
-        this.filename = filename;
+        this.mFilename = filename;
     }
 
     public String getUrl() {
-        return url;
+        return mUrl;
     }
 
     public void setUrl(String url) {
-        this.url = url;
+        this.mUrl = url;
     }
 
     public String getCreatedAt() {
-        return createdAt;
+        return mCreatedAt;
     }
 
     public void setCreatedAt(String createdAt) {
-        this.createdAt = createdAt;
+        this.mCreatedAt = createdAt;
     }
 
     public String getUpdatedAt() {
-        return updatedAt;
+        return mUpdatedAt;
     }
 
     public void setUpdatedAt(String updatedAt) {
-        this.updatedAt = updatedAt;
+        this.mUpdatedAt = updatedAt;
     }
 
     /**
@@ -105,7 +105,7 @@ public class FeedbackAttachment implements Serializable {
      * @return the filename in the cache.
      */
     public String getCacheId() {
-        return "" + messageId + id;
+        return "" + mMessageId + mId;
     }
 
     /**
@@ -131,12 +131,12 @@ public class FeedbackAttachment implements Serializable {
     @Override
     public String toString() {
         return "\n" + FeedbackAttachment.class.getSimpleName()
-                + "\n" + "id         " + id
-                + "\n" + "message id " + messageId
-                + "\n" + "filename   " + filename
-                + "\n" + "url        " + url
-                + "\n" + "createdAt  " + createdAt
-                + "\n" + "updatedAt  " + updatedAt
+                + "\n" + "id         " + mId
+                + "\n" + "message id " + mMessageId
+                + "\n" + "filename   " + mFilename
+                + "\n" + "url        " + mUrl
+                + "\n" + "createdAt  " + mCreatedAt
+                + "\n" + "updatedAt  " + mUpdatedAt
                 ;
     }
 }

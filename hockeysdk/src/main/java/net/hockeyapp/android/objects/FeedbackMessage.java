@@ -40,130 +40,129 @@ import java.util.List;
 public class FeedbackMessage implements Serializable {
     private static final long serialVersionUID = -8773015828853994624L;
 
-    private String subject;
-    private String text;
-    private String oem;
-    private String model;
-    private String osVersion;
-    private String createdAt;
-    private int id;
-    private String token;
-    private int via;
-    private String userString;
-    private String cleanText;
-    private String name;
-    private String appId;
-    private List<FeedbackAttachment> feedbackAttachments;
-
+    private String mSubject;
+    private String mText;
+    private String mDeviceOem;
+    private String mDeviceModel;
+    private String mDeviceOsVersion;
+    private String mCreatedAt;
+    private int mId;
+    private String mToken;
+    private int mVia;
+    private String mUserString;
+    private String mCleanText;
+    private String mName;
+    private String mAppId;
+    private List<FeedbackAttachment> mFeedbackAttachments;
     public String getSubjec() {
-        return subject;
+        return mSubject;
     }
 
     public void setSubjec(String subjec) {
-        this.subject = subjec;
+        this.mSubject = subjec;
     }
 
     public String getText() {
-        return text;
+        return mText;
     }
 
     public void setText(String text) {
-        this.text = text;
+        this.mText = text;
     }
 
     public String getOem() {
-        return oem;
+        return mDeviceOem;
     }
 
     public void setOem(String oem) {
-        this.oem = oem;
+        this.mDeviceOem = oem;
     }
 
     public String getModel() {
-        return model;
+        return mDeviceModel;
     }
 
     public void setModel(String model) {
-        this.model = model;
+        this.mDeviceModel = model;
     }
 
     public String getOsVersion() {
-        return osVersion;
+        return mDeviceOsVersion;
     }
 
     public void setOsVersion(String osVersion) {
-        this.osVersion = osVersion;
+        this.mDeviceOsVersion = osVersion;
     }
 
     public String getCreatedAt() {
-        return createdAt;
+        return mCreatedAt;
     }
 
     public void setCreatedAt(String createdAt) {
-        this.createdAt = createdAt;
+        this.mCreatedAt = createdAt;
     }
 
     public int getId() {
-        return id;
+        return mId;
     }
 
     public void setId(int id) {
-        this.id = id;
+        this.mId = id;
     }
 
     public String getToken() {
-        return token;
+        return mToken;
     }
 
     public void setToken(String token) {
-        this.token = token;
+        this.mToken = token;
     }
 
     public int getVia() {
-        return via;
+        return mVia;
     }
 
     public void setVia(int via) {
-        this.via = via;
+        this.mVia = via;
     }
 
     public String getUserString() {
-        return userString;
+        return mUserString;
     }
 
     public void setUserString(String userString) {
-        this.userString = userString;
+        this.mUserString = userString;
     }
 
     public String getCleanText() {
-        return cleanText;
+        return mCleanText;
     }
 
     public void setCleanText(String cleanText) {
-        this.cleanText = cleanText;
+        this.mCleanText = cleanText;
     }
 
     public String getName() {
-        return name;
+        return mName;
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.mName = name;
     }
 
     public String getAppId() {
-        return appId;
+        return mAppId;
     }
 
     public void setAppId(String appId) {
-        this.appId = appId;
+        this.mAppId = appId;
     }
 
     public List<FeedbackAttachment> getFeedbackAttachments() {
-        return feedbackAttachments;
+        return mFeedbackAttachments;
     }
 
     public void setFeedbackAttachments(List<FeedbackAttachment> feedbackAttachments) {
-        this.feedbackAttachments = feedbackAttachments;
+        this.mFeedbackAttachments = feedbackAttachments;
     }
 }

@@ -39,14 +39,14 @@ public enum FeedbackUserDataElement {
 
     DONT_SHOW(0), OPTIONAL(1), REQUIRED(2);
 
-    private final int value;
+    private final int mValue;
 
     private FeedbackUserDataElement(int value) {
-        this.value = value;
+        this.mValue = value;
     }
 
     public int getValue() {
-        return value;
+        return mValue;
     }
 
 }

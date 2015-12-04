@@ -19,13 +19,13 @@ public enum CrashManagerUserInput {
      */
     CrashManagerUserInputAlwaysSend(2);
 
-    private final int value;
+    private final int mValue;
 
     CrashManagerUserInput(int value) {
-        this.value = value;
+        this.mValue = value;
     }
 
     public int getValue() {
-        return value;
+        return mValue;
     }
 }

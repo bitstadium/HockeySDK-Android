@@ -39,31 +39,31 @@ import java.io.Serializable;
 public class FeedbackResponse implements Serializable {
     private static final long serialVersionUID = -1093570359639034766L;
 
-    private String status;
-    private Feedback feedback;
-    private String token;
+    private String mStatus;
+    private Feedback mFeedback;
+    private String mToken;
 
     public String getStatus() {
-        return status;
+        return mStatus;
     }
 
     public void setStatus(String status) {
-        this.status = status;
+        this.mStatus = status;
     }
 
     public Feedback getFeedback() {
-        return feedback;
+        return mFeedback;
     }
 
     public void setFeedback(Feedback feedback) {
-        this.feedback = feedback;
+        this.mFeedback = feedback;
     }
 
     public String getToken() {
-        return token;
+        return mToken;
     }
 
     public void setToken(String token) {
-        this.token = token;
+        this.mToken = token;
     }
 }
