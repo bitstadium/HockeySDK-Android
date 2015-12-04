@@ -58,7 +58,7 @@
             android:layout_alignParentLeft="true"
             android:layout_below="@id/label_version"
             android:layout_margin="20dp"
-            android:background="@drawable/button_background"
+            android:background="@drawable/btn_background"
             android:text="@string/hockeyapp_update_button"
             android:textColor="@color/text_white"
             android:textSize="16sp" />

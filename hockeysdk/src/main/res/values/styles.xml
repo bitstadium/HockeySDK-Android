@@ -21,7 +21,7 @@
         <item name="android:textColor">@color/text_white</item>
         <item name="android:textSize">15sp</item>
         <item name="android:gravity">center</item>
-        <item name="android:background">@drawable/button_background</item>
+        <item name="android:background">@drawable/btn_background</item>
     </style>
 
 </resources>
