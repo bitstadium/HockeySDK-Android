@@ -288,6 +288,7 @@ class TelemetryContext {
     setDeviceModel(Build.MODEL);
     setDeviceOemName(Build.MANUFACTURER);
     setOsLocale(Locale.getDefault().toString());
+    setOsLanguage(Locale.getDefault().getLanguage());
     updateScreenResolution();
 
     // get device ID
@@ -568,6 +569,18 @@ class TelemetryContext {
   public void setOsLocale(String osLocale) {
     synchronized (this.device) {
       this.device.setLocale(osLocale);
+    }
+  }
+
+  public String getOSLanguage() {
+    synchronized (this.device) {
+      return this.device.getLanguage();
+    }
+  }
+
+  public void setOsLanguage(String osLanguage) {
+    synchronized (this.device) {
+      this.device.setLanguage(osLanguage);
     }
   }
 

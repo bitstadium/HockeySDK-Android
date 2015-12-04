@@ -3,9 +3,6 @@ package net.hockeyapp.android.telemetry;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
-import net.hockeyapp.android.telemetry.Base;
-import net.hockeyapp.android.telemetry.Envelope;
-
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.LinkedHashMap;
@@ -18,13 +15,13 @@ public class EnvelopeTests extends TestCase
 {
     public void testVerPropertyWorksAsExpected()
     {
-        String expected = "MyVersionNumber";
+        int expected = 123;
         Envelope item = new Envelope();
         item.setVer(expected);
-        String actual = item.getVer();
+        int actual = item.getVer();
         Assert.assertEquals(expected, actual);
 
-        expected = "MyVersionNumber1";
+        expected = 456;
         item.setVer(expected);
         actual = item.getVer();
         Assert.assertEquals(expected, actual);
@@ -166,7 +163,7 @@ public class EnvelopeTests extends TestCase
     public void testSerialize() throws IOException
     {
         Envelope item = new Envelope();
-        item.setVer("Test string");
+        item.setVer(1234);
         item.setName("Test string");
         item.setTime("Test string");
         item.setIKey("Test string");
@@ -182,7 +179,7 @@ public class EnvelopeTests extends TestCase
         item.setData(new Base());
         StringWriter writer = new StringWriter();
         item.serialize(writer);
-        String expected = "{\"ver\":\"Test string\",\"name\":\"Test string\",\"time\":\"Test string\",\"popSample\":100.0,\"iKey\":\"Test string\",\"flags\":42,\"os\":\"Test string\",\"osVer\":\"Test string\",\"appId\":\"Test string\",\"appVer\":\"Test string\",\"tags\":{\"key1\":\"test value 1\",\"key2\":\"test value 2\"},\"data\":{}}";
+        String expected = "{\"ver\":1234,\"name\":\"Test string\",\"time\":\"Test string\",\"sampleRate\":100.0,\"iKey\":\"Test string\",\"flags\":42,\"os\":\"Test string\",\"osVer\":\"Test string\",\"appId\":\"Test string\",\"appVer\":\"Test string\",\"tags\":{\"key1\":\"test value 1\",\"key2\":\"test value 2\"},\"data\":{}}";
         Assert.assertEquals(expected, writer.toString());
     }
 

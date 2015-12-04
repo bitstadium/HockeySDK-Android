@@ -17,7 +17,7 @@ public class Envelope implements
     /**
      * Backing field for property Ver.
      */
-    private String ver;
+    private int ver = 1;
     
     /**
      * Backing field for property Name.
@@ -32,7 +32,7 @@ public class Envelope implements
     /**
      * Backing field for property PopSample.
      */
-    private double popSample = 100.0;
+    private int sampleRate = 100;
     
     /**
      * Backing field for property Epoch.
@@ -105,14 +105,14 @@ public class Envelope implements
     /**
      * Gets the Ver property.
      */
-    public String getVer() {
+    public int getVer() {
         return this.ver;
     }
     
     /**
      * Sets the Ver property.
      */
-    public void setVer(String value) {
+    public void setVer(int value) {
         this.ver = value;
     }
     
@@ -147,15 +147,15 @@ public class Envelope implements
     /**
      * Gets the PopSample property.
      */
-    public double getPopSample() {
-        return this.popSample;
+    public int getSampleRate() {
+        return this.sampleRate;
     }
     
     /**
      * Sets the PopSample property.
      */
-    public void setPopSample(double value) {
-        this.popSample = value;
+    public void setSampleRate(int value) {
+        this.sampleRate = value;
     }
     
     /**
@@ -369,10 +369,10 @@ public class Envelope implements
         writer.write(JsonHelper.convert(this.time));
         prefix = ",";
         
-        if (this.popSample > 0.0d)
+        if (this.sampleRate > 0.0d)
         {
-            writer.write(prefix + "\"popSample\":");
-            writer.write(JsonHelper.convert(this.popSample));
+            writer.write(prefix + "\"sampleRate\":");
+            writer.write(JsonHelper.convert(this.sampleRate));
             prefix = ",";
         }
         
@@ -404,19 +404,19 @@ public class Envelope implements
             prefix = ",";
         }
         
-        if (!(this.os == null))
-        {
-            writer.write(prefix + "\"os\":");
-            writer.write(JsonHelper.convert(this.os));
-            prefix = ",";
-        }
+//        if (!(this.os == null))
+//        {
+//            writer.write(prefix + "\"os\":");
+//            writer.write(JsonHelper.convert(this.os));
+//            prefix = ",";
+//        }
         
-        if (!(this.osVer == null))
-        {
-            writer.write(prefix + "\"osVer\":");
-            writer.write(JsonHelper.convert(this.osVer));
-            prefix = ",";
-        }
+//        if (!(this.osVer == null))
+//        {
+//            writer.write(prefix + "\"osVer\":");
+//            writer.write(JsonHelper.convert(this.osVer));
+//            prefix = ",";
+//        }
         
         if (!(this.appId == null))
         {
@@ -425,12 +425,12 @@ public class Envelope implements
             prefix = ",";
         }
         
-        if (!(this.appVer == null))
-        {
-            writer.write(prefix + "\"appVer\":");
-            writer.write(JsonHelper.convert(this.appVer));
-            prefix = ",";
-        }
+//        if (!(this.appVer == null))
+//        {
+//            writer.write(prefix + "\"appVer\":");
+//            writer.write(JsonHelper.convert(this.appVer));
+//            prefix = ",";
+//        }
         
         if (!(this.cV == null))
         {

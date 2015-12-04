@@ -41,7 +41,7 @@ public class SessionStateData extends TelemetryData
      * Base Type for this telemetry.
      */
     public String getBaseType() {
-        return "Microsoft.ApplicationInsights.SessionStateData";
+        return "SessionStateData";
     }
 
 
