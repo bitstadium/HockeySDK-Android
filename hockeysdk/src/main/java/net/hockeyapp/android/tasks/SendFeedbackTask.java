@@ -57,19 +57,19 @@ import java.util.Map;
  **/
 public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String, String>> {
     private static final String TAG = "SendFeedbackTask";
-    private Context context;
-    private Handler handler;
-    private String urlString;
-    private String name;
-    private String email;
-    private String subject;
-    private String text;
-    private List<Uri> attachmentUris;
-    private String token;
-    private boolean isFetchMessages;
-    private ProgressDialog progressDialog;
-    private boolean showProgressDialog;
-    private int lastMessageId;
+    private Context mContext;
+    private Handler mHandler;
+    private String mUrlString;
+    private String mName;
+    private String mEmail;
+    private String mSubject;
+    private String mText;
+    private List<Uri> mAttachmentUris;
+    private String mToken;
+    private boolean mIsFetchMessages;
+    private ProgressDialog mProgressDialog;
+    private boolean mShowProgressDialog;
+    private int mLastMessageId;
 
     /**
      * Send feedback {@link AsyncTask}.
@@ -97,18 +97,18 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
                             String text, List<Uri> attachmentUris, String token, Handler handler,
                             boolean isFetchMessages) {
 
-        this.context = context;
-        this.urlString = urlString;
-        this.name = name;
-        this.email = email;
-        this.subject = subject;
-        this.text = text;
-        this.attachmentUris = attachmentUris;
-        this.token = token;
-        this.handler = handler;
-        this.isFetchMessages = isFetchMessages;
-        this.showProgressDialog = true;
-        this.lastMessageId = -1;
+        this.mContext = context;
+        this.mUrlString = urlString;
+        this.mName = name;
+        this.mEmail = email;
+        this.mSubject = subject;
+        this.mText = text;
+        this.mAttachmentUris = attachmentUris;
+        this.mToken = token;
+        this.mHandler = handler;
+        this.mIsFetchMessages = isFetchMessages;
+        this.mShowProgressDialog = true;
+        this.mLastMessageId = -1;
 
         if (context != null) {
             Constants.loadFromContext(context);
@@ -116,37 +116,37 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
     }
 
     public void setShowProgressDialog(boolean showProgressDialog) {
-        this.showProgressDialog = showProgressDialog;
+        this.mShowProgressDialog = showProgressDialog;
     }
 
     public void setLastMessageId(int lastMessageId) {
-        this.lastMessageId = lastMessageId;
+        this.mLastMessageId = lastMessageId;
     }
 
     public void attach(Context context) {
-        this.context = context;
+        this.mContext = context;
     }
 
     public void detach() {
-        context = null;
-        progressDialog = null;
+        mContext = null;
+        mProgressDialog = null;
     }
 
     @Override
     protected void onPreExecute() {
         String loadingMessage = "Sending feedback..";
-        if (isFetchMessages) {
+        if (mIsFetchMessages) {
             loadingMessage = "Retrieving discussions...";
         }
 
-        if ((progressDialog == null || !progressDialog.isShowing()) && showProgressDialog) {
-            progressDialog = ProgressDialog.show(context, "", loadingMessage, true, false);
+        if ((mProgressDialog == null || !mProgressDialog.isShowing()) && mShowProgressDialog) {
+            mProgressDialog = ProgressDialog.show(mContext, "", loadingMessage, true, false);
         }
     }
 
     @Override
     protected HashMap<String, String> doInBackground(Void... args) {
-        if (isFetchMessages && token != null) {
+        if (mIsFetchMessages && mToken != null) {
             /** If we are fetching messages then do a GET */
             return doGet();
         } else {
@@ -154,8 +154,8 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
              * If we are sending a feedback do POST, and if we are sending a feedback
              * to an existing discussion do PUT
              */
-            if (!isFetchMessages) {
-                if (attachmentUris.isEmpty()) {
+            if (!mIsFetchMessages) {
+                if (mAttachmentUris.isEmpty()) {
                     return doPostPut();
                 } else {
                     HashMap<String, String> result = doPostPutWithAttachments();
@@ -172,8 +172,8 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
 
     private void clearTemporaryFolder(HashMap<String, String> result) {
         String status = result.get("status");
-        if ((status != null) && (status.startsWith("2")) && (context != null)) {
-            File folder = new File(context.getCacheDir(), Constants.TAG);
+        if ((status != null) && (status.startsWith("2")) && (mContext != null)) {
+            File folder = new File(mContext.getCacheDir(), Constants.TAG);
             if ((folder != null) && folder.exists()) {
                 for (File file : folder.listFiles()) {
                     if (file != null) {
@@ -189,16 +189,16 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
 
     @Override
     protected void onPostExecute(HashMap<String, String> result) {
-        if (progressDialog != null) {
+        if (mProgressDialog != null) {
             try {
-                progressDialog.dismiss();
+                mProgressDialog.dismiss();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
         /** If the Handler object is not NULL, send a message to the Activity with the result */
-        if (handler != null) {
+        if (mHandler != null) {
             Message msg = new Message();
             Bundle bundle = new Bundle();
 
@@ -212,7 +212,7 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
 
             msg.setData(bundle);
 
-            handler.sendMessage(msg);
+            mHandler.sendMessage(msg);
         }
     }
 
@@ -228,10 +228,10 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
         HttpURLConnection urlConnection = null;
         try {
             Map<String, String> parameters = new HashMap<String, String>();
-            parameters.put("name", name);
-            parameters.put("email", email);
-            parameters.put("subject", subject);
-            parameters.put("text", text);
+            parameters.put("name", mName);
+            parameters.put("email", mEmail);
+            parameters.put("subject", mSubject);
+            parameters.put("text", mText);
             parameters.put("bundle_identifier", Constants.APP_PACKAGE);
             parameters.put("bundle_short_version", Constants.APP_VERSION_NAME);
             parameters.put("bundle_version", Constants.APP_VERSION);
@@ -239,12 +239,12 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
             parameters.put("oem", Constants.PHONE_MANUFACTURER);
             parameters.put("model", Constants.PHONE_MODEL);
 
-            if (token != null) {
-                urlString += token + "/";
+            if (mToken != null) {
+                mUrlString += mToken + "/";
             }
 
-            urlConnection = new HttpURLConnectionBuilder(urlString)
-                    .setRequestMethod(token != null ? "PUT" : "POST")
+            urlConnection = new HttpURLConnectionBuilder(mUrlString)
+                    .setRequestMethod(mToken != null ? "PUT" : "POST")
                     .writeFormFields(parameters)
                     .build();
 
@@ -275,10 +275,10 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
         HttpURLConnection urlConnection = null;
         try {
             Map<String, String> parameters = new HashMap<String, String>();
-            parameters.put("name", name);
-            parameters.put("email", email);
-            parameters.put("subject", subject);
-            parameters.put("text", text);
+            parameters.put("name", mName);
+            parameters.put("email", mEmail);
+            parameters.put("subject", mSubject);
+            parameters.put("text", mText);
             parameters.put("bundle_identifier", Constants.APP_PACKAGE);
             parameters.put("bundle_short_version", Constants.APP_VERSION_NAME);
             parameters.put("bundle_version", Constants.APP_VERSION);
@@ -286,13 +286,13 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
             parameters.put("oem", Constants.PHONE_MANUFACTURER);
             parameters.put("model", Constants.PHONE_MODEL);
 
-            if (token != null) {
-                urlString += token + "/";
+            if (mToken != null) {
+                mUrlString += mToken + "/";
             }
 
-            urlConnection = new HttpURLConnectionBuilder(urlString)
-                    .setRequestMethod(token != null ? "PUT" : "POST")
-                    .writeMultipartData(parameters, context, attachmentUris)
+            urlConnection = new HttpURLConnectionBuilder(mUrlString)
+                    .setRequestMethod(mToken != null ? "PUT" : "POST")
+                    .writeMultipartData(parameters, mContext, mAttachmentUris)
                     .build();
 
             urlConnection.connect();
@@ -318,10 +318,10 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
      */
     private HashMap<String, String> doGet() {
         StringBuilder sb = new StringBuilder();
-        sb.append(urlString + Util.encodeParam(token));
+        sb.append(mUrlString + Util.encodeParam(mToken));
 
-        if (lastMessageId != -1) {
-            sb.append("?last_message_id=" + lastMessageId);
+        if (mLastMessageId != -1) {
+            sb.append("?last_message_id=" + mLastMessageId);
         }
 
         HashMap<String, String> result = new HashMap<String, String>();

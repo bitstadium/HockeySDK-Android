@@ -46,18 +46,18 @@ public class SimpleMultipartEntity {
 
     private final static char[] BOUNDARY_CHARS = "-_1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
 
-    private boolean isSetLast;
+    private boolean mIsSetLast;
 
-    private boolean isSetFirst;
+    private boolean mIsSetFirst;
 
-    private ByteArrayOutputStream out;
+    private ByteArrayOutputStream mOut;
 
-    private String boundary;
+    private String mBoundary;
 
     public SimpleMultipartEntity() {
-        this.isSetFirst = false;
-        this.isSetLast = false;
-        this.out = new ByteArrayOutputStream();
+        this.mIsSetFirst = false;
+        this.mIsSetLast = false;
+        this.mOut = new ByteArrayOutputStream();
 
         /** Create boundary String */
         final StringBuffer buffer = new StringBuffer();
@@ -66,41 +66,41 @@ public class SimpleMultipartEntity {
         for (int i = 0; i < 30; i++) {
             buffer.append(BOUNDARY_CHARS[rand.nextInt(BOUNDARY_CHARS.length)]);
         }
-        this.boundary = buffer.toString();
+        this.mBoundary = buffer.toString();
     }
 
     public String getBoundary() {
-        return boundary;
+        return mBoundary;
     }
 
     public void writeFirstBoundaryIfNeeds() throws IOException {
-        if (!isSetFirst) {
-            out.write(("--" + boundary + "\r\n").getBytes());
+        if (!mIsSetFirst) {
+            mOut.write(("--" + mBoundary + "\r\n").getBytes());
         }
-        isSetFirst = true;
+        mIsSetFirst = true;
     }
 
     public void writeLastBoundaryIfNeeds() {
-        if (isSetLast) {
+        if (mIsSetLast) {
             return;
         }
         try {
-            out.write(("\r\n--" + boundary + "--\r\n").getBytes());
+            mOut.write(("\r\n--" + mBoundary + "--\r\n").getBytes());
 
         } catch (final IOException e) {
             e.printStackTrace();
         }
-        isSetLast = true;
+        mIsSetLast = true;
     }
 
     public void addPart(final String key, final String value) throws IOException {
         writeFirstBoundaryIfNeeds();
 
-        out.write(("Content-Disposition: form-data; name=\"" + key + "\"\r\n").getBytes());
-        out.write("Content-Type: text/plain; charset=UTF-8\r\n".getBytes());
-        out.write("Content-Transfer-Encoding: 8bit\r\n\r\n".getBytes());
-        out.write(value.getBytes());
-        out.write(("\r\n--" + boundary + "\r\n").getBytes());
+        mOut.write(("Content-Disposition: form-data; name=\"" + key + "\"\r\n").getBytes());
+        mOut.write("Content-Type: text/plain; charset=UTF-8\r\n".getBytes());
+        mOut.write("Content-Transfer-Encoding: 8bit\r\n\r\n".getBytes());
+        mOut.write(value.getBytes());
+        mOut.write(("\r\n--" + mBoundary + "\r\n").getBytes());
     }
 
     public void addPart(final String key, final File value, boolean lastFile) throws IOException {
@@ -115,16 +115,16 @@ public class SimpleMultipartEntity {
         writeFirstBoundaryIfNeeds();
         try {
             type = "Content-Type: " + type + "\r\n";
-            out.write(("Content-Disposition: form-data; name=\"" + key + "\"; filename=\"" + fileName + "\"\r\n").getBytes());
-            out.write(type.getBytes());
-            out.write("Content-Transfer-Encoding: binary\r\n\r\n".getBytes());
+            mOut.write(("Content-Disposition: form-data; name=\"" + key + "\"; filename=\"" + fileName + "\"\r\n").getBytes());
+            mOut.write(type.getBytes());
+            mOut.write("Content-Transfer-Encoding: binary\r\n\r\n".getBytes());
 
             final byte[] tmp = new byte[4096];
             int l = 0;
             while ((l = fin.read(tmp)) != -1) {
-                out.write(tmp, 0, l);
+                mOut.write(tmp, 0, l);
             }
-            out.flush();
+            mOut.flush();
 
             if (lastFile) {
                 /** This is the last file: write last boundary. */
@@ -132,7 +132,7 @@ public class SimpleMultipartEntity {
 
             } else {
                 /** Another file will follow: write normal boundary. */
-                out.write(("\r\n--" + boundary + "\r\n").getBytes());
+                mOut.write(("\r\n--" + mBoundary + "\r\n").getBytes());
             }
 
         } finally {
@@ -146,7 +146,7 @@ public class SimpleMultipartEntity {
 
     public long getContentLength() {
         writeLastBoundaryIfNeeds();
-        return out.toByteArray().length;
+        return mOut.toByteArray().length;
     }
 
     public String getContentType() {
@@ -155,7 +155,7 @@ public class SimpleMultipartEntity {
 
     public ByteArrayOutputStream getOutputStream() {
         writeLastBoundaryIfNeeds();
-        return out;
+        return mOut;
     }
 
 }

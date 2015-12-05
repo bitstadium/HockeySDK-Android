@@ -43,7 +43,7 @@ import java.net.URLConnection;
  * @author Sebastian Schuberth
  **/
 public class GetFileSizeTask extends DownloadFileTask {
-    private long size;
+    private long mSize;
 
     public GetFileSizeTask(Context context, String urlString, DownloadFileListener notifier) {
         super(context, urlString, notifier);
@@ -68,15 +68,15 @@ public class GetFileSizeTask extends DownloadFileTask {
 
     @Override
     protected void onPostExecute(Long result) {
-        size = result;
-        if (size > 0L) {
-            notifier.downloadSuccessful(this);
+        mSize = result;
+        if (mSize > 0L) {
+            mNotifier.downloadSuccessful(this);
         } else {
-            notifier.downloadFailed(this, false);
+            mNotifier.downloadFailed(this, false);
         }
     }
 
     public long getSize() {
-        return size;
+        return mSize;
     }
 }

@@ -54,37 +54,37 @@ import java.util.regex.Pattern;
 public class VersionHelper {
     public static final String VERSION_MAX = "99.0";
 
-    private ArrayList<JSONObject> sortedVersions;
-    private JSONObject newest;
-    private UpdateInfoListener listener;
-    private int currentVersionCode;
+    private ArrayList<JSONObject> mSortedVersions;
+    private JSONObject mNewest;
+    private UpdateInfoListener mListener;
+    private int mCurrentVersionCode;
 
     public VersionHelper(Context context, String infoJSON, UpdateInfoListener listener) {
-        this.listener = listener;
+        this.mListener = listener;
 
         loadVersions(context, infoJSON);
         sortVersions();
     }
 
     private void loadVersions(Context context, String infoJSON) {
-        this.newest = new JSONObject();
-        this.sortedVersions = new ArrayList<JSONObject>();
-        this.currentVersionCode = listener.getCurrentVersionCode();
+        this.mNewest = new JSONObject();
+        this.mSortedVersions = new ArrayList<JSONObject>();
+        this.mCurrentVersionCode = mListener.getCurrentVersionCode();
 
         try {
             JSONArray versions = new JSONArray(infoJSON);
 
-            int versionCode = listener.getCurrentVersionCode();
+            int versionCode = mListener.getCurrentVersionCode();
             for (int index = 0; index < versions.length(); index++) {
                 JSONObject entry = versions.getJSONObject(index);
                 boolean largerVersionCode = (entry.getInt("version") > versionCode);
                 boolean newerApkFile = ((entry.getInt("version") == versionCode) && VersionHelper.isNewerThanLastUpdateTime(context, entry.getLong("timestamp")));
 
                 if (largerVersionCode || newerApkFile) {
-                    newest = entry;
+                    mNewest = entry;
                     versionCode = entry.getInt("version");
                 }
-                sortedVersions.add(entry);
+                mSortedVersions.add(entry);
             }
         } catch (JSONException je) {
         } catch (NullPointerException ne) {
@@ -92,7 +92,7 @@ public class VersionHelper {
     }
 
     private void sortVersions() {
-        Collections.sort(sortedVersions, new Comparator<JSONObject>() {
+        Collections.sort(mSortedVersions, new Comparator<JSONObject>() {
             public int compare(JSONObject object1, JSONObject object2) {
                 try {
                     if (object1.getInt("version") > object2.getInt("version")) {
@@ -108,20 +108,20 @@ public class VersionHelper {
     }
 
     public String getVersionString() {
-        return failSafeGetStringFromJSON(newest, "shortversion", "") + " (" + failSafeGetStringFromJSON(newest, "version", "") + ")";
+        return failSafeGetStringFromJSON(mNewest, "shortversion", "") + " (" + failSafeGetStringFromJSON(mNewest, "version", "") + ")";
     }
 
     @SuppressLint("SimpleDateFormat")
     public String getFileDateString() {
-        long timestamp = failSafeGetLongFromJSON(newest, "timestamp", 0L);
+        long timestamp = failSafeGetLongFromJSON(mNewest, "timestamp", 0L);
         Date date = new Date(timestamp * 1000L);
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
         return dateFormat.format(date);
     }
 
     public long getFileSizeBytes() {
-        boolean external = Boolean.valueOf(failSafeGetStringFromJSON(newest, "external", "false"));
-        long appSize = failSafeGetLongFromJSON(newest, "appsize", 0L);
+        boolean external = Boolean.valueOf(failSafeGetStringFromJSON(mNewest, "external", "false"));
+        long appSize = failSafeGetLongFromJSON(mNewest, "appsize", 0L);
 
         // In case of external builds a size of 0 most likely means that the size could not be determined because the URL
         // is not accessible from the HockeyApp servers via the Internet. Return -1 in that case in order to try retrieving
@@ -151,7 +151,7 @@ public class VersionHelper {
         result.append("<body style='padding: 0px 0px 20px 0px'>");
 
         int count = 0;
-        for (JSONObject version : sortedVersions) {
+        for (JSONObject version : mSortedVersions) {
             if (count > 0) {
                 result.append(getSeparator());
                 if (showRestore) {
@@ -196,7 +196,7 @@ public class VersionHelper {
     private String getVersionLine(int count, JSONObject version) {
         StringBuilder result = new StringBuilder();
 
-        int newestCode = getVersionCode(newest);
+        int newestCode = getVersionCode(mNewest);
         int versionCode = getVersionCode(version);
         String versionName = getVersionName(version);
 
@@ -205,8 +205,8 @@ public class VersionHelper {
             result.append("Newest version:");
         } else {
             result.append("Version " + versionName + " (" + versionCode + "): ");
-            if ((versionCode != newestCode) && (versionCode == currentVersionCode)) {
-                currentVersionCode = -1;
+            if ((versionCode != newestCode) && (versionCode == mCurrentVersionCode)) {
+                mCurrentVersionCode = -1;
                 result.append("[INSTALLED]");
             }
         }

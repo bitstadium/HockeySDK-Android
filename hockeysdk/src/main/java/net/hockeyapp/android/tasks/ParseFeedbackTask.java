@@ -18,7 +18,6 @@ import net.hockeyapp.android.objects.Feedback;
 import net.hockeyapp.android.objects.FeedbackMessage;
 import net.hockeyapp.android.objects.FeedbackResponse;
 import net.hockeyapp.android.utils.FeedbackParser;
-import net.hockeyapp.android.utils.PrefsUtil;
 import net.hockeyapp.android.utils.Util;
 
 import java.util.ArrayList;
@@ -64,28 +63,28 @@ public class ParseFeedbackTask extends AsyncTask<Void, Void, FeedbackResponse> {
     public static final String ID_LAST_MESSAGE_SEND = "idLastMessageSend";
     public static final String ID_LAST_MESSAGE_PROCESSED = "idLastMessageProcessed";
 
-    private Context context;
-    private String feedbackResponse;
-    private Handler handler;
-    private String requestType;
-    private String urlString;
+    private Context mContext;
+    private String mFeedbackResponse;
+    private Handler mHandler;
+    private String mRequestType;
+    private String mUrlString;
 
     public ParseFeedbackTask(Context context, String feedbackResponse, Handler handler, String requestType) {
-        this.context = context;
-        this.feedbackResponse = feedbackResponse;
-        this.handler = handler;
-        this.requestType = requestType;
-        this.urlString = null;
+        this.mContext = context;
+        this.mFeedbackResponse = feedbackResponse;
+        this.mHandler = handler;
+        this.mRequestType = requestType;
+        this.mUrlString = null;
     }
 
     public void setUrlString(String urlString) {
-        this.urlString = urlString;
+        this.mUrlString = urlString;
     }
 
     @Override
     protected FeedbackResponse doInBackground(Void... params) {
-        if (context != null && feedbackResponse != null) {
-            FeedbackResponse response = FeedbackParser.getInstance().parseFeedbackResponse(feedbackResponse);
+        if (mContext != null && mFeedbackResponse != null) {
+            FeedbackResponse response = FeedbackParser.getInstance().parseFeedbackResponse(mFeedbackResponse);
 
             if (response != null) {
                 Feedback feedback = response.getFeedback();
@@ -105,14 +104,14 @@ public class ParseFeedbackTask extends AsyncTask<Void, Void, FeedbackResponse> {
 
     @Override
     protected void onPostExecute(FeedbackResponse result) {
-        if (result != null && handler != null) {
+        if (result != null && mHandler != null) {
             Message msg = new Message();
             Bundle bundle = new Bundle();
 
             bundle.putSerializable("parse_feedback_response", result);
             msg.setData(bundle);
 
-            handler.sendMessage(msg);
+            mHandler.sendMessage(msg);
         }
     }
 
@@ -120,14 +119,14 @@ public class ParseFeedbackTask extends AsyncTask<Void, Void, FeedbackResponse> {
         FeedbackMessage latestMessage = messages.get(messages.size() - 1);
         int idLatestMessage = latestMessage.getId();
 
-        SharedPreferences preferences = context.getSharedPreferences(PREFERENCES_NAME, 0);
+        SharedPreferences preferences = mContext.getSharedPreferences(PREFERENCES_NAME, 0);
 
-        if (requestType.equals("send")) {
+        if (mRequestType.equals("send")) {
             preferences.edit()
                     .putInt(ID_LAST_MESSAGE_SEND, idLatestMessage)
                     .putInt(ID_LAST_MESSAGE_PROCESSED, idLatestMessage)
                     .apply();
-        } else if (requestType.equals("fetch")) {
+        } else if (mRequestType.equals("fetch")) {
             int idLastMessageSend = preferences.getInt(ID_LAST_MESSAGE_SEND, -1);
             int idLastMessageProcessed = preferences.getInt(ID_LAST_MESSAGE_PROCESSED, -1);
 
@@ -144,7 +143,7 @@ public class ParseFeedbackTask extends AsyncTask<Void, Void, FeedbackResponse> {
                 }
 
                 if (!eventHandled) {
-                    startNotification(context);
+                    startNotification(mContext);
                 }
             }
         }
@@ -152,7 +151,7 @@ public class ParseFeedbackTask extends AsyncTask<Void, Void, FeedbackResponse> {
 
     @SuppressWarnings("deprecation")
     private void startNotification(Context context) {
-        if (urlString == null) {
+        if (mUrlString == null) {
             return;
         }
 
@@ -170,7 +169,7 @@ public class ParseFeedbackTask extends AsyncTask<Void, Void, FeedbackResponse> {
         Intent intent = new Intent();
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         intent.setClass(context, activityClass);
-        intent.putExtra("url", urlString);
+        intent.putExtra("url", mUrlString);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_ONE_SHOT);
 

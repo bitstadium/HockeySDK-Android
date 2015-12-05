@@ -63,30 +63,30 @@ import java.util.UUID;
 public class DownloadFileTask extends AsyncTask<Void, Integer, Long> {
     protected static final int MAX_REDIRECTS = 6;
 
-    protected Context context;
-    protected DownloadFileListener notifier;
-    protected String urlString;
-    protected String filename;
-    protected String filePath;
-    protected ProgressDialog progressDialog;
-    private String downloadErrorMessage;
+    protected Context mContext;
+    protected DownloadFileListener mNotifier;
+    protected String mUrlString;
+    protected String mFilename;
+    protected String mFilePath;
+    protected ProgressDialog mProgressDialog;
+    private String mDownloadErrorMessage;
 
     public DownloadFileTask(Context context, String urlString, DownloadFileListener notifier) {
-        this.context = context;
-        this.urlString = urlString;
-        this.filename = UUID.randomUUID() + ".apk";
-        this.filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Download";
-        this.notifier = notifier;
-        this.downloadErrorMessage = null;
+        this.mContext = context;
+        this.mUrlString = urlString;
+        this.mFilename = UUID.randomUUID() + ".apk";
+        this.mFilePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Download";
+        this.mNotifier = notifier;
+        this.mDownloadErrorMessage = null;
     }
 
     public void attach(Context context) {
-        this.context = context;
+        this.mContext = context;
     }
 
     public void detach() {
-        context = null;
-        progressDialog = null;
+        mContext = null;
+        mProgressDialog = null;
     }
 
     @Override
@@ -104,16 +104,16 @@ public class DownloadFileTask extends AsyncTask<Void, Integer, Long> {
 
             if (contentType != null && contentType.contains("text")) {
                 // This is not the expected APK file. Maybe the redirect could not be resolved.
-                downloadErrorMessage = "The requested download does not appear to be a file.";
+                mDownloadErrorMessage = "The requested download does not appear to be a file.";
                 return 0L;
             }
 
-            File dir = new File(this.filePath);
+            File dir = new File(this.mFilePath);
             boolean result = dir.mkdirs();
             if (!result && !dir.exists()) {
                 throw new IOException("Could not create the dir(s):" + dir.getAbsolutePath());
             }
-            File file = new File(dir, this.filename);
+            File file = new File(dir, this.mFilename);
 
             input = new BufferedInputStream(connection.getInputStream());
             output = new FileOutputStream(file);
@@ -193,14 +193,14 @@ public class DownloadFileTask extends AsyncTask<Void, Integer, Long> {
     @Override
     protected void onProgressUpdate(Integer... args) {
         try {
-            if (progressDialog == null) {
-                progressDialog = new ProgressDialog(context);
-                progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-                progressDialog.setMessage("Loading...");
-                progressDialog.setCancelable(false);
-                progressDialog.show();
+            if (mProgressDialog == null) {
+                mProgressDialog = new ProgressDialog(mContext);
+                mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                mProgressDialog.setMessage("Loading...");
+                mProgressDialog.setCancelable(false);
+                mProgressDialog.show();
             }
-            progressDialog.setProgress(args[0]);
+            mProgressDialog.setProgress(args[0]);
         } catch (Exception e) {
             // Ignore all exceptions
         }
@@ -208,46 +208,46 @@ public class DownloadFileTask extends AsyncTask<Void, Integer, Long> {
 
     @Override
     protected void onPostExecute(Long result) {
-        if (progressDialog != null) {
+        if (mProgressDialog != null) {
             try {
-                progressDialog.dismiss();
+                mProgressDialog.dismiss();
             } catch (Exception e) {
                 // Ignore all exceptions
             }
         }
 
         if (result > 0L) {
-            notifier.downloadSuccessful(this);
+            mNotifier.downloadSuccessful(this);
 
             Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setDataAndType(Uri.fromFile(new File(this.filePath, this.filename)),
+            intent.setDataAndType(Uri.fromFile(new File(this.mFilePath, this.mFilename)),
                     "application/vnd.android.package-archive");
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(intent);
+            mContext.startActivity(intent);
         } else {
             try {
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
                 builder.setTitle(R.string.hockeyapp_download_failed_dialog_title);
 
                 String message;
-                if (downloadErrorMessage == null) {
-                    message = context.getString(R.string.hockeyapp_download_failed_dialog_message);
+                if (mDownloadErrorMessage == null) {
+                    message = mContext.getString(R.string.hockeyapp_download_failed_dialog_message);
                 } else {
-                    message = downloadErrorMessage;
+                    message = mDownloadErrorMessage;
                 }
                 builder.setMessage(message);
 
                 builder.setNegativeButton(R.string.hockeyapp_download_failed_dialog_negative_button, new
                         DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
-                                notifier.downloadFailed(DownloadFileTask.this, false);
+                                mNotifier.downloadFailed(DownloadFileTask.this, false);
                             }
                         });
 
                 builder.setPositiveButton(R.string.hockeyapp_download_failed_dialog_positive_button, new
                         DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
-                                notifier.downloadFailed(DownloadFileTask.this, true);
+                                mNotifier.downloadFailed(DownloadFileTask.this, true);
                             }
                         });
 
@@ -259,6 +259,6 @@ public class DownloadFileTask extends AsyncTask<Void, Integer, Long> {
     }
 
     protected String getURLString() {
-        return urlString + "&type=apk";
+        return mUrlString + "&type=apk";
     }
 }

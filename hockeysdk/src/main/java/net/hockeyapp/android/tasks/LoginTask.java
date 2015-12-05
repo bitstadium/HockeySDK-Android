@@ -8,20 +8,16 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
-import android.util.Base64;
 
 import net.hockeyapp.android.Constants;
 import net.hockeyapp.android.LoginManager;
 import net.hockeyapp.android.utils.HttpURLConnectionBuilder;
-import net.hockeyapp.android.utils.PrefsUtil;
-import net.hockeyapp.android.utils.Util;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.*;
 import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.Map;
 
 /**
@@ -59,14 +55,14 @@ import java.util.Map;
  * @author Patrick Eschenbach
  **/
 public class LoginTask extends ConnectionTask<Void, Void, Boolean> {
-    private Context context;
-    private Handler handler;
-    private ProgressDialog progressDialog;
-    private boolean showProgressDialog;
+    private Context mContext;
+    private Handler mHandler;
+    private ProgressDialog mProgressDialog;
+    private boolean mShowProgressDialog;
 
-    private final int mode;
-    private final String urlString;
-    private final Map<String, String> params;
+    private final int mMode;
+    private final String mUrlString;
+    private final Map<String, String> mParams;
 
     /**
      * Send feedback {@link AsyncTask}.
@@ -81,12 +77,12 @@ public class LoginTask extends ConnectionTask<Void, Void, Boolean> {
      * @param params    a map for all key value params.
      */
     public LoginTask(Context context, Handler handler, String urlString, int mode, Map<String, String> params) {
-        this.context = context;
-        this.handler = handler;
-        this.urlString = urlString;
-        this.mode = mode;
-        this.params = params;
-        this.showProgressDialog = true;
+        this.mContext = context;
+        this.mHandler = handler;
+        this.mUrlString = urlString;
+        this.mMode = mode;
+        this.mParams = params;
+        this.mShowProgressDialog = true;
 
         if (context != null) {
             Constants.loadFromContext(context);
@@ -94,24 +90,24 @@ public class LoginTask extends ConnectionTask<Void, Void, Boolean> {
     }
 
     public void setShowProgressDialog(boolean showProgressDialog) {
-        this.showProgressDialog = showProgressDialog;
+        this.mShowProgressDialog = showProgressDialog;
     }
 
     public void attach(Context context, Handler handler) {
-        this.context = context;
-        this.handler = handler;
+        this.mContext = context;
+        this.mHandler = handler;
     }
 
     public void detach() {
-        context = null;
-        handler = null;
-        progressDialog = null;
+        mContext = null;
+        mHandler = null;
+        mProgressDialog = null;
     }
 
     @Override
     protected void onPreExecute() {
-        if ((progressDialog == null || !progressDialog.isShowing()) && showProgressDialog) {
-            progressDialog = ProgressDialog.show(context, "", "Please wait...", true, false);
+        if ((mProgressDialog == null || !mProgressDialog.isShowing()) && mShowProgressDialog) {
+            mProgressDialog = ProgressDialog.show(mContext, "", "Please wait...", true, false);
         }
     }
 
@@ -120,7 +116,7 @@ public class LoginTask extends ConnectionTask<Void, Void, Boolean> {
         HttpURLConnection connection = null;
         try {
 
-            connection = makeRequest(mode, params);
+            connection = makeRequest(mMode, mParams);
             connection.connect();
 
             if (connection.getResponseCode() == 200) {
@@ -145,42 +141,42 @@ public class LoginTask extends ConnectionTask<Void, Void, Boolean> {
 
     @Override
     protected void onPostExecute(Boolean success) {
-        if (progressDialog != null) {
+        if (mProgressDialog != null) {
             try {
-                progressDialog.dismiss();
+                mProgressDialog.dismiss();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
         /** If the Handler object is not NULL, send a message to the Activity with the result */
-        if (handler != null) {
+        if (mHandler != null) {
             Message msg = new Message();
             Bundle bundle = new Bundle();
             bundle.putBoolean("success", success);
 
             msg.setData(bundle);
-            handler.sendMessage(msg);
+            mHandler.sendMessage(msg);
         }
     }
 
     private HttpURLConnection makeRequest(int mode, Map<String, String> params) throws IOException {
         if (mode == LoginManager.LOGIN_MODE_EMAIL_ONLY) {
 
-            return new HttpURLConnectionBuilder(urlString)
+            return new HttpURLConnectionBuilder(mUrlString)
                     .setRequestMethod("POST")
                     .writeFormFields(params)
                     .build();
         } else if (mode == LoginManager.LOGIN_MODE_EMAIL_PASSWORD) {
 
-            return new HttpURLConnectionBuilder(urlString)
+            return new HttpURLConnectionBuilder(mUrlString)
                     .setRequestMethod("POST")
                     .setBasicAuthorization(params.get("email"), params.get("password"))
                     .build();
         } else if (mode == LoginManager.LOGIN_MODE_VALIDATE) {
             String type = params.get("type");
             String id = params.get("id");
-            String paramUrl = urlString + "?" + type + "=" + id;
+            String paramUrl = mUrlString + "?" + type + "=" + id;
 
             return new HttpURLConnectionBuilder(paramUrl)
                     .build();
@@ -190,7 +186,7 @@ public class LoginTask extends ConnectionTask<Void, Void, Boolean> {
     }
 
     private boolean handleResponse(String responseStr) {
-        SharedPreferences prefs = context.getSharedPreferences("net.hockeyapp.android.login", 0);
+        SharedPreferences prefs = mContext.getSharedPreferences("net.hockeyapp.android.login", 0);
 
         try {
             JSONObject response = new JSONObject(responseStr);
@@ -200,7 +196,7 @@ public class LoginTask extends ConnectionTask<Void, Void, Boolean> {
                 return false;
             }
 
-            if (mode == LoginManager.LOGIN_MODE_EMAIL_ONLY) {
+            if (mMode == LoginManager.LOGIN_MODE_EMAIL_ONLY) {
                 if (status.equals("identified")) {
                     String iuid = response.getString("iuid");
                     if (!TextUtils.isEmpty(iuid)) {
@@ -210,7 +206,7 @@ public class LoginTask extends ConnectionTask<Void, Void, Boolean> {
                         return true;
                     }
                 }
-            } else if (mode == LoginManager.LOGIN_MODE_EMAIL_PASSWORD) {
+            } else if (mMode == LoginManager.LOGIN_MODE_EMAIL_PASSWORD) {
                 if (status.equals("authorized")) {
                     String auid = response.getString("auid");
                     if (!TextUtils.isEmpty(auid)) {
@@ -220,7 +216,7 @@ public class LoginTask extends ConnectionTask<Void, Void, Boolean> {
                         return true;
                     }
                 }
-            } else if (mode == LoginManager.LOGIN_MODE_VALIDATE) {
+            } else if (mMode == LoginManager.LOGIN_MODE_VALIDATE) {
                 if (status.equals("validated")) {
                     return true;
                 } else {
@@ -230,7 +226,7 @@ public class LoginTask extends ConnectionTask<Void, Void, Boolean> {
                             .apply();
                 }
             } else {
-                throw new IllegalArgumentException("Login mode " + mode + " not supported.");
+                throw new IllegalArgumentException("Login mode " + mMode + " not supported.");
             }
 
             return false;

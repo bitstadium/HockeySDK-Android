@@ -47,7 +47,7 @@ public class AttachmentListView extends ViewGroup {
 
     private static final String TAG = "AttachmentListView";
 
-    private int line_height;
+    private int mLineHeight;
 
     public AttachmentListView(Context context) {
         super(context);
@@ -106,7 +106,7 @@ public class AttachmentListView extends ViewGroup {
                 xPos += childWidth + lp.width;
             }
         }
-        this.line_height = line_height;
+        this.mLineHeight = line_height;
 
         if (MeasureSpec.getMode(heightMeasureSpec) == MeasureSpec.UNSPECIFIED) {
             height = yPos + line_height + getPaddingBottom();
@@ -147,7 +147,7 @@ public class AttachmentListView extends ViewGroup {
                 final LayoutParams lp = child.getLayoutParams();
                 if (xPos + childWidth > width) {
                     xPos = getPaddingLeft();
-                    yPos += line_height;
+                    yPos += mLineHeight;
                 }
                 child.layout(xPos, yPos, xPos + childWidth, yPos + childHeight);
                 xPos += childWidth + lp.width + ((AttachmentView) child).getGap();

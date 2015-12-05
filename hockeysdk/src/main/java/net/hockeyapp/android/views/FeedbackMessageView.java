@@ -57,10 +57,10 @@ public class FeedbackMessageView extends LinearLayout {
     @SuppressLint("SimpleDateFormat")
     private final static SimpleDateFormat DATE_FORMAT_OUT = new SimpleDateFormat("d MMM h:mm a");
 
-    private TextView authorTextView;
-    private TextView dateTextView;
-    private TextView messageTextView;
-    private AttachmentListView attachmentListView;
+    private TextView mAuthorTextView;
+    private TextView mDateTextView;
+    private TextView mMessageTextView;
+    private AttachmentListView mAttachmentListView;
 
     private FeedbackMessage mFeedbackMessage;
 
@@ -76,10 +76,10 @@ public class FeedbackMessageView extends LinearLayout {
 
         LayoutInflater.from(context).inflate(R.layout.view_feedback_message, this);
 
-        authorTextView = (TextView) findViewById(R.id.label_author);
-        dateTextView = (TextView) findViewById(R.id.label_date);
-        messageTextView = (TextView) findViewById(R.id.label_text);
-        attachmentListView = (AttachmentListView) findViewById(R.id.list_attachments);
+        mAuthorTextView = (TextView) findViewById(R.id.label_author);
+        mDateTextView = (TextView) findViewById(R.id.label_date);
+        mMessageTextView = (TextView) findViewById(R.id.label_text);
+        mAttachmentListView = (AttachmentListView) findViewById(R.id.list_attachments);
 
     }
 
@@ -88,19 +88,19 @@ public class FeedbackMessageView extends LinearLayout {
 
         try {
             Date date = DATE_FORMAT_IN.parse(mFeedbackMessage.getCreatedAt());
-            dateTextView.setText(DATE_FORMAT_OUT.format(date));
+            mDateTextView.setText(DATE_FORMAT_OUT.format(date));
         } catch (ParseException e) {
             e.printStackTrace();
         }
 
-        authorTextView.setText(mFeedbackMessage.getName());
-        messageTextView.setText(mFeedbackMessage.getText());
+        mAuthorTextView.setText(mFeedbackMessage.getName());
+        mMessageTextView.setText(mFeedbackMessage.getText());
 
-        attachmentListView.removeAllViews();
+        mAttachmentListView.removeAllViews();
         for (FeedbackAttachment feedbackAttachment : mFeedbackMessage.getFeedbackAttachments()) {
-            AttachmentView attachmentView = new AttachmentView(mContext, attachmentListView, feedbackAttachment, false);
+            AttachmentView attachmentView = new AttachmentView(mContext, mAttachmentListView, feedbackAttachment, false);
             AttachmentDownloader.getInstance().download(feedbackAttachment, attachmentView);
-            attachmentListView.addView(attachmentView);
+            mAttachmentListView.addView(attachmentView);
         }
     }
 
@@ -115,17 +115,17 @@ public class FeedbackMessageView extends LinearLayout {
         if (index % 2 == 0) {
 
             setBackgroundColor(getResources().getColor(R.color.background_light));
-            authorTextView.setTextColor(getResources().getColor(R.color.text_white));
-            dateTextView.setTextColor(getResources().getColor(R.color.text_white));
+            mAuthorTextView.setTextColor(getResources().getColor(R.color.text_white));
+            mDateTextView.setTextColor(getResources().getColor(R.color.text_white));
 
         } else {
 
             setBackgroundColor(getResources().getColor(R.color.background_white));
-            authorTextView.setTextColor(getResources().getColor(R.color.text_light));
-            dateTextView.setTextColor(getResources().getColor(R.color.text_light));
+            mAuthorTextView.setTextColor(getResources().getColor(R.color.text_light));
+            mDateTextView.setTextColor(getResources().getColor(R.color.text_light));
 
         }
-        messageTextView.setTextColor(getResources().getColor(R.color.text_black));
+        mMessageTextView.setTextColor(getResources().getColor(R.color.text_black));
     }
 
 
