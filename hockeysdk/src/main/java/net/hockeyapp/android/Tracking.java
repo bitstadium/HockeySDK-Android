@@ -1,7 +1,5 @@
 package net.hockeyapp.android;
 
-import net.hockeyapp.android.utils.PrefsUtil;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;

@@ -1,9 +1,5 @@
 package net.hockeyapp.android;
 
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-
 import org.json.JSONArray;
 
 import java.util.Date;

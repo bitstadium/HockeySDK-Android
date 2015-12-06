@@ -12,7 +12,11 @@ import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
 
-import net.hockeyapp.android.*;
+import net.hockeyapp.android.Constants;
+import net.hockeyapp.android.R;
+import net.hockeyapp.android.UpdateActivity;
+import net.hockeyapp.android.UpdateFragment;
+import net.hockeyapp.android.UpdateManagerListener;
 import net.hockeyapp.android.utils.Util;
 import net.hockeyapp.android.utils.VersionCache;
 

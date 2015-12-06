@@ -1,11 +1,11 @@
 package net.hockeyapp.android.utils;
 
-import net.hockeyapp.android.Constants;
-
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+
+import net.hockeyapp.android.Constants;
 
 /**
  * <h3>Description</h3>

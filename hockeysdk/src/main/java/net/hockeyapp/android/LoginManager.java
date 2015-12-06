@@ -10,7 +10,6 @@ import android.os.Message;
 
 import net.hockeyapp.android.tasks.LoginTask;
 import net.hockeyapp.android.utils.AsyncTaskUtils;
-import net.hockeyapp.android.utils.PrefsUtil;
 import net.hockeyapp.android.utils.Util;
 
 import java.util.HashMap;

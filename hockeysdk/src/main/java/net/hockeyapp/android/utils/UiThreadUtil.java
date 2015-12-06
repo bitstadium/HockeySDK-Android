@@ -1,10 +1,10 @@
 package net.hockeyapp.android.utils;
 
-import java.lang.ref.WeakReference;
-
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.widget.Toast;
+
+import java.lang.ref.WeakReference;
 
 /**
  * <h3>License</h3>

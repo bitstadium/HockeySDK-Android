@@ -1,9 +1,5 @@
 package net.hockeyapp.android.utils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import net.hockeyapp.android.objects.Feedback;
 import net.hockeyapp.android.objects.FeedbackAttachment;
 import net.hockeyapp.android.objects.FeedbackMessage;
@@ -12,6 +8,10 @@ import net.hockeyapp.android.objects.FeedbackResponse;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * <h3>Description</h3>
