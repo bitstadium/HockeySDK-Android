@@ -58,11 +58,11 @@ import java.util.regex.Pattern;
  * @author Bogdan Nistor
  */
 public class Util {
-    public static final String PREFS_FEEDBACK_TOKEN = "net.hockeyapp.android.prefs_feedback_token";
-    public static final String PREFS_KEY_FEEDBACK_TOKEN = "net.hockeyapp.android.prefs_key_feedback_token";
+    public static final String PREF_FEEDBACK_TOKEN = "net.hockeyapp.android.prefs_feedback_token";
+    public static final String PREF_KEY_FEEDBACK_TOKEN = "net.hockeyapp.android.prefs_key_feedback_token";
 
-    public static final String PREFS_NAME_EMAIL_SUBJECT = "net.hockeyapp.android.prefs_name_email";
-    public static final String PREFS_KEY_NAME_EMAIL_SUBJECT = "net.hockeyapp.android.prefs_key_name_email";
+    public static final String PREF_NAME_EMAIL_SUBJECT = "net.hockeyapp.android.prefs_name_email";
+    public static final String PREF_KEY_NAME_EMAIL_SUBJECT = "net.hockeyapp.android.prefs_key_name_email";
     public static final String APP_IDENTIFIER_PATTERN = "[0-9a-f]+";
     public static final int APP_IDENTIFIER_LENGTH = 32;
     public static final String APP_IDENTIFIER_KEY = "net.hockeyapp.android.appIdentifier";

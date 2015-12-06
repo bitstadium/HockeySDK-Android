@@ -38,13 +38,13 @@ import android.content.SharedPreferences;
  * @author Thomas Dohmke
  **/
 public class VersionCache {
-    private static String VERSION_INFO_KEY = "versionInfo";
+    private static String PREF_VERSION_INFO_KEY = "versionInfo";
 
     public static void setVersionInfo(Context context, String json) {
         if (context != null) {
             SharedPreferences preferences = context.getSharedPreferences("HockeyApp", Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = preferences.edit();
-            editor.putString(VERSION_INFO_KEY, json);
+            editor.putString(PREF_VERSION_INFO_KEY, json);
             editor.apply();
         }
     }
@@ -52,7 +52,7 @@ public class VersionCache {
     public static String getVersionInfo(Context context) {
         if (context != null) {
             SharedPreferences preferences = context.getSharedPreferences("HockeyApp", Context.MODE_PRIVATE);
-            return preferences.getString(VERSION_INFO_KEY, "[]");
+            return preferences.getString(PREF_VERSION_INFO_KEY, "[]");
         } else {
             return "[]";
         }
