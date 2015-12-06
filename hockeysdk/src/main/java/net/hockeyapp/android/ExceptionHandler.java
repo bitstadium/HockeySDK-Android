@@ -125,7 +125,7 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
                 writeValueToFile(limitedString(listener.getContact()), filename + ".contact");
                 writeValueToFile(listener.getDescription(), filename + ".description");
             }
-        } catch (Exception another) {
+        } catch (IOException another) {
             Log.e(Constants.TAG, "Error saving exception stacktrace!\n", another);
         } finally {
             try {
@@ -165,7 +165,7 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
                 writer.write(value);
                 writer.flush();
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             // TODO: Handle exception here
         } finally {
             if (writer != null) {

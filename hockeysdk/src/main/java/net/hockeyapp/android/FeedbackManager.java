@@ -28,6 +28,7 @@ import net.hockeyapp.android.utils.Util;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 
 /**
  * <h3>Description</h3>
@@ -362,7 +363,7 @@ public class FeedbackManager {
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
                     out.close();
                     return true;
-                } catch (Exception e) {
+                } catch (IOException e) {
                     Log.e(Constants.TAG, "Could not save screenshot.", e);
                 }
                 return false;

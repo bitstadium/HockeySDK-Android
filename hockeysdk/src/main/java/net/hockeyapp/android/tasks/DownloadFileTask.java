@@ -130,7 +130,7 @@ public class DownloadFileTask extends AsyncTask<Void, Integer, Long> {
             output.flush();
 
             return total;
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
             return 0L;
         } finally {

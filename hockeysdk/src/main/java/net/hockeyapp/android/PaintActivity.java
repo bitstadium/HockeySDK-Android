@@ -24,6 +24,7 @@ import net.hockeyapp.android.views.PaintView;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 
 /**
  * @author Patrick Eschenbach
@@ -178,7 +179,7 @@ public class PaintActivity extends Activity {
                     FileOutputStream out = new FileOutputStream(args[0]);
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
                     out.close();
-                } catch (Exception e) {
+                } catch (IOException e) {
                     e.printStackTrace();
                     Log.e(Constants.TAG, "Could not save image.", e);
                 }

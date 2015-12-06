@@ -140,7 +140,7 @@ public class CheckUpdateTask extends AsyncTask<Void, String, JSONArray> {
                 json = limitResponseSize(json);
                 return json;
             }
-        } catch (Exception e) {
+        } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
 

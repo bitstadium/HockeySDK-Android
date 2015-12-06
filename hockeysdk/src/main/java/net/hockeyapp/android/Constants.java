@@ -194,7 +194,7 @@ public class Constants {
                 if ((buildNumber != 0) && (buildNumber > packageInfo.versionCode)) {
                     Constants.APP_VERSION = "" + buildNumber;
                 }
-            } catch (Exception e) {
+            } catch (PackageManager.NameNotFoundException e) {
                 Log.e(TAG, "Exception thrown when accessing the package info:");
                 e.printStackTrace();
             }
@@ -214,7 +214,7 @@ public class Constants {
             if (metaData != null) {
                 return metaData.getInt("buildNumber", 0);
             }
-        } catch (Exception e) {
+        } catch (PackageManager.NameNotFoundException e) {
             Log.e(TAG, "Exception thrown when accessing the application info:");
             e.printStackTrace();
         }

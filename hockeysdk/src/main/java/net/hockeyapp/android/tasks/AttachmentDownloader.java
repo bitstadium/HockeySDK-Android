@@ -272,7 +272,7 @@ public class AttachmentDownloader {
                 input.close();
                 return (total > 0);
 
-            } catch (Exception e) {
+            } catch (IOException e) {
                 e.printStackTrace();
                 return false;
             }

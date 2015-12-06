@@ -179,7 +179,7 @@ public class PaintView extends ImageView {
                 try {
                     Bitmap bm = decodeSampledBitmapFromResource(context.getContentResolver(), imageUri, displayWidth, displayHeight);
                     return bm;
-                } catch (Exception e) {
+                } catch (IOException e) {
                     Log.e(Constants.TAG, "Could not load image into ImageView.", e);
                 }
                 return null;
