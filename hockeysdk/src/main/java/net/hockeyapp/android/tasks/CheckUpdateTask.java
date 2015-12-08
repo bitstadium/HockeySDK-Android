@@ -66,8 +66,6 @@ public class CheckUpdateTask extends AsyncTask<Void, String, JSONArray> {
     private static final int MAX_NUMBER_OF_VERSIONS = 25;
 
     protected static final String APK = "apk";
-    protected static final String INTENT_EXTRA_URL = "url";
-    protected static final String INTENT_EXTRA_JSON = "json";
 
     protected String urlString = null;
     protected String appIdentifier = null;

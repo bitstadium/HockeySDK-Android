@@ -31,6 +31,11 @@ import java.io.IOException;
  */
 public class PaintActivity extends Activity {
 
+    /**
+     * URI of the image to annotate
+     */
+    public static final String EXTRA_IMAGE_URI = "imageUri";
+
     private static final int MENU_SAVE_ID = Menu.FIRST;
     private static final int MENU_UNDO_ID = Menu.FIRST + 1;
     private static final int MENU_CLEAR_ID = Menu.FIRST + 2;
@@ -44,7 +49,7 @@ public class PaintActivity extends Activity {
 
         /* Get image path. */
         Bundle extras = getIntent().getExtras();
-        Uri imageUri = extras.getParcelable("imageUri");
+        Uri imageUri = extras.getParcelable(EXTRA_IMAGE_URI);
 
         mImageName = determineFilename(imageUri, imageUri.getLastPathSegment());
 
@@ -189,7 +194,7 @@ public class PaintActivity extends Activity {
 
         Intent intent = new Intent();
         Uri uri = Uri.fromFile(result);
-        intent.putExtra("imageUri", uri);
+        intent.putExtra(EXTRA_IMAGE_URI, uri);
 
         if (getParent() == null) {
             setResult(Activity.RESULT_OK, intent);

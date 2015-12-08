@@ -56,7 +56,13 @@ import java.util.Map;
  * @author Bogdan Nistor
  **/
 public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String, String>> {
+
+    public static final String BUNDLE_FEEDBACK_RESPONSE = "feedback_response";
+    public static final String BUNDLE_FEEDBACK_STATUS = "feedback_status";
+    public static final String BUNDLE_REQUEST_TYPE = "request_type";
+
     private static final String TAG = "SendFeedbackTask";
+
     private Context mContext;
     private Handler mHandler;
     private String mUrlString;
@@ -203,11 +209,11 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
             Bundle bundle = new Bundle();
 
             if (result != null) {
-                bundle.putString("request_type", result.get("type"));
-                bundle.putString("feedback_response", result.get("response"));
-                bundle.putString("feedback_status", result.get("status"));
+                bundle.putString(BUNDLE_REQUEST_TYPE, result.get("type"));
+                bundle.putString(BUNDLE_FEEDBACK_RESPONSE, result.get("response"));
+                bundle.putString(BUNDLE_FEEDBACK_STATUS, result.get("status"));
             } else {
-                bundle.putString("request_type", "unknown");
+                bundle.putString(BUNDLE_REQUEST_TYPE, "unknown");
             }
 
             msg.setData(bundle);

@@ -58,10 +58,12 @@ import java.util.ArrayList;
  * @author Patrick Eschenbach
  */
 public class ParseFeedbackTask extends AsyncTask<Void, Void, FeedbackResponse> {
+    
     public static final int NEW_ANSWER_NOTIFICATION_ID = 2;
     public static final String PREFERENCES_NAME = "net.hockeyapp.android.feedback";
     public static final String ID_LAST_MESSAGE_SEND = "idLastMessageSend";
     public static final String ID_LAST_MESSAGE_PROCESSED = "idLastMessageProcessed";
+    public static final String BUNDLE_PARSE_FEEDBACK_RESPONSE = "parse_feedback_response";
 
     private Context mContext;
     private String mFeedbackResponse;
@@ -108,7 +110,7 @@ public class ParseFeedbackTask extends AsyncTask<Void, Void, FeedbackResponse> {
             Message msg = new Message();
             Bundle bundle = new Bundle();
 
-            bundle.putSerializable("parse_feedback_response", result);
+            bundle.putSerializable(BUNDLE_PARSE_FEEDBACK_RESPONSE, result);
             msg.setData(bundle);
 
             mHandler.sendMessage(msg);

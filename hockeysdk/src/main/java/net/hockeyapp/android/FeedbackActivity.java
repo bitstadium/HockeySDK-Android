@@ -90,6 +90,17 @@ import java.util.List;
  * @author Thomas Dohmke
  **/
 public class FeedbackActivity extends Activity implements OnClickListener {
+
+    /**
+     * The URL of the feedback endpoint for this app.
+     */
+    public static final String EXTRA_URL = "url";
+
+    /**
+     * Extra for any initial attachments to add to the feedback message.
+     */
+    public static final String EXTRA_INITIAL_ATTACHMENTS = "initialAttachments";
+
     /**
      * Number of attachments allowed per message.
      **/
@@ -105,6 +116,7 @@ public class FeedbackActivity extends Activity implements OnClickListener {
     private static final int ATTACH_PICTURE = 1;
     private static final int ATTACH_FILE = 2;
     private static final int PAINT_IMAGE = 3;
+
     /**
      * Reference to this
      **/
@@ -240,9 +252,9 @@ public class FeedbackActivity extends Activity implements OnClickListener {
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            mUrl = extras.getString("url");
+            mUrl = extras.getString(EXTRA_URL);
 
-            Parcelable[] initialAttachmentsArray = extras.getParcelableArray("initialAttachments");
+            Parcelable[] initialAttachmentsArray = extras.getParcelableArray(EXTRA_INITIAL_ATTACHMENTS);
             if (initialAttachmentsArray != null) {
                 mInitialAttachments = new ArrayList<Uri>();
                 for (Parcelable parcelable : initialAttachmentsArray) {
@@ -446,7 +458,7 @@ public class FeedbackActivity extends Activity implements OnClickListener {
             if (uri != null) {
                 try {
                     Intent intent = new Intent(this, PaintActivity.class);
-                    intent.putExtra("imageUri", uri);
+                    intent.putExtra(PaintActivity.EXTRA_IMAGE_URI, uri);
                     startActivityForResult(intent, PAINT_IMAGE);
                 } catch (ActivityNotFoundException e) {
                     Log.e(Util.LOG_IDENTIFIER, "Paint activity not declared!", e);
@@ -456,7 +468,7 @@ public class FeedbackActivity extends Activity implements OnClickListener {
 
         } else if (requestCode == PAINT_IMAGE) {
             /** Final attachment picture received and ready to be added to list. */
-            Uri uri = data.getParcelableExtra("imageUri");
+            Uri uri = data.getParcelableExtra(PaintActivity.EXTRA_IMAGE_URI);
 
             if (uri != null) {
                 final ViewGroup attachments = (ViewGroup) findViewById(R.id.wrapper_attachments);
@@ -601,9 +613,9 @@ public class FeedbackActivity extends Activity implements OnClickListener {
 
                 if (msg != null && msg.getData() != null) {
                     Bundle bundle = msg.getData();
-                    String responseString = bundle.getString("feedback_response");
-                    String statusCode = bundle.getString("feedback_status");
-                    String requestType = bundle.getString("request_type");
+                    String responseString = bundle.getString(SendFeedbackTask.BUNDLE_FEEDBACK_RESPONSE);
+                    String statusCode = bundle.getString(SendFeedbackTask.BUNDLE_FEEDBACK_STATUS);
+                    String requestType = bundle.getString(SendFeedbackTask.BUNDLE_REQUEST_TYPE);
                     if ((requestType.equals("send") && ((responseString == null) || (Integer.parseInt(statusCode) != 201)))) {
                         // Send feedback went wrong if response is empty or status code != 201
                         mError.setMessage(getString(R.string.hockeyapp_feedback_send_generic_error));
@@ -650,7 +662,7 @@ public class FeedbackActivity extends Activity implements OnClickListener {
 
                 if (msg != null && msg.getData() != null) {
                     Bundle bundle = msg.getData();
-                    FeedbackResponse feedbackResponse = (FeedbackResponse) bundle.getSerializable("parse_feedback_response");
+                    FeedbackResponse feedbackResponse = (FeedbackResponse) bundle.getSerializable(ParseFeedbackTask.BUNDLE_PARSE_FEEDBACK_RESPONSE);
                     if (feedbackResponse != null) {
                         if (feedbackResponse.getStatus().equalsIgnoreCase("success")) {
                             /** We have a valid result from JSON parsing */

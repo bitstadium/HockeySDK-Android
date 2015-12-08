@@ -56,6 +56,12 @@ import java.util.Map;
  * @author Patrick Eschenbach
  **/
 public class LoginTask extends ConnectionTask<Void, Void, Boolean> {
+
+    /**
+     * Key for login success in the returend bundle
+     */
+    public static final String BUNDLE_SUCCESS = "success";
+
     private Context mContext;
     private Handler mHandler;
     private ProgressDialog mProgressDialog;
@@ -154,7 +160,7 @@ public class LoginTask extends ConnectionTask<Void, Void, Boolean> {
         if (mHandler != null) {
             Message msg = new Message();
             Bundle bundle = new Bundle();
-            bundle.putBoolean("success", success);
+            bundle.putBoolean(BUNDLE_SUCCESS, success);
 
             msg.setData(bundle);
             mHandler.sendMessage(msg);

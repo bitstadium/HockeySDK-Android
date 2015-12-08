@@ -56,6 +56,22 @@ import java.util.Map;
  * @author Patrick Eschenbach
  **/
 public class LoginActivity extends Activity {
+
+    /**
+     * Parameter to supply login endpoint URL
+     */
+    public static final String EXTRA_URL = "url";
+
+    /**
+     * Parameter to supply the app secret for the login API
+     */
+    public static final String EXTRA_SECRET = "secret";
+
+    /**
+     * Parameter to define the verification mode for the login API
+     */
+    public static final String EXTRA_MODE = "mode";
+
     /**
      * URL for HockeyApp API
      */
@@ -93,9 +109,9 @@ public class LoginActivity extends Activity {
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            mUrl = extras.getString("url");
-            mSecret = extras.getString("secret");
-            mMode = extras.getInt("mode");
+            mUrl = extras.getString(EXTRA_URL);
+            mSecret = extras.getString(EXTRA_SECRET);
+            mMode = extras.getInt(EXTRA_MODE);
         }
 
         configureView();
@@ -129,7 +145,7 @@ public class LoginActivity extends Activity {
             @Override
             public void handleMessage(Message msg) {
                 Bundle bundle = msg.getData();
-                boolean success = bundle.getBoolean("success");
+                boolean success = bundle.getBoolean(LoginTask.BUNDLE_SUCCESS);
 
                 if (success) {
                     finish();

@@ -66,6 +66,17 @@ import org.json.JSONException;
  **/
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class UpdateFragment extends DialogFragment implements OnClickListener, UpdateInfoListener {
+
+    /**
+     * The URL of the APK to offer as download
+     */
+    public static final String FRAGMENT_URL = "url";
+
+    /**
+     * Metadata about the update
+     */
+    public static final String FRAGMENT_VERSION_INFO = "versionInfo";
+
     /**
      * Task to download the .apk file.
      */
@@ -95,12 +106,12 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
      */
     @SuppressWarnings("unused")
     static public UpdateFragment newInstance(final JSONArray versionInfo, String urlString) {
-        Bundle state = new Bundle();
-        state.putString("url", urlString);
-        state.putString("versionInfo", versionInfo.toString());
+        Bundle arguments = new Bundle();
+        arguments.putString(FRAGMENT_URL, urlString);
+        arguments.putString(FRAGMENT_VERSION_INFO, versionInfo.toString());
 
         UpdateFragment fragment = new UpdateFragment();
-        fragment.setArguments(state);
+        fragment.setArguments(arguments);
         return fragment;
     }
 
@@ -116,8 +127,8 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
         super.onCreate(savedInstanceState);
 
         try {
-            this.mUrlString = getArguments().getString("url");
-            this.mVersionInfo = new JSONArray(getArguments().getString("versionInfo"));
+            this.mUrlString = getArguments().getString(FRAGMENT_URL);
+            this.mVersionInfo = new JSONArray(getArguments().getString(FRAGMENT_VERSION_INFO));
         } catch (JSONException e) {
             dismiss();
             return;

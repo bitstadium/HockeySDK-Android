@@ -68,6 +68,17 @@ import net.hockeyapp.android.utils.VersionHelper;
  **/
 public class UpdateActivity extends Activity implements UpdateActivityInterface, UpdateInfoListener, OnClickListener {
     private static final int DIALOG_ERROR_ID = 0;
+
+    /**
+     * Parameter to supply the download URL of the update's APK
+     */
+    public static final String EXTRA_URL = "url";
+
+    /**
+     * Parameter to supply metadata about the update in JSON format
+     */
+    public static final String EXTRA_JSON = "json";
+
     private ErrorObject mError;
     private Context mContext;
 
@@ -97,7 +108,7 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
         setContentView(getLayoutView());
 
         mContext = this;
-        mVersionHelper = new VersionHelper(this, getIntent().getStringExtra("json"), this);
+        mVersionHelper = new VersionHelper(this, getIntent().getStringExtra(EXTRA_JSON), this);
         configureView();
 
         mDownloadTask = (DownloadFileTask) getLastNonConfigurationInstance();
@@ -123,7 +134,7 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
         if (appSize >= 0L) {
             appSizeString = String.format("%.2f", appSize / (1024.0f * 1024.0f)) + " MB";
         } else {
-            GetFileSizeTask task = new GetFileSizeTask(this, getIntent().getStringExtra("url"), new DownloadFileListener() {
+            GetFileSizeTask task = new GetFileSizeTask(this, getIntent().getStringExtra(EXTRA_URL), new DownloadFileListener() {
                 @Override
                 public void downloadSuccessful(DownloadFileTask task) {
                     if (task instanceof GetFileSizeTask) {

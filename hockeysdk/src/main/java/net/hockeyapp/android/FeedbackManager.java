@@ -213,8 +213,8 @@ public class FeedbackManager {
             }
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.setClass(context, activityClass);
-            intent.putExtra("url", getURLString(context));
-            intent.putExtra("initialAttachments", attachments);
+            intent.putExtra(FeedbackActivity.EXTRA_URL, getURLString(context));
+            intent.putExtra(FeedbackActivity.EXTRA_INITIAL_ATTACHMENTS, attachments);
             context.startActivity(intent);
         }
     }
@@ -238,7 +238,7 @@ public class FeedbackManager {
             @Override
             public void handleMessage(Message msg) {
                 Bundle bundle = msg.getData();
-                String responseString = bundle.getString("feedback_response");
+                String responseString = bundle.getString(SendFeedbackTask.BUNDLE_FEEDBACK_RESPONSE);
 
                 if (responseString != null) {
                     ParseFeedbackTask task = new ParseFeedbackTask(context, responseString, null, "fetch");

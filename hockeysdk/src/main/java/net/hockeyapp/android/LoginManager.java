@@ -162,7 +162,7 @@ public class LoginManager {
                     @Override
                     public void handleMessage(Message msg) {
                         Bundle bundle = msg.getData();
-                        boolean success = bundle.getBoolean("success");
+                        boolean success = bundle.getBoolean(LoginTask.BUNDLE_SUCCESS);
 
                         if (!success) {
                             startLoginActivity(context);
@@ -236,9 +236,9 @@ public class LoginManager {
         Intent intent = new Intent();
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY);
         intent.setClass(context, LoginActivity.class);
-        intent.putExtra("url", getURLString(mode));
-        intent.putExtra("mode", mode);
-        intent.putExtra("secret", secret);
+        intent.putExtra(LoginActivity.EXTRA_URL, getURLString(mode));
+        intent.putExtra(LoginActivity.EXTRA_MODE, mode);
+        intent.putExtra(LoginActivity.EXTRA_SECRET, secret);
         context.startActivity(intent);
     }
 

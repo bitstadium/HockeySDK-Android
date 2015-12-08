@@ -54,6 +54,7 @@ import java.security.MessageDigest;
  * @author Thomas Dohmke
  **/
 public class Constants {
+
     /**
      * Path where crash logs and temporary files are stored.
      */
@@ -118,6 +119,8 @@ public class Constants {
      * Permissions request for the update task.
      */
     public static final int UPDATE_PERMISSIONS_REQUEST = 1;
+
+    private static final String BUNDLE_BUILD_NUMBER = "buildNumber";
 
     /**
      * Initializes constants from the given context. The context is used to set
@@ -211,7 +214,7 @@ public class Constants {
             ApplicationInfo appInfo = packageManager.getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
             Bundle metaData = appInfo.metaData;
             if (metaData != null) {
-                return metaData.getInt("buildNumber", 0);
+                return metaData.getInt(BUNDLE_BUILD_NUMBER, 0);
             }
         } catch (PackageManager.NameNotFoundException e) {
             Log.e(TAG, "Exception thrown when accessing the application info:");
