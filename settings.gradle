@@ -1,1 +1,1 @@
-include ':hockeysdk', ':app-sample'
+include ':hockeysdk'

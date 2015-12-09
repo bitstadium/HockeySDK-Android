@@ -1,3 +1,0 @@
-[submodule "app-sample"]
-	path = app-sample
-	url = git@github.com:bitstadium/HockeySDK-AndroidDemo.git

@@ -10,6 +10,13 @@ buildscript {
     }
 }
 
+allprojects {
+    repositories {
+        jcenter()
+    }
+}
+
+
 
 //The bintray-release plugin doesn't write the following attributes to the artifact's pom.xml:
 //Project name, project description,Project URL, License information,SCM URL and Developer information
