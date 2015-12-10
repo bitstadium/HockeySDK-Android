@@ -219,8 +219,8 @@ public class FeedbackManager {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.setClass(context, activityClass);
             intent.putExtra(FeedbackActivity.EXTRA_URL, getURLString(context));
-            intent.putExtra("initialUserName", userName);
-            intent.putExtra("initialUserEmail", userEmail);
+            intent.putExtra(FeedbackActivity.EXTRA_INITIAL_USER_NAME, userName);
+            intent.putExtra(FeedbackActivity.EXTRA_INITIAL_USER_EMAIL, userEmail);
             intent.putExtra(FeedbackActivity.EXTRA_INITIAL_ATTACHMENTS, attachments);
             context.startActivity(intent);
         }

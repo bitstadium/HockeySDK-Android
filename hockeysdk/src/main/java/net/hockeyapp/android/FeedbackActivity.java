@@ -97,6 +97,16 @@ public class FeedbackActivity extends Activity implements OnClickListener {
     public static final String EXTRA_URL = "url";
 
     /**
+     * Extra for initial username to set for the feedback message.
+     */
+    public static final String EXTRA_INITIAL_USER_NAME = "initialUserName";
+
+    /**
+     * Extra for initial email address to set for the feedback message.
+     */
+    public static final String EXTRA_INITIAL_USER_EMAIL = "initialUserEmail";
+
+    /**
      * Extra for any initial attachments to add to the feedback message.
      */
     public static final String EXTRA_INITIAL_ATTACHMENTS = "initialAttachments";
@@ -212,8 +222,8 @@ public class FeedbackActivity extends Activity implements OnClickListener {
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             mUrl = extras.getString(EXTRA_URL);
-            initialUserName = extras.getString("initialUserName");
-            initialUserEmail = extras.getString("initialUserEmail");
+            initialUserName = extras.getString(EXTRA_INITIAL_USER_NAME);
+            initialUserEmail = extras.getString(EXTRA_INITIAL_USER_EMAIL);
 
             Parcelable[] initialAttachmentsArray = extras.getParcelableArray(EXTRA_INITIAL_ATTACHMENTS);
             if (initialAttachmentsArray != null) {
