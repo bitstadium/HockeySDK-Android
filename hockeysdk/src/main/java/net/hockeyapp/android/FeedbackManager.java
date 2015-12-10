@@ -65,6 +65,7 @@ import java.io.IOException;
  * @author Bogdan Nistor
  **/
 public class FeedbackManager {
+
     /**
      * The id of the notification to take a screenshot.
      */
@@ -114,6 +115,10 @@ public class FeedbackManager {
      * Whether the user's email is required.
      */
     private static FeedbackUserDataElement requireUserEmail;
+
+    private static String userName;
+
+    private static String userEmail;
 
     /**
      * Last listener instance.
@@ -214,6 +219,8 @@ public class FeedbackManager {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.setClass(context, activityClass);
             intent.putExtra(FeedbackActivity.EXTRA_URL, getURLString(context));
+            intent.putExtra("initialUserName", userName);
+            intent.putExtra("initialUserEmail", userEmail);
             intent.putExtra(FeedbackActivity.EXTRA_INITIAL_ATTACHMENTS, attachments);
             context.startActivity(intent);
         }
@@ -305,6 +312,24 @@ public class FeedbackManager {
      */
     public static void setRequireUserEmail(FeedbackUserDataElement requireUserEmail) {
         FeedbackManager.requireUserEmail = requireUserEmail;
+    }
+
+    /**
+     * Sets the user's name to pre-fill the feedback form with
+     *
+     * @param userName user's name
+     */
+    public static void setUserName(String userName) {
+        FeedbackManager.userName = userName;
+    }
+
+    /**
+     * Sets the user's e-mail to pre-fill the feedback form with
+     *
+     * @param userEmail user's e-mail
+     */
+    public static void setUserEmail(String userEmail) {
+        FeedbackManager.userEmail = userEmail;
     }
 
     /**

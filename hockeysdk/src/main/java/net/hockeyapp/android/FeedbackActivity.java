@@ -118,6 +118,16 @@ public class FeedbackActivity extends Activity implements OnClickListener {
     private static final int PAINT_IMAGE = 3;
 
     /**
+     * Initial user's name to pre-fill the feedback form with
+     */
+    private String initialUserName;
+
+    /**
+     * Initial user's e-mail to pre-fill the feedback form with
+     */
+    private String initialUserEmail;
+
+    /**
      * Reference to this
      **/
     private Context mContext;
@@ -253,6 +263,8 @@ public class FeedbackActivity extends Activity implements OnClickListener {
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             mUrl = extras.getString(EXTRA_URL);
+            initialUserName = extras.getString("initialUserName");
+            initialUserEmail = extras.getString("initialUserEmail");
 
             Parcelable[] initialAttachmentsArray = extras.getParcelableArray(EXTRA_INITIAL_ATTACHMENTS);
             if (initialAttachmentsArray != null) {
@@ -383,11 +395,17 @@ public class FeedbackActivity extends Activity implements OnClickListener {
                         }
                     }
                 } else {
-                    /** We dont have Name and Email. Reset those fields */
-                    mNameInput.setText("");
-                    mEmailInput.setText("");
+                    /** We dont have Name and Email. Check if initial values were provided */
+                    mNameInput.setText(initialUserName);
+                    mEmailInput.setText(initialUserEmail);
                     mSubjectInput.setText("");
-                    mNameInput.requestFocus();
+                    if (TextUtils.isEmpty(initialUserName)) {
+                        mNameInput.requestFocus();
+                    } else if (TextUtils.isEmpty(initialUserEmail)) {
+                        mEmailInput.requestFocus();
+                    } else {
+                        mSubjectInput.requestFocus();
+                    }
                 }
 
                 mFeedbackViewInitialized = true;
