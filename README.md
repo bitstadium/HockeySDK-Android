@@ -386,6 +386,11 @@ Our documentation can be found on [HockeyApp](http://hockeyapp.net/help/sdk/andr
 
 We're looking forward to your contributions via pull requests.
 
+**Coding style**
+
+* Please follow our [coding styleguide](https://github.com/bitstadium/android-guidelines)
+* Every check in should build and lint without errors
+
 **Development environment**
 
 * Mac/Linux/Windows machine running the latest version of [Android Studio and the Android SDK](https://developer.android.com/sdk/index.html)
