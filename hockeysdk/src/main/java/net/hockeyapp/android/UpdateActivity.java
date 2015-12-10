@@ -67,30 +67,25 @@ import net.hockeyapp.android.utils.VersionHelper;
  * @author Thomas Dohmke
  **/
 public class UpdateActivity extends Activity implements UpdateActivityInterface, UpdateInfoListener, OnClickListener {
-    private static final int DIALOG_ERROR_ID = 0;
-
     /**
      * Parameter to supply the download URL of the update's APK
      */
     public static final String EXTRA_URL = "url";
-
     /**
      * Parameter to supply metadata about the update in JSON format
      */
     public static final String EXTRA_JSON = "json";
-
-    private ErrorObject mError;
-    private Context mContext;
-
+    private static final int DIALOG_ERROR_ID = 0;
     /**
      * Task to download the .apk file.
      */
     protected DownloadFileTask mDownloadTask;
-
     /**
      * Helper for version management.
      */
     protected VersionHelper mVersionHelper;
+    private ErrorObject mError;
+    private Context mContext;
 
     /**
      * Called when the activity is starting. Sets the title and content view.
@@ -116,6 +111,139 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
         if (mDownloadTask != null) {
             mDownloadTask.attach(this);
         }
+    }
+
+    /**
+     * Detaches the activity from the download task and returns the task
+     * as last instance. This way the task is restored when the activity
+     * is immediately re-created.
+     *
+     * @return The download task if present.
+     */
+    @Override
+    public Object onRetainNonConfigurationInstance() {
+        if (mDownloadTask != null) {
+            mDownloadTask.detach();
+        }
+        return mDownloadTask;
+    }
+
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        return onCreateDialog(id, null);
+    }
+
+    @Override
+    protected Dialog onCreateDialog(int id, Bundle args) {
+        switch (id) {
+            case DIALOG_ERROR_ID:
+                return new AlertDialog.Builder(this)
+                        .setMessage("An error has occured")
+                        .setCancelable(false)
+                        .setTitle("Error")
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                mError = null;
+                                dialog.cancel();
+                            }
+                        }).create();
+        }
+
+        return null;
+    }
+
+    @Override
+    protected void onPrepareDialog(int id, Dialog dialog) {
+        switch (id) {
+            case DIALOG_ERROR_ID:
+                AlertDialog messageDialogError = (AlertDialog) dialog;
+                if (mError != null) {
+                    /** If the ErrorObject is not null, display the ErrorObject message */
+                    messageDialogError.setMessage(mError.getMessage());
+                } else {
+                    /** If the ErrorObject is null, display the general error message */
+                    messageDialogError.setMessage("An unknown error has occured.");
+                }
+
+                break;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+
+        enableUpdateButton();
+
+        if (permissions.length == 0 || grantResults.length == 0) {
+            // User cancelled permissions dialog -> don't do anything.
+            return;
+        }
+
+        if (requestCode == Constants.UPDATE_PERMISSIONS_REQUEST) {
+            // Check for the grant result on write permission
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted, re-invoke download process
+                prepareDownload();
+            } else {
+                // Permission denied, show user alert
+                Log.w(Constants.TAG, "User denied write permission, can't continue with updater task.");
+
+                UpdateManagerListener listener = UpdateManager.getLastListener();
+                if (listener != null) {
+                    listener.onUpdatePermissionsNotGranted();
+                } else {
+                    final UpdateActivity updateActivity = this;
+                    new AlertDialog.Builder(mContext)
+                            .setTitle(getString(R.string.hockeyapp_permission_update_title))
+                            .setMessage(getString(R.string.hockeyapp_permission_update_message))
+                            .setNegativeButton(getString(R.string.hockeyapp_permission_dialog_negative_button), null)
+                            .setPositiveButton(getString(R.string.hockeyapp_permission_dialog_positive_button), new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    updateActivity.prepareDownload();
+                                }
+                            })
+                            .create()
+                            .show();
+                }
+            }
+        }
+    }
+
+    /**
+     * Returns the current version of the app.
+     *
+     * @return The version code as integer.
+     */
+    public int getCurrentVersionCode() {
+        int currentVersionCode = -1;
+
+        try {
+            currentVersionCode = getPackageManager().getPackageInfo(this.getPackageName(), PackageManager.GET_META_DATA).versionCode;
+        } catch (NameNotFoundException e) {
+        }
+
+        return currentVersionCode;
+    }
+
+    /**
+     * Creates and returns a new instance of the update view.
+     *
+     * @return Update view
+     */
+    public ViewGroup getLayoutView() {
+        LinearLayout layout = new LinearLayout(this);
+        LayoutInflater.from(this).inflate(R.layout.activity_update, layout);
+        return layout;
+    }
+
+    /**
+     * Called when the download button is tapped. Starts the download task and
+     * disables the button to avoid multiple taps.
+     */
+    public void onClick(View v) {
+        prepareDownload();
+        v.setEnabled(false);
     }
 
     /**
@@ -168,21 +296,6 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
     }
 
     /**
-     * Detaches the activity from the download task and returns the task
-     * as last instance. This way the task is restored when the activity
-     * is immediately re-created.
-     *
-     * @return The download task if present.
-     */
-    @Override
-    public Object onRetainNonConfigurationInstance() {
-        if (mDownloadTask != null) {
-            mDownloadTask.detach();
-        }
-        return mDownloadTask;
-    }
-
-    /**
      * Starts the download task for the app and sets the listener
      * for a successful download, a failed download, and configuration
      * strings.
@@ -190,46 +303,6 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
     protected void startDownloadTask() {
         String url = getIntent().getStringExtra("url");
         startDownloadTask(url);
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-
-        enableUpdateButton();
-
-        if (permissions.length == 0 || grantResults.length == 0) {
-            // User cancelled permissions dialog -> don't do anything.
-            return;
-        }
-
-        if (requestCode == Constants.UPDATE_PERMISSIONS_REQUEST) {
-            // Check for the grant result on write permission
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission granted, re-invoke download process
-                prepareDownload();
-            } else {
-                // Permission denied, show user alert
-                Log.w(Constants.TAG, "User denied write permission, can't continue with updater task.");
-
-                UpdateManagerListener listener = UpdateManager.getLastListener();
-                if (listener != null) {
-                    listener.onUpdatePermissionsNotGranted();
-                } else {
-                    final UpdateActivity updateActivity = this;
-                    new AlertDialog.Builder(mContext)
-                            .setTitle(getString(R.string.hockeyapp_permission_update_title))
-                            .setMessage(getString(R.string.hockeyapp_permission_update_message))
-                            .setNegativeButton(getString(R.string.hockeyapp_permission_dialog_negative_button), null)
-                            .setPositiveButton(getString(R.string.hockeyapp_permission_dialog_positive_button), new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    updateActivity.prepareDownload();
-                                }
-                            })
-                            .create()
-                            .show();
-                }
-            }
-        }
     }
 
     /**
@@ -240,16 +313,16 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
      */
     protected void startDownloadTask(String url) {
         createDownloadTask(url, new DownloadFileListener() {
-            public void downloadSuccessful(DownloadFileTask task) {
-                enableUpdateButton();
-            }
-
             public void downloadFailed(DownloadFileTask task, Boolean userWantsRetry) {
                 if (userWantsRetry) {
                     startDownloadTask();
                 } else {
                     enableUpdateButton();
                 }
+            }
+
+            public void downloadSuccessful(DownloadFileTask task) {
+                enableUpdateButton();
             }
         });
         AsyncTaskUtils.execute(mDownloadTask);
@@ -265,33 +338,6 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
     public void enableUpdateButton() {
         View updateButton = findViewById(R.id.button_update);
         updateButton.setEnabled(true);
-    }
-
-    /**
-     * Returns the current version of the app.
-     *
-     * @return The version code as integer.
-     */
-    public int getCurrentVersionCode() {
-        int currentVersionCode = -1;
-
-        try {
-            currentVersionCode = getPackageManager().getPackageInfo(this.getPackageName(), PackageManager.GET_META_DATA).versionCode;
-        } catch (NameNotFoundException e) {
-        }
-
-        return currentVersionCode;
-    }
-
-    /**
-     * Creates and returns a new instance of the update view.
-     *
-     * @return Update view
-     */
-    public ViewGroup getLayoutView() {
-        LinearLayout layout = new LinearLayout(this);
-        LayoutInflater.from(this).inflate(R.layout.activity_update, layout);
-        return layout;
     }
 
     /**
@@ -339,15 +385,6 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
         } catch (Settings.SettingNotFoundException e) {
             return true;
         }
-    }
-
-    /**
-     * Called when the download button is tapped. Starts the download task and
-     * disables the button to avoid multiple taps.
-     */
-    public void onClick(View v) {
-        prepareDownload();
-        v.setEnabled(false);
     }
 
     protected void prepareDownload() {
@@ -402,47 +439,5 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
         }
 
         startDownloadTask();
-    }
-
-    @Override
-    protected Dialog onCreateDialog(int id) {
-        return onCreateDialog(id, null);
-    }
-
-    @Override
-    protected Dialog onCreateDialog(int id, Bundle args) {
-        switch (id) {
-            case DIALOG_ERROR_ID:
-                return new AlertDialog.Builder(this)
-                        .setMessage("An error has occured")
-                        .setCancelable(false)
-                        .setTitle("Error")
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                mError = null;
-                                dialog.cancel();
-                            }
-                        }).create();
-        }
-
-        return null;
-    }
-
-    @Override
-    protected void onPrepareDialog(int id, Dialog dialog) {
-        switch (id) {
-            case DIALOG_ERROR_ID:
-                AlertDialog messageDialogError = (AlertDialog) dialog;
-                if (mError != null) {
-                    /** If the ErrorObject is not null, display the ErrorObject message */
-                    messageDialogError.setMessage(mError.getMessage());
-                } else {
-                    /** If the ErrorObject is null, display the general error message */
-                    messageDialogError.setMessage("An unknown error has occured.");
-                }
-
-                break;
-        }
     }
 }

@@ -125,6 +125,39 @@ public class LoginActivity extends Activity {
         }
     }
 
+    /**
+     * Detaches the activity from the LoginTask and returns the task
+     * as last instance. This way the task is restored when the activity
+     * is immediately re-created.
+     *
+     * @return The login task if present and null otherwise.
+     */
+    @Override
+    public Object onRetainNonConfigurationInstance() {
+        if (mLoginTask != null) {
+            mLoginTask.detach();
+        }
+
+        return mLoginTask;
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (LoginManager.listener != null) {
+                LoginManager.listener.onBack();
+            } else {
+                Intent intent = new Intent(this, LoginManager.mainActivity);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.putExtra(LoginManager.LOGIN_EXIT_KEY, true);
+                startActivity(intent);
+                return true;
+            }
+        }
+
+        return super.onKeyDown(keyCode, event);
+    }
+
     private void configureView() {
         if (mMode == LoginManager.LOGIN_MODE_EMAIL_ONLY) {
             EditText passwordInput = (EditText) findViewById(R.id.input_password);
@@ -213,38 +246,5 @@ public class LoginActivity extends Activity {
             e.printStackTrace();
         }
         return "";
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (LoginManager.listener != null) {
-                LoginManager.listener.onBack();
-            } else {
-                Intent intent = new Intent(this, LoginManager.mainActivity);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.putExtra(LoginManager.LOGIN_EXIT_KEY, true);
-                startActivity(intent);
-                return true;
-            }
-        }
-
-        return super.onKeyDown(keyCode, event);
-    }
-
-    /**
-     * Detaches the activity from the LoginTask and returns the task
-     * as last instance. This way the task is restored when the activity
-     * is immediately re-created.
-     *
-     * @return The login task if present and null otherwise.
-     */
-    @Override
-    public Object onRetainNonConfigurationInstance() {
-        if (mLoginTask != null) {
-            mLoginTask.detach();
-        }
-
-        return mLoginTask;
     }
 }

@@ -195,58 +195,6 @@ public class FeedbackActivity extends Activity implements OnClickListener {
     private String mToken;
 
     /**
-     * Enables/Disables the Send Feedback button.
-     *
-     * @param isEnable the button is enabled if true
-     */
-    public void enableDisableSendFeedbackButton(boolean isEnable) {
-        if (mSendFeedbackButton != null) {
-            mSendFeedbackButton.setEnabled(isEnable);
-        }
-    }
-
-    /**
-     * Called when the Send Feedback {@link Button} is tapped. Sends the feedback and disables
-     * the button to avoid multiple taps.
-     */
-    @Override
-    public void onClick(View v) {
-        int viewId = v.getId();
-
-        if (viewId == R.id.button_send) {
-            sendFeedback();
-        } else if (viewId == R.id.button_attachment) {
-            ViewGroup attachments = (ViewGroup) findViewById(R.id.wrapper_attachments);
-            if (attachments.getChildCount() >= MAX_ATTACHMENTS_PER_MSG) {
-                //TODO should we add some more text here?
-                Toast.makeText(this, String.valueOf(MAX_ATTACHMENTS_PER_MSG), Toast.LENGTH_SHORT).show();
-            } else {
-                openContextMenu(v);
-            }
-        } else if (viewId == R.id.button_add_response) {
-            configureFeedbackView(false);
-            mInSendFeedback = true;
-        } else if (viewId == R.id.button_refresh) {
-            sendFetchFeedback(mUrl, null, null, null, null, null, PrefsUtil.getInstance().getFeedbackTokenFromPrefs(mContext), mFeedbackHandler, true);
-        }
-    }
-
-    /**
-     * Called when user clicked on context menu item.
-     */
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case ATTACH_FILE:
-            case ATTACH_PICTURE:
-                return addAttachment(item.getItemId());
-
-            default:
-                return super.onContextItemSelected(item);
-        }
-    }
-
-    /**
      * Called when the activity is starting. Sets the title and content view
      *
      * @param savedInstanceState Data it most recently supplied in
@@ -294,14 +242,35 @@ public class FeedbackActivity extends Activity implements OnClickListener {
     }
 
     /**
-     * Called when context menu is needed (on add attachment button).
+     * Restore all attachments.
      */
     @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            ViewGroup attachmentList = (ViewGroup) findViewById(R.id.wrapper_attachments);
+            ArrayList<Uri> attachmentsUris = savedInstanceState.getParcelableArrayList("attachments");
+            for (Uri attachmentUri : attachmentsUris) {
+                attachmentList.addView(new AttachmentView(this, attachmentList, attachmentUri, true));
+            }
 
-        menu.add(0, ATTACH_FILE, 0, getString(R.string.hockeyapp_feedback_attach_file));
-        menu.add(0, ATTACH_PICTURE, 0, getString(R.string.hockeyapp_feedback_attach_picture));
+            mFeedbackViewInitialized = savedInstanceState.getBoolean("feedbackViewInitialized");
+        }
+
+        super.onRestoreInstanceState(savedInstanceState);
+    }
+
+    /**
+     * Save all attachments.
+     */
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        AttachmentListView attachmentListView = (AttachmentListView) findViewById(R.id.wrapper_attachments);
+
+        outState.putParcelableArrayList("attachments", attachmentListView.getAttachments());
+        outState.putBoolean("feedbackViewInitialized", mFeedbackViewInitialized);
+        outState.putBoolean("inSendFeedback", mInSendFeedback);
+
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -311,6 +280,22 @@ public class FeedbackActivity extends Activity implements OnClickListener {
         if (mSendFeedbackTask != null) {
             mSendFeedbackTask.detach();
         }
+    }
+
+    /**
+     * Detaches the activity from the send feedback task and returns the task
+     * as last instance. This way the task is restored when the activity
+     * is immediately re-created.
+     *
+     * @return The download task if present.
+     */
+    @Override
+    public Object onRetainNonConfigurationInstance() {
+        if (mSendFeedbackTask != null) {
+            mSendFeedbackTask.detach();
+        }
+
+        return mSendFeedbackTask;
     }
 
     @Override
@@ -330,19 +315,151 @@ public class FeedbackActivity extends Activity implements OnClickListener {
     }
 
     /**
-     * Detaches the activity from the send feedback task and returns the task
-     * as last instance. This way the task is restored when the activity
-     * is immediately re-created.
-     *
-     * @return The download task if present.
+     * Called when the Send Feedback {@link Button} is tapped. Sends the feedback and disables
+     * the button to avoid multiple taps.
      */
     @Override
-    public Object onRetainNonConfigurationInstance() {
-        if (mSendFeedbackTask != null) {
-            mSendFeedbackTask.detach();
+    public void onClick(View v) {
+        int viewId = v.getId();
+
+        if (viewId == R.id.button_send) {
+            sendFeedback();
+        } else if (viewId == R.id.button_attachment) {
+            ViewGroup attachments = (ViewGroup) findViewById(R.id.wrapper_attachments);
+            if (attachments.getChildCount() >= MAX_ATTACHMENTS_PER_MSG) {
+                //TODO should we add some more text here?
+                Toast.makeText(this, String.valueOf(MAX_ATTACHMENTS_PER_MSG), Toast.LENGTH_SHORT).show();
+            } else {
+                openContextMenu(v);
+            }
+        } else if (viewId == R.id.button_add_response) {
+            configureFeedbackView(false);
+            mInSendFeedback = true;
+        } else if (viewId == R.id.button_refresh) {
+            sendFetchFeedback(mUrl, null, null, null, null, null, PrefsUtil.getInstance().getFeedbackTokenFromPrefs(mContext), mFeedbackHandler, true);
+        }
+    }
+
+    /**
+     * Called when context menu is needed (on add attachment button).
+     */
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+
+        menu.add(0, ATTACH_FILE, 0, getString(R.string.hockeyapp_feedback_attach_file));
+        menu.add(0, ATTACH_PICTURE, 0, getString(R.string.hockeyapp_feedback_attach_picture));
+    }
+
+    /**
+     * Called when user clicked on context menu item.
+     */
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case ATTACH_FILE:
+            case ATTACH_PICTURE:
+                return addAttachment(item.getItemId());
+
+            default:
+                return super.onContextItemSelected(item);
+        }
+    }
+
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        switch (id) {
+            case DIALOG_ERROR_ID:
+                return new AlertDialog.Builder(this)
+                        .setMessage(getString(R.string.hockeyapp_dialog_error_message))
+                        .setCancelable(false)
+                        .setTitle(getString(R.string.hockeyapp_dialog_error_title))
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setPositiveButton(getString(R.string.hockeyapp_dialog_positive_button), new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                mError = null;
+                                dialog.cancel();
+                            }
+                        }).create();
         }
 
-        return mSendFeedbackTask;
+        return null;
+    }
+
+    @Override
+    protected void onPrepareDialog(int id, Dialog dialog) {
+        switch (id) {
+            case DIALOG_ERROR_ID:
+                AlertDialog messageDialogError = (AlertDialog) dialog;
+                if (mError != null) {
+                    /** If the ErrorObject is not null, display the ErrorObject message */
+                    messageDialogError.setMessage(mError.getMessage());
+                } else {
+                    /** If the ErrorObject is null, display the general error message */
+                    messageDialogError.setMessage(getString(R.string.hockeyapp_feedback_generic_error));
+                }
+                break;
+            default:
+                break;
+        }
+
+    }
+
+    /**
+     * Called when picture or file was chosen.
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != RESULT_OK) {
+            return;
+        }
+
+        if (requestCode == ATTACH_FILE) {
+            /** User picked file */
+            Uri uri = data.getData();
+
+            if (uri != null) {
+                final ViewGroup attachments = (ViewGroup) findViewById(R.id.wrapper_attachments);
+                attachments.addView(new AttachmentView(this, attachments, uri, true));
+            }
+
+        } else if (requestCode == ATTACH_PICTURE) {
+            /** User picked image */
+            Uri uri = data.getData();
+
+            /** Start PaintActivity */
+            if (uri != null) {
+                try {
+                    Intent intent = new Intent(this, PaintActivity.class);
+                    intent.putExtra(PaintActivity.EXTRA_IMAGE_URI, uri);
+                    startActivityForResult(intent, PAINT_IMAGE);
+                } catch (ActivityNotFoundException e) {
+                    Log.e(Util.LOG_IDENTIFIER, "Paint activity not declared!", e);
+                }
+
+            }
+
+        } else if (requestCode == PAINT_IMAGE) {
+            /** Final attachment picture received and ready to be added to list. */
+            Uri uri = data.getParcelableExtra(PaintActivity.EXTRA_IMAGE_URI);
+
+            if (uri != null) {
+                final ViewGroup attachments = (ViewGroup) findViewById(R.id.wrapper_attachments);
+                attachments.addView(new AttachmentView(this, attachments, uri, true));
+            }
+
+        } else return;
+    }
+
+    /**
+     * Enables/Disables the Send Feedback button.
+     *
+     * @param isEnable the button is enabled if true
+     */
+    public void enableDisableSendFeedbackButton(boolean isEnable) {
+        if (mSendFeedbackButton != null) {
+            mSendFeedbackButton.setEnabled(isEnable);
+        }
     }
 
     /**
@@ -450,123 +567,6 @@ public class FeedbackActivity extends Activity implements OnClickListener {
      * @param success is true if the sending of the feedback was successful
      */
     protected void onSendFeedbackResult(final boolean success) {
-    }
-
-    /**
-     * Called when picture or file was chosen.
-     */
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode != RESULT_OK) {
-            return;
-        }
-
-        if (requestCode == ATTACH_FILE) {
-            /** User picked file */
-            Uri uri = data.getData();
-
-            if (uri != null) {
-                final ViewGroup attachments = (ViewGroup) findViewById(R.id.wrapper_attachments);
-                attachments.addView(new AttachmentView(this, attachments, uri, true));
-            }
-
-        } else if (requestCode == ATTACH_PICTURE) {
-            /** User picked image */
-            Uri uri = data.getData();
-
-            /** Start PaintActivity */
-            if (uri != null) {
-                try {
-                    Intent intent = new Intent(this, PaintActivity.class);
-                    intent.putExtra(PaintActivity.EXTRA_IMAGE_URI, uri);
-                    startActivityForResult(intent, PAINT_IMAGE);
-                } catch (ActivityNotFoundException e) {
-                    Log.e(Util.LOG_IDENTIFIER, "Paint activity not declared!", e);
-                }
-
-            }
-
-        } else if (requestCode == PAINT_IMAGE) {
-            /** Final attachment picture received and ready to be added to list. */
-            Uri uri = data.getParcelableExtra(PaintActivity.EXTRA_IMAGE_URI);
-
-            if (uri != null) {
-                final ViewGroup attachments = (ViewGroup) findViewById(R.id.wrapper_attachments);
-                attachments.addView(new AttachmentView(this, attachments, uri, true));
-            }
-
-        } else return;
-    }
-
-    @Override
-    protected Dialog onCreateDialog(int id) {
-        switch (id) {
-            case DIALOG_ERROR_ID:
-                return new AlertDialog.Builder(this)
-                        .setMessage(getString(R.string.hockeyapp_dialog_error_message))
-                        .setCancelable(false)
-                        .setTitle(getString(R.string.hockeyapp_dialog_error_title))
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setPositiveButton(getString(R.string.hockeyapp_dialog_positive_button), new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                mError = null;
-                                dialog.cancel();
-                            }
-                        }).create();
-        }
-
-        return null;
-    }
-
-    @Override
-    protected void onPrepareDialog(int id, Dialog dialog) {
-        switch (id) {
-            case DIALOG_ERROR_ID:
-                AlertDialog messageDialogError = (AlertDialog) dialog;
-                if (mError != null) {
-                    /** If the ErrorObject is not null, display the ErrorObject message */
-                    messageDialogError.setMessage(mError.getMessage());
-                } else {
-                    /** If the ErrorObject is null, display the general error message */
-                    messageDialogError.setMessage(getString(R.string.hockeyapp_feedback_generic_error));
-                }
-                break;
-            default:
-                break;
-        }
-
-    }
-
-    /**
-     * Restore all attachments.
-     */
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
-            ViewGroup attachmentList = (ViewGroup) findViewById(R.id.wrapper_attachments);
-            ArrayList<Uri> attachmentsUris = savedInstanceState.getParcelableArrayList("attachments");
-            for (Uri attachmentUri : attachmentsUris) {
-                attachmentList.addView(new AttachmentView(this, attachmentList, attachmentUri, true));
-            }
-
-            mFeedbackViewInitialized = savedInstanceState.getBoolean("feedbackViewInitialized");
-        }
-
-        super.onRestoreInstanceState(savedInstanceState);
-    }
-
-    /**
-     * Save all attachments.
-     */
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        AttachmentListView attachmentListView = (AttachmentListView) findViewById(R.id.wrapper_attachments);
-
-        outState.putParcelableArrayList("attachments", attachmentListView.getAttachments());
-        outState.putBoolean("feedbackViewInitialized", mFeedbackViewInitialized);
-        outState.putBoolean("inSendFeedback", mInSendFeedback);
-
-        super.onSaveInstanceState(outState);
     }
 
     /**

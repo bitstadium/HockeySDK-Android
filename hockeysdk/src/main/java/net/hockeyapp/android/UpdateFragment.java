@@ -195,20 +195,6 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
         prepareDownload();
     }
 
-    public void prepareDownload() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            // Only if we're running on Android M or later
-            if (getActivity().checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                // We don't have the permission to write to external storage yet, so we have to request it asynchronously.
-                requestPermissions(new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, Constants.UPDATE_PERMISSIONS_REQUEST);
-                return;
-            }
-        }
-
-        startDownloadTask(this.getActivity());
-        dismiss();
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if (permissions.length == 0 || grantResults.length == 0) {
@@ -247,6 +233,37 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
     }
 
     /**
+     * Returns the current version of the app.
+     *
+     * @return The version code as integer.
+     */
+    public int getCurrentVersionCode() {
+        int currentVersionCode = -1;
+
+        try {
+            currentVersionCode = getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), PackageManager.GET_META_DATA).versionCode;
+        } catch (NameNotFoundException e) {
+        } catch (NullPointerException e) {
+        }
+
+        return currentVersionCode;
+    }
+
+    public void prepareDownload() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            // Only if we're running on Android M or later
+            if (getActivity().checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                // We don't have the permission to write to external storage yet, so we have to request it asynchronously.
+                requestPermissions(new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, Constants.UPDATE_PERMISSIONS_REQUEST);
+                return;
+            }
+        }
+
+        startDownloadTask(this.getActivity());
+        dismiss();
+    }
+
+    /**
      * Starts the download task and sets the listener for a successful
      * download, a failed download, and configuration strings.
      */
@@ -264,23 +281,6 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
 
         });
         AsyncTaskUtils.execute(mDownloadTask);
-    }
-
-    /**
-     * Returns the current version of the app.
-     *
-     * @return The version code as integer.
-     */
-    public int getCurrentVersionCode() {
-        int currentVersionCode = -1;
-
-        try {
-            currentVersionCode = getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), PackageManager.GET_META_DATA).versionCode;
-        } catch (NameNotFoundException e) {
-        } catch (NullPointerException e) {
-        }
-
-        return currentVersionCode;
     }
 
     /**
