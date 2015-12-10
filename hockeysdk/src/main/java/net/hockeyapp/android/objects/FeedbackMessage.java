@@ -56,7 +56,7 @@ public class FeedbackMessage implements Serializable {
     private List<FeedbackAttachment> mFeedbackAttachments;
 
     /**
-     * @return
+     * @return Subject of the feedback message.
      * @deprecated as of 3.7.0, replaced by {@link #getSubject()}
      */
     @Deprecated
@@ -66,7 +66,7 @@ public class FeedbackMessage implements Serializable {
     }
 
     /**
-     * @param subjec
+     * @param subjec Subject for the feedback message.
      * @deprecated as of 3.7.0, replaced by {@link #setSubject(String)}
      */
     @Deprecated

@@ -71,8 +71,12 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
     }
 
     /**
+     * Save a caught exception to disk.
      * @deprecated in 3.7.0-beta.2. Use saveException(Throwable exception, Thread thread,
      * CrashManagerListener listener) instead.
+     *
+     * @param exception Exception to save.
+     * @param listener  Custom CrashManager listener instance.
      */
     @Deprecated
     @SuppressWarnings("unused")
@@ -80,6 +84,12 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
         saveException(exception, null, listener);
     }
 
+    /**
+     * Save a caught exception to disk.
+     * @param exception Exception to save.
+     * @param thread    Thread that crashed.
+     * @param listener  Custom CrashManager listener instance.
+     */
     public static void saveException(Throwable exception, Thread thread, CrashManagerListener listener) {
         final Date now = new Date();
         final Writer result = new StringWriter();
