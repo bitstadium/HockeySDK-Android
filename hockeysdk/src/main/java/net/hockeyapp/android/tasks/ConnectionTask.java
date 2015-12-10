@@ -1,21 +1,18 @@
 package net.hockeyapp.android.tasks;
 
 import android.os.AsyncTask;
-import android.os.Build;
-import android.text.TextUtils;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * <h3>Description</h3>
  *
- *  Base class for asynchronous HTTP connections.
+ * Base class for asynchronous HTTP connections.
  *
  * <h3>License</h3>
  *
