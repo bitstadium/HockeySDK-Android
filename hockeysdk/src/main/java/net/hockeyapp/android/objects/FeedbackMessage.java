@@ -5,11 +5,11 @@ import java.util.List;
 
 /**
  * <h3>Description</h3>
- * <p/>
+ *
  * Model for feedback messages.
- * <p/>
+ *
  * <h3>License</h3>
- * <p/>
+ *
  * <pre>
  * Copyright (c) 2011-2014 Bit Stadium GmbH
  *

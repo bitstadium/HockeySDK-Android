@@ -11,11 +11,11 @@ import java.util.ArrayList;
 
 /**
  * <h3>Description</h3>
- * <p/>
+ *
  * A multi-row layout doing a line break when content doesn't fit into current row.
- * <p/>
+ *
  * <h3>License</h3>
- * <p/>
+ *
  * <pre>
  * Copyright (c) 2011-2014 Bit Stadium GmbH
  *

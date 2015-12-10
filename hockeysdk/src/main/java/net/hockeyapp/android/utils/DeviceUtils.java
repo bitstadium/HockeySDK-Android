@@ -9,11 +9,11 @@ import net.hockeyapp.android.Constants;
 
 /**
  * <h3>Description</h3>
- * <p/>
+ *
  * Device helper class.
- * <p/>
+ *
  * <h3>License</h3>
- * <p/>
+ *
  * <pre>
  * Copyright (c) 2011-2014 Bit Stadium GmbH
  *

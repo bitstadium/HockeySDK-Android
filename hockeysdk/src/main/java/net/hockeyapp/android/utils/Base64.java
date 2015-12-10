@@ -6,22 +6,22 @@ import java.io.UnsupportedEncodingException;
 
 /**
  * <h3>Description</h3>
- * <p/>
+ *
  * Utilities for encoding and decoding the Base64 representation of
  * binary data.  See RFCs <a
  * href="http://www.ietf.org/rfc/rfc2045.txt">2045</a> and <a
  * href="http://www.ietf.org/rfc/rfc3548.txt">3548</a>.
- * <p/>
+ *
  * <h3>License</h3>
- * <p/>
+ *
  * Copyright (C) 2010 The Android Open Source Project
- * <p/>
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p/>
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -100,7 +100,7 @@ public class Base64 {
     /**
      * Decode the Base64-encoded data in input and return the data in
      * a new byte array.
-     * <p/>
+     *
      * <p>The padding '=' characters at the end are considered optional, but
      * if any are present, there must be the correct number of them.
      *
@@ -119,7 +119,7 @@ public class Base64 {
     /**
      * Decode the Base64-encoded data in input and return the data in
      * a new byte array.
-     * <p/>
+     *
      * <p>The padding '=' characters at the end are considered optional, but
      * if any are present, there must be the correct number of them.
      *
@@ -137,7 +137,7 @@ public class Base64 {
     /**
      * Decode the Base64-encoded data in input and return the data in
      * a new byte array.
-     * <p/>
+     *
      * <p>The padding '=' characters at the end are considered optional, but
      * if any are present, there must be the correct number of them.
      *

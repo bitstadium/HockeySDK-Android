@@ -2,11 +2,11 @@ package net.hockeyapp.android;
 
 /**
  * <h3>Description</h3>
- * <p/>
+ *
  * Abstract class for callbacks to be invoked from the CrashManager.
- * <p/>
+ *
  * <h3>License</h3>
- * <p/>
+ *
  * <pre>
  * Copyright (c) 2011-2014 Bit Stadium GmbH
  *

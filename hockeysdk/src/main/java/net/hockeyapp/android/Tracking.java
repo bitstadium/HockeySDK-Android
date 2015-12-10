@@ -6,11 +6,11 @@ import android.content.SharedPreferences;
 
 /**
  * <h3>Description</h3>
- * <p/>
+ *
  * This class defines methods to track the app's usage time.
- * <p/>
+ *
  * <h3>License</h3>
- * <p/>
+ *
  * <pre>
  * Copyright (c) 2011-2014 Bit Stadium GmbH
  *

@@ -14,13 +14,13 @@ import java.util.UUID;
 
 /**
  * <h3>Description</h3>
- * <p/>
+ *
  * Helper class to catch exceptions. Saves the stack trace
  * as a file and executes callback methods to ask the app for
  * additional information and meta data (see CrashManagerListener).
- * <p/>
+ *
  * <h3>License</h3>
- * <p/>
+ *
  * <pre>
  * Copyright (c) 2009 nullwire aps
  * Copyright (c) 2011-2014 Bit Stadium GmbH

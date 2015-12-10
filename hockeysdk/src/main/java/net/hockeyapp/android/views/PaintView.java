@@ -22,11 +22,11 @@ import java.util.Stack;
 
 /**
  * <h3>Description</h3>
- * <p/>
+ *
  * The PaintView for showing the image and drawing on it.
- * <p/>
+ *
  * <h3>License</h3>
- * <p/>
+ *
  * <pre>
  * Copyright (c) 2011-2014 Bit Stadium GmbH
  *
@@ -87,7 +87,7 @@ public class PaintView extends ImageView {
     /**
      * Calculates the scale factor to scale down the image as much as possible while preserving a minimum size
      * defined by the given reqWidth and reqHeight.
-     * <p/>
+     *
      * See: http://developer.android.com/training/displaying-bitmaps/load-bitmap.html
      *
      * @param options   options that describe the image
@@ -119,7 +119,7 @@ public class PaintView extends ImageView {
     /**
      * Decodes the image as a bitmap with a size as small as possible but with a minimum size of given reqWidth
      * and reqHeight.
-     * <p/>
+     *
      * Based on: http://developer.android.com/training/displaying-bitmaps/load-bitmap.html
      *
      * @param resolver  a content resolver

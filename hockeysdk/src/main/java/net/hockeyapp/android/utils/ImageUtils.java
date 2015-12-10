@@ -12,11 +12,11 @@ import java.io.InputStream;
 
 /**
  * <h3>Description</h3>
- * <p/>
+ *
  * Various functions related to image loading and bitmap scaling.
- * <p/>
+ *
  * <h3>License</h3>
- * <p/>
+ *
  * <pre>
  * Copyright (c) 2011-2014 Bit Stadium GmbH
  *
@@ -110,7 +110,7 @@ public class ImageUtils {
     /**
      * Decodes the image as a bitmap with a size as small as possible but with a minimum size of given reqWidth
      * and reqHeight.
-     * <p/>
+     *
      * Based on: http://developer.android.com/training/displaying-bitmaps/load-bitmap.html
      *
      * @param file      the file handle of the image
@@ -139,7 +139,7 @@ public class ImageUtils {
     /**
      * Decodes the image as a bitmap with a size as small as possible but with a minimum size of given reqWidth
      * and reqHeight.
-     * <p/>
+     *
      * Based on: http://developer.android.com/training/displaying-bitmaps/load-bitmap.html
      *
      * @param context   the context to use
@@ -171,7 +171,7 @@ public class ImageUtils {
     /**
      * Calculates the scale factor to scale down the image as much as possible while preserving a minimum size
      * defined by the given reqWidth and reqHeight.
-     * <p/>
+     *
      * See: http://developer.android.com/training/displaying-bitmaps/load-bitmap.html
      *
      * @param options   options that describe the image

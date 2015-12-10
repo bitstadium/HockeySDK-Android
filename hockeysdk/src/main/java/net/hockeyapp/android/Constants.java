@@ -16,11 +16,11 @@ import java.security.MessageDigest;
 
 /**
  * <h3>Description</h3>
- * <p/>
+ *
  * Various constants and meta information loaded from the context.
- * <p/>
+ *
  * <h3>License</h3>
- * <p/>
+ *
  * <pre>
  * Copyright (c) 2009 nullwire aps
  * Copyright (c) 2011-2014 Bit Stadium GmbH
@@ -56,71 +56,58 @@ import java.security.MessageDigest;
 public class Constants {
 
     /**
-     * Path where crash logs and temporary files are stored.
-     */
-    public static String FILES_PATH = null;
-
-    /**
-     * The app's version code.
-     */
-    public static String APP_VERSION = null;
-
-    /**
-     * The app's version name.
-     */
-    public static String APP_VERSION_NAME = null;
-
-    /**
-     * The app's package name.
-     */
-    public static String APP_PACKAGE = null;
-
-    /**
-     * The device's OS version.
-     */
-    public static String ANDROID_VERSION = null;
-
-    /**
-     * The device's model name.
-     */
-    public static String PHONE_MODEL = null;
-
-    /**
-     * The device's model manufacturer name.
-     */
-    public static String PHONE_MANUFACTURER = null;
-
-    /**
-     * Unique identifier for crash reports.
-     */
-    public static String CRASH_IDENTIFIER = null;
-
-    /**
      * Tag for internal logging statements.
      */
     public static final String TAG = "HockeyApp";
-
     /**
      * HockeyApp API URL.
      */
     public static final String BASE_URL = "https://sdk.hockeyapp.net/";
-
     /**
      * Name of this SDK.
      */
     public static final String SDK_NAME = "HockeySDK";
-
     /**
      * Version of this SDK.
      */
     public static final String SDK_VERSION = "3.7.0-b.1";
-
     /**
      * Permissions request for the update task.
      */
     public static final int UPDATE_PERMISSIONS_REQUEST = 1;
-
     private static final String BUNDLE_BUILD_NUMBER = "buildNumber";
+    /**
+     * Path where crash logs and temporary files are stored.
+     */
+    public static String FILES_PATH = null;
+    /**
+     * The app's version code.
+     */
+    public static String APP_VERSION = null;
+    /**
+     * The app's version name.
+     */
+    public static String APP_VERSION_NAME = null;
+    /**
+     * The app's package name.
+     */
+    public static String APP_PACKAGE = null;
+    /**
+     * The device's OS version.
+     */
+    public static String ANDROID_VERSION = null;
+    /**
+     * The device's model name.
+     */
+    public static String PHONE_MODEL = null;
+    /**
+     * The device's model manufacturer name.
+     */
+    public static String PHONE_MANUFACTURER = null;
+    /**
+     * Unique identifier for crash reports.
+     */
+    public static String CRASH_IDENTIFIER = null;
 
     /**
      * Initializes constants from the given context. The context is used to set

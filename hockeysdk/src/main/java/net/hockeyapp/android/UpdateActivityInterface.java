@@ -4,11 +4,11 @@ import android.view.View;
 
 /**
  * <h3>Description</h3>
- * <p/>
+ *
  * Interface definition for callbacks to be invoked from the UpdateActivity.
- * <p/>
+ *
  * <h3>License</h3>
- * <p/>
+ *
  * <pre>
  * Copyright (c) 2011-2014 Bit Stadium GmbH
  *

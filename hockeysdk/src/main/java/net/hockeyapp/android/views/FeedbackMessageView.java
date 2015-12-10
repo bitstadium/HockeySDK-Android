@@ -22,7 +22,7 @@ import java.util.Date;
  * Internal helper class to draw the content view of a Feedback message row
  * </p>
  * <h3>License</h3>
- * <p/>
+ *
  * <pre>
  * Copyright (c) 2011-2014 Bit Stadium GmbH
  *

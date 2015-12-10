@@ -8,7 +8,7 @@ import java.lang.ref.WeakReference;
 
 /**
  * <h3>License</h3>
- * <p/>
+ *
  * <pre>
  * Copyright (c) 2011-2014 Bit Stadium GmbH
  *

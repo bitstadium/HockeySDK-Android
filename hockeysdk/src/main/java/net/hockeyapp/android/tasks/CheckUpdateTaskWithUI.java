@@ -27,12 +27,12 @@ import java.lang.reflect.Method;
 
 /**
  * <h3>Description</h3>
- * <p/>
+ *
  * Internal helper class. Checks if a new update is available by
  * fetching version data from Hockeyapp.
- * <p/>
+ *
  * <h3>License</h3>
- * <p/>
+ *
  * <pre>
  * Copyright (c) 2011-2014 Bit Stadium GmbH
  *

@@ -11,11 +11,11 @@ import java.net.HttpURLConnection;
 
 /**
  * <h3>Description</h3>
- * <p/>
+ *
  * Base class for asynchronous HTTP connections.
- * <p/>
+ *
  * <h3>License</h3>
- * <p/>
+ *
  * <pre>
  * Copyright (c) 2011-2015 Bit Stadium GmbH
  *

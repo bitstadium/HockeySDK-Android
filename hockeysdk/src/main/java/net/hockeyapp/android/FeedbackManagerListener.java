@@ -4,11 +4,11 @@ import net.hockeyapp.android.objects.FeedbackMessage;
 
 /**
  * <h3>Description</h3>
- * <p/>
+ *
  * Abstract class for callbacks to be invoked from the {@link FeedbackManager}
- * <p/>
+ *
  * <h3>License</h3>
- * <p/>
+ *
  * <pre>
  * Copyright (c) 2011-2014 Bit Stadium GmbH
  *

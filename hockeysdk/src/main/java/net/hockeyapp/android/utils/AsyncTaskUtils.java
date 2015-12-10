@@ -6,12 +6,12 @@ import android.os.Build;
 
 /**
  * <h3>Description</h3>
- * <p/>
+ *
  * Either calls execute or executeOnExecutor on an AsyncTask depending on the
  * API level.
- * <p/>
+ *
  * <h3>License</h3>
- * <p/>
+ *
  * <pre>
  * Copyright (c) 2011-2014 Bit Stadium GmbH
  *

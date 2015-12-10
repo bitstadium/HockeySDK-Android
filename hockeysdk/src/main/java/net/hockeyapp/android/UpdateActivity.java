@@ -33,12 +33,12 @@ import net.hockeyapp.android.utils.VersionHelper;
 
 /**
  * <h3>Description</h3>
- * <p/>
+ *
  * Activity to show update information and start the download
  * process if the user taps the corresponding button.
- * <p/>
+ *
  * <h3>License</h3>
- * <p/>
+ *
  * <pre>
  * Copyright (c) 2011-2014 Bit Stadium GmbH
  *

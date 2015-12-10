@@ -30,15 +30,15 @@ import java.util.Map;
 
 /**
  * <h3>Description</h3>
- * <p/>
+ *
  * The crash manager sets an exception handler to catch all unhandled
  * exceptions. The handler writes the stack trace and additional meta data to
  * a file. If it finds one or more of these files at the next start, it shows
  * an alert dialog to ask the user if he want the send the crash data to
  * HockeyApp.
- * <p/>
+ *
  * <h3>License</h3>
- * <p/>
+ *
  * <pre>
  * Copyright (c) 2011-2014 Bit Stadium GmbH
  *

@@ -8,11 +8,11 @@ import net.hockeyapp.android.utils.Util;
 
 /**
  * <h3>Description</h3>
- * <p/>
+ *
  * The expiry activity is shown when the build is expired.
- * <p/>
+ *
  * <h3>License</h3>
- * <p/>
+ *
  * <pre>
  * Copyright (c) 2011-2014 Bit Stadium GmbH
  *

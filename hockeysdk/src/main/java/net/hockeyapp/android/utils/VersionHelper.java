@@ -22,12 +22,12 @@ import java.util.regex.Pattern;
 
 /**
  * <h3>Description</h3>
- * <p/>
+ *
  * Internal helper class. Provides helper methods to parse the
  * version JSON and create the release notes as HTML.
- * <p/>
+ *
  * <h3>License</h3>
- * <p/>
+ *
  * <pre>
  * Copyright (c) 2011-2014 Bit Stadium GmbH
  *

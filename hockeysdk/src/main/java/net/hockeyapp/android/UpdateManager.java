@@ -18,12 +18,12 @@ import java.util.Date;
 
 /**
  * <h3>Description</h3>
- * <p/>
+ *
  * The update manager sends version information to HockeyApp and
  * shows an alert dialog if a new version was found.
- * <p/>
+ *
  * <h3>License</h3>
- * <p/>
+ *
  * <pre>
  * Copyright (c) 2011-2014 Bit Stadium GmbH
  *

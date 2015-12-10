@@ -32,11 +32,11 @@ import java.io.IOException;
 
 /**
  * <h3>Description</h3>
- * <p/>
+ *
  * The FeedbackManager displays the feedback currentActivity.
- * <p/>
+ *
  * <h3>License</h3>
- * <p/>
+ *
  * <pre>
  * Copyright (c) 2011-2014 Bit Stadium GmbH
  *
