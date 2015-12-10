@@ -27,7 +27,7 @@ allprojects {
 //The Hook
 //...will generate a new pom.xml after the generatePomFileForMavenPublication-task and BEFORE the
 // bintrayUpload-task. We can than sync from bintray to maven central using the bintray web-UI.
-//as described in https://github.com/novoda/bintray-release/issues/19
+//This is part of the readme at https://github.com/novoda/bintray-release
 
 ext {
     ARTIFACT_ID = 'HockeySDK'
