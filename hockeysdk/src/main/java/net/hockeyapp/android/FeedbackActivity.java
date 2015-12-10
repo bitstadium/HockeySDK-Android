@@ -252,6 +252,7 @@ public class FeedbackActivity extends Activity implements OnClickListener {
      * @param savedInstanceState Data it most recently supplied in
      *                           onSaveInstanceState(Bundle)
      */
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -454,6 +455,7 @@ public class FeedbackActivity extends Activity implements OnClickListener {
     /**
      * Called when picture or file was chosen.
      */
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != RESULT_OK) {
             return;

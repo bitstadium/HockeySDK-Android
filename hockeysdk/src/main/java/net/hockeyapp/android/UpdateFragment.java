@@ -190,6 +190,7 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
      * Called when the download button is tapped. Starts the download task and
      * disables the button to avoid multiple taps.
      */
+    @Override
     public void onClick(View view) {
         prepareDownload();
     }

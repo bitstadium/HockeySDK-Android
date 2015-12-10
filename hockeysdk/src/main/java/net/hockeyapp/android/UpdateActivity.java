@@ -101,6 +101,7 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
      *                           onSaveInstanceState(Bundle)
      */
     @SuppressWarnings("deprecation")
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
