@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
 import net.hockeyapp.android.tasks.LoginTask;
 import net.hockeyapp.android.utils.AsyncTaskUtils;
 import net.hockeyapp.android.utils.Util;
@@ -55,183 +56,195 @@ import java.util.Map;
  * @author Patrick Eschenbach
  **/
 public class LoginActivity extends Activity {
-  /**
-   * URL for HockeyApp API
-   */
-  private String url;
 
-  /**
-   * The APP secret.
-   */
-  private String secret;
+    /**
+     * Parameter to supply login endpoint URL
+     */
+    public static final String EXTRA_URL = "url";
 
-  /**
-   * The Login Mode.
-   */
-  private int mode;
+    /**
+     * Parameter to supply the app secret for the login API
+     */
+    public static final String EXTRA_SECRET = "secret";
 
-  /**
-   * The LoginTask.
-   */
-  private LoginTask loginTask;
+    /**
+     * Parameter to define the verification mode for the login API
+     */
+    public static final String EXTRA_MODE = "mode";
 
-  /**
-   * The Handler for the LoginTask.
-   */
-  private Handler loginHandler;
+    /**
+     * URL for HockeyApp API
+     */
+    private String mUrl;
 
-  /**
-   * The Login button.
-   */
-  private Button buttonLogin;
+    /**
+     * The APP mSecret.
+     */
+    private String mSecret;
 
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_login);
+    /**
+     * The Login Mode.
+     */
+    private int mMode;
 
-    Bundle extras = getIntent().getExtras();
-    if (extras != null) {
-      url = extras.getString("url");
-      secret = extras.getString("secret");
-      mode = extras.getInt("mode");
-    }
+    /**
+     * The LoginTask.
+     */
+    private LoginTask mLoginTask;
 
-    configureView();
-    initLoginHandler();
+    /**
+     * The Handler for the LoginTask.
+     */
+    private Handler mLoginHandler;
 
-    @SuppressWarnings("deprecation")
-    Object object = getLastNonConfigurationInstance();
-    if (object != null) {
-      loginTask = (LoginTask) object;
-      loginTask.attach(this, loginHandler);
-    }
-  }
+    /**
+     * The Login button.
+     */
+    private Button mButtonLogin;
 
-  private void configureView() {
-    if (mode == LoginManager.LOGIN_MODE_EMAIL_ONLY) {
-      EditText passwordInput = (EditText) findViewById(R.id.input_password);
-      passwordInput.setVisibility(View.INVISIBLE);
-    }
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_login);
 
-    buttonLogin = (Button) findViewById(R.id.button_login);
-    buttonLogin.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        performAuthentication();
-      }
-    });
-  }
-
-  private void initLoginHandler() {
-    loginHandler = new Handler() {
-      @Override
-      public void handleMessage(Message msg) {
-        Bundle bundle = msg.getData();
-        boolean success = bundle.getBoolean("success");
-
-        if (success) {
-          finish();
-
-          if (LoginManager.listener != null) {
-            LoginManager.listener.onSuccess();
-          }
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            mUrl = extras.getString(EXTRA_URL);
+            mSecret = extras.getString(EXTRA_SECRET);
+            mMode = extras.getInt(EXTRA_MODE);
         }
-        else {
-          Toast.makeText(LoginActivity.this, "Login failed. Check your credentials.", Toast.LENGTH_LONG)
-            .show();
+
+        configureView();
+        initLoginHandler();
+
+        @SuppressWarnings("deprecation")
+        Object object = getLastNonConfigurationInstance();
+        if (object != null) {
+            mLoginTask = (LoginTask) object;
+            mLoginTask.attach(this, mLoginHandler);
         }
-      }
-    };
-  }
-
-  private void performAuthentication() {
-    if (!Util.isConnectedToNetwork(this)) {
-      Toast errorToast = Toast.makeText(this, R.string.hockeyapp_error_no_network_message, Toast.LENGTH_LONG);
-      errorToast.show();
-      return;
     }
 
-    String email = ((EditText) findViewById(R.id.input_email)).getText().toString();
-    String password = ((EditText) findViewById(R.id.input_password)).getText().toString();
+    /**
+     * Detaches the activity from the LoginTask and returns the task
+     * as last instance. This way the task is restored when the activity
+     * is immediately re-created.
+     *
+     * @return The login task if present and null otherwise.
+     */
+    @Override
+    public Object onRetainNonConfigurationInstance() {
+        if (mLoginTask != null) {
+            mLoginTask.detach();
+        }
 
-    boolean ready = false;
-    Map<String, String> params = new HashMap<String, String>();
-
-    if (mode == LoginManager.LOGIN_MODE_EMAIL_ONLY) {
-      ready = !TextUtils.isEmpty(email);
-      params.put("email", email);
-      params.put("authcode", md5(secret + email));
-    }
-    else if (mode == LoginManager.LOGIN_MODE_EMAIL_PASSWORD) {
-      ready = !TextUtils.isEmpty(email) && !TextUtils.isEmpty(password);
-      params.put("email", email);
-      params.put("password", password);
-    }
-
-    if (ready) {
-      loginTask = new LoginTask(this, loginHandler, url, mode, params);
-      AsyncTaskUtils.execute(loginTask);
-    }
-    else {
-      Toast.makeText(this, getString(R.string.hockeyapp_login_missing_credentials_toast), Toast.LENGTH_LONG).show();
-    }
-  }
-
-  public String md5(final String s) {
-    try {
-      // Create MD5 Hash
-      MessageDigest digest = java.security.MessageDigest.getInstance("MD5");
-      digest.update(s.getBytes());
-      byte messageDigest[] = digest.digest();
-
-      // Create Hex String
-      StringBuilder hexString = new StringBuilder();
-      for (byte aMessageDigest : messageDigest) {
-        String h = Integer.toHexString(0xFF & aMessageDigest);
-        while (h.length() < 2)
-          h = "0" + h;
-        hexString.append(h);
-      }
-      return hexString.toString();
-
-    } catch (NoSuchAlgorithmException e) {
-      e.printStackTrace();
-    }
-    return "";
-  }
-
-  @Override
-  public boolean onKeyDown(int keyCode, KeyEvent event) {
-    if (keyCode == KeyEvent.KEYCODE_BACK) {
-      if (LoginManager.listener != null) {
-        LoginManager.listener.onBack();
-      }
-      else {
-        Intent intent = new Intent(this, LoginManager.mainActivity);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.putExtra(LoginManager.LOGIN_EXIT_KEY, true);
-        startActivity(intent);
-        return true;
-      }
+        return mLoginTask;
     }
 
-    return super.onKeyDown(keyCode, event);
-  }
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (LoginManager.listener != null) {
+                LoginManager.listener.onBack();
+            } else {
+                Intent intent = new Intent(this, LoginManager.mainActivity);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.putExtra(LoginManager.LOGIN_EXIT_KEY, true);
+                startActivity(intent);
+                return true;
+            }
+        }
 
-  /**
-   * Detaches the activity from the LoginTask and returns the task
-   * as last instance. This way the task is restored when the activity
-   * is immediately re-created.
-   *
-   * @return The login task if present and null otherwise.
-   */
-  @Override
-  public Object onRetainNonConfigurationInstance() {
-    if (loginTask != null) {
-      loginTask.detach();
+        return super.onKeyDown(keyCode, event);
     }
 
-    return loginTask;
-  }
+    private void configureView() {
+        if (mMode == LoginManager.LOGIN_MODE_EMAIL_ONLY) {
+            EditText passwordInput = (EditText) findViewById(R.id.input_password);
+            passwordInput.setVisibility(View.INVISIBLE);
+        }
+
+        mButtonLogin = (Button) findViewById(R.id.button_login);
+        mButtonLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                performAuthentication();
+            }
+        });
+    }
+
+    private void initLoginHandler() {
+        mLoginHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                Bundle bundle = msg.getData();
+                boolean success = bundle.getBoolean(LoginTask.BUNDLE_SUCCESS);
+
+                if (success) {
+                    finish();
+
+                    if (LoginManager.listener != null) {
+                        LoginManager.listener.onSuccess();
+                    }
+                } else {
+                    Toast.makeText(LoginActivity.this, "Login failed. Check your credentials.", Toast.LENGTH_LONG)
+                            .show();
+                }
+            }
+        };
+    }
+
+    private void performAuthentication() {
+        if (!Util.isConnectedToNetwork(this)) {
+            Toast errorToast = Toast.makeText(this, R.string.hockeyapp_error_no_network_message, Toast.LENGTH_LONG);
+            errorToast.show();
+            return;
+        }
+
+        String email = ((EditText) findViewById(R.id.input_email)).getText().toString();
+        String password = ((EditText) findViewById(R.id.input_password)).getText().toString();
+
+        boolean ready = false;
+        Map<String, String> params = new HashMap<String, String>();
+
+        if (mMode == LoginManager.LOGIN_MODE_EMAIL_ONLY) {
+            ready = !TextUtils.isEmpty(email);
+            params.put("email", email);
+            params.put("authcode", md5(mSecret + email));
+        } else if (mMode == LoginManager.LOGIN_MODE_EMAIL_PASSWORD) {
+            ready = !TextUtils.isEmpty(email) && !TextUtils.isEmpty(password);
+            params.put("email", email);
+            params.put("password", password);
+        }
+
+        if (ready) {
+            mLoginTask = new LoginTask(this, mLoginHandler, mUrl, mMode, params);
+            AsyncTaskUtils.execute(mLoginTask);
+        } else {
+            Toast.makeText(this, getString(R.string.hockeyapp_login_missing_credentials_toast), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public String md5(final String s) {
+        try {
+            // Create MD5 Hash
+            MessageDigest digest = java.security.MessageDigest.getInstance("MD5");
+            digest.update(s.getBytes());
+            byte messageDigest[] = digest.digest();
+
+            // Create Hex String
+            StringBuilder hexString = new StringBuilder();
+            for (byte aMessageDigest : messageDigest) {
+                String h = Integer.toHexString(0xFF & aMessageDigest);
+                while (h.length() < 2)
+                    h = "0" + h;
+                hexString.append(h);
+            }
+            return hexString.toString();
+
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
 }

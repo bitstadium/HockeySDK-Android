@@ -61,211 +61,204 @@ import java.util.UUID;
  * @author Thomas Dohmke
  **/
 public class DownloadFileTask extends AsyncTask<Void, Integer, Long> {
-  protected static final int MAX_REDIRECTS = 6;
+    protected static final int MAX_REDIRECTS = 6;
 
-  protected Context context;
-  protected DownloadFileListener notifier;
-  protected String urlString;
-  protected String filename;
-  protected String filePath;
-  protected ProgressDialog progressDialog;
-  private String downloadErrorMessage;
+    protected Context mContext;
+    protected DownloadFileListener mNotifier;
+    protected String mUrlString;
+    protected String mFilename;
+    protected String mFilePath;
+    protected ProgressDialog mProgressDialog;
+    private String mDownloadErrorMessage;
 
-  public DownloadFileTask(Context context, String urlString, DownloadFileListener notifier) {
-    this.context = context;
-    this.urlString = urlString;
-    this.filename = UUID.randomUUID() + ".apk";
-    this.filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Download";
-    this.notifier = notifier;
-    this.downloadErrorMessage = null;
-  }
-
-  public void attach(Context context) {
-    this.context = context;
-  }
-
-  public void detach() {
-    context = null;
-    progressDialog = null;
-  }
-
-  @Override
-  protected Long doInBackground(Void... args) {
-    InputStream input = null;
-    OutputStream output = null;
-
-    try {
-      URL url = new URL(getURLString());
-      URLConnection connection = createConnection(url, MAX_REDIRECTS);
-      connection.connect();
-
-      int lengthOfFile = connection.getContentLength();
-      String contentType = connection.getContentType();
-
-      if (contentType != null && contentType.contains("text")) {
-        // This is not the expected APK file. Maybe the redirect could not be resolved.
-        downloadErrorMessage = "The requested download does not appear to be a file.";
-        return 0L;
-      }
-
-      File dir = new File(this.filePath);
-      boolean result = dir.mkdirs();
-      if (!result && !dir.exists()) {
-        throw new IOException("Could not create the dir(s):" + dir.getAbsolutePath());
-      }
-      File file = new File(dir, this.filename);
-
-      input = new BufferedInputStream(connection.getInputStream());
-      output = new FileOutputStream(file);
-
-      byte data[] = new byte[1024];
-      int count;
-      long total = 0;
-      while ((count = input.read(data)) != -1) {
-        total += count;
-        publishProgress(Math.round(total * 100.0f / lengthOfFile));
-        output.write(data, 0, count);
-      }
-
-      output.flush();
-
-      return total;
+    public DownloadFileTask(Context context, String urlString, DownloadFileListener notifier) {
+        this.mContext = context;
+        this.mUrlString = urlString;
+        this.mFilename = UUID.randomUUID() + ".apk";
+        this.mFilePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Download";
+        this.mNotifier = notifier;
+        this.mDownloadErrorMessage = null;
     }
-    catch (Exception e) {
-      e.printStackTrace();
-      return 0L;
-    } finally {
-      try {
-        if (output != null) {
-          output.close();
+
+    public void attach(Context context) {
+        this.mContext = context;
+    }
+
+    public void detach() {
+        mContext = null;
+        mProgressDialog = null;
+    }
+
+    @Override
+    protected Long doInBackground(Void... args) {
+        InputStream input = null;
+        OutputStream output = null;
+
+        try {
+            URL url = new URL(getURLString());
+            URLConnection connection = createConnection(url, MAX_REDIRECTS);
+            connection.connect();
+
+            int lengthOfFile = connection.getContentLength();
+            String contentType = connection.getContentType();
+
+            if (contentType != null && contentType.contains("text")) {
+                // This is not the expected APK file. Maybe the redirect could not be resolved.
+                mDownloadErrorMessage = "The requested download does not appear to be a file.";
+                return 0L;
+            }
+
+            File dir = new File(this.mFilePath);
+            boolean result = dir.mkdirs();
+            if (!result && !dir.exists()) {
+                throw new IOException("Could not create the dir(s):" + dir.getAbsolutePath());
+            }
+            File file = new File(dir, this.mFilename);
+
+            input = new BufferedInputStream(connection.getInputStream());
+            output = new FileOutputStream(file);
+
+            byte data[] = new byte[1024];
+            int count;
+            long total = 0;
+            while ((count = input.read(data)) != -1) {
+                total += count;
+                publishProgress(Math.round(total * 100.0f / lengthOfFile));
+                output.write(data, 0, count);
+            }
+
+            output.flush();
+
+            return total;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return 0L;
+        } finally {
+            try {
+                if (output != null) {
+                    output.close();
+                }
+                if (input != null) {
+                    input.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-        if (input != null) {
-          input.close();
+    }
+
+    protected void setConnectionProperties(HttpURLConnection connection) {
+        connection.addRequestProperty("User-Agent", "HockeySDK/Android");
+        connection.setInstanceFollowRedirects(true);
+
+        // connection bug workaround for SDK<=2.x
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.GINGERBREAD) {
+            connection.setRequestProperty("connection", "close");
         }
-      }
-      catch (IOException e) {
-        e.printStackTrace();
-      }
     }
-  }
 
-  protected void setConnectionProperties(HttpURLConnection connection) {
-    connection.addRequestProperty("User-Agent", "HockeySDK/Android");
-    connection.setInstanceFollowRedirects(true);
+    /**
+     * Recursive method for resolving redirects. Resolves at most MAX_REDIRECTS times.
+     *
+     * @param url                a URL
+     * @param remainingRedirects loop counter
+     * @return instance of URLConnection
+     * @throws IOException if connection fails
+     */
+    protected URLConnection createConnection(URL url, int remainingRedirects) throws IOException {
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        setConnectionProperties(connection);
 
-    // connection bug workaround for SDK<=2.x
-    if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.GINGERBREAD) {
-      connection.setRequestProperty("connection", "close");
-    }
-  }
+        int code = connection.getResponseCode();
+        if (code == HttpURLConnection.HTTP_MOVED_PERM ||
+                code == HttpURLConnection.HTTP_MOVED_TEMP ||
+                code == HttpURLConnection.HTTP_SEE_OTHER) {
 
-  /**
-   * Recursive method for resolving redirects. Resolves at most MAX_REDIRECTS times.
-   *
-   * @param url                a URL
-   * @param remainingRedirects loop counter
-   * @return instance of URLConnection
-   * @throws IOException if connection fails
-   */
-  protected URLConnection createConnection(URL url, int remainingRedirects) throws IOException {
-    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-    setConnectionProperties(connection);
+            if (remainingRedirects == 0) {
+                // Stop redirecting.
+                return connection;
+            }
 
-    int code = connection.getResponseCode();
-    if (code == HttpURLConnection.HTTP_MOVED_PERM ||
-      code == HttpURLConnection.HTTP_MOVED_TEMP ||
-      code == HttpURLConnection.HTTP_SEE_OTHER) {
-
-      if (remainingRedirects == 0) {
-        // Stop redirecting.
+            URL movedUrl = new URL(connection.getHeaderField("Location"));
+            if (!url.getProtocol().equals(movedUrl.getProtocol())) {
+                // HttpURLConnection doesn't handle redirects across schemes, so handle it manually, see
+                // http://code.google.com/p/android/issues/detail?id=41651
+                connection.disconnect();
+                return createConnection(movedUrl, --remainingRedirects); // Recursion
+            }
+        }
         return connection;
-      }
-
-      URL movedUrl = new URL(connection.getHeaderField("Location"));
-      if (!url.getProtocol().equals(movedUrl.getProtocol())) {
-        // HttpURLConnection doesn't handle redirects across schemes, so handle it manually, see
-        // http://code.google.com/p/android/issues/detail?id=41651
-        connection.disconnect();
-        return createConnection(movedUrl, --remainingRedirects); // Recursion
-      }
-    }
-    return connection;
-  }
-
-  @Override
-  protected void onProgressUpdate(Integer... args) {
-    try {
-      if (progressDialog == null) {
-        progressDialog = new ProgressDialog(context);
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        progressDialog.setMessage("Loading...");
-        progressDialog.setCancelable(false);
-        progressDialog.show();
-      }
-      progressDialog.setProgress(args[0]);
-    }
-    catch (Exception e) {
-      // Ignore all exceptions
-    }
-  }
-
-  @Override
-  protected void onPostExecute(Long result) {
-    if (progressDialog != null) {
-      try {
-        progressDialog.dismiss();
-      }
-      catch (Exception e) {
-        // Ignore all exceptions
-      }
     }
 
-    if (result > 0L) {
-      notifier.downloadSuccessful(this);
-
-      Intent intent = new Intent(Intent.ACTION_VIEW);
-      intent.setDataAndType(Uri.fromFile(new File(this.filePath, this.filename)),
-        "application/vnd.android.package-archive");
-      intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-      context.startActivity(intent);
-    }
-    else {
-      try {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle(R.string.hockeyapp_download_failed_dialog_title);
-
-        String message;
-        if (downloadErrorMessage == null) {
-          message = context.getString(R.string.hockeyapp_download_failed_dialog_message);
+    @Override
+    protected void onProgressUpdate(Integer... args) {
+        try {
+            if (mProgressDialog == null) {
+                mProgressDialog = new ProgressDialog(mContext);
+                mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                mProgressDialog.setMessage("Loading...");
+                mProgressDialog.setCancelable(false);
+                mProgressDialog.show();
+            }
+            mProgressDialog.setProgress(args[0]);
+        } catch (Exception e) {
+            // Ignore all exceptions
         }
-        else {
-          message = downloadErrorMessage;
-        }
-        builder.setMessage(message);
-
-        builder.setNegativeButton(R.string.hockeyapp_download_failed_dialog_negative_button, new
-          DialogInterface.OnClickListener() {
-          public void onClick(DialogInterface dialog, int which) {
-            notifier.downloadFailed(DownloadFileTask.this, false);
-          }
-        });
-
-        builder.setPositiveButton(R.string.hockeyapp_download_failed_dialog_positive_button, new
-          DialogInterface.OnClickListener() {
-          public void onClick(DialogInterface dialog, int which) {
-            notifier.downloadFailed(DownloadFileTask.this, true);
-          }
-        });
-
-        builder.create().show();
-      }
-      catch (Exception e) {
-        // Ignore all exceptions
-      }
     }
-  }
 
-  protected String getURLString() {
-    return urlString + "&type=apk";
-  }
+    @Override
+    protected void onPostExecute(Long result) {
+        if (mProgressDialog != null) {
+            try {
+                mProgressDialog.dismiss();
+            } catch (Exception e) {
+                // Ignore all exceptions
+            }
+        }
+
+        if (result > 0L) {
+            mNotifier.downloadSuccessful(this);
+
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setDataAndType(Uri.fromFile(new File(this.mFilePath, this.mFilename)),
+                    "application/vnd.android.package-archive");
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            mContext.startActivity(intent);
+        } else {
+            try {
+                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                builder.setTitle(R.string.hockeyapp_download_failed_dialog_title);
+
+                String message;
+                if (mDownloadErrorMessage == null) {
+                    message = mContext.getString(R.string.hockeyapp_download_failed_dialog_message);
+                } else {
+                    message = mDownloadErrorMessage;
+                }
+                builder.setMessage(message);
+
+                builder.setNegativeButton(R.string.hockeyapp_download_failed_dialog_negative_button, new
+                        DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                mNotifier.downloadFailed(DownloadFileTask.this, false);
+                            }
+                        });
+
+                builder.setPositiveButton(R.string.hockeyapp_download_failed_dialog_positive_button, new
+                        DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                mNotifier.downloadFailed(DownloadFileTask.this, true);
+                            }
+                        });
+
+                builder.create().show();
+            } catch (Exception e) {
+                // Ignore all exceptions
+            }
+        }
+    }
+
+    protected String getURLString() {
+        return mUrlString + "&type=apk";
+    }
 }
