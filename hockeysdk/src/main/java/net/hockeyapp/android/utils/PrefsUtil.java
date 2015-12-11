@@ -143,7 +143,7 @@ public class PrefsUtil {
             return null;
         }
 
-        return mNameEmailSubjectPrefs.getString(Util.PREFS _KEY_NAME_EMAIL_SUBJECT, null);
+        return mNameEmailSubjectPrefs.getString(Util.PREFS_KEY_NAME_EMAIL_SUBJECT, null);
     }
 
 }
