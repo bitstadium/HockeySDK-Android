@@ -42,12 +42,12 @@ public class Tracking {
     /**
      * Key for shared preferences to store a start time.
      */
-    private static final String START_TIME_KEY = "startTime";
+    protected static final String START_TIME_KEY = "startTime";
 
     /**
      * Key for shared preferences to store a usage time.
      */
-    private static final String USAGE_TIME_KEY = "usageTime";
+    protected static final String USAGE_TIME_KEY = "usageTime";
 
     /**
      * Starts tracking of the usage time for the given activity. The current
@@ -134,7 +134,7 @@ public class Tracking {
     /**
      * Helper method to return an instance of SharedPreferences.
      */
-    private static SharedPreferences getPreferences(Context context) {
+    protected static SharedPreferences getPreferences(Context context) {
         return context.getSharedPreferences("HockeyApp", Context.MODE_PRIVATE);
     }
 }
