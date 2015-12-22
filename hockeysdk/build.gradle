@@ -13,6 +13,7 @@ android {
         targetSdkVersion 23
         versionCode 4
         versionName hockeySdkVersion
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
