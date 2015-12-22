@@ -92,9 +92,15 @@ public class Tracking {
 
         if (start > 0) {
             long duration = now - start;
+            long newSum = sum + duration;
+
+            if (duration <= 0 || newSum < 0) {
+                // Don't add negative values or values which cause overflow to tracking
+                return;
+            }
 
             SharedPreferences.Editor editor = preferences.edit();
-            editor.putLong(USAGE_TIME_KEY + Constants.APP_VERSION, sum + duration);
+            editor.putLong(USAGE_TIME_KEY + Constants.APP_VERSION, newSum);
             editor.apply();
         }
     }
@@ -112,6 +118,10 @@ public class Tracking {
 
         SharedPreferences preferences = getPreferences(context);
         long sum = preferences.getLong(USAGE_TIME_KEY + Constants.APP_VERSION, 0);
+        if (sum < 0) {
+            preferences.edit().remove(USAGE_TIME_KEY + Constants.APP_VERSION).apply();
+            return 0;
+        }
         return sum / 1000;
     }
 
