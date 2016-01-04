@@ -42,12 +42,12 @@ public class Tracking {
     /**
      * Key for shared preferences to store a start time.
      */
-    private static final String START_TIME_KEY = "startTime";
+    protected static final String START_TIME_KEY = "startTime";
 
     /**
      * Key for shared preferences to store a usage time.
      */
-    private static final String USAGE_TIME_KEY = "usageTime";
+    protected static final String USAGE_TIME_KEY = "usageTime";
 
     /**
      * Starts tracking of the usage time for the given activity. The current
@@ -92,9 +92,15 @@ public class Tracking {
 
         if (start > 0) {
             long duration = now - start;
+            long newSum = sum + duration;
+
+            if (duration <= 0 || newSum < 0) {
+                // Don't add negative values or values which cause overflow to tracking
+                return;
+            }
 
             SharedPreferences.Editor editor = preferences.edit();
-            editor.putLong(USAGE_TIME_KEY + Constants.APP_VERSION, sum + duration);
+            editor.putLong(USAGE_TIME_KEY + Constants.APP_VERSION, newSum);
             editor.apply();
         }
     }
@@ -112,6 +118,10 @@ public class Tracking {
 
         SharedPreferences preferences = getPreferences(context);
         long sum = preferences.getLong(USAGE_TIME_KEY + Constants.APP_VERSION, 0);
+        if (sum < 0) {
+            preferences.edit().remove(USAGE_TIME_KEY + Constants.APP_VERSION).apply();
+            return 0;
+        }
         return sum / 1000;
     }
 
@@ -134,7 +144,7 @@ public class Tracking {
     /**
      * Helper method to return an instance of SharedPreferences.
      */
-    private static SharedPreferences getPreferences(Context context) {
+    protected static SharedPreferences getPreferences(Context context) {
         return context.getSharedPreferences("HockeyApp", Context.MODE_PRIVATE);
     }
 }
