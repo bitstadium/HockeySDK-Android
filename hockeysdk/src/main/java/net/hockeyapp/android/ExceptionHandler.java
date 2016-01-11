@@ -1,5 +1,6 @@
 package net.hockeyapp.android;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import java.io.BufferedWriter;
@@ -167,6 +168,9 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
     }
 
     private static void writeValueToFile(String value, String filename) throws IOException {
+        if (TextUtils.isEmpty(value)) {
+            return;
+        }
         BufferedWriter writer = null;
         try {
             String path = Constants.FILES_PATH + "/" + filename;
