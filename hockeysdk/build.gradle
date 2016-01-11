@@ -61,7 +61,7 @@ dependencies {
     dependencies {
         compile fileTree(dir: 'libs', include: ['*.jar'])
         //Integration testing
-        androidTestCompile "com.android.support:support-annotations:$supporLibVersion"
+        androidTestCompile "com.android.support:support-annotations:$supportLibVersion"
         androidTestCompile 'com.android.support.test:runner:0.4.1'
         androidTestCompile 'com.android.support.test:rules:0.4.1'
 
