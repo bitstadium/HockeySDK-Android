@@ -67,10 +67,7 @@ public class Constants {
      * Name of this SDK.
      */
     public static final String SDK_NAME = "HockeySDK";
-    /**
-     * Version of this SDK.
-     */
-    public static final String SDK_VERSION = "3.7.0-b.1";
+   
     /**
      * Permissions request for the update task.
      */
