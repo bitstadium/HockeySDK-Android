@@ -11,12 +11,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
 import net.hockeyapp.android.BuildConfig;
 import net.hockeyapp.android.Constants;
+import net.hockeyapp.android.utils.HockeyLog;
 import net.hockeyapp.android.utils.Util;
 
 import java.lang.reflect.Method;
@@ -32,7 +32,7 @@ import java.util.UUID;
  **/
 class TelemetryContext {
 
-  private static final String TAG = "TelemetryContext";
+  private static final String TAG = "HockeyApp Metrics";
 
   /**
    * Key needed to access the shared preferences of the SDK.
@@ -178,7 +178,7 @@ class TelemetryContext {
       version = String.format("%s (%S)", info.versionName, appBuild);
     }
     catch (PackageManager.NameNotFoundException e) {
-      Log.d(Constants.TAG, "Could not collect application context");
+      HockeyLog.log(Constants.TAG, "Could not collect application context");
     } finally {
       setAppVersion(version);
     }
@@ -301,7 +301,7 @@ class TelemetryContext {
           wm.getDefaultDisplay().getSize(size);
           width = size.x;
           height = size.y;
-          Log.d(TAG, "Couldn't determine screen resolution: " + ex.toString());
+          HockeyLog.log(TAG, "Couldn't determine screen resolution: " + ex.toString());
         }
 
       }
@@ -332,12 +332,12 @@ class TelemetryContext {
           sdkVersionString = bundle.getString("net.hockeyapp.android.sdkVersion");
         }
         else {
-          Log.d(TAG, "Could not load hockey sdk version from gradle.properties or manifest");
+          HockeyLog.log(TAG, "Could not load hockey sdk version from gradle.properties or manifest");
         }
       }
       catch (PackageManager.NameNotFoundException exception) {
-        Log.d(TAG, "Error loading Hockey SDK version from manifest");
-        Log.v(TAG, exception.toString());
+        HockeyLog.log(TAG, "Error loading Hockey SDK version from manifest");
+        HockeyLog.log(TAG, exception.toString());
       }
     }
     setSdkVersion("android:" + sdkVersionString);

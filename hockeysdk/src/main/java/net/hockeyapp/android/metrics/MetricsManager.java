@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import net.hockeyapp.android.utils.AsyncTaskUtils;
+import net.hockeyapp.android.utils.HockeyLog;
 import net.hockeyapp.android.utils.Util;
 
 import java.lang.ref.WeakReference;
@@ -64,7 +65,7 @@ public class MetricsManager implements Application.ActivityLifecycleCallbacks {
      * The timestamp of the last activity
      */
     protected static final AtomicLong lastBackground = new AtomicLong(getTime());
-    private static final String TAG = "MetricsManager";
+    private static final String TAG = "HockeyApp MetricsManager";
     /**
      * Background time of the app after which a session gets renewed (in milliseconds).
      */
@@ -221,7 +222,7 @@ public class MetricsManager implements Application.ActivityLifecycleCallbacks {
      */
     public static void setSessionTrackingDisabled(Boolean disabled) {
         if (instance == null) {
-            Log.d(TAG, "MetricsManager hasn't been registered");
+            Log.w(TAG, "MetricsManager hasn't been registered. No Metrics will be collected!");
         } else {
             synchronized (LOCK) {
                 if (Util.sessionTrackingSupported()) {
@@ -346,10 +347,10 @@ public class MetricsManager implements Application.ActivityLifecycleCallbacks {
         int count = this.activityCount.getAndIncrement();
         if (count == 0) {
             if (sessionTrackingEnabled()) {
-                Log.d(TAG, "Starting & tracking session");
+                HockeyLog.log(TAG, "Starting & tracking session");
                 renewSession();
             } else {
-                Log.d(TAG, "Session management disabled by the developer");
+                HockeyLog.log(TAG, "Session management disabled by the developer");
             }
         } else {
             //we should already have a session now
@@ -358,10 +359,10 @@ public class MetricsManager implements Application.ActivityLifecycleCallbacks {
             long then = this.lastBackground.getAndSet(getTime());
             //TODO save session intervall in configuration file?
             boolean shouldRenew = ((now - then) >= SESSION_RENEWAL_INTERVAL);
-            Log.d(TAG, "Checking if we have to renew a session, time difference is: " + (now - then));
+            HockeyLog.log(TAG, "Checking if we have to renew a session, time difference is: " + (now - then));
 
             if (shouldRenew && sessionTrackingEnabled()) {
-                Log.d(TAG, "Renewing session");
+                HockeyLog.log(TAG, "Renewing session");
                 renewSession();
             }
         }

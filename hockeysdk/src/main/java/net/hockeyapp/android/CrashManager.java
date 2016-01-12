@@ -341,7 +341,7 @@ public class CrashManager {
             parameters.put("description", description);
             parameters.put("sdk", Constants.SDK_NAME);
             parameters.put("sdk_version", Util.getSdkVersionFromManifest(weakContext.get()));
-            Log.d(TAG, parameters.toString());
+            HockeyLog.log(TAG, parameters.toString());
 
                         successful = (responseCode == HttpURLConnection.HTTP_ACCEPTED || responseCode == HttpURLConnection.HTTP_CREATED);
 

@@ -1,7 +1,6 @@
 package net.hockeyapp.android.metrics;
 
-import android.util.Log;
-
+import net.hockeyapp.android.utils.HockeyLog;
 import net.hockeyapp.android.utils.Util;
 
 import java.io.IOException;
@@ -20,7 +19,7 @@ import java.util.Map;
  **/
 class Channel {
 
-    private static final String TAG = "Channel";
+    private static final String TAG = "HockeyApp Metrics Channel";
 
     /**
      *  Number of queue items which will trigger a flush (testing).
@@ -73,7 +72,7 @@ class Channel {
                     synchronize();
                 }
             } else {
-                Log.d(TAG, "Unable to add item to queue");
+                HockeyLog.log(TAG, "Unable to add item to queue");
             }
         }
     }
@@ -138,9 +137,9 @@ class Channel {
             // log to queue
             String serializedEnvelope = serializeEnvelope(envelope);
             enqueue(serializedEnvelope);
-            Log.i(TAG, "enqueued telemetry: " + envelope.getName());
+            HockeyLog.log(TAG, "enqueued telemetry: " + envelope.getName());
         } else {
-            Log.w(TAG, "telemetry not enqueued, must be of type ITelemetry");
+            HockeyLog.log(TAG, "telemetry not enqueued, must be of type ITelemetry");
         }
     }
 
@@ -156,10 +155,10 @@ class Channel {
                 envelope.serialize(stringWriter);
                 return stringWriter.toString();
             }
-            Log.d(TAG, "Envelop wasn't empty but failed to serialize anything, returning null");
+            HockeyLog.log(TAG, "Envelope wasn't empty but failed to serialize anything, returning null");
             return null;
         } catch (IOException e) {
-            Log.d(TAG, "Failed to save data with exception: " + e.toString());
+            HockeyLog.log(TAG, "Failed to save data with exception: " + e.toString());
             return null;
         }
     }
