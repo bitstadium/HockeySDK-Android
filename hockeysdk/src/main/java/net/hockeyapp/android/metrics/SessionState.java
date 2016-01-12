@@ -1,6 +1,3 @@
-/*
- * Generated from SessionStateData.bond (https://github.com/Microsoft/bond)
-*/
 package net.hockeyapp.android.metrics;
 /**
  * Enum SessionState.

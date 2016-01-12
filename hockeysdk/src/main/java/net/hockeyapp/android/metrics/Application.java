@@ -1,6 +1,3 @@
-/*
- * Generated from ContextTagKeys.bond (https://github.com/Microsoft/bond)
-*/
 package net.hockeyapp.android.metrics;
 
 import java.io.IOException;

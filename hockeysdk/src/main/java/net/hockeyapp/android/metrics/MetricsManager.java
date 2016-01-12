@@ -21,8 +21,7 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * <h3>Description</h3>
  * <p>
- * The MetricsManager provides functionality to gather telemetry information about your users,
- * sessions, and – eventually – events and pageviews.
+ * The MetricsManager provides functionality to gather metrics about your users and session.
  * </p>
  * <h3>License</h3>
  * <p/>
@@ -112,7 +111,7 @@ public class MetricsManager implements Application.ActivityLifecycleCallbacks {
      * Contains params for unit testing/mocking
      *
      * @param context          the context that will be used for the SDK
-     * @param telemetryContext telemetry context, contains meta-information necessary for telemetry
+     * @param telemetryContext telemetry context, contains meta-information necessary for metrics
      *                         feature of the SDK
      * @param sender           usually null, included for unit testing/dependency injection
      * @param persistence,     included for unit testing/dependency injection
@@ -145,7 +144,7 @@ public class MetricsManager implements Application.ActivityLifecycleCallbacks {
     }
 
     /**
-     * Register a new MetricsManager and collect telemetry information about user and session.
+     * Register a new MetricsManager and collect metrics about user and session.
      * HockeyApp App Identifier is read from configuration values in AndroidManifest.xml
      *
      * @param context     The context to use. Usually your Activity object.
@@ -158,7 +157,7 @@ public class MetricsManager implements Application.ActivityLifecycleCallbacks {
     }
 
     /**
-     * Register a new MetricsManager and collect telemetry information about user and session.
+     * Register a new MetricsManager and collect metrics about user and session.
      *
      * @param application   the Application object which is required to get application lifecycle
      *                      callbacks
@@ -170,7 +169,7 @@ public class MetricsManager implements Application.ActivityLifecycleCallbacks {
     }
 
     /**
-     * Register a new TelemtryManager and collect telemetry information about user and session
+     * Register a new MetricsManager and collect metrics information about user and session
      * Intended to be used for unit testing only, shouldn't be visible outside the SDK   *
      *
      * @param context       The context to use. Usually your Activity object.
@@ -228,7 +227,7 @@ public class MetricsManager implements Application.ActivityLifecycleCallbacks {
                 if (Util.sessionTrackingSupported()) {
                     instance.sessionTrackingDisabled = disabled;
                     //TODO persist this setting so the dev doesn't have to take care of this
-                    //between launches
+                    //between launches?
                     if (!disabled) {
                         getApplication().registerActivityLifecycleCallbacks(instance);
                     }
@@ -241,9 +240,9 @@ public class MetricsManager implements Application.ActivityLifecycleCallbacks {
     }
 
     /**
-     * Set the server url if you want telemetry to be sent to your own server
+     * Set the server url if you want metrics to be sent to a custom server
      *
-     * @param serverURL the URL of your custom telemetry server as a String
+     * @param serverURL the URL of your custom metrics server as a String
      */
     public static void setCustomServerURL(String serverURL) {
         if (sender != null) {
