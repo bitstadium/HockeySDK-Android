@@ -3,9 +3,10 @@ package net.hockeyapp.android.views;
 import android.content.Context;
 import android.net.Uri;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+
+import net.hockeyapp.android.utils.HockeyLog;
 
 import java.util.ArrayList;
 
@@ -75,7 +76,7 @@ public class AttachmentListView extends ViewGroup {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         if ((MeasureSpec.getMode(widthMeasureSpec) == MeasureSpec.UNSPECIFIED)) {
-            Log.d(TAG, "Width is unspecified");
+            HockeyLog.log(TAG, "Width is unspecified");
             //throw new AssertionError();
         }
 

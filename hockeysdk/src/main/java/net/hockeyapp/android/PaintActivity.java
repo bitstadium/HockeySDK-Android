@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import net.hockeyapp.android.utils.HockeyLog;
 import net.hockeyapp.android.views.PaintView;
 
 import java.io.File;
@@ -64,7 +65,7 @@ public class PaintActivity extends Activity {
 
         if (currentOrientation != desiredOrientation) {
       /* Activity will be destroyed again.. skip the following expensive operations. */
-            Log.d(Constants.TAG, "Image loading skipped because activity will be destroyed for orientation change.");
+            HockeyLog.log(Constants.TAG, "Image loading skipped because activity will be destroyed for orientation change.");
             return;
         }
 

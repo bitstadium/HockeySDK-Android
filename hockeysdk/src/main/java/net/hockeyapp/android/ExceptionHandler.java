@@ -3,6 +3,8 @@ package net.hockeyapp.android;
 import android.text.TextUtils;
 import android.util.Log;
 
+import net.hockeyapp.android.utils.HockeyLog;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -102,7 +104,7 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
             // Create filename from a random uuid
             String filename = UUID.randomUUID().toString();
             String path = Constants.FILES_PATH + "/" + filename + ".stacktrace";
-            Log.d(Constants.TAG, "Writing unhandled exception to: " + path);
+            HockeyLog.log(Constants.TAG, "Writing unhandled exception to: " + path);
 
             // Write the stacktrace to disk
             writer = new BufferedWriter(new FileWriter(path));
