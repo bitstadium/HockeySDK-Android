@@ -25,7 +25,7 @@ public class TelemetryManagerTests extends InstrumentationTestCase {
         Persistence mockPersistence = mock(PublicPersistence.class);
         Channel mockChannel = mock(PublicChannel.class);
         Sender mockSender = mock(PublicSender.class);
-        TelemetryManager sut = new TelemetryManager(getInstrumentation().getContext(),
+        MetricsManager sut = new MetricsManager(getInstrumentation().getContext(),
                 mockTelemetryContext, mockSender, mockPersistence, mockChannel);
         assertNotNull(sut);
         assertNotNull(sut.getSender());
@@ -39,12 +39,12 @@ public class TelemetryManagerTests extends InstrumentationTestCase {
         Sender mockSender = mock(PublicSender.class);
         Application mockApplication = mock(Application.class);
 
-        TelemetryManager.register(getInstrumentation().getContext(), mockApplication, "12345678901234567890123456789032",
+        MetricsManager.register(getInstrumentation().getContext(), mockApplication, "12345678901234567890123456789032",
                 mockSender, mockPersistence, mockChannel);
 
-        assertNotNull(TelemetryManager.getSender());
-        assertNotNull(TelemetryManager.getChannel());
-        assertNotNull(TelemetryManager.getSender().getPersistence());
+        assertNotNull(MetricsManager.getSender());
+        assertNotNull(MetricsManager.getChannel());
+        assertNotNull(MetricsManager.getSender().getPersistence());
     }
 
 }
