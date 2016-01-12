@@ -128,7 +128,7 @@ class Channel {
     /**
      * Create an envelope with the given object as its base data
      *
-     * @param data The telemetry we want to wrap inside an Enevelope and send to the server
+     * @param data The telemetry we want to wrap inside an Envelope and send to the server
      * @return the envelope that includes the telemetry data
      */
     protected Envelope createEnvelope(Data<Domain> data) {
