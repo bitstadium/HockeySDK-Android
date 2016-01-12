@@ -7,10 +7,10 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import net.hockeyapp.android.objects.CrashManagerUserInput;
 import net.hockeyapp.android.objects.CrashMetaData;
+import net.hockeyapp.android.utils.HockeyLog;
 import net.hockeyapp.android.utils.HttpURLConnectionBuilder;
 import net.hockeyapp.android.utils.Util;
 
@@ -280,7 +280,7 @@ public class CrashManager {
         Boolean successful = false;
 
         if ((list != null) && (list.length > 0)) {
-            Log.d(Constants.TAG, "Found " + list.length + " stacktrace(s).");
+            HockeyLog.log(Constants.TAG, "Found " + list.length + " stacktrace(s).");
 
             for (int index = 0; index < list.length; index++) {
                 HttpURLConnection urlConnection = null;
@@ -291,7 +291,7 @@ public class CrashManager {
                     if (stacktrace.length() > 0) {
                         // Transmit stack trace with POST request
 
-                        Log.d(Constants.TAG, "Transmitting crash data: \n" + stacktrace);
+                        HockeyLog.log(Constants.TAG, "Transmitting crash data: \n" + stacktrace);
 
                         // Retrieve user ID and contact information if given
                         String userID = contentsOfFile(weakContext, filename.replace(".stacktrace", ".user"));
@@ -345,7 +345,7 @@ public class CrashManager {
                         urlConnection.disconnect();
                     }
                     if (successful) {
-                        Log.d(Constants.TAG, "Transmission succeeded");
+                        HockeyLog.log(Constants.TAG, "Transmission succeeded");
                         deleteStackTrace(weakContext, list[index]);
 
                         if (listener != null) {
@@ -353,7 +353,7 @@ public class CrashManager {
                             deleteRetryCounter(weakContext, list[index], listener.getMaxRetryAttempts());
                         }
                     } else {
-                        Log.d(Constants.TAG, "Transmission failed, will retry on next register() call");
+                        HockeyLog.log(Constants.TAG, "Transmission failed, will retry on next register() call");
                         if (listener != null) {
                             listener.onCrashesNotSent();
                             updateRetryCounter(weakContext, list[index], listener.getMaxRetryAttempts());
@@ -373,13 +373,13 @@ public class CrashManager {
         String[] list = searchForStackTraces();
 
         if ((list != null) && (list.length > 0)) {
-            Log.d(Constants.TAG, "Found " + list.length + " stacktrace(s).");
+            HockeyLog.log(Constants.TAG, "Found " + list.length + " stacktrace(s).");
 
             for (int index = 0; index < list.length; index++) {
                 try {
                     Context context = null;
                     if (weakContext != null) {
-                        Log.d(Constants.TAG, "Delete stacktrace " + list[index] + ".");
+                        HockeyLog.log(Constants.TAG, "Delete stacktrace " + list[index] + ".");
                         deleteStackTrace(weakContext, list[index]);
 
                         context = weakContext.get();
@@ -581,7 +581,7 @@ public class CrashManager {
             // Get current handler
             UncaughtExceptionHandler currentHandler = Thread.getDefaultUncaughtExceptionHandler();
             if (currentHandler != null) {
-                Log.d(Constants.TAG, "Current handler class = " + currentHandler.getClass().getName());
+                HockeyLog.log(Constants.TAG, "Current handler class = " + currentHandler.getClass().getName());
             }
 
             // Update listener if already registered, otherwise set new handler
@@ -591,7 +591,7 @@ public class CrashManager {
                 Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(currentHandler, listener, ignoreDefaultHandler));
             }
         } else {
-            Log.d(Constants.TAG, "Exception handler not set because version or package is null.");
+            HockeyLog.log(Constants.TAG, "Exception handler not set because version or package is null.");
         }
     }
 
@@ -746,7 +746,7 @@ public class CrashManager {
      */
     private static String[] searchForStackTraces() {
         if (Constants.FILES_PATH != null) {
-            Log.d(Constants.TAG, "Looking for exceptions in: " + Constants.FILES_PATH);
+            HockeyLog.log(Constants.TAG, "Looking for exceptions in: " + Constants.FILES_PATH);
 
             // Try to create the files folder if it doesn't exist
             File dir = new File(Constants.FILES_PATH + "/");
@@ -763,7 +763,7 @@ public class CrashManager {
             };
             return dir.list(filter);
         } else {
-            Log.d(Constants.TAG, "Can't search for exception as file path is null.");
+            HockeyLog.log(Constants.TAG, "Can't search for exception as file path is null.");
             return null;
         }
     }
