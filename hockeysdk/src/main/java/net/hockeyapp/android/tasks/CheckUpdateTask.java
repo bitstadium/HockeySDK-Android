@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.provider.Settings;
 
+import net.hockeyapp.android.BuildConfig;
 import net.hockeyapp.android.Constants;
 import net.hockeyapp.android.Tracking;
 import net.hockeyapp.android.UpdateManagerListener;
@@ -232,7 +233,7 @@ public class CheckUpdateTask extends AsyncTask<Void, String, JSONArray> {
         builder.append("&oem=" + encodeParam(Constants.PHONE_MANUFACTURER));
         builder.append("&app_version=" + encodeParam(Constants.APP_VERSION));
         builder.append("&sdk=" + encodeParam(Constants.SDK_NAME));
-        builder.append("&sdk_version=" + encodeParam(Constants.SDK_VERSION));
+        builder.append("&sdk_version=" + encodeParam(BuildConfig.VERSION_NAME));
         builder.append("&lang=" + encodeParam(Locale.getDefault().getLanguage()));
         builder.append("&usage_time=" + usageTime);
 

@@ -326,7 +326,7 @@ public class CrashManager {
                         parameters.put("contact", contact);
                         parameters.put("description", description);
                         parameters.put("sdk", Constants.SDK_NAME);
-                        parameters.put("sdk_version", Constants.SDK_VERSION);
+                        parameters.put("sdk_version", BuildConfig.VERSION_NAME);
 
                         urlConnection = new HttpURLConnectionBuilder(getURLString())
                                 .setRequestMethod("POST")
