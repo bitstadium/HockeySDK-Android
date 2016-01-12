@@ -404,19 +404,19 @@ public class Envelope implements
             prefix = ",";
         }
         
-//        if (!(this.os == null))
-//        {
-//            writer.write(prefix + "\"os\":");
-//            writer.write(JsonHelper.convert(this.os));
-//            prefix = ",";
-//        }
+        if (!(this.os == null))
+        {
+            writer.write(prefix + "\"os\":");
+            writer.write(JsonHelper.convert(this.os));
+            prefix = ",";
+        }
         
-//        if (!(this.osVer == null))
-//        {
-//            writer.write(prefix + "\"osVer\":");
-//            writer.write(JsonHelper.convert(this.osVer));
-//            prefix = ",";
-//        }
+        if (!(this.osVer == null))
+        {
+            writer.write(prefix + "\"osVer\":");
+            writer.write(JsonHelper.convert(this.osVer));
+            prefix = ",";
+        }
         
         if (!(this.appId == null))
         {
@@ -425,12 +425,12 @@ public class Envelope implements
             prefix = ",";
         }
         
-//        if (!(this.appVer == null))
-//        {
-//            writer.write(prefix + "\"appVer\":");
-//            writer.write(JsonHelper.convert(this.appVer));
-//            prefix = ",";
-//        }
+        if (!(this.appVer == null))
+        {
+            writer.write(prefix + "\"appVer\":");
+            writer.write(JsonHelper.convert(this.appVer));
+            prefix = ",";
+        }
         
         if (!(this.cV == null))
         {
