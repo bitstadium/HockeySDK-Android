@@ -1,9 +1,9 @@
 package net.hockeyapp.android.metrics;
+
 /**
  * Enum SessionState.
  */
-public enum SessionState
-{
+public enum SessionState {
     START(0), END(1);
 
     private final int value;

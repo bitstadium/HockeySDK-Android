@@ -20,31 +20,26 @@ import java.util.Map;
 class Channel {
 
     private static final String TAG = "HockeyApp Metrics Channel";
-
-    /**
-     *  Number of queue items which will trigger a flush (testing).
-     */
-    protected static int MAX_BATCH_COUNT = 1;
-
-    /**
-     *  Telemetry context used by the channel to create the payload.
-     */
-    protected TelemetryContext telemetryContext;
-
     /**
      * Synchronization LOCK
      */
     private static final Object LOCK = new Object();
-
     /**
-     * Persistence used for storing telemetry items before they get sent out.
+     * Number of queue items which will trigger a flush (testing).
      */
-    private Persistence persistence;
-
+    protected static int MAX_BATCH_COUNT = 1;
     /**
      * The linked queue for this queue.
      */
     protected final List<String> queue;
+    /**
+     * Telemetry context used by the channel to create the payload.
+     */
+    protected TelemetryContext telemetryContext;
+    /**
+     * Persistence used for storing telemetry items before they get sent out.
+     */
+    private Persistence persistence;
 
     /**
      * Instantiates a new INSTANCE of Channel
@@ -131,7 +126,7 @@ class Channel {
      * @param data the base object to record
      */
     public void log(Base data) {
-        if(data instanceof Data) {
+        if (data instanceof Data) {
             Envelope envelope = createEnvelope((Data<Domain>) data);
 
             // log to queue

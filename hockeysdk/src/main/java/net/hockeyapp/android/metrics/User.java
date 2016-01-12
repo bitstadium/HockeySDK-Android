@@ -9,8 +9,7 @@ import java.util.Map;
 /**
  * Data contract class User.
  */
-public class User
-      implements IJsonSerializable, Serializable {
+public class User implements IJsonSerializable, Serializable {
     /**
      * Backing field for property AccountAcquisitionDate.
      */

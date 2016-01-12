@@ -8,8 +8,7 @@ import java.util.Map;
 /**
  * Data contract class Session.
  */
-public class Session
-      implements IJsonSerializable, Serializable {
+public class Session implements IJsonSerializable, Serializable {
     /**
      * Backing field for property Id.
      */
