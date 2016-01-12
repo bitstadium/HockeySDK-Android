@@ -1,8 +1,6 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.novoda.bintray-release' // must be applied after your artifact generating plugin (eg. java / com.android.library)
 
-def hockeySdkVersion = "3.7.0-rc.1"
-
 def supportLibVersion = "23.1.1"
 android {
     compileSdkVersion 23
@@ -12,7 +10,7 @@ android {
         minSdkVersion 9
         targetSdkVersion 23
         versionCode 4
-        versionName hockeySdkVersion
+        versionName VERSION_NAME
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -28,7 +26,7 @@ publish {
     userOrg = 'hockeyapp'
     groupId = 'net.hockeyapp.android'
     artifactId = 'HockeySDK'
-    publishVersion = hockeySdkVersion
+    publishVersion = VERSION_NAME
     desc = 'HockeySDK-Android implements support for using HockeyApp in your Android application. The following features are currently supported:\n' +
             '\n' +
             'Collect crash reports: If your app crashes, a crash log is written to the device\'s storage. If the user starts the app again, he is asked to submit the crash report to HockeyApp. This works for both beta and live apps, i.e. those submitted to Google Play or other app stores! I\n' +
