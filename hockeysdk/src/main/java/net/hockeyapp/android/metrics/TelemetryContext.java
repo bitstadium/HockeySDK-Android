@@ -8,7 +8,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.os.Build;
-import android.os.Bundle;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.view.Display;
@@ -322,24 +321,7 @@ class TelemetryContext {
    * Sets the internal package context
    */
   protected void configInternalContext() {
-    String sdkVersionString = "";
-    if (this.context != null) {
-      try {
-        Bundle bundle = this.context.getPackageManager()
-          .getApplicationInfo(this.context.getPackageName(), PackageManager.GET_META_DATA)
-          .metaData;
-        if (bundle != null) {
-          sdkVersionString = bundle.getString("net.hockeyapp.android.sdkVersion");
-        }
-        else {
-          HockeyLog.log(TAG, "Could not load hockey sdk version from gradle.properties or manifest");
-        }
-      }
-      catch (PackageManager.NameNotFoundException exception) {
-        HockeyLog.log(TAG, "Error loading Hockey SDK version from manifest");
-        HockeyLog.log(TAG, exception.toString());
-      }
-    }
+    String sdkVersionString = BuildConfig.VERSION_NAME;
     setSdkVersion("android:" + sdkVersionString);
   }
 
