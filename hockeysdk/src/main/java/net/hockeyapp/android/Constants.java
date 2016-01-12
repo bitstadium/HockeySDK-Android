@@ -11,6 +11,8 @@ import android.os.Environment;
 import android.provider.Settings;
 import android.util.Log;
 
+import net.hockeyapp.android.utils.HockeyLog;
+
 import java.io.File;
 import java.security.MessageDigest;
 
@@ -67,10 +69,7 @@ public class Constants {
      * Name of this SDK.
      */
     public static final String SDK_NAME = "HockeySDK";
-    /**
-     * Version of this SDK.
-     */
-    public static final String SDK_VERSION = "3.7.0-b.1";
+   
     /**
      * Permissions request for the update task.
      */
@@ -136,7 +135,7 @@ public class Constants {
         File dir = new File(externalStorage.getAbsolutePath() + "/" + Constants.TAG);
         Boolean success = dir.mkdirs();
         if (!success) {
-            Log.d(TAG, "Couldn't create HockeyApp Storage dir");
+            HockeyLog.log("Couldn't create HockeyApp Storage dir");
         }
         return dir;
     }
