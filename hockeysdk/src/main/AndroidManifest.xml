@@ -16,10 +16,6 @@
         <activity android:name=".LoginActivity" />
         <activity android:name=".ExpiryInfoActivity" />
 
-        <meta-data
-            android:name="net.hockeyapp.android.sdkVersion"
-            android:value="${HOCKEY_MANIFEST_SDK_VERSION}"/>
-
     </application>
 
 </manifest>
