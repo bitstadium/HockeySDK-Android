@@ -8,7 +8,11 @@ import junit.framework.Assert;
 import java.io.File;
 import java.util.ArrayList;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 public class PersistenceTests extends InstrumentationTestCase {
 
@@ -24,12 +28,12 @@ public class PersistenceTests extends InstrumentationTestCase {
         mockSender.setPersistence(sut);
     }
 
-    public void testNewInstanceWasInitialisedCorrectly() {
+    public void testInstanceInitialisation() {
         Assert.assertNotNull(sut);
         Assert.assertNotNull(sut.servedFiles);
     }
 
-    public void testTelemetryDirIsGetsCreated (){
+    public void testTelemetryDirectoryGetsCreated() {
         File spy = spy(new File("/my/test/directory/"));
 
         sut = new PublicPersistence(getInstrumentation().getContext(), spy, null);
@@ -37,7 +41,7 @@ public class PersistenceTests extends InstrumentationTestCase {
         verify(spy).mkdirs();
     }
 
-    public void testCallingPersistWillWriteToDisk() {
+    public void testCallingPersistTriggersWriteToDisk() {
         PublicPersistence spy = spy(sut);
         String[] testData = {"test", "data"};
         String testSerializedString = "test\ndata";
@@ -58,7 +62,7 @@ public class PersistenceTests extends InstrumentationTestCase {
         verify(sut.servedFiles).remove(mockFile);
     }
 
-    public void testMakeAvailableUnblockesFile() {
+    public void testMakeAvailableUnblocksFile() {
         File mockFile = mock(File.class);
         sut.servedFiles = mock(ArrayList.class);
 

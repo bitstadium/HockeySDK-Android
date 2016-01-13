@@ -5,8 +5,7 @@ import junit.framework.TestCase;
 
 import net.hockeyapp.android.utils.Util;
 
-public class UtilTests extends TestCase
-{
+public class UtilTests extends TestCase {
 
     public void testValidAppIdentifierGetsConvertedToGuid() {
         String appIdentifier = "    ca2aba1482cb9458a67b917930b202c8      ";

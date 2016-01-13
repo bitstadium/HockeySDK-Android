@@ -13,7 +13,8 @@ import java.io.StringWriter;
 /// Data contract test class SessionStateDataTests.
 /// </summary>
 public class SessionStateDataTests extends TestCase {
-    public void testVerPropertyWorksAsExpected() {
+
+    public void testVerProperty() {
         int expected = 42;
         SessionStateData item = new SessionStateData();
         item.setVer(expected);
@@ -26,7 +27,7 @@ public class SessionStateDataTests extends TestCase {
         Assert.assertEquals(expected, actual);
     }
 
-    public void testStatePropertyWorksAsExpected() {
+    public void testStateProperty() {
         SessionState expected = SessionState.START;
         SessionStateData item = new SessionStateData();
         item.setState(expected);

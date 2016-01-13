@@ -11,206 +11,191 @@ import java.io.StringWriter;
 /// <summary>
 /// Data contract test class DeviceTests.
 /// </summary>
-public class DeviceTests extends TestCase
-{
-    public void testIdPropertyWorksAsExpected()
-    {
+public class DeviceTests extends TestCase {
+
+    public void testIdProperty() {
         String expected = "Test string";
         Device item = new Device();
         item.setId(expected);
         String actual = item.getId();
         Assert.assertEquals(expected, actual);
-        
+
         expected = "Other string";
         item.setId(expected);
         actual = item.getId();
         Assert.assertEquals(expected, actual);
     }
-    
-    public void testIpPropertyWorksAsExpected()
-    {
+
+    public void testIpProperty() {
         String expected = "Test string";
         Device item = new Device();
         item.setIp(expected);
         String actual = item.getIp();
         Assert.assertEquals(expected, actual);
-        
+
         expected = "Other string";
         item.setIp(expected);
         actual = item.getIp();
         Assert.assertEquals(expected, actual);
     }
-    
-    public void testLanguagePropertyWorksAsExpected()
-    {
+
+    public void testLanguageProperty() {
         String expected = "Test string";
         Device item = new Device();
         item.setLanguage(expected);
         String actual = item.getLanguage();
         Assert.assertEquals(expected, actual);
-        
+
         expected = "Other string";
         item.setLanguage(expected);
         actual = item.getLanguage();
         Assert.assertEquals(expected, actual);
     }
-    
-    public void testLocalePropertyWorksAsExpected()
-    {
+
+    public void testLocaleProperty() {
         String expected = "Test string";
         Device item = new Device();
         item.setLocale(expected);
         String actual = item.getLocale();
         Assert.assertEquals(expected, actual);
-        
+
         expected = "Other string";
         item.setLocale(expected);
         actual = item.getLocale();
         Assert.assertEquals(expected, actual);
     }
-    
-    public void testModelPropertyWorksAsExpected()
-    {
+
+    public void testModelProperty() {
         String expected = "Test string";
         Device item = new Device();
         item.setModel(expected);
         String actual = item.getModel();
         Assert.assertEquals(expected, actual);
-        
+
         expected = "Other string";
         item.setModel(expected);
         actual = item.getModel();
         Assert.assertEquals(expected, actual);
     }
-    
-    public void testNetworkPropertyWorksAsExpected()
-    {
+
+    public void testNetworkProperty() {
         String expected = "Test string";
         Device item = new Device();
         item.setNetwork(expected);
         String actual = item.getNetwork();
         Assert.assertEquals(expected, actual);
-        
+
         expected = "Other string";
         item.setNetwork(expected);
         actual = item.getNetwork();
         Assert.assertEquals(expected, actual);
     }
-    
-    public void testOem_namePropertyWorksAsExpected()
-    {
+
+    public void testOemNameProperty() {
         String expected = "Test string";
         Device item = new Device();
         item.setOemName(expected);
         String actual = item.getOemName();
         Assert.assertEquals(expected, actual);
-        
+
         expected = "Other string";
         item.setOemName(expected);
         actual = item.getOemName();
         Assert.assertEquals(expected, actual);
     }
-    
-    public void testOsPropertyWorksAsExpected()
-    {
+
+    public void testOsProperty() {
         String expected = "Test string";
         Device item = new Device();
         item.setOs(expected);
         String actual = item.getOs();
         Assert.assertEquals(expected, actual);
-        
+
         expected = "Other string";
         item.setOs(expected);
         actual = item.getOs();
         Assert.assertEquals(expected, actual);
     }
-    
-    public void testOs_versionPropertyWorksAsExpected()
-    {
+
+    public void testOsVersionProperty() {
         String expected = "Test string";
         Device item = new Device();
         item.setOsVersion(expected);
         String actual = item.getOsVersion();
         Assert.assertEquals(expected, actual);
-        
+
         expected = "Other string";
         item.setOsVersion(expected);
         actual = item.getOsVersion();
         Assert.assertEquals(expected, actual);
     }
-    
-    public void testRole_instancePropertyWorksAsExpected()
-    {
+
+    public void testRoleInstanceProperty() {
         String expected = "Test string";
         Device item = new Device();
         item.setRoleInstance(expected);
         String actual = item.getRoleInstance();
         Assert.assertEquals(expected, actual);
-        
+
         expected = "Other string";
         item.setRoleInstance(expected);
         actual = item.getRoleInstance();
         Assert.assertEquals(expected, actual);
     }
-    
-    public void testRole_namePropertyWorksAsExpected()
-    {
+
+    public void testRoleNameProperty() {
         String expected = "Test string";
         Device item = new Device();
         item.setRoleName(expected);
         String actual = item.getRoleName();
         Assert.assertEquals(expected, actual);
-        
+
         expected = "Other string";
         item.setRoleName(expected);
         actual = item.getRoleName();
         Assert.assertEquals(expected, actual);
     }
-    
-    public void testScreen_resolutionPropertyWorksAsExpected()
-    {
+
+    public void testScreenResolutionProperty() {
         String expected = "Test string";
         Device item = new Device();
         item.setScreenResolution(expected);
         String actual = item.getScreenResolution();
         Assert.assertEquals(expected, actual);
-        
+
         expected = "Other string";
         item.setScreenResolution(expected);
         actual = item.getScreenResolution();
         Assert.assertEquals(expected, actual);
     }
-    
-    public void testTypePropertyWorksAsExpected()
-    {
+
+    public void testTypeProperty() {
         String expected = "Test string";
         Device item = new Device();
         item.setType(expected);
         String actual = item.getType();
         Assert.assertEquals(expected, actual);
-        
+
         expected = "Other string";
         item.setType(expected);
         actual = item.getType();
         Assert.assertEquals(expected, actual);
     }
-    
-    public void testMachine_namePropertyWorksAsExpected()
-    {
+
+    public void testMachineNameProperty() {
         String expected = "Test string";
         Device item = new Device();
         item.setMachineName(expected);
         String actual = item.getMachineName();
         Assert.assertEquals(expected, actual);
-        
+
         expected = "Other string";
         item.setMachineName(expected);
         actual = item.getMachineName();
         Assert.assertEquals(expected, actual);
     }
-    
-    public void testSerialize() throws IOException
-    {
+
+    public void testSerialize() throws IOException {
         Device item = new Device();
         item.setId("Test string");
         item.setIp("Test string");

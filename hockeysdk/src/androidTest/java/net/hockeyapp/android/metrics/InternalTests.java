@@ -11,38 +11,34 @@ import java.io.StringWriter;
 /// <summary>
 /// Data contract test class InternalTests.
 /// </summary>
-public class InternalTests extends TestCase
-{
-    public void testSdk_versionPropertyWorksAsExpected()
-    {
+public class InternalTests extends TestCase {
+    public void testSdk_versionProperty() {
         String expected = "Test string";
         Internal item = new Internal();
         item.setSdkVersion(expected);
         String actual = item.getSdkVersion();
         Assert.assertEquals(expected, actual);
-        
+
         expected = "Other string";
         item.setSdkVersion(expected);
         actual = item.getSdkVersion();
         Assert.assertEquals(expected, actual);
     }
-    
-    public void testAgent_versionPropertyWorksAsExpected()
-    {
+
+    public void testAgent_versionProperty() {
         String expected = "Test string";
         Internal item = new Internal();
         item.setAgentVersion(expected);
         String actual = item.getAgentVersion();
         Assert.assertEquals(expected, actual);
-        
+
         expected = "Other string";
         item.setAgentVersion(expected);
         actual = item.getAgentVersion();
         Assert.assertEquals(expected, actual);
     }
-    
-    public void testSerialize() throws IOException
-    {
+
+    public void testSerialize() throws IOException {
         Internal item = new Internal();
         item.setSdkVersion("Test string");
         item.setAgentVersion("Test string");
