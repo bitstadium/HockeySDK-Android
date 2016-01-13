@@ -4,14 +4,14 @@ import java.io.Serializable;
 
 /**
  * <h3>Description</h3>
- * 
+ *
  * Error helper object
- * 
+ *
  * <h3>License</h3>
- * 
+ *
  * <pre>
  * Copyright (c) 2011-2014 Bit Stadium GmbH
- * 
+ *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
  * files (the "Software"), to deal in the Software without
@@ -20,10 +20,10 @@ import java.io.Serializable;
  * copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following
  * conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -33,28 +33,28 @@ import java.io.Serializable;
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  * </pre>
- * 
+ *
  * @author Bogdan Nistor
  */
 public class ErrorObject implements Serializable {
-  private static final long serialVersionUID = 1508110658372169868L;
-  
-  private int code;
-  private String message;
-	
-  public int getCode() {
-    return code;
-  }
-	
-  public void setCode(int code) {
-    this.code = code;
-  }
-	
-  public String getMessage() {
-    return message;
-  }
-	
-  public void setMessage(String message) {
-    this.message = message;
-  }
+    private static final long serialVersionUID = 1508110658372169868L;
+
+    private int mCode;
+    private String mMessage;
+
+    public int getCode() {
+        return mCode;
+    }
+
+    public void setCode(int code) {
+        this.mCode = code;
+    }
+
+    public String getMessage() {
+        return mMessage;
+    }
+
+    public void setMessage(String message) {
+        this.mMessage = message;
+    }
 }

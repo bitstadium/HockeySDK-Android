@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/bitstadium/HockeySDK-Android.svg?branch=develop)](https://travis-ci.org/bitstadium/HockeySDK-Android)
 
-## Version 3.7.0-beta.2
+## Version 3.7.0
 
 ## Introduction
 
@@ -63,7 +63,7 @@ Please see the "[How to create a new app](http://support.hockeyapp.net/kb/about-
 Add the SDK to your app module's dependencies in Android Studio by adding the following line to your `dependencies { ... }` configuration:
 
 ```groovy
-compile 'net.hockeyapp.android:HockeySDK:3.7.0-beta.2'
+compile 'net.hockeyapp.android:HockeySDK:3.7.0'
 ```
 also make sure your repository configuration contains
 
@@ -138,7 +138,7 @@ When the activity is resumed, the crash manager is triggered and checks if a new
 This will add the in-app update mechanism to your app. For more configuration options of the update manager module see [Advanced Setup](#advancedsetup).
 
 1. Open the activity where you want to inform the user about eventual updates. We'll assume you want to do this on startup of your main activity.
-2. Add the following lines and make sure to always make sure to balance `register(...)` calls to SDK managers with `unregister()` calls in the corresponding lifecycle callbacks:
+2. Add the following lines and make sure to always balance `register(...)` calls to SDK managers with `unregister()` calls in the corresponding lifecycle callbacks:
 
 ```java
 import net.hockeyapp.android.UpdateManager;
@@ -262,14 +262,40 @@ You can access the full changelog in our [releases-section](https://github.com/b
 
 <a id="manualdependency"></a> 
 ### 4.1 Manual Library Dependency
-If you don't want to use Android Studio, Gradle, or Maven you can also download and add the library manually.
+If you don't want to use Gradle or Maven dependency management you can also download and add the library manually. The easiest way to do this is using Android Studio.
 
 1. Download the latest release from [here](http://hockeyapp.net/releases/#android).
-2. Unzip the file.
-3. Copy the file libs/HockeySDK-$version.aar to the libs folder of your Android project. (`$version` is the version of the downloaded SDK)
-4. Configure your development tools to use the aar-file in the libs folder.
+2. Unzip the release distribution.
+3. Copy the file libs/HockeySDK-$version.aar to the `libs` folder of your Android project. (`$version` is the version of the downloaded SDK, if the version is < 3.7.0 it will be a .jar file instead)
+4. Configure your development tools to use the .aar/.jar file.
+5. In Android Studio, create a new module via `File > New > New Module`
+6. Select **Import .JAR/.AAR Package** and click **Next**.
+7. In the next menu select the .aar/.jar file you just copied to the libs folder. You can rename the module to whatever you want, but we in general recommend leaving it as is. If you don't rename the module, it will match the name of the .aar/.jar file, in this case **HockeySDK-3.7.0**. This way you'll quickly know which version of the SDK you are using in the future.
+8. Make sure Android Studio added the necessary code to integrate the HockeySDK:
 
-Then proceed with [the SDK integration](#setup-modifycode).
+Head over to your app's `build.gradle` to verify the dependency was added correctly. It should look like this:
+
+```groovy
+dependencies {
+	//your other dependencies
+	//...
+	
+    compile project(':HockeySDK-3.7.0')
+}
+```
+Next, make sure your `settings.gradle` contains the new module:
+
+```groovy
+include ':app', ':HockeySDK-3.7.0'
+```
+
+Finally, check the `build.gradle` of the newly added module:
+```groovy
+configurations.maybeCreate("default")
+artifacts.add("default", file('HockeySDK-3.7.0.aar'))
+```
+
+Once you have verified that everything necessary has been added, proceed with [SDK integration](#integrate-sdk).
 
 <a id="crashreporting-advanced"></a>
 ### 4.2 Crash Reporting
@@ -342,7 +368,7 @@ You can configure a notification to show to the user. When they select the notif
 <a id="documentation"></a>
 ## 5. Documentation
 
-Our documentation can be found on [HockeyApp](http://hockeyapp.net/help/sdk/android/3.7.0-beta.2/index.html).
+Our documentation can be found on [HockeyApp](http://hockeyapp.net/help/sdk/android/3.7.0/index.html).
 
 <a id="troubleshooting"></a>
 ## 6.Troubleshooting
@@ -359,6 +385,11 @@ Our documentation can be found on [HockeyApp](http://hockeyapp.net/help/sdk/andr
 ## 7. Contributing
 
 We're looking forward to your contributions via pull requests.
+
+**Coding style**
+
+* Please follow our [coding styleguide](https://github.com/bitstadium/android-guidelines)
+* Every check in should build and lint without errors
 
 **Development environment**
 
