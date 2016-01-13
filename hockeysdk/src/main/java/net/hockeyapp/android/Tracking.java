@@ -143,6 +143,9 @@ public class Tracking {
 
     /**
      * Helper method to return an instance of SharedPreferences.
+     *
+     * @param context Context to access shared preference.
+     * @return Shared preferences instance
      */
     protected static SharedPreferences getPreferences(Context context) {
         return context.getSharedPreferences("HockeyApp", Context.MODE_PRIVATE);
