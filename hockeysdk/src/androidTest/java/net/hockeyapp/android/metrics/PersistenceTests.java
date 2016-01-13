@@ -8,7 +8,11 @@ import junit.framework.Assert;
 import java.io.File;
 import java.util.ArrayList;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 public class PersistenceTests extends InstrumentationTestCase {
 
@@ -29,7 +33,7 @@ public class PersistenceTests extends InstrumentationTestCase {
         Assert.assertNotNull(sut.servedFiles);
     }
 
-    public void testTelemetryDirIsGetsCreated (){
+    public void testTelemetryDirIsGetsCreated() {
         File spy = spy(new File("/my/test/directory/"));
 
         sut = new PublicPersistence(getInstrumentation().getContext(), spy, null);

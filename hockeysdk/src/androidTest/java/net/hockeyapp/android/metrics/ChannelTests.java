@@ -12,13 +12,39 @@ import net.hockeyapp.android.metrics.model.SessionStateData;
 
 import java.util.HashMap;
 
-import static  org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class ChannelTests extends InstrumentationTestCase {
 
+    // Helper
+    private static final String MOCK_APP_ID = "appId";
+    private static final String MOCK_APP_VER = "appVer";
+    private static final String MOCK_IKEY = "iKey";
+    private static final String MOCK_OS_VER = "osVer";
+    private static final String MOCK_OS = "os";
+    private static final String MOCK_TAGS_KEY = "tagsKey";
+    private static final String MOCK_TAGS_VALUE = "tagsValue";
     private PublicChannel sut;
     private PublicTelemetryContext mockTelemetryContext;
     private PublicPersistence mockPersistence;
+
+    private static PublicTelemetryContext getMockTelemetryContext() {
+        HashMap<String, String> tags = new HashMap<String, String>();
+        tags.put(MOCK_TAGS_KEY, MOCK_TAGS_VALUE);
+
+        PublicTelemetryContext mockContext = mock(PublicTelemetryContext.class);
+        when(mockContext.getPackageName()).thenReturn(MOCK_APP_ID);
+        when(mockContext.getContextTags()).thenReturn(tags);
+        when(mockContext.getAppVersion()).thenReturn(MOCK_APP_VER);
+        when(mockContext.getInstrumentationKey()).thenReturn(MOCK_IKEY);
+        when(mockContext.getOsVersion()).thenReturn(MOCK_OS_VER);
+        when(mockContext.getOsName()).thenReturn(MOCK_OS);
+
+        return mockContext;
+    }
 
     public void setUp() throws Exception {
         super.setUp();
@@ -88,29 +114,5 @@ public class ChannelTests extends InstrumentationTestCase {
         Assert.assertEquals(SessionState.START, actualState);
         String actualBaseType = result.getData().getBaseType();
         Assert.assertEquals(new SessionStateData().getBaseType(), actualBaseType);
-    }
-
-    // Helper
-    private static final String MOCK_APP_ID = "appId";
-    private static final String MOCK_APP_VER = "appVer";
-    private static final String MOCK_IKEY = "iKey";
-    private static final String MOCK_OS_VER = "osVer";
-    private static final String MOCK_OS = "os";
-    private static final String MOCK_TAGS_KEY = "tagsKey";
-    private static final String MOCK_TAGS_VALUE = "tagsValue";
-
-    private static PublicTelemetryContext getMockTelemetryContext() {
-        HashMap<String, String> tags = new HashMap<String, String>();
-        tags.put(MOCK_TAGS_KEY, MOCK_TAGS_VALUE);
-
-        PublicTelemetryContext mockContext = mock(PublicTelemetryContext.class);
-        when(mockContext.getPackageName()).thenReturn(MOCK_APP_ID);
-        when(mockContext.getContextTags()).thenReturn(tags);
-        when(mockContext.getAppVersion()).thenReturn(MOCK_APP_VER);
-        when(mockContext.getInstrumentationKey()).thenReturn(MOCK_IKEY);
-        when(mockContext.getOsVersion()).thenReturn(MOCK_OS_VER);
-        when(mockContext.getOsName()).thenReturn(MOCK_OS);
-
-        return mockContext;
     }
 }

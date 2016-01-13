@@ -11,52 +11,47 @@ import java.io.StringWriter;
 /// <summary>
 /// Data contract test class SessionTests.
 /// </summary>
-public class SessionTests extends TestCase
-{
-    public void testIdPropertyWorksAsExpected()
-    {
+public class SessionTests extends TestCase {
+    public void testIdPropertyWorksAsExpected() {
         String expected = "Test string";
         Session item = new Session();
         item.setId(expected);
         String actual = item.getId();
         Assert.assertEquals(expected, actual);
-        
+
         expected = "Other string";
         item.setId(expected);
         actual = item.getId();
         Assert.assertEquals(expected, actual);
     }
-    
-    public void testIs_firstPropertyWorksAsExpected()
-    {
+
+    public void testIs_firstPropertyWorksAsExpected() {
         String expected = "Test string";
         Session item = new Session();
         item.setIsFirst(expected);
         String actual = item.getIsFirst();
         Assert.assertEquals(expected, actual);
-        
+
         expected = "Other string";
         item.setIsFirst(expected);
         actual = item.getIsFirst();
         Assert.assertEquals(expected, actual);
     }
-    
-    public void testIs_newPropertyWorksAsExpected()
-    {
+
+    public void testIs_newPropertyWorksAsExpected() {
         String expected = "Test string";
         Session item = new Session();
         item.setIsNew(expected);
         String actual = item.getIsNew();
         Assert.assertEquals(expected, actual);
-        
+
         expected = "Other string";
         item.setIsNew(expected);
         actual = item.getIsNew();
         Assert.assertEquals(expected, actual);
     }
-    
-    public void testSerialize() throws IOException
-    {
+
+    public void testSerialize() throws IOException {
         Session item = new Session();
         item.setId("Test string");
         item.setIsFirst("Test string");

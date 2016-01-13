@@ -12,24 +12,21 @@ import java.io.StringWriter;
 /// <summary>
 /// Data contract test class BaseTests.
 /// </summary>
-public class BaseTests extends TestCase
-{
-    public void testBase_typePropertyWorksAsExpected()
-    {
+public class BaseTests extends TestCase {
+    public void testBase_typePropertyWorksAsExpected() {
         String expected = "Test string";
         Base item = new Base();
         item.setBaseType(expected);
         String actual = item.getBaseType();
         Assert.assertEquals(expected, actual);
-        
+
         expected = "Other string";
         item.setBaseType(expected);
         actual = item.getBaseType();
         Assert.assertEquals(expected, actual);
     }
-    
-    public void testSerialize() throws IOException
-    {
+
+    public void testSerialize() throws IOException {
         Base item = new Base();
         item.setBaseType("Test string");
         StringWriter writer = new StringWriter();

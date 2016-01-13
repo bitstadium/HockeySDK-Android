@@ -14,10 +14,8 @@ import java.util.Map;
 /// <summary>
 /// Data contract test class EnvelopeTests.
 /// </summary>
-public class EnvelopeTests extends TestCase
-{
-    public void testVerPropertyWorksAsExpected()
-    {
+public class EnvelopeTests extends TestCase {
+    public void testVerPropertyWorksAsExpected() {
         int expected = 123;
         Envelope item = new Envelope();
         item.setVer(expected);
@@ -29,142 +27,131 @@ public class EnvelopeTests extends TestCase
         actual = item.getVer();
         Assert.assertEquals(expected, actual);
     }
-    
-    public void testNamePropertyWorksAsExpected()
-    {
+
+    public void testNamePropertyWorksAsExpected() {
         String expected = "Test string";
         Envelope item = new Envelope();
         item.setName(expected);
         String actual = item.getName();
         Assert.assertEquals(expected, actual);
-        
+
         expected = "Other string";
         item.setName(expected);
         actual = item.getName();
         Assert.assertEquals(expected, actual);
     }
-    
-    public void testTimePropertyWorksAsExpected()
-    {
+
+    public void testTimePropertyWorksAsExpected() {
         String expected = "Test string";
         Envelope item = new Envelope();
         item.setTime(expected);
         String actual = item.getTime();
         Assert.assertEquals(expected, actual);
-        
+
         expected = "Other string";
         item.setTime(expected);
         actual = item.getTime();
         Assert.assertEquals(expected, actual);
     }
-    
-    public void testI_keyPropertyWorksAsExpected()
-    {
+
+    public void testI_keyPropertyWorksAsExpected() {
         String expected = "Test string";
         Envelope item = new Envelope();
         item.setIKey(expected);
         String actual = item.getIKey();
         Assert.assertEquals(expected, actual);
-        
+
         expected = "Other string";
         item.setIKey(expected);
         actual = item.getIKey();
         Assert.assertEquals(expected, actual);
     }
-    
-    public void testFlagsPropertyWorksAsExpected()
-    {
+
+    public void testFlagsPropertyWorksAsExpected() {
         long expected = 42;
         Envelope item = new Envelope();
         item.setFlags(expected);
         long actual = item.getFlags();
         Assert.assertEquals(expected, actual);
-        
+
         expected = 13;
         item.setFlags(expected);
         actual = item.getFlags();
         Assert.assertEquals(expected, actual);
     }
-    
-    public void testOsPropertyWorksAsExpected()
-    {
+
+    public void testOsPropertyWorksAsExpected() {
         String expected = "Test string";
         Envelope item = new Envelope();
         item.setOs(expected);
         String actual = item.getOs();
         Assert.assertEquals(expected, actual);
-        
+
         expected = "Other string";
         item.setOs(expected);
         actual = item.getOs();
         Assert.assertEquals(expected, actual);
     }
-    
-    public void testOs_verPropertyWorksAsExpected()
-    {
+
+    public void testOs_verPropertyWorksAsExpected() {
         String expected = "Test string";
         Envelope item = new Envelope();
         item.setOsVer(expected);
         String actual = item.getOsVer();
         Assert.assertEquals(expected, actual);
-        
+
         expected = "Other string";
         item.setOsVer(expected);
         actual = item.getOsVer();
         Assert.assertEquals(expected, actual);
     }
-    
-    public void testApp_idPropertyWorksAsExpected()
-    {
+
+    public void testApp_idPropertyWorksAsExpected() {
         String expected = "Test string";
         Envelope item = new Envelope();
         item.setAppId(expected);
         String actual = item.getAppId();
         Assert.assertEquals(expected, actual);
-        
+
         expected = "Other string";
         item.setAppId(expected);
         actual = item.getAppId();
         Assert.assertEquals(expected, actual);
     }
-    
-    public void testApp_verPropertyWorksAsExpected()
-    {
+
+    public void testApp_verPropertyWorksAsExpected() {
         String expected = "Test string";
         Envelope item = new Envelope();
         item.setAppVer(expected);
         String actual = item.getAppVer();
         Assert.assertEquals(expected, actual);
-        
+
         expected = "Other string";
         item.setAppVer(expected);
         actual = item.getAppVer();
         Assert.assertEquals(expected, actual);
     }
-    
-    public void testTagsPropertyWorksAsExpected()
-    {
+
+    public void testTagsPropertyWorksAsExpected() {
         Envelope item = new Envelope();
-        LinkedHashMap<String, String> actual = (LinkedHashMap<String, String>)item.getTags();
+        LinkedHashMap<String, String> actual = (LinkedHashMap<String, String>) item.getTags();
         Assert.assertNotNull(actual);
     }
-    
-    public void testDataPropertyWorksAsExpected()
-    {
+
+    public void testDataPropertyWorksAsExpected() {
         Base expected = new Base();
         Envelope item = new Envelope();
         item.setData(expected);
         Base actual = item.getData();
         Assert.assertEquals(expected, actual);
-        
+
         expected = new Base();
         item.setData(expected);
         actual = item.getData();
         Assert.assertEquals(expected, actual);
     }
-    
-    public void testSerialize() throws IOException
-    {
+
+    public void testSerialize() throws IOException {
         Envelope item = new Envelope();
         item.setVer(1234);
         item.setName("Test string");
@@ -175,8 +162,10 @@ public class EnvelopeTests extends TestCase
         item.setOsVer("Test string");
         item.setAppId("Test string");
         item.setAppVer("Test string");
-        for (Map.Entry<String, String> entry : new LinkedHashMap<String, String>() {{put("key1", "test value 1"); put("key2", "test value 2"); }}.entrySet())
-        {
+        for (Map.Entry<String, String> entry : new LinkedHashMap<String, String>() {{
+            put("key1", "test value 1");
+            put("key2", "test value 2");
+        }}.entrySet()) {
             item.getTags().put(entry.getKey(), entry.getValue());
         }
         item.setData(new Base());
