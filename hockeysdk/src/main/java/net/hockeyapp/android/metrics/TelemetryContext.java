@@ -31,7 +31,7 @@ import java.util.UUID;
  **/
 class TelemetryContext {
 
-  private static final String TAG = "HockeyApp Metrics";
+  private static final String TAG = "HA-Metrics";
 
   /**
    * Key needed to access the shared preferences of the SDK.

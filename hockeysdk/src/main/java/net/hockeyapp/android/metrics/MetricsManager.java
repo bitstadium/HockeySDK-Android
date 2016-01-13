@@ -65,7 +65,8 @@ public class MetricsManager implements Application.ActivityLifecycleCallbacks {
      * The timestamp of the last activity
      */
     protected static final AtomicLong lastBackground = new AtomicLong(getTime());
-    private static final String TAG = "HockeyApp MetricsManager";
+
+    private static final String TAG = "HA-MetricsManager";
     /**
      * Background time of the app after which a session gets renewed (in milliseconds).
      */

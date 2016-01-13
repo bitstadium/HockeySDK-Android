@@ -18,7 +18,7 @@ class Persistence {
   /**
    * The tag for logging
    */
-  private static final String TAG = "Persistence";
+  private static final String TAG = "HA-MetricsPersistence";
 
   /**
    * Synchronization LOCK for setting static context.
