@@ -4,6 +4,12 @@ import android.test.InstrumentationTestCase;
 
 import junit.framework.Assert;
 
+import net.hockeyapp.android.metrics.model.Data;
+import net.hockeyapp.android.metrics.model.Domain;
+import net.hockeyapp.android.metrics.model.Envelope;
+import net.hockeyapp.android.metrics.model.SessionState;
+import net.hockeyapp.android.metrics.model.SessionStateData;
+
 import java.util.HashMap;
 
 import static  org.mockito.Mockito.*;

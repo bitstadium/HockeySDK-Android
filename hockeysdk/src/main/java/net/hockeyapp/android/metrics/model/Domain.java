@@ -1,38 +1,28 @@
-package net.hockeyapp.android.metrics;
+package net.hockeyapp.android.metrics.model;
 
 import java.io.IOException;
 import java.io.Writer;
-
+import java.util.LinkedHashMap;
 
 /**
- * Data contract class Extension.
+ * Data contract class Domain.
  */
-public class Extension implements
-        IJsonSerializable {
+public class Domain implements IJsonSerializable {
     /**
-     * Backing field for property Ver.
+     * A map for holding event attributes.
      */
-    private String ver = "1.0";
+    public LinkedHashMap<String, String> Attributes = new LinkedHashMap<String, String>();
 
     /**
-     * Initializes a new instance of the Extension class.
+     * The name for thie type
      */
-    public Extension() {
+    public String QualifiedName;
+
+    /**
+     * Initializes a new instance of the Domain class.
+     */
+    public Domain() {
         this.InitializeFields();
-    }
-
-    /**
-     * Gets the Ver property.
-     */
-    public String getVer() {
-        return this.ver;
-    }
-
-    /**
-     * Sets the Ver property.
-     */
-    public void setVer(String value) {
-        this.ver = value;
     }
 
 
@@ -59,12 +49,6 @@ public class Extension implements
      */
     protected String serializeContent(Writer writer) throws IOException {
         String prefix = "";
-        if (!(this.ver == null)) {
-            writer.write(prefix + "\"ver\":");
-            writer.write(JsonHelper.convert(this.ver));
-            prefix = ",";
-        }
-
         return prefix;
     }
 

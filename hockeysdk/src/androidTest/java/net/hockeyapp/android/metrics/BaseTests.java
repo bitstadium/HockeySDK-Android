@@ -4,6 +4,8 @@ package net.hockeyapp.android.metrics;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
+import net.hockeyapp.android.metrics.model.Base;
+
 import java.io.IOException;
 import java.io.StringWriter;
 

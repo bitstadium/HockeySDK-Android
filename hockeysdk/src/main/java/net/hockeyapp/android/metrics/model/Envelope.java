@@ -1,4 +1,6 @@
-package net.hockeyapp.android.metrics;
+package net.hockeyapp.android.metrics.model;
+
+import net.hockeyapp.android.metrics.JsonHelper;
 
 import java.io.IOException;
 import java.io.Writer;

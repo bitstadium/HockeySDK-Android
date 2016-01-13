@@ -1,5 +1,7 @@
 package net.hockeyapp.android.metrics;
 
+import net.hockeyapp.android.metrics.model.IJsonSerializable;
+
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Iterator;

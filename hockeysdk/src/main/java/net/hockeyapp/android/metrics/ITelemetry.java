@@ -1,5 +1,7 @@
 package net.hockeyapp.android.metrics;
 
+import net.hockeyapp.android.metrics.model.Domain;
+
 import java.util.Map;
 
 public abstract class ITelemetry extends Domain {

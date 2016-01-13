@@ -15,6 +15,11 @@ import android.view.WindowManager;
 
 import net.hockeyapp.android.BuildConfig;
 import net.hockeyapp.android.Constants;
+import net.hockeyapp.android.metrics.model.Application;
+import net.hockeyapp.android.metrics.model.Device;
+import net.hockeyapp.android.metrics.model.Internal;
+import net.hockeyapp.android.metrics.model.Session;
+import net.hockeyapp.android.metrics.model.User;
 import net.hockeyapp.android.utils.HockeyLog;
 import net.hockeyapp.android.utils.Util;
 

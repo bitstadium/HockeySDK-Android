@@ -9,6 +9,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
+import net.hockeyapp.android.metrics.model.Data;
+import net.hockeyapp.android.metrics.model.Domain;
+import net.hockeyapp.android.metrics.model.SessionState;
+import net.hockeyapp.android.metrics.model.SessionStateData;
+import net.hockeyapp.android.metrics.model.TelemetryData;
 import net.hockeyapp.android.utils.AsyncTaskUtils;
 import net.hockeyapp.android.utils.HockeyLog;
 import net.hockeyapp.android.utils.Util;

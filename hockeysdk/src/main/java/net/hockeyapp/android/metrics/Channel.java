@@ -1,5 +1,10 @@
 package net.hockeyapp.android.metrics;
 
+import net.hockeyapp.android.metrics.model.Base;
+import net.hockeyapp.android.metrics.model.Data;
+import net.hockeyapp.android.metrics.model.Domain;
+import net.hockeyapp.android.metrics.model.Envelope;
+import net.hockeyapp.android.metrics.model.TelemetryData;
 import net.hockeyapp.android.utils.HockeyLog;
 import net.hockeyapp.android.utils.Util;
 
