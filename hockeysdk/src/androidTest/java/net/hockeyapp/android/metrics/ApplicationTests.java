@@ -12,7 +12,8 @@ import java.io.StringWriter;
 /// Data contract test class ApplicationTests.
 /// </summary>
 public class ApplicationTests extends TestCase {
-    public void testVerPropertyWorksAsExpected() {
+
+    public void testVerProperty() {
         String expected = "Test string";
         Application item = new Application();
         item.setVer(expected);

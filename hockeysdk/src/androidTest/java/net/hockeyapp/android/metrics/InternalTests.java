@@ -12,7 +12,7 @@ import java.io.StringWriter;
 /// Data contract test class InternalTests.
 /// </summary>
 public class InternalTests extends TestCase {
-    public void testSdk_versionPropertyWorksAsExpected() {
+    public void testSdk_versionProperty() {
         String expected = "Test string";
         Internal item = new Internal();
         item.setSdkVersion(expected);
@@ -25,7 +25,7 @@ public class InternalTests extends TestCase {
         Assert.assertEquals(expected, actual);
     }
 
-    public void testAgent_versionPropertyWorksAsExpected() {
+    public void testAgent_versionProperty() {
         String expected = "Test string";
         Internal item = new Internal();
         item.setAgentVersion(expected);

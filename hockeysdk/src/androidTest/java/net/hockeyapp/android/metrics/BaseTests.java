@@ -13,7 +13,7 @@ import java.io.StringWriter;
 /// Data contract test class BaseTests.
 /// </summary>
 public class BaseTests extends TestCase {
-    public void testBase_typePropertyWorksAsExpected() {
+    public void testBaseTypeProperty() {
         String expected = "Test string";
         Base item = new Base();
         item.setBaseType(expected);

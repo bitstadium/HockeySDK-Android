@@ -16,7 +16,7 @@ public class TelemetryContextTests extends InstrumentationTestCase {
                 "a123b4567cde890abcd1e2f3ab456789");//this is a made-up app identifier.
     }
 
-    public void testNewInstanceWasInitialisedCorrectly() {
+    public void testInstanceInitialisation() {
         Assert.assertNotNull(sut);
         Assert.assertNotNull(sut.getInstrumentationKey());
         Assert.assertNotNull(sut.context);

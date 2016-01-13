@@ -12,6 +12,7 @@ import java.io.StringWriter;
 /// Data contract test class DomainTests.
 /// </summary>
 public class DomainTests extends TestCase {
+
     public void testSerialize() throws IOException {
         Domain item = new Domain();
         StringWriter writer = new StringWriter();

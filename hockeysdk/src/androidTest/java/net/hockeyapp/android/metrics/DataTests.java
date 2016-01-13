@@ -14,7 +14,8 @@ import java.io.StringWriter;
 /// Data contract test class DataTests.
 /// </summary>
 public class DataTests extends TestCase {
-    public void testBase_dataPropertyWorksAsExpected() {
+
+    public void testBaseDataProperty() {
         ITelemetry expected = new SessionStateData();
         Data item = new Data();
         item.setBaseData(expected);

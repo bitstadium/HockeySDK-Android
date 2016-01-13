@@ -12,7 +12,8 @@ import java.io.StringWriter;
 /// Data contract test class DeviceTests.
 /// </summary>
 public class DeviceTests extends TestCase {
-    public void testIdPropertyWorksAsExpected() {
+
+    public void testIdProperty() {
         String expected = "Test string";
         Device item = new Device();
         item.setId(expected);
@@ -25,7 +26,7 @@ public class DeviceTests extends TestCase {
         Assert.assertEquals(expected, actual);
     }
 
-    public void testIpPropertyWorksAsExpected() {
+    public void testIpProperty() {
         String expected = "Test string";
         Device item = new Device();
         item.setIp(expected);
@@ -38,7 +39,7 @@ public class DeviceTests extends TestCase {
         Assert.assertEquals(expected, actual);
     }
 
-    public void testLanguagePropertyWorksAsExpected() {
+    public void testLanguageProperty() {
         String expected = "Test string";
         Device item = new Device();
         item.setLanguage(expected);
@@ -51,7 +52,7 @@ public class DeviceTests extends TestCase {
         Assert.assertEquals(expected, actual);
     }
 
-    public void testLocalePropertyWorksAsExpected() {
+    public void testLocaleProperty() {
         String expected = "Test string";
         Device item = new Device();
         item.setLocale(expected);
@@ -64,7 +65,7 @@ public class DeviceTests extends TestCase {
         Assert.assertEquals(expected, actual);
     }
 
-    public void testModelPropertyWorksAsExpected() {
+    public void testModelProperty() {
         String expected = "Test string";
         Device item = new Device();
         item.setModel(expected);
@@ -77,7 +78,7 @@ public class DeviceTests extends TestCase {
         Assert.assertEquals(expected, actual);
     }
 
-    public void testNetworkPropertyWorksAsExpected() {
+    public void testNetworkProperty() {
         String expected = "Test string";
         Device item = new Device();
         item.setNetwork(expected);
@@ -90,7 +91,7 @@ public class DeviceTests extends TestCase {
         Assert.assertEquals(expected, actual);
     }
 
-    public void testOem_namePropertyWorksAsExpected() {
+    public void testOemNameProperty() {
         String expected = "Test string";
         Device item = new Device();
         item.setOemName(expected);
@@ -103,7 +104,7 @@ public class DeviceTests extends TestCase {
         Assert.assertEquals(expected, actual);
     }
 
-    public void testOsPropertyWorksAsExpected() {
+    public void testOsProperty() {
         String expected = "Test string";
         Device item = new Device();
         item.setOs(expected);
@@ -116,7 +117,7 @@ public class DeviceTests extends TestCase {
         Assert.assertEquals(expected, actual);
     }
 
-    public void testOs_versionPropertyWorksAsExpected() {
+    public void testOsVersionProperty() {
         String expected = "Test string";
         Device item = new Device();
         item.setOsVersion(expected);
@@ -129,7 +130,7 @@ public class DeviceTests extends TestCase {
         Assert.assertEquals(expected, actual);
     }
 
-    public void testRole_instancePropertyWorksAsExpected() {
+    public void testRoleInstanceProperty() {
         String expected = "Test string";
         Device item = new Device();
         item.setRoleInstance(expected);
@@ -142,7 +143,7 @@ public class DeviceTests extends TestCase {
         Assert.assertEquals(expected, actual);
     }
 
-    public void testRole_namePropertyWorksAsExpected() {
+    public void testRoleNameProperty() {
         String expected = "Test string";
         Device item = new Device();
         item.setRoleName(expected);
@@ -155,7 +156,7 @@ public class DeviceTests extends TestCase {
         Assert.assertEquals(expected, actual);
     }
 
-    public void testScreen_resolutionPropertyWorksAsExpected() {
+    public void testScreenResolutionProperty() {
         String expected = "Test string";
         Device item = new Device();
         item.setScreenResolution(expected);
@@ -168,7 +169,7 @@ public class DeviceTests extends TestCase {
         Assert.assertEquals(expected, actual);
     }
 
-    public void testTypePropertyWorksAsExpected() {
+    public void testTypeProperty() {
         String expected = "Test string";
         Device item = new Device();
         item.setType(expected);
@@ -181,7 +182,7 @@ public class DeviceTests extends TestCase {
         Assert.assertEquals(expected, actual);
     }
 
-    public void testMachine_namePropertyWorksAsExpected() {
+    public void testMachineNameProperty() {
         String expected = "Test string";
         Device item = new Device();
         item.setMachineName(expected);

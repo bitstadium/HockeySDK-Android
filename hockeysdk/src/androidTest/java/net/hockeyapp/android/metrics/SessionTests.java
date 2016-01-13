@@ -12,7 +12,8 @@ import java.io.StringWriter;
 /// Data contract test class SessionTests.
 /// </summary>
 public class SessionTests extends TestCase {
-    public void testIdPropertyWorksAsExpected() {
+
+    public void testIdProperty() {
         String expected = "Test string";
         Session item = new Session();
         item.setId(expected);
@@ -25,7 +26,7 @@ public class SessionTests extends TestCase {
         Assert.assertEquals(expected, actual);
     }
 
-    public void testIs_firstPropertyWorksAsExpected() {
+    public void testIsFirstProperty() {
         String expected = "Test string";
         Session item = new Session();
         item.setIsFirst(expected);
@@ -38,7 +39,7 @@ public class SessionTests extends TestCase {
         Assert.assertEquals(expected, actual);
     }
 
-    public void testIs_newPropertyWorksAsExpected() {
+    public void testIsNewProperty() {
         String expected = "Test string";
         Session item = new Session();
         item.setIsNew(expected);

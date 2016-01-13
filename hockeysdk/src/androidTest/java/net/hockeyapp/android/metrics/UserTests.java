@@ -12,7 +12,8 @@ import java.io.StringWriter;
 /// Data contract test class UserTests.
 /// </summary>
 public class UserTests extends TestCase {
-    public void testAccount_acquisition_datePropertyWorksAsExpected() {
+
+    public void testAccountAcquisitionDateProperty() {
         String expected = "Test string";
         User item = new User();
         item.setAccountAcquisitionDate(expected);
@@ -25,7 +26,7 @@ public class UserTests extends TestCase {
         Assert.assertEquals(expected, actual);
     }
 
-    public void testAccount_idPropertyWorksAsExpected() {
+    public void testAccountIdProperty() {
         String expected = "Test string";
         User item = new User();
         item.setAccountId(expected);
@@ -38,7 +39,7 @@ public class UserTests extends TestCase {
         Assert.assertEquals(expected, actual);
     }
 
-    public void testUser_agentPropertyWorksAsExpected() {
+    public void testUserAgentProperty() {
         String expected = "Test string";
         User item = new User();
         item.setUserAgent(expected);
@@ -51,7 +52,7 @@ public class UserTests extends TestCase {
         Assert.assertEquals(expected, actual);
     }
 
-    public void testIdPropertyWorksAsExpected() {
+    public void testIdProperty() {
         String expected = "Test string";
         User item = new User();
         item.setId(expected);

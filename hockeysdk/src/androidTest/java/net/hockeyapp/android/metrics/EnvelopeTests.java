@@ -15,7 +15,8 @@ import java.util.Map;
 /// Data contract test class EnvelopeTests.
 /// </summary>
 public class EnvelopeTests extends TestCase {
-    public void testVerPropertyWorksAsExpected() {
+
+    public void testVerProperty() {
         int expected = 123;
         Envelope item = new Envelope();
         item.setVer(expected);
@@ -28,7 +29,7 @@ public class EnvelopeTests extends TestCase {
         Assert.assertEquals(expected, actual);
     }
 
-    public void testNamePropertyWorksAsExpected() {
+    public void testNameProperty() {
         String expected = "Test string";
         Envelope item = new Envelope();
         item.setName(expected);
@@ -41,7 +42,7 @@ public class EnvelopeTests extends TestCase {
         Assert.assertEquals(expected, actual);
     }
 
-    public void testTimePropertyWorksAsExpected() {
+    public void testTimeProperty() {
         String expected = "Test string";
         Envelope item = new Envelope();
         item.setTime(expected);
@@ -54,7 +55,7 @@ public class EnvelopeTests extends TestCase {
         Assert.assertEquals(expected, actual);
     }
 
-    public void testI_keyPropertyWorksAsExpected() {
+    public void testI_keyProperty() {
         String expected = "Test string";
         Envelope item = new Envelope();
         item.setIKey(expected);
@@ -67,7 +68,7 @@ public class EnvelopeTests extends TestCase {
         Assert.assertEquals(expected, actual);
     }
 
-    public void testFlagsPropertyWorksAsExpected() {
+    public void testFlagsProperty() {
         long expected = 42;
         Envelope item = new Envelope();
         item.setFlags(expected);
@@ -80,7 +81,7 @@ public class EnvelopeTests extends TestCase {
         Assert.assertEquals(expected, actual);
     }
 
-    public void testOsPropertyWorksAsExpected() {
+    public void testOsProperty() {
         String expected = "Test string";
         Envelope item = new Envelope();
         item.setOs(expected);
@@ -93,7 +94,7 @@ public class EnvelopeTests extends TestCase {
         Assert.assertEquals(expected, actual);
     }
 
-    public void testOs_verPropertyWorksAsExpected() {
+    public void testOs_verProperty() {
         String expected = "Test string";
         Envelope item = new Envelope();
         item.setOsVer(expected);
@@ -106,7 +107,7 @@ public class EnvelopeTests extends TestCase {
         Assert.assertEquals(expected, actual);
     }
 
-    public void testApp_idPropertyWorksAsExpected() {
+    public void testApp_idProperty() {
         String expected = "Test string";
         Envelope item = new Envelope();
         item.setAppId(expected);
@@ -119,7 +120,7 @@ public class EnvelopeTests extends TestCase {
         Assert.assertEquals(expected, actual);
     }
 
-    public void testApp_verPropertyWorksAsExpected() {
+    public void testApp_verProperty() {
         String expected = "Test string";
         Envelope item = new Envelope();
         item.setAppVer(expected);
@@ -132,13 +133,13 @@ public class EnvelopeTests extends TestCase {
         Assert.assertEquals(expected, actual);
     }
 
-    public void testTagsPropertyWorksAsExpected() {
+    public void testTagsProperty() {
         Envelope item = new Envelope();
         LinkedHashMap<String, String> actual = (LinkedHashMap<String, String>) item.getTags();
         Assert.assertNotNull(actual);
     }
 
-    public void testDataPropertyWorksAsExpected() {
+    public void testDataProperty() {
         Base expected = new Base();
         Envelope item = new Envelope();
         item.setData(expected);

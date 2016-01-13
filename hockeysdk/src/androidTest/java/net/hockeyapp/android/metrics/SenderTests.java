@@ -35,7 +35,7 @@ public class SenderTests extends InstrumentationTestCase {
         super.tearDown();
     }
 
-    public void testInitialisationWorks() throws Exception {
+    public void testInstanceInitialisation() throws Exception {
         Assert.assertNotNull(sut);
         Assert.assertEquals(0, sut.requestCount());
         Assert.assertNotNull(sut.getPersistence());
