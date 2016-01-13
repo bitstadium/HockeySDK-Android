@@ -5,7 +5,7 @@ import android.test.InstrumentationTestCase;
 
 import static org.mockito.Mockito.mock;
 
-public class TelemetryManagerTests extends InstrumentationTestCase {
+public class MetricsManagerTests extends InstrumentationTestCase {
 
     @Override
     public void setUp() throws Exception {
