@@ -15,10 +15,10 @@ import java.util.UUID;
 
 class Persistence {
 
-    /**
-     * The tag for logging
-     */
-    private static final String TAG = "Persistence";
+  /**
+   * The tag for logging
+   */
+  private static final String TAG = "HA-MetricsPersistence";
 
     /**
      * Synchronization LOCK for setting static context.

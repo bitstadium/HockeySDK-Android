@@ -336,12 +336,12 @@ public class CrashManager {
                                 .build();
 
                         int responseCode = urlConnection.getResponseCode();
-            parameters.put("userID", userID);
-            parameters.put("contact", contact);
-            parameters.put("description", description);
-            parameters.put("sdk", Constants.SDK_NAME);
-            parameters.put("sdk_version", Util.getSdkVersionFromManifest(weakContext.get()));
-            HockeyLog.log(TAG, parameters.toString());
+                        parameters.put("userID", userID);
+                        parameters.put("contact", contact);
+                        parameters.put("description", description);
+                        parameters.put("sdk", Constants.SDK_NAME);
+                        parameters.put("sdk_version", Util.getSdkVersionFromManifest(weakContext.get()));
+                        HockeyLog.log(TAG, parameters.toString());
 
                         successful = (responseCode == HttpURLConnection.HTTP_ACCEPTED || responseCode == HttpURLConnection.HTTP_CREATED);
 
