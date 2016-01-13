@@ -1,4 +1,4 @@
-package net.hockeyapp.android.metrics;
+package net.hockeyapp.android.metrics.model;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -10,10 +10,10 @@ public interface IJsonSerializable {
 
     /**
      * Serialize the contract objects with writer
-     * 
+     *
      * @param writer the writer to serialize data
      * @throws IOException will be thrown if something wrong with the output
-     *             stream
+     *                     stream
      */
     public void serialize(Writer writer) throws IOException;
 }

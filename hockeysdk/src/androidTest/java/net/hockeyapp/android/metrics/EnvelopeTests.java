@@ -3,6 +3,9 @@ package net.hockeyapp.android.metrics;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
+import net.hockeyapp.android.metrics.model.Base;
+import net.hockeyapp.android.metrics.model.Envelope;
+
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.LinkedHashMap;

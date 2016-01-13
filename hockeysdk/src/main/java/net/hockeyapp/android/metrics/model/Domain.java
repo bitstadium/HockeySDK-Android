@@ -1,65 +1,42 @@
-package net.hockeyapp.android.metrics;
+package net.hockeyapp.android.metrics.model;
 
 import java.io.IOException;
 import java.io.Writer;
 import java.util.LinkedHashMap;
 
 /**
- * Data contract class Base.
+ * Data contract class Domain.
  */
-public class Base implements
-        IJsonSerializable
-{
+public class Domain implements IJsonSerializable {
     /**
      * A map for holding event attributes.
      */
     public LinkedHashMap<String, String> Attributes = new LinkedHashMap<String, String>();
-    
+
     /**
      * The name for thie type
      */
     public String QualifiedName;
-    
+
     /**
-     * Backing field for property BaseType.
+     * Initializes a new instance of the Domain class.
      */
-    private String baseType;
-    
-    /**
-     * Initializes a new instance of the Base class.
-     */
-    public Base()
-    {
+    public Domain() {
         this.InitializeFields();
     }
-    
-    /**
-     * Gets the BaseType property.
-     */
-    public String getBaseType() {
-        return this.baseType;
-    }
-    
-    /**
-     * Sets the BaseType property.
-     */
-    public void setBaseType(String value) {
-        this.baseType = value;
-    }
-    
+
 
     /**
      * Serializes the beginning of this object to the passed in writer.
+     *
      * @param writer The writer to serialize this object to.
      */
     @Override
-    public void serialize(Writer writer) throws IOException
-    {
-        if (writer == null)
-        {
+    public void serialize(Writer writer) throws IOException {
+        if (writer == null) {
             throw new IllegalArgumentException("writer");
         }
-        
+
         writer.write('{');
         this.serializeContent(writer);
         writer.write('}');
@@ -67,25 +44,18 @@ public class Base implements
 
     /**
      * Serializes the beginning of this object to the passed in writer.
+     *
      * @param writer The writer to serialize this object to.
      */
-    protected String serializeContent(Writer writer) throws IOException
-    {
+    protected String serializeContent(Writer writer) throws IOException {
         String prefix = "";
-        if (!(this.baseType == null))
-        {
-            writer.write(prefix + "\"baseType\":");
-            writer.write(JsonHelper.convert(this.baseType));
-            prefix = ",";
-        }
-        
         return prefix;
     }
-    
+
     /**
      * Optionally initializes fields for the current context.
      */
     protected void InitializeFields() {
-        
+
     }
 }

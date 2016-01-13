@@ -1,4 +1,6 @@
-package net.hockeyapp.android.metrics;
+package net.hockeyapp.android.metrics.model;
+
+import net.hockeyapp.android.metrics.JsonHelper;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -6,7 +8,7 @@ import java.io.Writer;
 import java.util.Map;
 
 /**
- * Data contract class Application.å
+ * Data contract class Application.
  */
 public class Application implements IJsonSerializable, Serializable {
     /**
@@ -74,7 +76,8 @@ public class Application implements IJsonSerializable, Serializable {
     }
 
 
-    /**å
+    /**
+     * å
      * Adds all members of this class to a hashmap
      *
      * @param map to which the members of this class will be added.

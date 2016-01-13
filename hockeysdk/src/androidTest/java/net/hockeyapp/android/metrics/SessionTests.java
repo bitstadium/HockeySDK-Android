@@ -3,6 +3,8 @@ package net.hockeyapp.android.metrics;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
+import net.hockeyapp.android.metrics.model.Session;
+
 import java.io.IOException;
 import java.io.StringWriter;
 

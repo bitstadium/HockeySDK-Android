@@ -1,4 +1,6 @@
-package net.hockeyapp.android.metrics;
+package net.hockeyapp.android.metrics.model;
+
+import net.hockeyapp.android.metrics.JsonHelper;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -8,8 +10,7 @@ import java.util.Map;
 /**
  * Data contract class Session.
  */
-public class Session
-      implements IJsonSerializable, Serializable {
+public class Session implements IJsonSerializable, Serializable {
     /**
      * Backing field for property Id.
      */
