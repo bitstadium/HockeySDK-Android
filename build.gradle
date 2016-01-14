@@ -14,8 +14,12 @@ allprojects {
     repositories {
         jcenter()
     }
-}
 
+    tasks.withType(Javadoc) {
+        options.addStringOption('Xdoclint:none', '-quiet')
+        options.addStringOption('encoding', 'UTF-8')
+    }
+}
 
 
 //The bintray-release plugin doesn't write the following attributes to the artifact's pom.xml:
