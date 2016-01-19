@@ -443,9 +443,9 @@ class TelemetryContext {
         }
     }
 
-    public void setIsNewSession(String isFirst) {
+    public void setIsNewSession(String isNewSession) {
         synchronized (this.session) {
-            this.session.setIsNew(isFirst);
+            this.session.setIsNew(isNewSession);
         }
     }
 
