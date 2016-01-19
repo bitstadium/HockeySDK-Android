@@ -376,7 +376,7 @@ public class MetricsManager implements Application.ActivityLifecycleCallbacks {
 
     protected void renewSession() {
         String sessionId = UUID.randomUUID().toString();
-        telemetryContext.updateSessionContext(sessionId);
+        telemetryContext.renewSessionContext(sessionId);
         trackSessionState(SessionState.START);
     }
 

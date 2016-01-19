@@ -132,7 +132,7 @@ class TelemetryContext {
      *
      * @param sessionId the current session Id
      */
-    protected void updateSessionContext(String sessionId) {
+    protected void renewSessionContext(String sessionId) {
         configSessionContext(sessionId);
     }
 
@@ -143,11 +143,12 @@ class TelemetryContext {
      */
     protected void configSessionContext(String sessionId) {
         setSessionId(sessionId);
-        //normally, this should also be saved to SharedPrefs like isFirst.
-        //The problem is that there are cases when committing the changes is too slow and we get
-        //the wrong value. As isNew is only "true" when we start a new session, it is set in
-        //TrackDataOperation directly before enqueueing the session event.
-        setIsNewSession("false");
+
+        //TODO check in E2E-Test if this is working
+        //The previous logic was stupid in relying setting the session.isNew later in the
+        //async task. I(Benny) have corrected this and think it should work just like we do it now.
+        //but this has to be verified.
+        setIsNewSession("true");
 
         SharedPreferences.Editor editor = this.settings.edit();
         if (!this.settings.getBoolean(SESSION_IS_FIRST_KEY, false)) {
