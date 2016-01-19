@@ -112,12 +112,9 @@ class Channel {
         }
 
         this.telemetryContext.updateScreenResolution();
-        envelope.setAppId(this.telemetryContext.getPackageName());
-        envelope.setAppVer(this.telemetryContext.getAppVersion());
+
         envelope.setTime(Util.dateToISO8601(new Date()));
         envelope.setIKey(this.telemetryContext.getInstrumentationKey());
-        envelope.setOsVer(this.telemetryContext.getOsVersion());
-        envelope.setOs(this.telemetryContext.getOsName());
 
         Map<String, String> tags = this.telemetryContext.getContextTags();
         if (tags != null) {
