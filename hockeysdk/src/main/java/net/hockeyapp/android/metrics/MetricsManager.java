@@ -192,17 +192,13 @@ public class MetricsManager implements Application.ActivityLifecycleCallbacks {
         MetricsManager result = instance;
         if (result == null) {
             synchronized (LOCK) {
-                result = instance;        // thread may have instantiated the objectx
+                result = instance;        // thread may have instantiated the object
                 if (result == null) {
                     result = new MetricsManager(context, new TelemetryContext(context, appIdentifier),
                             sender, persistence, channel);
                     weakApplication = new WeakReference<>(application);
                 }
-                if (Util.sessionTrackingSupported()) {
-                    result.sessionTrackingDisabled = false;
-                } else {
-                    result.sessionTrackingDisabled = true;
-                }
+                result.sessionTrackingDisabled = !Util.sessionTrackingSupported();
                 instance = result;
                 if (!result.sessionTrackingDisabled) {
                     setSessionTrackingDisabled(false);
@@ -405,7 +401,7 @@ public class MetricsManager implements Application.ActivityLifecycleCallbacks {
      * @return a base data object containing the telemetry data
      */
     protected Data<Domain> createData(TelemetryData telemetryData) {
-        Data<Domain> data = new Data<Domain>();
+        Data<Domain> data = new Data<>();
         data.setBaseData(telemetryData);
         data.setBaseType(telemetryData.getBaseType());
         data.QualifiedName = telemetryData.getEnvelopeName();
