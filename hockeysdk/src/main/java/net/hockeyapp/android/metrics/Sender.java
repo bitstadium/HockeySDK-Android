@@ -382,7 +382,7 @@ public class Sender {
     /**
      * Set a custom server URL that will be used to send data to it.
      *
-     * @param customServerURL
+     * @param customServerURL URL for custom server endpoint to collect telemetry
      */
     protected void setCustomServerURL(String customServerURL) {
         this.customServerURL = customServerURL;
