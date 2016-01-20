@@ -57,33 +57,33 @@ public class ChannelTests extends InstrumentationTestCase {
 
     public void testInstanceInitialisation() {
         Assert.assertNotNull(sut);
-        Assert.assertNotNull(sut.telemetryContext);
-        Assert.assertEquals(mockTelemetryContext, sut.telemetryContext);
-        Assert.assertNotNull(sut.queue);
-        Assert.assertEquals(0, sut.queue.size());
+        Assert.assertNotNull(sut.mTelemetryContext);
+        Assert.assertEquals(mockTelemetryContext, sut.mTelemetryContext);
+        Assert.assertNotNull(sut.mQueue);
+        Assert.assertEquals(0, sut.mQueue.size());
     }
 
     public void testLoggingItemAddsToQueue() {
         Data<Domain> data = new Data<Domain>();
-        Channel.MAX_BATCH_COUNT = 3;
-        Assert.assertEquals(0, sut.queue.size());
+        Channel.mMaxBatchCount = 3;
+        Assert.assertEquals(0, sut.mQueue.size());
 
-        sut.log(data);
-        Assert.assertEquals(1, sut.queue.size());
+        sut.enqueueData(data);
+        Assert.assertEquals(1, sut.mQueue.size());
     }
 
     public void testQueueFlushesWhenMaxBatchCountReached() {
-        PublicChannel.MAX_BATCH_COUNT = 3;
-        Assert.assertEquals(0, sut.queue.size());
+        PublicChannel.mMaxBatchCount = 3;
+        Assert.assertEquals(0, sut.mQueue.size());
 
-        sut.log(new Data<Domain>());
-        Assert.assertEquals(1, sut.queue.size());
+        sut.enqueueData(new Data<Domain>());
+        Assert.assertEquals(1, sut.mQueue.size());
 
-        sut.log(new Data<Domain>());
-        Assert.assertEquals(2, sut.queue.size());
+        sut.enqueueData(new Data<Domain>());
+        Assert.assertEquals(2, sut.mQueue.size());
 
-        sut.log(new Data<Domain>());
-        Assert.assertEquals(0, sut.queue.size());
+        sut.enqueueData(new Data<Domain>());
+        Assert.assertEquals(0, sut.mQueue.size());
 
         verify(mockPersistence).persist(any(String[].class));
     }

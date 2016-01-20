@@ -33,27 +33,27 @@ class Channel {
     /**
      * Number of queue items which will trigger a flush (testing).
      */
-    protected static int MAX_BATCH_COUNT = 1;
+    protected static int mMaxBatchCount = 1;
     /**
      * The linked queue for this queue.
      */
-    protected final List<String> queue;
+    protected final List<String> mQueue;
     /**
      * Telemetry context used by the channel to create the payload.
      */
-    protected final TelemetryContext telemetryContext;
+    protected final TelemetryContext mTelemetryContext;
     /**
      * Persistence used for storing telemetry items before they get sent out.
      */
-    private final Persistence persistence;
+    private final Persistence mPersistence;
 
     /**
      * Instantiates a new INSTANCE of Channel
      */
     public Channel(TelemetryContext telemetryContext, Persistence persistence) {
-        this.telemetryContext = telemetryContext;
-        this.queue = new LinkedList<>();
-        this.persistence = persistence;
+        mTelemetryContext = telemetryContext;
+        mQueue = new LinkedList<>();
+        mPersistence = persistence;
     }
 
     /**
@@ -67,8 +67,8 @@ class Channel {
             return;
         }
         synchronized (LOCK) {
-            if (this.queue.add(serializedItem)) {
-                if ((this.queue.size() >= MAX_BATCH_COUNT)) {
+            if (mQueue.add(serializedItem)) {
+                if ((mQueue.size() >= mMaxBatchCount)) {
                     synchronize();
                 }
             } else {
@@ -82,13 +82,13 @@ class Channel {
      */
     protected void synchronize() {
         String[] data;
-        if (!queue.isEmpty()) {
-            data = new String[queue.size()];
-            queue.toArray(data);
-            queue.clear();
+        if (!mQueue.isEmpty()) {
+            data = new String[mQueue.size()];
+            mQueue.toArray(data);
+            mQueue.clear();
 
-            if (this.persistence != null) {
-                this.persistence.persist(data);
+            if (mPersistence != null) {
+                mPersistence.persist(data);
             }
         }
     }
@@ -108,12 +108,12 @@ class Channel {
             envelope.setName(envelopeName);
         }
 
-        this.telemetryContext.updateScreenResolution();
+        mTelemetryContext.updateScreenResolution();
 
         envelope.setTime(Util.dateToISO8601(new Date()));
-        envelope.setIKey(this.telemetryContext.getInstrumentationKey());
+        envelope.setIKey(mTelemetryContext.getInstrumentationKey());
 
-        Map<String, String> tags = this.telemetryContext.getContextTags();
+        Map<String, String> tags = mTelemetryContext.getContextTags();
         if (tags != null) {
             envelope.setTags(tags);
         }
@@ -126,7 +126,7 @@ class Channel {
      * @param data the base object to enqueue
      */
     @SuppressWarnings("unchecked")
-    public void log(Base data) {
+    public void enqueueData(Base data) {
         if (data instanceof Data) {
             Envelope envelope = null;
             try {
@@ -136,7 +136,7 @@ class Channel {
             }
 
             if (envelope != null) {
-                // log to queue
+                // enqueueData to queue
                 String serializedEnvelope = serializeEnvelope(envelope);
                 enqueue(serializedEnvelope);
                 HockeyLog.log(TAG, "enqueued telemetry: " + envelope.getName());

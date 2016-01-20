@@ -64,12 +64,12 @@ public class MetricsManager implements Application.ActivityLifecycleCallbacks {
     /**
      * The activity counter
      */
-    protected static final AtomicInteger activityCount = new AtomicInteger(0);
+    protected static final AtomicInteger ACTIVITY_COUNT = new AtomicInteger(0);
 
     /**
      * The timestamp of the last activity
      */
-    protected static final AtomicLong lastBackground = new AtomicLong(getTime());
+    protected static final AtomicLong LAST_BACKGROUND = new AtomicLong(getTime());
 
     private static final String TAG = "HA-MetricsManager";
     /**
@@ -90,27 +90,27 @@ public class MetricsManager implements Application.ActivityLifecycleCallbacks {
     /**
      * The application needed for auto collecting session data
      */
-    private static WeakReference<Application> weakApplication;
+    private static WeakReference<Application> sWeakApplication;
 
     /**
      * A sender who's responsible to send telemetry to the server
      * MetricsManager holds a reference to it because we want the user to easily set the server
      * url.
      */
-    private static Sender sender;
+    private static Sender sSender;
     /**
      * A channel for collecting new events before storing and sending them.
      */
-    private static Channel channel;
+    private static Channel sChannel;
     /**
      * A telemetry context which is used to add meta info to events, before they're sent out.
      */
-    private static TelemetryContext telemetryContext;
+    private static TelemetryContext sTelemetryContext;
     /**
      * Flag that indicates disabled session tracking.
      * Default is false.
      */
-    private volatile boolean sessionTrackingDisabled;
+    private volatile boolean mSessionTrackingDisabled;
 
     /**
      * Restrict access to the default constructor
@@ -126,26 +126,26 @@ public class MetricsManager implements Application.ActivityLifecycleCallbacks {
      */
     protected MetricsManager(Context context, TelemetryContext telemetryContext, Sender sender,
                              Persistence persistence, Channel channel) {
-        this.telemetryContext = telemetryContext;
+        sTelemetryContext = telemetryContext;
 
         //Important: create sender and persistence first, wire them up and then create the channel!
         if (sender == null) {
             sender = new Sender();
         }
-        this.sender = sender;
+        sSender = sender;
 
         if (persistence == null) {
             persistence = new Persistence(context, sender);
         }
 
         //Link sender
-        this.sender.setPersistence(persistence);
+        this.sSender.setPersistence(persistence);
 
         //create the channel and wire the persistence to it.
         if (channel == null) {
-            this.channel = new Channel(this.telemetryContext, persistence);
+            sChannel = new Channel(sTelemetryContext, persistence);
         } else {
-            this.channel = channel;
+            sChannel = channel;
         }
 
     }
@@ -196,11 +196,11 @@ public class MetricsManager implements Application.ActivityLifecycleCallbacks {
                 if (result == null) {
                     result = new MetricsManager(context, new TelemetryContext(context, appIdentifier),
                             sender, persistence, channel);
-                    weakApplication = new WeakReference<>(application);
+                    sWeakApplication = new WeakReference<>(application);
                 }
-                result.sessionTrackingDisabled = !Util.sessionTrackingSupported();
+                result.mSessionTrackingDisabled = !Util.sessionTrackingSupported();
                 instance = result;
-                if (!result.sessionTrackingDisabled) {
+                if (!result.mSessionTrackingDisabled) {
                     setSessionTrackingDisabled(false);
                 }
 
@@ -214,7 +214,7 @@ public class MetricsManager implements Application.ActivityLifecycleCallbacks {
      * @return YES if session tracking is enabled
      */
     public static boolean sessionTrackingEnabled() {
-        return !instance.sessionTrackingDisabled;
+        return !instance.mSessionTrackingDisabled;
     }
 
     /**
@@ -228,14 +228,14 @@ public class MetricsManager implements Application.ActivityLifecycleCallbacks {
         } else {
             synchronized (LOCK) {
                 if (Util.sessionTrackingSupported()) {
-                    instance.sessionTrackingDisabled = disabled;
+                    instance.mSessionTrackingDisabled = disabled;
                     //TODO persist this setting so the dev doesn't have to take care of this
                     //between launches?
                     if (!disabled) {
                         getApplication().registerActivityLifecycleCallbacks(instance);
                     }
                 } else {
-                    instance.sessionTrackingDisabled = true;
+                    instance.mSessionTrackingDisabled = true;
                     getApplication().unregisterActivityLifecycleCallbacks(instance);
                 }
             }
@@ -248,8 +248,8 @@ public class MetricsManager implements Application.ActivityLifecycleCallbacks {
      * @param serverURL the URL of your custom metrics server as a String
      */
     public static void setCustomServerURL(String serverURL) {
-        if (sender != null) {
-            sender.setCustomServerURL(serverURL);
+        if (sSender != null) {
+            sSender.setCustomServerURL(serverURL);
         } else {
             Log.w(TAG, "HockeyApp couldn't set the custom server url. Please register(...) the MetricsManager before setting the server URL.");
         }
@@ -262,8 +262,8 @@ public class MetricsManager implements Application.ActivityLifecycleCallbacks {
      */
     private static Application getApplication() {
         Application application = null;
-        if (weakApplication != null) {
-            application = weakApplication.get();
+        if (sWeakApplication != null) {
+            application = sWeakApplication.get();
         }
 
         return application;
@@ -279,19 +279,19 @@ public class MetricsManager implements Application.ActivityLifecycleCallbacks {
     }
 
     protected static Channel getChannel() {
-        return MetricsManager.channel;
+        return sChannel;
     }
 
     protected void setChannel(Channel channel) {
-        MetricsManager.channel = channel;
+        sChannel = channel;
     }
 
     protected static Sender getSender() {
-        return MetricsManager.sender;
+        return sSender;
     }
 
     protected static void setSender(Sender sender) {
-        MetricsManager.sender = sender;
+        sSender = sender;
     }
 
     protected static MetricsManager getInstance() {
@@ -321,7 +321,7 @@ public class MetricsManager implements Application.ActivityLifecycleCallbacks {
     public void onActivityPaused(Activity activity) {
         //set the timestamp when the app was last send to the background. This will be continuously
         //updated when the user navigates through the app.
-        this.lastBackground.set(this.getTime());
+        LAST_BACKGROUND.set(this.getTime());
     }
 
     @Override
@@ -346,7 +346,7 @@ public class MetricsManager implements Application.ActivityLifecycleCallbacks {
      * This is done by comparing NOW with the last time, onPause has been called.
      */
     private void updateSession() {
-        int count = this.activityCount.getAndIncrement();
+        int count = this.ACTIVITY_COUNT.getAndIncrement();
         if (count == 0) {
             if (sessionTrackingEnabled()) {
                 HockeyLog.log(TAG, "Starting & tracking session");
@@ -358,7 +358,7 @@ public class MetricsManager implements Application.ActivityLifecycleCallbacks {
             //we should already have a session now
             //check if the session should be renewed
             long now = this.getTime();
-            long then = this.lastBackground.getAndSet(getTime());
+            long then = this.LAST_BACKGROUND.getAndSet(getTime());
             //TODO save session intervall in configuration file?
             boolean shouldRenew = ((now - then) >= SESSION_RENEWAL_INTERVAL);
             HockeyLog.log(TAG, "Checking if we have to renew a session, time difference is: " + (now - then));
@@ -372,7 +372,7 @@ public class MetricsManager implements Application.ActivityLifecycleCallbacks {
 
     protected void renewSession() {
         String sessionId = UUID.randomUUID().toString();
-        telemetryContext.renewSessionContext(sessionId);
+        sTelemetryContext.renewSessionContext(sessionId);
         trackSessionState(SessionState.START);
     }
 
@@ -388,7 +388,7 @@ public class MetricsManager implements Application.ActivityLifecycleCallbacks {
                 SessionStateData sessionItem = new SessionStateData();
                 sessionItem.setState(sessionState);
                 Data<Domain> data = createData(sessionItem);
-                channel.log(data);
+                sChannel.enqueueData(data);
                 return null;
             }
         });

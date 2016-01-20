@@ -19,61 +19,61 @@ public class TelemetryContextTests extends InstrumentationTestCase {
     public void testInstanceInitialisation() {
         Assert.assertNotNull(sut);
         Assert.assertNotNull(sut.getInstrumentationKey());
-        Assert.assertNotNull(sut.context);
-        Assert.assertNotNull(sut.device);
-        Assert.assertNotNull(sut.user);
-        Assert.assertNotNull(sut.internal);
-        Assert.assertNotNull(sut.application);
+        Assert.assertNotNull(sut.mContext);
+        Assert.assertNotNull(sut.mDevice);
+        Assert.assertNotNull(sut.mUser);
+        Assert.assertNotNull(sut.mInternal);
+        Assert.assertNotNull(sut.mApplication);
     }
 
     public void testContextIsAccessible() {
 
         // Device context
         sut.setDeviceModel("Model");
-        Assert.assertEquals(sut.device.getModel(), sut.getDeviceModel());
+        Assert.assertEquals(sut.mDevice.getModel(), sut.getDeviceModel());
 
         sut.setDeviceType("Type");
-        Assert.assertEquals(sut.device.getType(), sut.getDeviceType());
+        Assert.assertEquals(sut.mDevice.getType(), sut.getDeviceType());
 
         sut.setOsVersion("OsVersion");
-        Assert.assertEquals(sut.device.getOsVersion(), sut.getOsVersion());
+        Assert.assertEquals(sut.mDevice.getOsVersion(), sut.getOsVersion());
 
         sut.setOsName("Os");
-        Assert.assertEquals(sut.device.getOs(), sut.getOsName());
+        Assert.assertEquals(sut.mDevice.getOs(), sut.getOsName());
 
         sut.setDeviceId("DeviceId");
-        Assert.assertEquals(sut.device.getId(), sut.getDeviceId());
+        Assert.assertEquals(sut.mDevice.getId(), sut.getDeviceId());
 
         sut.setOsLocale("OsLocale");
-        Assert.assertEquals(sut.device.getLocale(), sut.getOsLocale());
+        Assert.assertEquals(sut.mDevice.getLocale(), sut.getOsLocale());
 
         sut.setScreenResolution("ScreenResolution");
-        Assert.assertEquals(sut.device.getScreenResolution(), sut.getScreenResolution());
+        Assert.assertEquals(sut.mDevice.getScreenResolution(), sut.getScreenResolution());
 
         sut.setDeviceOemName("OemName");
-        Assert.assertEquals(sut.device.getOemName(), sut.getDeviceOemName());
+        Assert.assertEquals(sut.mDevice.getOemName(), sut.getDeviceOemName());
 
         // Internal context
         sut.setSdkVersion("SdkVersion");
-        Assert.assertEquals(sut.internal.getSdkVersion(), sut.getSdkVersion());
+        Assert.assertEquals(sut.mInternal.getSdkVersion(), sut.getSdkVersion());
 
         // Application context
         sut.setAppVersion("Version");
-        Assert.assertEquals(sut.application.getVer(), sut.getAppVersion());
+        Assert.assertEquals(sut.mApplication.getVer(), sut.getAppVersion());
 
         // User context
         sut.setAnonymousUserId("AnonymousUserId");
-        Assert.assertEquals(sut.user.getId(), sut.getAnonymousUserId());
+        Assert.assertEquals(sut.mUser.getId(), sut.getAnonymousUserId());
 
         // Session context
         sut.setSessionId("SessionId");
-        Assert.assertEquals(sut.session.getId(), sut.getSessionId());
+        Assert.assertEquals(sut.mSession.getId(), sut.getSessionId());
 
         sut.setIsFirstSession("IsFirstSession");
-        Assert.assertEquals(sut.session.getIsFirst(), sut.getIsFirstSession());
+        Assert.assertEquals(sut.mSession.getIsFirst(), sut.getIsFirstSession());
 
         sut.setIsNewSession("IsNewSession");
-        Assert.assertEquals(sut.session.getIsNew(), sut.getIsNewSession());
+        Assert.assertEquals(sut.mSession.getIsNew(), sut.getIsNewSession());
     }
 
 }

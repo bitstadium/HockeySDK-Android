@@ -47,23 +47,23 @@ public class Sender {
     /**
      * Persistence object used to reserve, free, or delete files.
      */
-    protected WeakReference<Persistence> weakPersistence;
+    protected WeakReference<Persistence> mWeakPersistence;
     /**
      * Thread safe counter to keep track of num of operations
      */
-    private AtomicInteger requestCount;
+    private AtomicInteger mRequestCount;
 
     /**
      * Field to hold custom server URL. Will be ignored if null.
      */
-    private String customServerURL;
+    private String mCustomServerURL;
 
     /**
      * Create a Sender instance
      * Call setPersistence immediately after creating the Sender object
      */
     protected Sender() {
-        this.requestCount = new AtomicInteger(0);
+        mRequestCount = new AtomicInteger(0);
     }
 
     /**
@@ -73,7 +73,7 @@ public class Sender {
      */
     protected void triggerSending() {
         if (requestCount() < MAX_REQUEST_COUNT) {
-            this.requestCount.getAndIncrement();
+            mRequestCount.getAndIncrement();
 
             AsyncTaskUtils.execute(
                     new AsyncTask<Void, Void, Void>() {
@@ -92,7 +92,7 @@ public class Sender {
 
     protected void triggerSendingForTesting(final HttpURLConnection connection, final File file, final String persistedData) {
         if (requestCount() < MAX_REQUEST_COUNT) {
-            this.requestCount.getAndIncrement();
+            mRequestCount.getAndIncrement();
 
             AsyncTaskUtils.execute(
                     new AsyncTask<Void, Void, Void>() {
@@ -170,6 +170,7 @@ public class Sender {
      *
      * @return connection to the API endpoint
      */
+    @SuppressWarnings("ConstantConditions")
     protected HttpURLConnection createConnection() {
         URL url;
         HttpURLConnection connection = null;
@@ -177,7 +178,7 @@ public class Sender {
             if (getCustomServerURL() == null) {
                 url = new URL(DEFAULT_ENDPOINT_URL);
             } else {
-                url = new URL(this.customServerURL);
+                url = new URL(this.mCustomServerURL);
                 if (url == null) {
                     url = new URL(DEFAULT_ENDPOINT_URL);
                 }
@@ -207,7 +208,7 @@ public class Sender {
      */
     protected void onResponse(HttpURLConnection connection, int responseCode, String payload, File
             fileToSend) {
-        this.requestCount.getAndDecrement();
+        mRequestCount.getAndDecrement();
         HockeyLog.log(TAG, "response code " + Integer.toString(responseCode));
 
         boolean isRecoverableError = isRecoverableError(responseCode);
@@ -351,8 +352,8 @@ public class Sender {
 
     protected Persistence getPersistence() {
         Persistence persistence = null;
-        if (weakPersistence != null) {
-            persistence = weakPersistence.get();
+        if (mWeakPersistence != null) {
+            persistence = mWeakPersistence.get();
         }
         return persistence;
     }
@@ -363,7 +364,7 @@ public class Sender {
      * @param persistence a persistence used to reserve, free, or delete files
      */
     protected void setPersistence(Persistence persistence) {
-        this.weakPersistence = new WeakReference<>(persistence);
+        mWeakPersistence = new WeakReference<>(persistence);
     }
 
     /**
@@ -372,11 +373,11 @@ public class Sender {
      * @return the number of running requests
      */
     protected int requestCount() {
-        return this.requestCount.get();
+        return mRequestCount.get();
     }
 
     protected String getCustomServerURL() {
-        return customServerURL;
+        return mCustomServerURL;
     }
 
     /**
@@ -385,6 +386,6 @@ public class Sender {
      * @param customServerURL URL for custom server endpoint to collect telemetry
      */
     protected void setCustomServerURL(String customServerURL) {
-        this.customServerURL = customServerURL;
+        mCustomServerURL = customServerURL;
     }
 }

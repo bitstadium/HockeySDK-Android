@@ -30,7 +30,7 @@ public class PersistenceTests extends InstrumentationTestCase {
 
     public void testInstanceInitialisation() {
         Assert.assertNotNull(sut);
-        Assert.assertNotNull(sut.servedFiles);
+        Assert.assertNotNull(sut.mServedFiles);
     }
 
     public void testTelemetryDirectoryGetsCreated() {
@@ -54,22 +54,22 @@ public class PersistenceTests extends InstrumentationTestCase {
     public void testDeleteFileWorks() {
         File mockFile = mock(File.class);
         when(mockFile.delete()).thenReturn(true);
-        sut.servedFiles = mock(ArrayList.class);
+        sut.mServedFiles = mock(ArrayList.class);
 
         sut.deleteFile(mockFile);
 
         verify(mockFile).delete();
-        verify(sut.servedFiles).remove(mockFile);
+        verify(sut.mServedFiles).remove(mockFile);
     }
 
     public void testMakeAvailableUnblocksFile() {
         File mockFile = mock(File.class);
-        sut.servedFiles = mock(ArrayList.class);
+        sut.mServedFiles = mock(ArrayList.class);
 
         sut.makeAvailable(mockFile);
 
-        verify(sut.servedFiles).remove(mockFile);
-        verifyNoMoreInteractions(sut.servedFiles);
+        verify(sut.mServedFiles).remove(mockFile);
+        verifyNoMoreInteractions(sut.mServedFiles);
     }
 
     public void testNextFileRequestReturnsUnreservedFile() {
@@ -84,12 +84,12 @@ public class PersistenceTests extends InstrumentationTestCase {
         // Mock served list containing 1 file
         ArrayList<File> servedFiles = new ArrayList<File>();
         servedFiles.add(mockFile1);
-        sut.servedFiles = servedFiles;
+        sut.mServedFiles = servedFiles;
 
         // Test one unreserved file left
         File result = sut.nextAvailableFileInDirectory();
         Assert.assertEquals(mockFile2, result);
-        Assert.assertTrue(sut.servedFiles.contains(mockFile2));
+        Assert.assertTrue(sut.mServedFiles.contains(mockFile2));
 
         // Test all files are already in use
         result = sut.nextAvailableFileInDirectory();
