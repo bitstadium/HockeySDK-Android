@@ -24,7 +24,7 @@ import java.util.Map;
  **/
 class Channel {
 
-    private static final String TAG = "HA-MetricsChannel";
+    private static final String TAG = "HockeyApp-Metrics";
 
     /**
      * Synchronization LOCK

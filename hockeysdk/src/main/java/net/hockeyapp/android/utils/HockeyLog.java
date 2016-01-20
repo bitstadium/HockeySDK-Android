@@ -34,7 +34,7 @@ import android.util.Log;
  * @author Benjamin Reimold
  */
 public class HockeyLog {
-    public static final String LOG_IDENTIFIER = "HockeyApp";
+    public static final String TAG = "HockeyApp";
 
     private static boolean mDebugLogEnabled = false;
 
@@ -74,7 +74,7 @@ public class HockeyLog {
     public static void log(String tag, String message) {
         if (isDebugLogEnabled() && (message != null)) {
             if (tag == null) {
-                tag = LOG_IDENTIFIER;
+                tag = TAG;
             }
 
             Log.d(tag, message);

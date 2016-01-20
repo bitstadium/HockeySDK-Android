@@ -42,7 +42,7 @@ public class Sender {
     static final int DEFAULT_SENDER_CONNECT_TIMEOUT = 15 * 1000;
     static final int MAX_REQUEST_COUNT = 10;
 
-    private static final String TAG = "HA-MetricsSender";
+    private static final String TAG = "HockeyApp-Metrics";
 
     /**
      * Persistence object used to reserve, free, or delete files.

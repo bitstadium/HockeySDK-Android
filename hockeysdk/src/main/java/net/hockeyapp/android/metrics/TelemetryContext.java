@@ -14,7 +14,6 @@ import android.view.Display;
 import android.view.WindowManager;
 
 import net.hockeyapp.android.BuildConfig;
-import net.hockeyapp.android.Constants;
 import net.hockeyapp.android.metrics.model.Application;
 import net.hockeyapp.android.metrics.model.Device;
 import net.hockeyapp.android.metrics.model.Internal;
@@ -36,7 +35,7 @@ import java.util.UUID;
  **/
 class TelemetryContext {
 
-    private static final String TAG = "HA-Metrics";
+    private static final String TAG = "HockeyApp-Metrics";
 
     /**
      * Key needed to access the shared preferences of the SDK.
@@ -52,31 +51,27 @@ class TelemetryContext {
      * Key needed to determine, whether we have a new or existing user.
      */
     private static final String SESSION_IS_FIRST_KEY = "SESSION_IS_FIRST";
-
-    /**
-     * Synchronization LOCK for setting static context.
-     */
-    private static final Object LOCK = new Object();
+    
     /**
      * Device telemetryContext.
      */
-    protected final Device device;
+    protected final Device mDevice;
     /**
      * Session context.
      */
-    protected final Session session;
+    protected final Session mSession;
     /**
      * User context.
      */
-    protected final User user;
+    protected final User mUser;
     /**
      * Internal context.
      */
-    protected final Internal internal;
+    protected final Internal mInternal;
     /**
      * Application context.
      */
-    protected final Application application;
+    protected final Application mApplication;
     /**
      * Synchronization LOCK for setting instrumentation key.
      */
@@ -84,29 +79,29 @@ class TelemetryContext {
     /**
      * The application context needed to update some context values.
      */
-    protected Context context;
+    protected Context mContext;
     /**
      * The shared preferences INSTANCE for reading persistent context.
      */
-    protected SharedPreferences settings;
+    protected SharedPreferences mSettings;
     /**
      * Device context.
      */
-    protected String instrumentationKey;
+    protected String mInstrumentationKey;
     /**
      * The app's package name.
      */
-    protected String packageName;
+    protected String mPackageName;
 
     /**
      * Constructs a new INSTANCE of TelemetryContext.
      */
     private TelemetryContext() {
-        this.device = new Device();
-        this.session = new Session();
-        this.user = new User();
-        this.application = new Application();
-        this.internal = new Internal();
+        mDevice = new Device();
+        mSession = new Session();
+        mUser = new User();
+        mApplication = new Application();
+        mInternal = new Internal();
     }
 
     /**
@@ -117,9 +112,9 @@ class TelemetryContext {
      */
     protected TelemetryContext(Context context, String appIdentifier) {
         this();
-        this.settings = context.getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
-        this.context = context;
-        this.instrumentationKey = Util.convertAppIdentifierToGuid(appIdentifier);
+        mSettings = context.getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
+        mContext = context;
+        mInstrumentationKey = Util.convertAppIdentifierToGuid(appIdentifier);
 
         configDeviceContext();
         configUserContext();
@@ -150,8 +145,8 @@ class TelemetryContext {
         //but this has to be verified.
         setIsNewSession("true");
 
-        SharedPreferences.Editor editor = this.settings.edit();
-        if (!this.settings.getBoolean(SESSION_IS_FIRST_KEY, false)) {
+        SharedPreferences.Editor editor = mSettings.edit();
+        if (!mSettings.getBoolean(SESSION_IS_FIRST_KEY, false)) {
             editor.putBoolean(SESSION_IS_FIRST_KEY, true);
             editor.apply();
             setIsFirstSession("true");
@@ -167,21 +162,21 @@ class TelemetryContext {
 
         // App version
         String version = "unknown";
-        this.packageName = "";
+        mPackageName = "";
 
         try {
-            final PackageManager manager = this.context.getPackageManager();
+            final PackageManager manager = mContext.getPackageManager();
             final PackageInfo info = manager
-                    .getPackageInfo(this.context.getPackageName(), 0);
+                    .getPackageInfo(mContext.getPackageName(), 0);
 
             if (info.packageName != null) {
-                this.packageName = info.packageName;
+                mPackageName = info.packageName;
             }
 
             String appBuild = Integer.toString(info.versionCode);
             version = String.format("%s (%S)", info.versionName, appBuild);
         } catch (PackageManager.NameNotFoundException e) {
-            HockeyLog.log(Constants.TAG, "Could not collect application context");
+            HockeyLog.log(TAG, "Could not get application context");
         } finally {
             setAppVersion(version);
         }
@@ -199,7 +194,7 @@ class TelemetryContext {
     protected void configUserContext(String userId) {
         if (userId == null) {
             // No custom user Id is given, so get this info from settings
-            userId = this.settings.getString(TelemetryContext.USER_ANON_ID_KEY, null);
+            userId = mSettings.getString(TelemetryContext.USER_ANON_ID_KEY, null);
             if (userId == null) {
                 // No settings available, generate new user info
                 userId = UUID.randomUUID().toString();
@@ -215,7 +210,7 @@ class TelemetryContext {
      */
     protected void configUserContext() {
         loadUserInfo();
-        if (user != null && user.getId() == null) {
+        if (mUser != null && mUser.getId() == null) {
             setAnonymousUserId(UUID.randomUUID().toString());
             saveUserInfo();
         }
@@ -225,7 +220,7 @@ class TelemetryContext {
      * Write user information to shared preferences.
      */
     protected void saveUserInfo() {
-        SharedPreferences.Editor editor = this.settings.edit();
+        SharedPreferences.Editor editor = mSettings.edit();
         editor.putString(TelemetryContext.USER_ANON_ID_KEY, getAnonymousUserId());
         editor.apply();
     }
@@ -234,9 +229,9 @@ class TelemetryContext {
      * Load user information to shared preferences.
      */
     protected void loadUserInfo() {
-        String userId = this.settings.getString(USER_ANON_ID_KEY, null);
+        String userId = mSettings.getString(USER_ANON_ID_KEY, null);
         // get device ID
-        ContentResolver resolver = this.context.getContentResolver();
+        ContentResolver resolver = mContext.getContentResolver();
         String deviceIdentifier = Settings.Secure.getString(resolver, Settings.Secure.ANDROID_ID);
         if (deviceIdentifier != null) {
             userId = Util.tryHashStringSha256(deviceIdentifier);
@@ -258,7 +253,7 @@ class TelemetryContext {
         updateScreenResolution();
 
         // get device ID
-        ContentResolver resolver = this.context.getContentResolver();
+        ContentResolver resolver = mContext.getContentResolver();
         String deviceIdentifier = Settings.Secure.getString(resolver, Settings.Secure.ANDROID_ID);
         if (deviceIdentifier != null) {
             setDeviceId(Util.tryHashStringSha256(deviceIdentifier));
@@ -266,7 +261,7 @@ class TelemetryContext {
 
         // check device type
         final TelephonyManager telephonyManager = (TelephonyManager)
-                this.context.getSystemService(Context.TELEPHONY_SERVICE);
+                mContext.getSystemService(Context.TELEPHONY_SERVICE);
         if (telephonyManager.getPhoneType() != TelephonyManager.PHONE_TYPE_NONE) {
             setDeviceType("Phone");
         } else {
@@ -275,7 +270,7 @@ class TelemetryContext {
 
         // detect emulator
         if (Util.isEmulator()) {
-            setDeviceModel("[Emulator]" + device.getModel());
+            setDeviceModel("[Emulator]" + mDevice.getModel());
         }
     }
 
@@ -286,8 +281,8 @@ class TelemetryContext {
         int width;
         int height;
 
-        if (this.context != null) {
-            WindowManager wm = (WindowManager) this.context.getSystemService(
+        if (mContext != null) {
+            WindowManager wm = (WindowManager) mContext.getSystemService(
                     Context.WINDOW_SERVICE);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                 Point size = new Point();
@@ -337,26 +332,26 @@ class TelemetryContext {
      * The package name.
      */
     protected String getPackageName() {
-        return this.packageName;
+        return mPackageName;
     }
 
     protected Map<String, String> getContextTags() {
         Map<String, String> contextTags = new LinkedHashMap<>();
 
-        synchronized (this.application) {
-            this.application.addToHashMap(contextTags);
+        synchronized (mApplication) {
+            mApplication.addToHashMap(contextTags);
         }
-        synchronized (this.device) {
-            this.device.addToHashMap(contextTags);
+        synchronized (mDevice) {
+            mDevice.addToHashMap(contextTags);
         }
-        synchronized (this.session) {
-            this.session.addToHashMap(contextTags);
+        synchronized (mSession) {
+            mSession.addToHashMap(contextTags);
         }
-        synchronized (this.user) {
-            this.user.addToHashMap(contextTags);
+        synchronized (mUser) {
+            mUser.addToHashMap(contextTags);
         }
-        synchronized (this.internal) {
-            this.internal.addToHashMap(contextTags);
+        synchronized (mInternal) {
+            mInternal.addToHashMap(contextTags);
         }
 
         return contextTags;
@@ -364,189 +359,189 @@ class TelemetryContext {
 
     public String getInstrumentationKey() {
         synchronized (IKEY_LOCK) {
-            return this.instrumentationKey;
+            return mInstrumentationKey;
         }
     }
 
     public synchronized void setInstrumentationKey(String instrumentationKey) {
         synchronized (IKEY_LOCK) {
-            this.instrumentationKey = instrumentationKey;
+            mInstrumentationKey = instrumentationKey;
         }
     }
 
     public String getScreenResolution() {
-        synchronized (this.application) {
-            return this.device.getScreenResolution();
+        synchronized (mDevice) {
+            return mDevice.getScreenResolution();
         }
     }
 
     public void setScreenResolution(String screenResolution) {
-        synchronized (this.application) {
-            this.device.setScreenResolution(screenResolution);
+        synchronized (mDevice) {
+            mDevice.setScreenResolution(screenResolution);
         }
     }
 
     public String getAppVersion() {
-        synchronized (this.application) {
-            return this.application.getVer();
+        synchronized (mApplication) {
+            return mApplication.getVer();
         }
     }
 
     public void setAppVersion(String appVersion) {
-        synchronized (this.application) {
-            this.application.setVer(appVersion);
+        synchronized (mApplication) {
+            mApplication.setVer(appVersion);
         }
     }
 
     public String getAnonymousUserId() {
-        synchronized (this.user) {
-            return this.user.getId();
+        synchronized (mUser) {
+            return mUser.getId();
         }
     }
 
     public void setAnonymousUserId(String userId) {
-        synchronized (this.user) {
-            this.user.setId(userId);
+        synchronized (mUser) {
+            mUser.setId(userId);
         }
     }
 
     public String getSdkVersion() {
-        synchronized (this.internal) {
-            return this.internal.getSdkVersion();
+        synchronized (mInternal) {
+            return mInternal.getSdkVersion();
         }
     }
 
     public void setSdkVersion(String sdkVersion) {
-        synchronized (this.internal) {
-            this.internal.setSdkVersion(sdkVersion);
+        synchronized (mInternal) {
+            mInternal.setSdkVersion(sdkVersion);
         }
     }
 
     public String getSessionId() {
-        synchronized (this.session) {
-            return this.session.getId();
+        synchronized (mSession) {
+            return mSession.getId();
         }
     }
 
     public void setSessionId(String sessionId) {
-        synchronized (this.session) {
-            this.session.setId(sessionId);
+        synchronized (mSession) {
+            mSession.setId(sessionId);
         }
     }
 
     public String getIsFirstSession() {
-        synchronized (this.session) {
-            return this.session.getIsFirst();
+        synchronized (mSession) {
+            return mSession.getIsFirst();
         }
     }
 
     public void setIsFirstSession(String isFirst) {
-        synchronized (this.session) {
-            this.session.setIsFirst(isFirst);
+        synchronized (mSession) {
+            mSession.setIsFirst(isFirst);
         }
     }
 
     public String getIsNewSession() {
-        synchronized (this.session) {
-            return this.session.getIsNew();
+        synchronized (mSession) {
+            return mSession.getIsNew();
         }
     }
 
     public void setIsNewSession(String isNewSession) {
-        synchronized (this.session) {
-            this.session.setIsNew(isNewSession);
+        synchronized (mSession) {
+            mSession.setIsNew(isNewSession);
         }
     }
 
     public String getOsVersion() {
-        synchronized (this.device) {
-            return this.device.getOsVersion();
+        synchronized (mDevice) {
+            return mDevice.getOsVersion();
         }
     }
 
     public void setOsVersion(String osVersion) {
-        synchronized (this.device) {
-            this.device.setOsVersion(osVersion);
+        synchronized (mDevice) {
+            mDevice.setOsVersion(osVersion);
         }
     }
 
     public String getOsName() {
-        synchronized (this.device) {
-            return this.device.getOs();
+        synchronized (mDevice) {
+            return mDevice.getOs();
         }
     }
 
     public void setOsName(String osName) {
-        synchronized (this.device) {
-            this.device.setOs(osName);
+        synchronized (mDevice) {
+            mDevice.setOs(osName);
         }
     }
 
     public String getDeviceModel() {
-        synchronized (this.device) {
-            return this.device.getModel();
+        synchronized (mDevice) {
+            return mDevice.getModel();
         }
     }
 
     public void setDeviceModel(String deviceModel) {
-        synchronized (this.device) {
-            this.device.setModel(deviceModel);
+        synchronized (mDevice) {
+            mDevice.setModel(deviceModel);
         }
     }
 
     public String getDeviceOemName() {
-        synchronized (this.device) {
-            return this.device.getOemName();
+        synchronized (mDevice) {
+            return mDevice.getOemName();
         }
     }
 
     public void setDeviceOemName(String deviceOemName) {
-        synchronized (this.device) {
-            this.device.setOemName(deviceOemName);
+        synchronized (mDevice) {
+            mDevice.setOemName(deviceOemName);
         }
     }
 
     public String getOsLocale() {
-        synchronized (this.device) {
-            return this.device.getLocale();
+        synchronized (mDevice) {
+            return mDevice.getLocale();
         }
     }
 
     public void setOsLocale(String osLocale) {
-        synchronized (this.device) {
-            this.device.setLocale(osLocale);
+        synchronized (mDevice) {
+            mDevice.setLocale(osLocale);
         }
     }
 
     public String getOSLanguage() {
-        synchronized (this.device) {
-            return this.device.getLanguage();
+        synchronized (mDevice) {
+            return mDevice.getLanguage();
         }
     }
 
     public void setOsLanguage(String osLanguage) {
-        synchronized (this.device) {
-            this.device.setLanguage(osLanguage);
+        synchronized (mDevice) {
+            mDevice.setLanguage(osLanguage);
         }
     }
 
     public String getDeviceId() {
-        return this.device.getId();
+        return mDevice.getId();
     }
 
     public void setDeviceId(String deviceId) {
-        synchronized (this.device) {
-            this.device.setId(deviceId);
+        synchronized (mDevice) {
+            mDevice.setId(deviceId);
         }
     }
 
     public String getDeviceType() {
-        return this.device.getType();
+        return mDevice.getType();
     }
 
     public void setDeviceType(String deviceType) {
-        synchronized (this.device) {
-            this.device.setType(deviceType);
+        synchronized (mDevice) {
+            mDevice.setType(deviceType);
         }
     }
 }
