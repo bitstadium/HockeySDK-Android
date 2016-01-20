@@ -87,10 +87,8 @@ class Channel {
             queue.toArray(data);
             queue.clear();
 
-            if (data != null) {
-                if (this.persistence != null) {
-                    this.persistence.persist(data);
-                }
+            if (this.persistence != null) {
+                this.persistence.persist(data);
             }
         }
     }
@@ -133,12 +131,11 @@ class Channel {
             Envelope envelope = null;
             try {
                 envelope = createEnvelope((Data<Domain>) data);
-            }
-            catch (ClassCastException e) {
+            } catch (ClassCastException e) {
                 HockeyLog.log(TAG, "Telemetry not enqueued, could not create Envelope, must be of type ITelemetry");
             }
 
-            if(envelope != null) {
+            if (envelope != null) {
                 // log to queue
                 String serializedEnvelope = serializeEnvelope(envelope);
                 enqueue(serializedEnvelope);
