@@ -279,6 +279,7 @@ class TelemetryContext {
         }
     }
 
+    @SuppressWarnings("deprecation")
     @SuppressLint({"NewApi", "Deprecation"})
     protected void updateScreenResolution() {
         String resolutionString;
