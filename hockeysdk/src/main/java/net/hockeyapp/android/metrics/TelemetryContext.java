@@ -46,7 +46,7 @@ class TelemetryContext {
     /**
      * Key needed to access the anonymous user id saved in the preferences.
      */
-    private static final String USER_ANOM_ID_KEY = "USER_ID";
+    private static final String USER_ANON_ID_KEY = "USER_ID";
 
     /**
      * Key needed to determine, whether we have a new or exisiting user.
@@ -199,7 +199,7 @@ class TelemetryContext {
     protected void configUserContext(String userId) {
         if (userId == null) {
             // No custom user Id is given, so get this info from settings
-            userId = this.settings.getString(TelemetryContext.USER_ANOM_ID_KEY, null);
+            userId = this.settings.getString(TelemetryContext.USER_ANON_ID_KEY, null);
             if (userId == null) {
                 // No settings available, generate new user info
                 userId = UUID.randomUUID().toString();
@@ -226,7 +226,7 @@ class TelemetryContext {
      */
     protected void saveUserInfo() {
         SharedPreferences.Editor editor = this.settings.edit();
-        editor.putString(TelemetryContext.USER_ANOM_ID_KEY, getAnonymousUserId());
+        editor.putString(TelemetryContext.USER_ANON_ID_KEY, getAnonymousUserId());
         editor.apply();
     }
 
@@ -234,7 +234,14 @@ class TelemetryContext {
      * Load user information to shared preferences.
      */
     protected void loadUserInfo() {
-        String userId = this.settings.getString(USER_ANOM_ID_KEY, null);
+        String userId = this.settings.getString(USER_ANON_ID_KEY, null);
+        // get device ID
+        ContentResolver resolver = this.context.getContentResolver();
+        String deviceIdentifier = Settings.Secure.getString(resolver, Settings.Secure.ANDROID_ID);
+        if (deviceIdentifier != null) {
+            userId = Util.tryHashStringSha256(deviceIdentifier);
+        }
+
         setAnonymousUserId(userId);
     }
 
