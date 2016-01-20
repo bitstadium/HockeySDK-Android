@@ -49,7 +49,7 @@ class TelemetryContext {
     private static final String USER_ANON_ID_KEY = "USER_ID";
 
     /**
-     * Key needed to determine, whether we have a new or exisiting user.
+     * Key needed to determine, whether we have a new or existing user.
      */
     private static final String SESSION_IS_FIRST_KEY = "SESSION_IS_FIRST";
 
@@ -298,7 +298,7 @@ class TelemetryContext {
                 try {
                     //We have to use undocumented API here. Android 4.0 introduced soft buttons for
                     //back, home and menu, but there's no API present to get the real display size
-                    //all available methods only return the size of the contentview.
+                    //all available methods only return the size of the contentView.
                     Method mGetRawW = Display.class.getMethod("getRawWidth");
                     Method mGetRawH = Display.class.getMethod("getRawHeight");
                     Display display = wm.getDefaultDisplay();
@@ -341,7 +341,7 @@ class TelemetryContext {
     }
 
     protected Map<String, String> getContextTags() {
-        Map<String, String> contextTags = new LinkedHashMap<String, String>();
+        Map<String, String> contextTags = new LinkedHashMap<>();
 
         synchronized (this.application) {
             this.application.addToHashMap(contextTags);
