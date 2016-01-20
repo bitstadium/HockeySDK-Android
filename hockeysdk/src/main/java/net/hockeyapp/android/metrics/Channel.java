@@ -52,7 +52,7 @@ class Channel {
      */
     public Channel(TelemetryContext telemetryContext, Persistence persistence) {
         this.telemetryContext = telemetryContext;
-        this.queue = new LinkedList<String>();
+        this.queue = new LinkedList<>();
         this.persistence = persistence;
     }
 
@@ -60,14 +60,13 @@ class Channel {
      * Adds an item to the sender queue
      *
      * @param serializedItem a serialized telemetry item to enqueue
-     * @return true if the item was successfully added to the queue
      */
     protected void enqueue(String serializedItem) {
 
         if (serializedItem == null) {
             return;
         }
-        synchronized (this.LOCK) {
+        synchronized (LOCK) {
             if (this.queue.add(serializedItem)) {
                 if ((this.queue.size() >= MAX_BATCH_COUNT)) {
                     synchronize();
@@ -126,18 +125,27 @@ class Channel {
     /**
      * Records the passed in data.
      *
-     * @param data the base object to record
+     * @param data the base object to enqueue
      */
+    @SuppressWarnings("unchecked")
     public void log(Base data) {
         if (data instanceof Data) {
-            Envelope envelope = createEnvelope((Data<Domain>) data);
+            Envelope envelope = null;
+            try {
+                envelope = createEnvelope((Data<Domain>) data);
+            }
+            catch (ClassCastException e) {
+                HockeyLog.log(TAG, "Telemetry not enqueued, could not create Envelope, must be of type ITelemetry");
+            }
 
-            // log to queue
-            String serializedEnvelope = serializeEnvelope(envelope);
-            enqueue(serializedEnvelope);
-            HockeyLog.log(TAG, "enqueued telemetry: " + envelope.getName());
+            if(envelope != null) {
+                // log to queue
+                String serializedEnvelope = serializeEnvelope(envelope);
+                enqueue(serializedEnvelope);
+                HockeyLog.log(TAG, "enqueued telemetry: " + envelope.getName());
+            }
         } else {
-            HockeyLog.log(TAG, "telemetry not enqueued, must be of type ITelemetry");
+            HockeyLog.log(TAG, "Telemetry not enqueued, must be of type ITelemetry");
         }
     }
 
