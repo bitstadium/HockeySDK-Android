@@ -11,7 +11,7 @@ public class Domain implements IJsonSerializable {
     /**
      * A map for holding event attributes.
      */
-    public LinkedHashMap<String, String> Attributes = new LinkedHashMap<String, String>();
+    public LinkedHashMap<String, String> Attributes = new LinkedHashMap<>();
 
     /**
      * The name for thie type
@@ -48,8 +48,7 @@ public class Domain implements IJsonSerializable {
      * @param writer The writer to serialize this object to.
      */
     protected String serializeContent(Writer writer) throws IOException {
-        String prefix = "";
-        return prefix;
+        return "";
     }
 
     /**
