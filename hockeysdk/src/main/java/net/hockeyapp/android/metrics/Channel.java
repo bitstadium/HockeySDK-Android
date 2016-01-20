@@ -41,11 +41,11 @@ class Channel {
     /**
      * Telemetry context used by the channel to create the payload.
      */
-    protected TelemetryContext telemetryContext;
+    protected final TelemetryContext telemetryContext;
     /**
      * Persistence used for storing telemetry items before they get sent out.
      */
-    private Persistence persistence;
+    private final Persistence persistence;
 
     /**
      * Instantiates a new INSTANCE of Channel
