@@ -36,7 +36,7 @@ class Persistence {
     /**
      * Directory of telemetry files.
      */
-    protected File telemetryDirectory;
+    protected final File telemetryDirectory;
     /**
      * Sender module used to send out files.
      */
@@ -50,7 +50,7 @@ class Persistence {
     /**
      * A weak reference to the app context
      */
-    private WeakReference<Context> weakContext;
+    private final WeakReference<Context> weakContext;
 
     /**
      * Restrict access to the default constructor
