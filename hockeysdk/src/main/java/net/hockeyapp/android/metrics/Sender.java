@@ -136,7 +136,7 @@ public class Sender {
                 //Probably offline
                 HockeyLog.log(TAG, "Couldn't send data with IOException: " + e.toString());
                 if (this.getPersistence() != null) {
-                    HockeyLog.log(TAG, "Persisting because of IOException: We're probably offline =)");
+                    HockeyLog.log(TAG, "Persisting because of IOException: We're probably offline.");
                     this.getPersistence().makeAvailable(file); //send again later
                 }
             }
