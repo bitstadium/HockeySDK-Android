@@ -1,21 +1,31 @@
 package net.hockeyapp.android.metrics;
 
+import android.support.test.InstrumentationRegistry;
+import android.support.test.runner.AndroidJUnit4;
 import android.test.InstrumentationTestCase;
 
 import junit.framework.Assert;
 
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+@RunWith(AndroidJUnit4.class)
 public class TelemetryContextTests extends InstrumentationTestCase {
 
     private PublicTelemetryContext sut;
 
+    @Before
     public void setUp() throws Exception {
         super.setUp();
-        System.setProperty("dexmaker.dexcache", getInstrumentation().getTargetContext().getCacheDir()
-                .getPath());
+
+        injectInstrumentation(InstrumentationRegistry.getInstrumentation());
+
         sut = new PublicTelemetryContext(getInstrumentation().getContext(),
                 "a123b4567cde890abcd1e2f3ab456789");//this is a made-up app identifier.
     }
 
+    @Test
     public void testInstanceInitialisation() {
         Assert.assertNotNull(sut);
         Assert.assertNotNull(sut.getInstrumentationKey());
@@ -26,6 +36,7 @@ public class TelemetryContextTests extends InstrumentationTestCase {
         Assert.assertNotNull(sut.mApplication);
     }
 
+    @Test
     public void testContextIsAccessible() {
 
         // Device context

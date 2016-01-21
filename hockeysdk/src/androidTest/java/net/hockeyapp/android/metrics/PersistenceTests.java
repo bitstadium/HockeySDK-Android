@@ -1,46 +1,56 @@
 package net.hockeyapp.android.metrics;
 
 import android.content.Context;
+import android.support.test.InstrumentationRegistry;
+import android.support.test.runner.AndroidJUnit4;
 import android.test.InstrumentationTestCase;
 
 import junit.framework.Assert;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.util.ArrayList;
 
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+@RunWith(AndroidJUnit4.class)
 public class PersistenceTests extends InstrumentationTestCase {
 
     private PublicPersistence sut;
 
+    @Before
     public void setUp() throws Exception {
         super.setUp();
 
-        System.setProperty("dexmaker.dexcache", getInstrumentation().getTargetContext().getCacheDir().getPath());
-        Context mockContext = getInstrumentation().getContext();
+        injectInstrumentation(InstrumentationRegistry.getInstrumentation());
+
+        Context context = getInstrumentation().getContext();
         Sender mockSender = mock(Sender.class);
-        sut = new PublicPersistence(mockContext, mockSender);
+        sut = new PublicPersistence(context, mockSender);
         mockSender.setPersistence(sut);
     }
 
+    @Test
     public void testInstanceInitialisation() {
         Assert.assertNotNull(sut);
         Assert.assertNotNull(sut.mServedFiles);
     }
 
+    @Test
     public void testTelemetryDirectoryGetsCreated() {
-        File spy = spy(new File("/my/test/directory/"));
+        File mock = mock(File.class);
+        sut = new PublicPersistence(getInstrumentation().getContext(), mock, null);
 
-        sut = new PublicPersistence(getInstrumentation().getContext(), spy, null);
-
-        verify(spy).mkdirs();
+        verify(mock).mkdirs();
     }
 
+    @Test
     public void testCallingPersistTriggersWriteToDisk() {
         PublicPersistence spy = spy(sut);
         String[] testData = {"test", "data"};
@@ -51,6 +61,7 @@ public class PersistenceTests extends InstrumentationTestCase {
         verify(spy).writeToDisk(testSerializedString);
     }
 
+    @Test
     public void testDeleteFileWorks() {
         File mockFile = mock(File.class);
         when(mockFile.delete()).thenReturn(true);
@@ -62,6 +73,7 @@ public class PersistenceTests extends InstrumentationTestCase {
         verify(sut.mServedFiles).remove(mockFile);
     }
 
+    @Test
     public void testMakeAvailableUnblocksFile() {
         File mockFile = mock(File.class);
         sut.mServedFiles = mock(ArrayList.class);
@@ -72,6 +84,7 @@ public class PersistenceTests extends InstrumentationTestCase {
         verifyNoMoreInteractions(sut.mServedFiles);
     }
 
+    @Test
     public void testNextFileRequestReturnsUnreservedFile() {
         // Mock file system with 2 files
         File mockDirectory = mock(File.class);
@@ -96,6 +109,7 @@ public class PersistenceTests extends InstrumentationTestCase {
         Assert.assertNull(result);
     }
 
+    @Test
     public void testloadFileWorks() {
         //TODO: Write test after sender integration
     }
