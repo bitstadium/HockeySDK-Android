@@ -46,7 +46,7 @@ publish {
 
 dependencies {
     //Mocking
-    androidTestCompile 'org.mockito:mockito-core:2.0.31-beta'
+    androidTestCompile 'org.mockito:mockito-core:2.0.40-beta'
     androidTestCompile 'com.google.dexmaker:dexmaker:1.2'
     androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.2'
     androidTestCompile 'org.hamcrest:hamcrest-core:1.3'
