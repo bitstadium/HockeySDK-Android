@@ -1,4 +1,4 @@
-package net.hockeyapp.android.metrics;
+package net.hockeyapp.android.objects.metrics;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -172,7 +172,7 @@ public class EnvelopeTests extends TestCase {
         item.setData(new Base());
         StringWriter writer = new StringWriter();
         item.serialize(writer);
-        String expected = "{\"ver\":1234,\"name\":\"Test string\",\"time\":\"Test string\",\"sampleRate\":100.0,\"iKey\":\"Test string\",\"flags\":42,\"os\":\"Test string\",\"osVer\":\"Test string\",\"appId\":\"Test string\",\"appVer\":\"Test string\",\"tags\":{\"key1\":\"test value 1\",\"key2\":\"test value 2\"},\"data\":{}}";
+        String expected = "{\"ver\":1234,\"name\":\"Test string\",\"time\":\"Test string\",\"sampleRate\":100,\"iKey\":\"Test string\",\"flags\":42,\"os\":\"Test string\",\"osVer\":\"Test string\",\"appId\":\"Test string\",\"appVer\":\"Test string\",\"tags\":{\"key1\":\"test value 1\",\"key2\":\"test value 2\"},\"data\":{}}";
         Assert.assertEquals(expected, writer.toString());
     }
 
