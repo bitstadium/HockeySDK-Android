@@ -187,25 +187,6 @@ class TelemetryContext {
     }
 
     /**
-     * Loads an existing user context if existing.
-     *
-     * @param userId custom user id
-     */
-    protected void configUserContext(String userId) {
-        if (userId == null) {
-            // No custom user Id is given, so get this info from settings
-            userId = mSettings.getString(TelemetryContext.USER_ANON_ID_KEY, null);
-            if (userId == null) {
-                // No settings available, generate new user info
-                userId = UUID.randomUUID().toString();
-
-            }
-        }
-        setAnonymousUserId(userId);
-        saveUserInfo();
-    }
-
-    /**
      * Load the user context associated with telemetry data.
      */
     protected void configUserContext() {
