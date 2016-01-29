@@ -285,7 +285,7 @@ public class Envelope implements IJsonSerializable {
      */
     public Map<String, String> getTags() {
         if (this.tags == null) {
-            this.tags = new LinkedHashMap<String, String>();
+            this.tags = new LinkedHashMap<>();
         }
         return this.tags;
     }
@@ -302,7 +302,7 @@ public class Envelope implements IJsonSerializable {
      */
     public Map<String, Extension> getExt() {
         if (this.ext == null) {
-            this.ext = new LinkedHashMap<String, Extension>();
+            this.ext = new LinkedHashMap<>();
         }
         return this.ext;
     }

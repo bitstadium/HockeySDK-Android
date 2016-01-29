@@ -13,7 +13,7 @@ public class Base implements IJsonSerializable {
     /**
      * A map for holding event attributes.
      */
-    public LinkedHashMap<String, String> Attributes = new LinkedHashMap<String, String>();
+    public LinkedHashMap<String, String> Attributes;
 
     /**
      * The name for thie type
@@ -30,6 +30,7 @@ public class Base implements IJsonSerializable {
      */
     public Base() {
         this.InitializeFields();
+        Attributes = new LinkedHashMap<String, String>();
     }
 
     /**

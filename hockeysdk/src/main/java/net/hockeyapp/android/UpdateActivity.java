@@ -28,6 +28,7 @@ import net.hockeyapp.android.objects.ErrorObject;
 import net.hockeyapp.android.tasks.DownloadFileTask;
 import net.hockeyapp.android.tasks.GetFileSizeTask;
 import net.hockeyapp.android.utils.AsyncTaskUtils;
+import net.hockeyapp.android.utils.HockeyLog;
 import net.hockeyapp.android.utils.Util;
 import net.hockeyapp.android.utils.VersionHelper;
 
@@ -187,7 +188,7 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
                 prepareDownload();
             } else {
                 // Permission denied, show user alert
-                Log.w(Constants.TAG, "User denied write permission, can't continue with updater task.");
+                Log.w(HockeyLog.TAG, "User denied write permission, can't continue with updater task.");
 
                 UpdateManagerListener listener = UpdateManager.getLastListener();
                 if (listener != null) {

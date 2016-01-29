@@ -1,46 +1,56 @@
 package net.hockeyapp.android.metrics;
 
 import android.content.Context;
+import android.support.test.InstrumentationRegistry;
+import android.support.test.runner.AndroidJUnit4;
 import android.test.InstrumentationTestCase;
 
 import junit.framework.Assert;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.util.ArrayList;
 
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+@RunWith(AndroidJUnit4.class)
 public class PersistenceTests extends InstrumentationTestCase {
 
     private PublicPersistence sut;
 
+    @Before
     public void setUp() throws Exception {
         super.setUp();
 
-        System.setProperty("dexmaker.dexcache", getInstrumentation().getTargetContext().getCacheDir().getPath());
-        Context mockContext = getInstrumentation().getContext();
+        injectInstrumentation(InstrumentationRegistry.getInstrumentation());
+
+        Context context = getInstrumentation().getContext();
         Sender mockSender = mock(Sender.class);
-        sut = new PublicPersistence(mockContext, mockSender);
+        sut = new PublicPersistence(context, mockSender);
         mockSender.setPersistence(sut);
     }
 
+    @Test
     public void testInstanceInitialisation() {
         Assert.assertNotNull(sut);
-        Assert.assertNotNull(sut.servedFiles);
+        Assert.assertNotNull(sut.mServedFiles);
     }
 
+    @Test
     public void testTelemetryDirectoryGetsCreated() {
-        File spy = spy(new File("/my/test/directory/"));
+        File mock = mock(File.class);
+        sut = new PublicPersistence(getInstrumentation().getContext(), mock, null);
 
-        sut = new PublicPersistence(getInstrumentation().getContext(), spy, null);
-
-        verify(spy).mkdirs();
+        verify(mock).mkdirs();
     }
 
+    @Test
     public void testCallingPersistTriggersWriteToDisk() {
         PublicPersistence spy = spy(sut);
         String[] testData = {"test", "data"};
@@ -51,27 +61,30 @@ public class PersistenceTests extends InstrumentationTestCase {
         verify(spy).writeToDisk(testSerializedString);
     }
 
+    @Test
     public void testDeleteFileWorks() {
         File mockFile = mock(File.class);
         when(mockFile.delete()).thenReturn(true);
-        sut.servedFiles = mock(ArrayList.class);
+        sut.mServedFiles = mock(ArrayList.class);
 
         sut.deleteFile(mockFile);
 
         verify(mockFile).delete();
-        verify(sut.servedFiles).remove(mockFile);
+        verify(sut.mServedFiles).remove(mockFile);
     }
 
+    @Test
     public void testMakeAvailableUnblocksFile() {
         File mockFile = mock(File.class);
-        sut.servedFiles = mock(ArrayList.class);
+        sut.mServedFiles = mock(ArrayList.class);
 
         sut.makeAvailable(mockFile);
 
-        verify(sut.servedFiles).remove(mockFile);
-        verifyNoMoreInteractions(sut.servedFiles);
+        verify(sut.mServedFiles).remove(mockFile);
+        verifyNoMoreInteractions(sut.mServedFiles);
     }
 
+    @Test
     public void testNextFileRequestReturnsUnreservedFile() {
         // Mock file system with 2 files
         File mockDirectory = mock(File.class);
@@ -84,18 +97,19 @@ public class PersistenceTests extends InstrumentationTestCase {
         // Mock served list containing 1 file
         ArrayList<File> servedFiles = new ArrayList<File>();
         servedFiles.add(mockFile1);
-        sut.servedFiles = servedFiles;
+        sut.mServedFiles = servedFiles;
 
         // Test one unreserved file left
         File result = sut.nextAvailableFileInDirectory();
         Assert.assertEquals(mockFile2, result);
-        Assert.assertTrue(sut.servedFiles.contains(mockFile2));
+        Assert.assertTrue(sut.mServedFiles.contains(mockFile2));
 
         // Test all files are already in use
         result = sut.nextAvailableFileInDirectory();
         Assert.assertNull(result);
     }
 
+    @Test
     public void testloadFileWorks() {
         //TODO: Write test after sender integration
     }

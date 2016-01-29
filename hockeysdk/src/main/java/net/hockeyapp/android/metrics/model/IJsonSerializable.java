@@ -15,5 +15,5 @@ public interface IJsonSerializable {
      * @throws IOException will be thrown if something wrong with the output
      *                     stream
      */
-    public void serialize(Writer writer) throws IOException;
+    void serialize(Writer writer) throws IOException;
 }

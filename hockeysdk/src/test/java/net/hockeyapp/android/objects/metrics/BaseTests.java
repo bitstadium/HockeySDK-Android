@@ -1,4 +1,4 @@
-package net.hockeyapp.android.metrics;
+package net.hockeyapp.android.objects.metrics;
 
 
 import junit.framework.Assert;

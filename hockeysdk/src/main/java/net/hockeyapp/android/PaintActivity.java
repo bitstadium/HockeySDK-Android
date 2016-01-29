@@ -65,7 +65,7 @@ public class PaintActivity extends Activity {
 
         if (currentOrientation != desiredOrientation) {
       /* Activity will be destroyed again.. skip the following expensive operations. */
-            HockeyLog.log(Constants.TAG, "Image loading skipped because activity will be destroyed for orientation change.");
+            HockeyLog.log(HockeyLog.TAG, "Image loading skipped because activity will be destroyed for orientation change.");
             return;
         }
 
@@ -164,7 +164,7 @@ public class PaintActivity extends Activity {
     }
 
     private void makeResult() {
-        File hockeyAppCache = new File(getCacheDir(), Constants.TAG);
+        File hockeyAppCache = new File(getCacheDir(), HockeyLog.TAG);
         hockeyAppCache.mkdir();
 
         String filename = mImageName + ".jpg";
@@ -187,7 +187,7 @@ public class PaintActivity extends Activity {
                     out.close();
                 } catch (IOException e) {
                     e.printStackTrace();
-                    Log.e(Constants.TAG, "Could not save image.", e);
+                    Log.e(HockeyLog.TAG, "Could not save image.", e);
                 }
                 return null;
             }

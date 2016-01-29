@@ -8,7 +8,7 @@ public enum SessionState {
 
     private final int value;
 
-    private SessionState(int value) {
+    SessionState(int value) {
         this.value = value;
     }
 

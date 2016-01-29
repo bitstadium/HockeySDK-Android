@@ -48,8 +48,8 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
     //Mocking
-//    androidTestCompile 'org.mockito:mockito-core:1.10.19'
-    androidTestCompile 'org.mockito:mockito-core:2.0.36-beta'
+    androidTestCompile 'org.mockito:mockito-core:1.10.19'
+//    androidTestCompile 'org.mockito:mockito-core:2.0.36-beta'
     androidTestCompile 'com.google.dexmaker:dexmaker:1.2'
     androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.2'
     androidTestCompile 'org.hamcrest:hamcrest-core:1.3'

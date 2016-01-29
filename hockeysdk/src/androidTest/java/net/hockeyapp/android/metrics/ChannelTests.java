@@ -1,5 +1,7 @@
 package net.hockeyapp.android.metrics;
 
+import android.support.test.InstrumentationRegistry;
+import android.support.test.runner.AndroidJUnit4;
 import android.test.InstrumentationTestCase;
 
 import junit.framework.Assert;
@@ -10,6 +12,10 @@ import net.hockeyapp.android.metrics.model.Envelope;
 import net.hockeyapp.android.metrics.model.SessionState;
 import net.hockeyapp.android.metrics.model.SessionStateData;
 
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
 import java.util.HashMap;
 
 import static org.mockito.Mockito.any;
@@ -17,6 +23,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@RunWith(AndroidJUnit4.class)
 public class ChannelTests extends InstrumentationTestCase {
 
     // Helper
@@ -46,48 +53,54 @@ public class ChannelTests extends InstrumentationTestCase {
         return mockContext;
     }
 
+    @Before
     public void setUp() throws Exception {
         super.setUp();
 
-        System.setProperty("dexmaker.dexcache", getInstrumentation().getTargetContext().getCacheDir().getPath());
+        injectInstrumentation(InstrumentationRegistry.getInstrumentation());
+
         mockTelemetryContext = getMockTelemetryContext();
         mockPersistence = mock(PublicPersistence.class);
         sut = new PublicChannel(mockTelemetryContext, mockPersistence);
     }
 
+    @Test
     public void testInstanceInitialisation() {
         Assert.assertNotNull(sut);
-        Assert.assertNotNull(sut.telemetryContext);
-        Assert.assertEquals(mockTelemetryContext, sut.telemetryContext);
-        Assert.assertNotNull(sut.queue);
-        Assert.assertEquals(0, sut.queue.size());
+        Assert.assertNotNull(sut.mTelemetryContext);
+        Assert.assertEquals(mockTelemetryContext, sut.mTelemetryContext);
+        Assert.assertNotNull(sut.mQueue);
+        Assert.assertEquals(0, sut.mQueue.size());
     }
 
+    @Test
     public void testLoggingItemAddsToQueue() {
         Data<Domain> data = new Data<Domain>();
-        Channel.MAX_BATCH_COUNT = 3;
-        Assert.assertEquals(0, sut.queue.size());
+        Channel.mMaxBatchCount = 3;
+        Assert.assertEquals(0, sut.mQueue.size());
 
-        sut.log(data);
-        Assert.assertEquals(1, sut.queue.size());
+        sut.enqueueData(data);
+        Assert.assertEquals(1, sut.mQueue.size());
     }
 
+    @Test
     public void testQueueFlushesWhenMaxBatchCountReached() {
-        PublicChannel.MAX_BATCH_COUNT = 3;
-        Assert.assertEquals(0, sut.queue.size());
+        PublicChannel.mMaxBatchCount = 3;
+        Assert.assertEquals(0, sut.mQueue.size());
 
-        sut.log(new Data<Domain>());
-        Assert.assertEquals(1, sut.queue.size());
+        sut.enqueueData(new Data<Domain>());
+        Assert.assertEquals(1, sut.mQueue.size());
 
-        sut.log(new Data<Domain>());
-        Assert.assertEquals(2, sut.queue.size());
+        sut.enqueueData(new Data<Domain>());
+        Assert.assertEquals(2, sut.mQueue.size());
 
-        sut.log(new Data<Domain>());
-        Assert.assertEquals(0, sut.queue.size());
+        sut.enqueueData(new Data<Domain>());
+        Assert.assertEquals(0, sut.mQueue.size());
 
         verify(mockPersistence).persist(any(String[].class));
     }
 
+    @Test
     public void testCreateEnvelopeForTelemetryData() {
         SessionStateData sessionStateData = new SessionStateData();
         sessionStateData.setState(SessionState.START);
@@ -99,12 +112,8 @@ public class ChannelTests extends InstrumentationTestCase {
         Envelope result = sut.createEnvelope(testData);
 
         Assert.assertNotNull(result);
-        Assert.assertEquals(MOCK_APP_ID, result.getAppId());
-        Assert.assertEquals(MOCK_APP_VER, result.getAppVer());
         Assert.assertNotNull(result.getTime());
         Assert.assertEquals(MOCK_IKEY, result.getIKey());
-        Assert.assertEquals(MOCK_OS_VER, result.getOsVer());
-        Assert.assertEquals(MOCK_OS, result.getOs());
         Assert.assertNotNull(result.getTags());
         Assert.assertEquals(1, result.getTags().size());
         Assert.assertTrue(result.getTags().containsKey(MOCK_TAGS_KEY));

@@ -36,21 +36,19 @@ class Persistence {
     /**
      * Directory of telemetry files.
      */
-    protected File telemetryDirectory;
-    /**
-     * Sender module used to send out files.
-     */
-    protected WeakReference<Sender> weakSender;
-
-    /**
-     * List with paths of telemetry files which are currently used by the sender.
-     */
-    protected ArrayList<File> servedFiles;
-
+    protected final File mTelemetryDirectory;
     /**
      * A weak reference to the app context
      */
-    private WeakReference<Context> weakContext;
+    private final WeakReference<Context> mWeakContext;
+    /**
+     * Sender module used to send out files.
+     */
+    protected WeakReference<Sender> mWeakSender;
+    /**
+     * List with paths of telemetry files which are currently used by the sender.
+     */
+    protected ArrayList<File> mServedFiles;
 
     /**
      * Restrict access to the default constructor
@@ -59,10 +57,10 @@ class Persistence {
      * @param telemetryDirectory the directory where files should be saved
      */
     protected Persistence(Context context, File telemetryDirectory, Sender sender) {
-        this.weakContext = new WeakReference<>(context);
-        this.servedFiles = new ArrayList<>(51);
-        this.telemetryDirectory = telemetryDirectory;
-        this.weakSender = new WeakReference<>(sender);
+        mWeakContext = new WeakReference<>(context);
+        mServedFiles = new ArrayList<>(51);
+        mTelemetryDirectory = telemetryDirectory;
+        mWeakSender = new WeakReference<>(sender);
         createDirectoriesIfNecessary();
     }
 
@@ -116,7 +114,7 @@ class Persistence {
         FileOutputStream outputStream = null;
         try {
             synchronized (this.LOCK) {
-                File filesDir = new File(this.telemetryDirectory + "/" + uuid);
+                File filesDir = new File(mTelemetryDirectory + "/" + uuid);
                 outputStream = new FileOutputStream(filesDir, true);
                 outputStream.write(data.getBytes());
                 Log.w(TAG, "Saving data to: " + filesDir.toString());
@@ -180,17 +178,17 @@ class Persistence {
      */
     protected File nextAvailableFileInDirectory() {
         synchronized (this.LOCK) {
-            if (this.telemetryDirectory != null) {
-                File[] files = this.telemetryDirectory.listFiles();
+            if (mTelemetryDirectory != null) {
+                File[] files = mTelemetryDirectory.listFiles();
                 File file;
 
                 if ((files != null) && (files.length > 0)) {
                     for (int i = 0; i <= files.length - 1; i++) {
 
                         file = files[i];
-                        if (!this.servedFiles.contains(file)) {
+                        if (!mServedFiles.contains(file)) {
                             Log.i(TAG, "The directory " + file.toString() + " (ADDING TO SERVED AND RETURN)");
-                            this.servedFiles.add(file);
+                            mServedFiles.add(file);
                             return file;
                         } else {
                             Log.i(TAG, "The directory " + file.toString() + " (WAS ALREADY SERVED)");
@@ -198,8 +196,8 @@ class Persistence {
                     }
                 }
             }
-            if (this.telemetryDirectory != null) {
-                Log.i(TAG, "The directory " + this.telemetryDirectory.toString() + " did not contain any " +
+            if (mTelemetryDirectory != null) {
+                Log.i(TAG, "The directory " + mTelemetryDirectory.toString() + " did not contain any " +
                         "unserved files");
             }
             return null;
@@ -219,7 +217,7 @@ class Persistence {
                     Log.w(TAG, "Error deleting telemetry file " + file.toString());
                 } else {
                     Log.w(TAG, "Successfully deleted telemetry file at: " + file.toString());
-                    servedFiles.remove(file);
+                    mServedFiles.remove(file);
                 }
             }
         } else {
@@ -235,7 +233,7 @@ class Persistence {
     protected void makeAvailable(File file) {
         synchronized (this.LOCK) {
             if (file != null) {
-                servedFiles.remove(file);
+                mServedFiles.remove(file);
             }
         }
     }
@@ -261,8 +259,8 @@ class Persistence {
     protected void createDirectoriesIfNecessary() {
         String successMessage = "Successfully created directory";
         String errorMessage = "Error creating directory";
-        if (this.telemetryDirectory != null && !this.telemetryDirectory.exists()) {
-            if (this.telemetryDirectory.mkdirs()) {
+        if (mTelemetryDirectory != null && !mTelemetryDirectory.exists()) {
+            if (mTelemetryDirectory.mkdirs()) {
                 Log.i(TAG, successMessage);
             } else {
                 Log.i(TAG, errorMessage);
@@ -277,8 +275,8 @@ class Persistence {
      */
     private Context getContext() {
         Context context = null;
-        if (weakContext != null) {
-            context = weakContext.get();
+        if (mWeakContext != null) {
+            context = mWeakContext.get();
         }
 
         return context;
@@ -286,14 +284,14 @@ class Persistence {
 
     protected Sender getSender() {
         Sender sender = null;
-        if (weakSender != null) {
-            sender = weakSender.get();
+        if (mWeakSender != null) {
+            sender = mWeakSender.get();
         }
 
         return sender;
     }
 
     protected void setSender(Sender sender) {
-        this.weakSender = new WeakReference<>(sender);
+        this.mWeakSender = new WeakReference<>(sender);
     }
 }
