@@ -18,6 +18,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.spy;
 
 @RunWith(AndroidJUnit4.class)
 public class PersistenceTests extends InstrumentationTestCase {
