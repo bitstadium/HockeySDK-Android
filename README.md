@@ -12,7 +12,7 @@ The following features are currently supported:
 
 1. **Collect crash reports:** If your app crashes, a crash log is written to the device's storage. If the user starts the app again, they will be asked asked to submit the crash report to HockeyApp. This works for both beta and live apps, i.e. those submitted to Google Play or other app stores! Crash logs contain viable information for you to help resolve the issue. Furthermore you as a developer can add additional information to the report as well.
 
-2. **Metrics** Get nice statistics about how many users you have and how they are using your app. This feature requires has a minimum API level of 14 (Android 4.-Icecream Sandwhich)
+2. **Collect user metrics:** Get nice statistics about how many users you have and how they are using your app. This feature requires a minimum API level of 14 (Android 4.x Icecream Sandwich).
 
 3. **Update Alpha/Beta apps:** The app will check with HockeyApp if a new version for your alpha/beta build is available. If yes, it will show a dialog to the user and let him see the release notes, the version history and start the installation process right away. You can even force the installation of certain updates.
 
@@ -28,7 +28,7 @@ This document contains the following sections:
   2. [Get the SDK](#get-sdk)
   3. [Integrate HockeySDK](#integrate-sdk)
   4. [Add Crash Reporting](#crashreporting)
-  5. [Add Metrics](#metrics)
+  5. [Add User Metrics](#user-metrics)
   6. [Add Update Distribution](#updatedistribution)
   7. [Add In-App Feedback](#feedback)
   8. [Add Authentication](#authentication)
@@ -131,17 +131,19 @@ public class YourActivity extends Activity {
 
 When the activity is resumed, the crash manager is triggered and checks if a new crash was created before. If yes, it presents a dialog to ask the user whether they want to send the crash log to HockeyApp. On app launch the crash manager registers a new exception handler to recognize app crashes.
 
-<a id="metrics"></a>
-### 2.5 Add Metrics
+<a id="user-metrics"></a>
+### 2.5 Add User Metrics
 
-This will add the metrics feature to you app.
+This will add the user metrics feature to your app.
 
-1. Open your main activity.
-2. Add the following line to the activitie's `onCreate`-callback:
+1. Open your app's main activity.
+2. Add the following line to the activity's `onCreate`-callback:
 
 ```java
 MetricsManager.register(this, getApplication());
 ```
+
+Your app will now send metrics which you can use to count your active and overall usage numbers.
 
 <a id="updatedistribution"></a>
 ### 2.6 Add Update Distribution
