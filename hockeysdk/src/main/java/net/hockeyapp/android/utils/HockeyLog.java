@@ -41,6 +41,7 @@ public class HockeyLog {
     /**
      * Get the loglevel to find out how much data the HockeySDK spews into LogCat. The Default will be
      * LOG_LEVEL.ERROR so only errors show up in LogCat.
+     *
      * @return the log level
      */
     public static int getLogLevel() {
@@ -59,16 +60,7 @@ public class HockeyLog {
     /**
      * Log a message with level VERBOSE
      *
-     * @param message the log message
-     */
-    public static void verbose(String message) {
-        verbose(null, message);
-    }
-
-    /**
-     * Log a message with level VERBOSE
-     *
-     * @param tag the TAG
+     * @param tag     the TAG
      * @param message the log message
      */
     public static void verbose(String tag, String message) {
@@ -81,8 +73,8 @@ public class HockeyLog {
     /**
      * Log a message with level VERBOSE
      *
-     * @param tag the TAG
-     * @param message the log message
+     * @param tag       the TAG
+     * @param message   the log message
      * @param throwable the throwable you want to log
      */
     public static void verbose(String tag, String message, Throwable throwable) {
@@ -104,7 +96,7 @@ public class HockeyLog {
     /**
      * Log a message with level DEBUG
      *
-     * @param tag the TAG
+     * @param tag     the TAG
      * @param message the log message
      */
     public static void debug(String tag, String message) {
@@ -117,8 +109,8 @@ public class HockeyLog {
     /**
      * Log a message with level DEBUG
      *
-     * @param tag the TAG
-     * @param message the log message
+     * @param tag       the TAG
+     * @param message   the log message
      * @param throwable the throwable you want to log
      */
     public static void debug(String tag, String message, Throwable throwable) {
@@ -140,7 +132,7 @@ public class HockeyLog {
     /**
      * Log a message with level INFO
      *
-     * @param tag the TAG
+     * @param tag     the TAG
      * @param message the log message
      */
     public static void info(String tag, String message) {
@@ -153,8 +145,8 @@ public class HockeyLog {
     /**
      * Log a message with level INFO
      *
-     * @param tag the TAG
-     * @param message the log message
+     * @param tag       the TAG
+     * @param message   the log message
      * @param throwable the throwable you want to log
      */
     public static void info(String tag, String message, Throwable throwable) {
@@ -176,7 +168,7 @@ public class HockeyLog {
     /**
      * Log a message with level WARN
      *
-     * @param tag the TAG
+     * @param tag     the TAG
      * @param message the log message
      */
     public static void warn(String tag, String message) {
@@ -189,8 +181,8 @@ public class HockeyLog {
     /**
      * Log a message with level WARN
      *
-     * @param tag the TAG
-     * @param message the log message
+     * @param tag       the TAG
+     * @param message   the log message
      * @param throwable the throwable you want to log
      */
     public static void warn(String tag, String message, Throwable throwable) {
@@ -212,7 +204,7 @@ public class HockeyLog {
     /**
      * Log a message with level ERROR
      *
-     * @param tag the TAG
+     * @param tag     the TAG
      * @param message the log message
      */
     public static void error(String tag, String message) {
@@ -225,8 +217,8 @@ public class HockeyLog {
     /**
      * Log a message with level ERROR
      *
-     * @param tag the TAG
-     * @param message the log message
+     * @param tag       the TAG
+     * @param message   the log message
      * @param throwable the throwable you want to log
      */
     public static void error(String tag, String message, Throwable throwable) {
@@ -238,12 +230,13 @@ public class HockeyLog {
 
     /**
      * Sanitize a TAG string
+     *
      * @param tag the tag for the logging
      * @return a sanitized TAG, defaults to 'HockeyApp' in case the tag is null, empty or longer than
      * 23 characters.
      */
     static String sanitizeTag(String tag) {
-        if((tag == null) || (tag.length() == 0) || (tag.length() > 23) ) {
+        if ((tag == null) || (tag.length() == 0) || (tag.length() > 23)) {
             tag = HOCKEY_TAG;
         }
 
