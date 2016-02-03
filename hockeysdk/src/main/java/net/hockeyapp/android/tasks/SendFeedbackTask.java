@@ -185,7 +185,7 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
                     if (file != null) {
                         Boolean success = file.delete();
                         if (!success) {
-                            HockeyLog.log(TAG, "Error deleting file from temporary folder");
+                            HockeyLog.debug(TAG, "Error deleting file from temporary folder");
                         }
                     }
                 }

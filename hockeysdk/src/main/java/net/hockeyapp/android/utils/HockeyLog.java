@@ -34,50 +34,138 @@ import android.util.Log;
  * @author Benjamin Reimold
  */
 public class HockeyLog {
-    public static final String LOG_IDENTIFIER = "HockeyApp";
+    public static final String HOCKEY_TAG = "HockeyApp";
 
-    private static boolean mDebugLogEnabled = false;
+    public enum LogLevel {
+        VERBOSE(Log.VERBOSE), DEBUG(Log.DEBUG), INFO(Log.INFO), WARN(Log.WARN), ERROR(Log.ERROR), ASSERT(Log.ASSERT);
+        final int systemLogLevel;
+
+        LogLevel(final int systemLogLevel) {
+            this.systemLogLevel = systemLogLevel;
+        }
+
+        public int getStystemLogLevel() {
+            return systemLogLevel;
+        }
+    }
+
+    private static LogLevel sLogLevel = LogLevel.ERROR;
+
 
     /**
-     * Check if debug logging has been enabled.
-     *
-     * @return true/falls to indicate if debug logging has been enabled.
+     * Get the loglevel to find out how much data the HockeySDK spews into LogCat. The Default will be
+     * LOG_LEVEL.ERROR so only errors show up in LogCat.
+     * @return the log level
      */
-    public static boolean isDebugLogEnabled() {
-        return mDebugLogEnabled;
+    public static LogLevel getHockeyLogLevel() {
+        return sLogLevel;
     }
 
     /**
-     * Enable additional output to Log.d(...) by the SDK.
+     * Set the log level to determine the amount of info the HockeySDK spews info into LogCat.
      *
-     * @param debugLogEnabled
+     * @param hockeyLogLevel The log level for hockeySDK logging
      */
-    public static void setDebugLogEnabled(boolean debugLogEnabled) {
-        mDebugLogEnabled = debugLogEnabled;
+    public static void setHockeyLogLevel(LogLevel hockeyLogLevel) {
+        sLogLevel = hockeyLogLevel;
     }
 
-    /**
-     * Log a message to Log.d(TAG, message) if debug logging has been enabled.
-     *
-     * @param message the message to log to Log.d, if it is null, nothing will be logged.
-     */
-    public static void log(String message) {
-        log(null, message);
+    public static void verbose(String message) {
+        verbose(null, message);
     }
 
-    /**
-     * Log a message to Log.d(TAG, message) if debug logging has been enabled.
-     *
-     * @param tag,    the tag used for logging. If null, it will default to HockeyApp
-     * @param message the message to log to Log.d, if it is null, nothing will be logged.
-     */
-    public static void log(String tag, String message) {
-        if (isDebugLogEnabled() && (message != null)) {
-            if (tag == null) {
-                tag = LOG_IDENTIFIER;
-            }
+    public static void verbose(String tag, String message) {
+        tag = sanitizeTag(tag);
+        if (sLogLevel.systemLogLevel <= Log.VERBOSE) {
+            Log.v(tag, message);
+        }
+    }
 
+    public static void verbose(String tag, String message, Throwable throwable) {
+        tag = sanitizeTag(tag);
+        if (sLogLevel.systemLogLevel <= Log.VERBOSE) {
+            Log.v(tag, message, throwable);
+        }
+    }
+
+    public static void debug(String message) {
+        debug(null, message);
+    }
+
+    public static void debug(String tag, String message) {
+        tag = sanitizeTag(tag);
+        if (sLogLevel.systemLogLevel <= Log.DEBUG) {
             Log.d(tag, message);
         }
     }
+
+    public static void debug(String tag, String message, Throwable throwable) {
+        tag = sanitizeTag(tag);
+        if (sLogLevel.systemLogLevel <= Log.DEBUG) {
+            Log.d(tag, message, throwable);
+        }
+    }
+
+    public static void info(String message) {
+        info(null, message);
+    }
+
+    public static void info(String tag, String message) {
+        tag = sanitizeTag(tag);
+        if (sLogLevel.systemLogLevel <= Log.INFO) {
+            Log.i(tag, message);
+        }
+    }
+
+    public static void info(String tag, String message, Throwable throwable) {
+        tag = sanitizeTag(tag);
+        if (sLogLevel.systemLogLevel <= Log.INFO) {
+            Log.i(tag, message, throwable);
+        }
+    }
+
+    public static void warn(String message) {
+        warn(null, message);
+    }
+
+    public static void warn(String tag, String message) {
+        tag = sanitizeTag(tag);
+        if (sLogLevel.systemLogLevel <= Log.WARN) {
+            Log.w(tag, message);
+        }
+    }
+
+    public static void warn(String tag, String message, Throwable throwable) {
+        tag = sanitizeTag(tag);
+        if (sLogLevel.systemLogLevel <= Log.WARN) {
+            Log.w(tag, message, throwable);
+        }
+    }
+
+    public static void error(String message) {
+        error(null, message);
+    }
+
+    public static void error(String tag, String message) {
+        tag = sanitizeTag(tag);
+        if (sLogLevel.systemLogLevel <= Log.ERROR) {
+            Log.e(tag, message);
+        }
+    }
+
+    public static void error(String tag, String message, Throwable throwable) {
+        tag = sanitizeTag(tag);
+        if (sLogLevel.systemLogLevel <= Log.ERROR) {
+            Log.e(tag, message, throwable);
+        }
+    }
+
+    private static String sanitizeTag(String tag) {
+        if((tag == null) || (tag.length() == 0) || (tag.length() > 23) ) {
+            tag = HOCKEY_TAG;
+        }
+
+        return tag;
+    }
+
 }
