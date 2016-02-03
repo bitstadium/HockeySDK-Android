@@ -24,8 +24,8 @@ public class HockeyLogTest {
 
     @Test
     public void sanitizeTagWorks() {
+        String expected = HockeyLog.HOCKEY_TAG;
         String actual = HockeyLog.sanitizeTag(null);
-        String expected = "HockeyApp";
         Assert.assertEquals(expected, actual);
 
         actual = HockeyLog.sanitizeTag("");
@@ -38,8 +38,8 @@ public class HockeyLogTest {
         actual = HockeyLog.sanitizeTag("Exactly2ThreeCharacters");
         Assert.assertEquals(expected, actual);
 
-        actual = "Awesome Hockey SDK";
         expected = "Awesome Hockey SDK";
+        actual = HockeyLog.sanitizeTag("Awesome Hockey SDK");
         Assert.assertEquals(expected, actual);
     }
 }
