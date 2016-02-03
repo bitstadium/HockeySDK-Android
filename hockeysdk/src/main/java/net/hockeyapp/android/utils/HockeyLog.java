@@ -36,28 +36,14 @@ import android.util.Log;
 public class HockeyLog {
     public static final String HOCKEY_TAG = "HockeyApp";
 
-    public enum LogLevel {
-        VERBOSE(Log.VERBOSE), DEBUG(Log.DEBUG), INFO(Log.INFO), WARN(Log.WARN), ERROR(Log.ERROR);
-        final int systemLogLevel;
-
-        LogLevel(final int systemLogLevel) {
-            this.systemLogLevel = systemLogLevel;
-        }
-
-        public int getStystemLogLevel() {
-            return systemLogLevel;
-        }
-    }
-
-    private static LogLevel sLogLevel = LogLevel.ERROR;
-
+    private static int sLogLevel = Log.ERROR;
 
     /**
      * Get the loglevel to find out how much data the HockeySDK spews into LogCat. The Default will be
      * LOG_LEVEL.ERROR so only errors show up in LogCat.
      * @return the log level
      */
-    public static LogLevel getHockeyLogLevel() {
+    public static int getLogLevel() {
         return sLogLevel;
     }
 
@@ -66,7 +52,7 @@ public class HockeyLog {
      *
      * @param hockeyLogLevel The log level for hockeySDK logging
      */
-    public static void setHockeyLogLevel(LogLevel hockeyLogLevel) {
+    public static void setLogLevel(int hockeyLogLevel) {
         sLogLevel = hockeyLogLevel;
     }
 
@@ -87,7 +73,7 @@ public class HockeyLog {
      */
     public static void verbose(String tag, String message) {
         tag = sanitizeTag(tag);
-        if (sLogLevel.systemLogLevel <= Log.VERBOSE) {
+        if (sLogLevel <= Log.VERBOSE) {
             Log.v(tag, message);
         }
     }
@@ -101,7 +87,7 @@ public class HockeyLog {
      */
     public static void verbose(String tag, String message, Throwable throwable) {
         tag = sanitizeTag(tag);
-        if (sLogLevel.systemLogLevel <= Log.VERBOSE) {
+        if (sLogLevel <= Log.VERBOSE) {
             Log.v(tag, message, throwable);
         }
     }
@@ -123,7 +109,7 @@ public class HockeyLog {
      */
     public static void debug(String tag, String message) {
         tag = sanitizeTag(tag);
-        if (sLogLevel.systemLogLevel <= Log.DEBUG) {
+        if (sLogLevel <= Log.DEBUG) {
             Log.d(tag, message);
         }
     }
@@ -137,7 +123,7 @@ public class HockeyLog {
      */
     public static void debug(String tag, String message, Throwable throwable) {
         tag = sanitizeTag(tag);
-        if (sLogLevel.systemLogLevel <= Log.DEBUG) {
+        if (sLogLevel <= Log.DEBUG) {
             Log.d(tag, message, throwable);
         }
     }
@@ -159,7 +145,7 @@ public class HockeyLog {
      */
     public static void info(String tag, String message) {
         tag = sanitizeTag(tag);
-        if (sLogLevel.systemLogLevel <= Log.INFO) {
+        if (sLogLevel <= Log.INFO) {
             Log.i(tag, message);
         }
     }
@@ -173,7 +159,7 @@ public class HockeyLog {
      */
     public static void info(String tag, String message, Throwable throwable) {
         tag = sanitizeTag(tag);
-        if (sLogLevel.systemLogLevel <= Log.INFO) {
+        if (sLogLevel <= Log.INFO) {
             Log.i(tag, message, throwable);
         }
     }
@@ -195,7 +181,7 @@ public class HockeyLog {
      */
     public static void warn(String tag, String message) {
         tag = sanitizeTag(tag);
-        if (sLogLevel.systemLogLevel <= Log.WARN) {
+        if (sLogLevel <= Log.WARN) {
             Log.w(tag, message);
         }
     }
@@ -209,7 +195,7 @@ public class HockeyLog {
      */
     public static void warn(String tag, String message, Throwable throwable) {
         tag = sanitizeTag(tag);
-        if (sLogLevel.systemLogLevel <= Log.WARN) {
+        if (sLogLevel <= Log.WARN) {
             Log.w(tag, message, throwable);
         }
     }
@@ -231,7 +217,7 @@ public class HockeyLog {
      */
     public static void error(String tag, String message) {
         tag = sanitizeTag(tag);
-        if (sLogLevel.systemLogLevel <= Log.ERROR) {
+        if (sLogLevel <= Log.ERROR) {
             Log.e(tag, message);
         }
     }
@@ -245,7 +231,7 @@ public class HockeyLog {
      */
     public static void error(String tag, String message, Throwable throwable) {
         tag = sanitizeTag(tag);
-        if (sLogLevel.systemLogLevel <= Log.ERROR) {
+        if (sLogLevel <= Log.ERROR) {
             Log.e(tag, message, throwable);
         }
     }

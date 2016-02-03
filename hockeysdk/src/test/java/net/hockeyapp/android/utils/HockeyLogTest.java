@@ -1,5 +1,7 @@
 package net.hockeyapp.android.utils;
 
+import android.util.Log;
+
 import junit.framework.Assert;
 
 import org.junit.Test;
@@ -8,16 +10,16 @@ public class HockeyLogTest {
 
     @Test
     public void setLogLevelWorks() {
-        HockeyLog.setHockeyLogLevel(HockeyLog.LogLevel.DEBUG);
-        Assert.assertTrue(HockeyLog.getHockeyLogLevel() == HockeyLog.LogLevel.DEBUG);
-        HockeyLog.setHockeyLogLevel(HockeyLog.LogLevel.INFO);
-        Assert.assertTrue(HockeyLog.getHockeyLogLevel() == HockeyLog.LogLevel.INFO);
-        HockeyLog.setHockeyLogLevel(HockeyLog.LogLevel.ERROR);
-        Assert.assertTrue(HockeyLog.getHockeyLogLevel() == HockeyLog.LogLevel.ERROR);
-        HockeyLog.setHockeyLogLevel(HockeyLog.LogLevel.WARN);
-        Assert.assertTrue(HockeyLog.getHockeyLogLevel() == HockeyLog.LogLevel.WARN);
-        HockeyLog.setHockeyLogLevel(HockeyLog.LogLevel.VERBOSE);
-        Assert.assertTrue(HockeyLog.getHockeyLogLevel() == HockeyLog.LogLevel.VERBOSE);
+        HockeyLog.setLogLevel(Log.DEBUG);
+        Assert.assertTrue(HockeyLog.getLogLevel() == Log.DEBUG);
+        HockeyLog.setLogLevel(Log.INFO);
+        Assert.assertTrue(HockeyLog.getLogLevel() == Log.INFO);
+        HockeyLog.setLogLevel(Log.ERROR);
+        Assert.assertTrue(HockeyLog.getLogLevel() == Log.ERROR);
+        HockeyLog.setLogLevel(Log.WARN);
+        Assert.assertTrue(HockeyLog.getLogLevel() == Log.WARN);
+        HockeyLog.setLogLevel(Log.VERBOSE);
+        Assert.assertTrue(HockeyLog.getLogLevel() == Log.VERBOSE);
     }
 
     @Test
