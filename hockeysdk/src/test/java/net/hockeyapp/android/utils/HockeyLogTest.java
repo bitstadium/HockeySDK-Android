@@ -40,11 +40,4 @@ public class HockeyLogTest {
         expected = "Awesome Hockey SDK";
         Assert.assertEquals(expected, actual);
     }
-
-    @Test
-    public void logLevelsWork() {
-        HockeyLog.debug("Something happened");
-        Log mockLog ()
-    }
-
 }
