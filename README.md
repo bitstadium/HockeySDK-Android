@@ -335,21 +335,8 @@ To configure a custom `UpdateManagerListener` use the following `register()` met
 ```
 
 ### 4.3.1 Providing your own user interface for the update process
-The `UpdateManager` will select a suitable activity or fragment depending on the availability of the feature. You can also supply your own by implementing the respective methods:
+The `UpdateManager` will select a suitable activity or fragment depending on the availability of the feature. You can also supply your own by overriding the respective methods `getUpdateActivityClass()` and `getUpdateFragmentClass()` in your UpdateManagerListener subclass.
 
-```
-public class MyCustomUpdateManagerListener extends UpdateManagerListener {
-  @Override
-  public Class<? extends UpdateActivity> getUpdateActivityClass() {
-    return MyCustomUpdateActivity.class;
-  }
-
-  @Override
-  public Class<? extends UpdateFragment> getUpdateFragmentClass() {
-    return MyCustomUpdateFragment.class;
-  }
-}
-```
 
 <a id="feedback-advanced"></a> 
 ### 4.4 In-App Feedback
