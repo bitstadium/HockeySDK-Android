@@ -8,9 +8,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 
 import net.hockeyapp.android.Constants;
+import net.hockeyapp.android.utils.HockeyLog;
 import net.hockeyapp.android.utils.HttpURLConnectionBuilder;
 import net.hockeyapp.android.utils.Util;
 
@@ -185,7 +185,7 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
                     if (file != null) {
                         Boolean success = file.delete();
                         if (!success) {
-                            Log.d(TAG, "Error deleting file from temporary folder");
+                            HockeyLog.debug(TAG, "Error deleting file from temporary folder");
                         }
                     }
                 }
