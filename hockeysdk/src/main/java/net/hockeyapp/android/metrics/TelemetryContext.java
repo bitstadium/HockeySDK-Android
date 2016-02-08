@@ -26,7 +26,6 @@ import java.lang.reflect.Method;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * <h3>Description</h3>
@@ -43,55 +42,59 @@ class TelemetryContext {
     private static final String SHARED_PREFERENCES_KEY = "HOCKEY_APP_TELEMETRY_CONTEXT";
 
     /**
-     * Key needed to access the anonymous user id saved in the preferences.
-     */
-    private static final String USER_ANON_ID_KEY = "USER_ID";
-
-    /**
      * Key needed to determine, whether we have a new or existing user.
      */
     private static final String SESSION_IS_FIRST_KEY = "SESSION_IS_FIRST";
-    
+
     /**
      * Device telemetryContext.
      */
     protected final Device mDevice;
+
     /**
      * Session context.
      */
     protected final Session mSession;
+
     /**
      * User context.
      */
     protected final User mUser;
+
     /**
      * Internal context.
      */
     protected final Internal mInternal;
+
     /**
      * Application context.
      */
     protected final Application mApplication;
+
     /**
      * Synchronization LOCK for setting instrumentation key.
      */
     private final Object IKEY_LOCK = new Object();
+
     /**
      * The application context needed to update some context values.
      */
     protected Context mContext;
+
     /**
      * The shared preferences INSTANCE for reading persistent context.
      */
-    protected SharedPreferences mSettings;
+    private SharedPreferences mSettings;
+
     /**
      * Device context.
      */
-    protected String mInstrumentationKey;
+    private String mInstrumentationKey;
+
     /**
      * The app's package name.
      */
-    protected String mPackageName;
+    private String mPackageName;
 
     /**
      * Constructs a new INSTANCE of TelemetryContext.
@@ -117,7 +120,7 @@ class TelemetryContext {
         mInstrumentationKey = Util.convertAppIdentifierToGuid(appIdentifier);
 
         configDeviceContext();
-        configUserContext();
+        configUserId();
         configInternalContext();
         configApplicationContext();
     }
@@ -132,17 +135,15 @@ class TelemetryContext {
     }
 
     /**
-     * Configure the session context.
+     * Configure the session context. This is called for each new session.
      *
      * @param sessionId the current session Id
      */
     protected void configSessionContext(String sessionId) {
-        setSessionId(sessionId);
+        HockeyLog.log(TAG, "Configuring session context");
 
-        //TODO check in E2E-Test if this is working
-        //The previous logic was stupid in relying setting the session.isNew later in the
-        //async task. I(Benny) have corrected this and think it should work just like we do it now.
-        //but this has to be verified.
+        setSessionId(sessionId);
+        HockeyLog.log(TAG, "Setting the isNew-flag to true, as we only count new sessions");
         setIsNewSession("true");
 
         SharedPreferences.Editor editor = mSettings.edit();
@@ -150,8 +151,10 @@ class TelemetryContext {
             editor.putBoolean(SESSION_IS_FIRST_KEY, true);
             editor.apply();
             setIsFirstSession("true");
+            HockeyLog.log(TAG, "It's our first session, writing true to SharedPreferences.");
         } else {
             setIsFirstSession("false");
+            HockeyLog.log(TAG, "It's not their first session, writing false to SharedPreferences.");
         }
     }
 
@@ -159,6 +162,7 @@ class TelemetryContext {
      * Sets the application telemetryContext tags.
      */
     protected void configApplicationContext() {
+        HockeyLog.log(TAG, "Configuring application context");
 
         // App version
         String version = "unknown";
@@ -189,42 +193,41 @@ class TelemetryContext {
     /**
      * Load the user context associated with telemetry data.
      */
-    protected void configUserContext() {
-        loadUserInfo();
-        if (mUser != null && mUser.getId() == null) {
-            setAnonymousUserId(UUID.randomUUID().toString());
-            saveUserInfo();
-        }
-    }
+    protected void configUserId() {
+        HockeyLog.log(TAG, "Configuring user context");
 
-    /**
-     * Write user information to shared preferences.
-     */
-    protected void saveUserInfo() {
-        SharedPreferences.Editor editor = mSettings.edit();
-        editor.putString(TelemetryContext.USER_ANON_ID_KEY, getAnonymousUserId());
-        editor.apply();
-    }
-
-    /**
-     * Load user information to shared preferences.
-     */
-    protected void loadUserInfo() {
-        String userId = mSettings.getString(USER_ANON_ID_KEY, null);
         // get device ID
         ContentResolver resolver = mContext.getContentResolver();
         String deviceIdentifier = Settings.Secure.getString(resolver, Settings.Secure.ANDROID_ID);
+        HockeyLog.log("The device identifier is: " + deviceIdentifier);
         if (deviceIdentifier != null) {
-            userId = Util.tryHashStringSha256(deviceIdentifier);
+            String userID = Util.tryHashStringSha256(deviceIdentifier);
+            if (userID == null || userID.length() > 0) {
+                HockeyLog.log("Creating the SHA256 failed, so we're using the deviceIdentifier directly.");
+                setAnonymousUserId(deviceIdentifier);
+            } else {
+                setAnonymousUserId(userID);
+                HockeyLog.log("Creating the SHA256 succeeded, we're using it as the user ID. It's:" + userID);
+            }
+        } else {
+            String serial;
+            try {
+                serial = android.os.Build.class.getField("SERIAL").get(null).toString();
+                if (serial != null && serial.length() >= 0) {
+                    setAnonymousUserId(serial);
+                    HockeyLog.log("We couldn't get a deviceIdentifier, but we could get a Serial Number");
+                }
+            } catch (Throwable t) {
+                HockeyLog.log("Couldn't retrieve Serial Number with Throwable: " + t.toString());
+            }
         }
-
-        setAnonymousUserId(userId);
     }
 
     /**
      * Sets the device telemetryContext tags.
      */
     protected void configDeviceContext() {
+        HockeyLog.log(TAG, "Configuring device context");
         setOsVersion(Build.VERSION.RELEASE);
         setOsName("Android");
         setDeviceModel(Build.MODEL);
