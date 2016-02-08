@@ -33,6 +33,7 @@ This document contains the following sections:
   2. [Crash Reporting](#crashreporting-advanced)
   3. [Update Distribution](#updatedistribution-advanced)
   4. [In-App Feedback](#feedback-advanced)
+  5. [Strings & Localization](#strings-advanced)
 5. [Documentation](#documentation)
 6. [Troubleshooting](#troubleshooting)
 7. [Contributing](#contributing)
@@ -247,8 +248,9 @@ You can access the full changelog in our [releases-section](https://github.com/b
 ## 3.1 Upgrading from 3.6.x to 3.7.0
 
 1. We didn't introduce any breaking changes, except that we have raised the minimum API level to 9.
-2. Also consider switching to our new register-calls and adding your App ID to your configuration as described above.  
-3. If you integrate the SDK using Gradle, you can remove the previously required activities from your manifest file.
+2. Also consider switching to our new register-calls and adding your app id to your configuration as described above.
+3. The `Strings` class for overriding SDK strings has been removed in favor of resource merging. See our section on [Strings & Localizations](#strings-advanced) for more details.
+4. If you integrate the SDK using Gradle, you can remove the previously required activities from your manifest file:
 
 ```xml
  <!-- HockeySDK Activities – no longer required as of 3.7.0! -->
@@ -351,6 +353,15 @@ You can configure a notification to show to the user. When they select the notif
 ```java
   FeedbackManager.setActivityForScreenshot(YourActivity.this);
 ```
+
+<a id="strings-advanced"></a>
+### 4.5 Strings & Localization
+HockeySDK for Android comes with English, French, and German localizations of all user interface strings. If you want to add further localizations or override certain strings to suit your app's user interface, you can simply override them and [resource merging](http://tools.android.com/tech-docs/new-build-system/resource-merging) takes care of the rest.
+
+Our base strings resource file is located in [`hockeysdk/src/main/res/values/strings.xml`](https://github.com/bitstadium/HockeySDK-Android/blob/master/hockeysdk/src/main/res/values/strings.xml). If your app overrides any of these strings in its `strings.xml` file, the overridden strings will be used in your app.
+
+In case you want to add a localization, please also consider [creating a pull request](#contributing).
+
 
 <a id="documentation"></a>
 ## 5. Documentation
