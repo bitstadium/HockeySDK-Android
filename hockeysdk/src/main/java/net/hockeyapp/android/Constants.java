@@ -157,7 +157,7 @@ public class Constants {
                     Constants.FILES_PATH = file.getAbsolutePath();
                 }
             } catch (Exception e) {
-                Log.e(TAG, "Exception thrown when accessing the files dir:");
+                HockeyLog.error("Exception thrown when accessing the files dir:");
                 e.printStackTrace();
             }
         }
