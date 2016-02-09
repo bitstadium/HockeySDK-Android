@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
+import net.hockeyapp.android.Constants;
 import net.hockeyapp.android.metrics.model.Data;
 import net.hockeyapp.android.metrics.model.Domain;
 import net.hockeyapp.android.metrics.model.SessionState;
@@ -197,6 +198,7 @@ public class MetricsManager implements Application.ActivityLifecycleCallbacks {
             synchronized (LOCK) {
                 result = instance;        // thread may have instantiated the object
                 if (result == null) {
+                    Constants.loadFromContext(context);
                     result = new MetricsManager(context, new TelemetryContext(context, appIdentifier),
                             sender, persistence, channel);
                     sWeakApplication = new WeakReference<>(application);

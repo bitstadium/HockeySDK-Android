@@ -14,6 +14,7 @@ import android.view.Display;
 import android.view.WindowManager;
 
 import net.hockeyapp.android.BuildConfig;
+import net.hockeyapp.android.Constants;
 import net.hockeyapp.android.metrics.model.Application;
 import net.hockeyapp.android.metrics.model.Device;
 import net.hockeyapp.android.metrics.model.Internal;
@@ -196,31 +197,8 @@ class TelemetryContext {
     protected void configUserId() {
         HockeyLog.log(TAG, "Configuring user context");
 
-        // get device ID
-        ContentResolver resolver = mContext.getContentResolver();
-        String deviceIdentifier = Settings.Secure.getString(resolver, Settings.Secure.ANDROID_ID);
-        HockeyLog.log("The device identifier is: " + deviceIdentifier);
-        if (deviceIdentifier != null) {
-            String userID = Util.tryHashStringSha256(deviceIdentifier);
-            if (userID == null || userID.length() > 0) {
-                HockeyLog.log("Creating the SHA256 failed, so we're using the deviceIdentifier directly.");
-                setAnonymousUserId(deviceIdentifier);
-            } else {
-                setAnonymousUserId(userID);
-                HockeyLog.log("Creating the SHA256 succeeded, we're using it as the user ID. It's:" + userID);
-            }
-        } else {
-            String serial;
-            try {
-                serial = android.os.Build.class.getField("SERIAL").get(null).toString();
-                if (serial != null && serial.length() >= 0) {
-                    setAnonymousUserId(serial);
-                    HockeyLog.log("We couldn't get a deviceIdentifier, but we could get a Serial Number");
-                }
-            } catch (Throwable t) {
-                HockeyLog.log("Couldn't retrieve Serial Number with Throwable: " + t.toString());
-            }
-        }
+        HockeyLog.log("Using pre-supplied anonymous device identifier.");
+        setAnonymousUserId(Constants.CRASH_IDENTIFIER);
     }
 
     /**
