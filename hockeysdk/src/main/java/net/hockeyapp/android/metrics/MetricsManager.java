@@ -354,22 +354,21 @@ public class MetricsManager implements Application.ActivityLifecycleCallbacks {
         int count = this.ACTIVITY_COUNT.getAndIncrement();
         if (count == 0) {
             if (sessionTrackingEnabled()) {
-                HockeyLog.log(TAG, "Starting & tracking session");
+                HockeyLog.debug(TAG, "Starting & tracking session");
                 renewSession();
             } else {
-                HockeyLog.log(TAG, "Session management disabled by the developer");
+                HockeyLog.debug(TAG, "Session management disabled by the developer");
             }
         } else {
             //we should already have a session now
             //check if the session should be renewed
             long now = this.getTime();
             long then = this.LAST_BACKGROUND.getAndSet(getTime());
-            //TODO save session intervall in configuration file?
             boolean shouldRenew = ((now - then) >= SESSION_RENEWAL_INTERVAL);
-            HockeyLog.log(TAG, "Checking if we have to renew a session, time difference is: " + (now - then));
+            HockeyLog.debug(TAG, "Checking if we have to renew a session, time difference is: " + (now - then));
 
             if (shouldRenew && sessionTrackingEnabled()) {
-                HockeyLog.log(TAG, "Renewing session");
+                HockeyLog.debug(TAG, "Renewing session");
                 renewSession();
             }
         }

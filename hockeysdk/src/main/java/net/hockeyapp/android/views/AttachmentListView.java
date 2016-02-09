@@ -76,7 +76,7 @@ public class AttachmentListView extends ViewGroup {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         if ((MeasureSpec.getMode(widthMeasureSpec) == MeasureSpec.UNSPECIFIED)) {
-            HockeyLog.log(TAG, "Width is unspecified");
+            HockeyLog.debug(TAG, "Width is unspecified");
             //throw new AssertionError();
         }
 

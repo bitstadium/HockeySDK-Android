@@ -141,10 +141,10 @@ class TelemetryContext {
      * @param sessionId the current session Id
      */
     protected void configSessionContext(String sessionId) {
-        HockeyLog.log(TAG, "Configuring session context");
+        HockeyLog.debug(TAG, "Configuring session context");
 
         setSessionId(sessionId);
-        HockeyLog.log(TAG, "Setting the isNew-flag to true, as we only count new sessions");
+        HockeyLog.debug(TAG, "Setting the isNew-flag to true, as we only count new sessions");
         setIsNewSession("true");
 
         SharedPreferences.Editor editor = mSettings.edit();
@@ -152,10 +152,10 @@ class TelemetryContext {
             editor.putBoolean(SESSION_IS_FIRST_KEY, true);
             editor.apply();
             setIsFirstSession("true");
-            HockeyLog.log(TAG, "It's our first session, writing true to SharedPreferences.");
+            HockeyLog.debug(TAG, "It's our first session, writing true to SharedPreferences.");
         } else {
             setIsFirstSession("false");
-            HockeyLog.log(TAG, "It's not their first session, writing false to SharedPreferences.");
+            HockeyLog.debug(TAG, "It's not their first session, writing false to SharedPreferences.");
         }
     }
 
@@ -163,7 +163,7 @@ class TelemetryContext {
      * Sets the application telemetryContext tags.
      */
     protected void configApplicationContext() {
-        HockeyLog.log(TAG, "Configuring application context");
+        HockeyLog.debug(TAG, "Configuring application context");
 
         // App version
         String version = "unknown";
@@ -181,7 +181,7 @@ class TelemetryContext {
             String appBuild = Integer.toString(info.versionCode);
             version = String.format("%s (%S)", info.versionName, appBuild);
         } catch (PackageManager.NameNotFoundException e) {
-            HockeyLog.log(TAG, "Could not get application context");
+            HockeyLog.debug(TAG, "Could not get application context");
         } finally {
             setAppVersion(version);
         }
@@ -195,9 +195,9 @@ class TelemetryContext {
      * Load the user context associated with telemetry data.
      */
     protected void configUserId() {
-        HockeyLog.log(TAG, "Configuring user context");
+        HockeyLog.debug(TAG, "Configuring user context");
 
-        HockeyLog.log("Using pre-supplied anonymous device identifier.");
+        HockeyLog.debug("Using pre-supplied anonymous device identifier.");
         setAnonymousUserId(Constants.CRASH_IDENTIFIER);
     }
 
@@ -205,7 +205,7 @@ class TelemetryContext {
      * Sets the device telemetryContext tags.
      */
     protected void configDeviceContext() {
-        HockeyLog.log(TAG, "Configuring device context");
+        HockeyLog.debug(TAG, "Configuring device context");
         setOsVersion(Build.VERSION.RELEASE);
         setOsName("Android");
         setDeviceModel(Build.MODEL);
@@ -266,7 +266,7 @@ class TelemetryContext {
                     wm.getDefaultDisplay().getSize(size);
                     width = size.x;
                     height = size.y;
-                    HockeyLog.log(TAG, "Couldn't determine screen resolution: " + ex.toString());
+                    HockeyLog.debug(TAG, "Couldn't determine screen resolution: " + ex.toString());
                 }
 
             } else {

@@ -179,13 +179,13 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
     private void clearTemporaryFolder(HashMap<String, String> result) {
         String status = result.get("status");
         if ((status != null) && (status.startsWith("2")) && (mContext != null)) {
-            File folder = new File(mContext.getCacheDir(), HockeyLog.TAG);
+            File folder = new File(mContext.getCacheDir(), "HockeyApp");
             if ((folder != null) && folder.exists()) {
                 for (File file : folder.listFiles()) {
                     if (file != null) {
                         Boolean success = file.delete();
                         if (!success) {
-                            HockeyLog.log(TAG, "Error deleting file from temporary folder");
+                            HockeyLog.debug(TAG, "Error deleting file from temporary folder");
                         }
                     }
                 }

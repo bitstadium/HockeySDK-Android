@@ -13,7 +13,6 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -188,7 +187,7 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
                 prepareDownload();
             } else {
                 // Permission denied, show user alert
-                Log.w(HockeyLog.TAG, "User denied write permission, can't continue with updater task.");
+                HockeyLog.warn("User denied write permission, can't continue with updater task.");
 
                 UpdateManagerListener listener = UpdateManager.getLastListener();
                 if (listener != null) {
@@ -378,7 +377,7 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
     @SuppressWarnings("deprecation")
     private boolean isUnknownSourcesChecked() {
         try {
-            if (android.os.Build.VERSION.SDK_INT >= 17 && android.os.Build.VERSION.SDK_INT < 21) {
+            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
                 return (Settings.Global.getInt(getContentResolver(), Settings.Global.INSTALL_NON_MARKET_APPS) == 1);
             } else {
                 return (Settings.Secure.getInt(getContentResolver(), Settings.Secure.INSTALL_NON_MARKET_APPS) == 1);

@@ -17,7 +17,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Parcelable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -41,6 +40,7 @@ import net.hockeyapp.android.objects.FeedbackUserDataElement;
 import net.hockeyapp.android.tasks.ParseFeedbackTask;
 import net.hockeyapp.android.tasks.SendFeedbackTask;
 import net.hockeyapp.android.utils.AsyncTaskUtils;
+import net.hockeyapp.android.utils.HockeyLog;
 import net.hockeyapp.android.utils.PrefsUtil;
 import net.hockeyapp.android.utils.Util;
 import net.hockeyapp.android.views.AttachmentListView;
@@ -444,7 +444,7 @@ public class FeedbackActivity extends Activity implements OnClickListener {
                     intent.putExtra(PaintActivity.EXTRA_IMAGE_URI, uri);
                     startActivityForResult(intent, PAINT_IMAGE);
                 } catch (ActivityNotFoundException e) {
-                    Log.e(Util.LOG_IDENTIFIER, "Paint activity not declared!", e);
+                    HockeyLog.error(Util.LOG_IDENTIFIER, "Paint activity not declared!", e);
                 }
 
             }

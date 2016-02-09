@@ -9,7 +9,6 @@ import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
-import android.util.Log;
 import android.widget.Toast;
 
 import net.hockeyapp.android.R;
@@ -169,9 +168,9 @@ public class CheckUpdateTaskWithUI extends CheckUpdateTask {
                 DialogFragment updateFragment = (DialogFragment) method.invoke(null, updateInfo, getURLString("apk"));
                 updateFragment.show(fragmentTransaction, "hockey_update_dialog");
             } catch (Exception e) { // can't catch ReflectiveOperationException here because not targeting API level 19 or later
-                Log.e(HockeyLog.TAG, "An exception happened while showing the update fragment:");
+                HockeyLog.error("An exception happened while showing the update fragment:");
                 e.printStackTrace();
-                Log.e(HockeyLog.TAG, "Showing update activity instead.");
+                HockeyLog.error("Showing update activity instead.");
                 startUpdateIntent(updateInfo, false);
             }
         }

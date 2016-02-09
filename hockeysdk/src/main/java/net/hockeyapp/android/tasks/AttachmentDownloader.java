@@ -5,7 +5,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 
 import net.hockeyapp.android.Constants;
 import net.hockeyapp.android.objects.FeedbackAttachment;
@@ -191,12 +190,12 @@ public class AttachmentDownloader {
             FeedbackAttachment attachment = downloadJob.getFeedbackAttachment();
 
             if (attachment.isAvailableInCache()) {
-                Log.e(HockeyLog.TAG, "Cached...");
+                HockeyLog.error("Cached...");
                 loadImageThumbnail();
                 return true;
 
             } else {
-                Log.e(HockeyLog.TAG, "Downloading...");
+                HockeyLog.error("Downloading...");
                 boolean success = downloadAttachment(attachment.getUrl(), attachment.getCacheId());
                 if (success) {
                     loadImageThumbnail();

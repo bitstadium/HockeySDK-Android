@@ -135,7 +135,7 @@ public class Constants {
         File dir = new File(externalStorage.getAbsolutePath() + "/" + Constants.TAG);
         Boolean success = dir.mkdirs();
         if (!success) {
-            HockeyLog.log("Couldn't create HockeyApp Storage dir");
+            HockeyLog.warn("Couldn't create HockeyApp Storage dir");
         }
         return dir;
     }
@@ -183,7 +183,7 @@ public class Constants {
                     Constants.APP_VERSION = "" + buildNumber;
                 }
             } catch (PackageManager.NameNotFoundException e) {
-                Log.e(TAG, "Exception thrown when accessing the package info:");
+                HockeyLog.error(TAG, "Exception thrown when accessing the package info:");
                 e.printStackTrace();
             }
         }
@@ -203,7 +203,7 @@ public class Constants {
                 return metaData.getInt(BUNDLE_BUILD_NUMBER, 0);
             }
         } catch (PackageManager.NameNotFoundException e) {
-            Log.e(TAG, "Exception thrown when accessing the application info:");
+            HockeyLog.error(TAG, "Exception thrown when accessing the application info:");
             e.printStackTrace();
         }
 

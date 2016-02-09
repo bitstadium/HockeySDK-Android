@@ -10,7 +10,6 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.ImageView;
 
@@ -79,7 +78,7 @@ public class PaintView extends ImageView {
             return ratio > 1 ? ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE : ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
 
         } catch (IOException e) {
-            Log.e(HockeyLog.TAG, "Unable to determine necessary screen orientation.", e);
+            HockeyLog.error(null, "Unable to determine necessary screen orientation.", e);
             return ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
         }
     }
@@ -184,7 +183,7 @@ public class PaintView extends ImageView {
                     Bitmap bm = decodeSampledBitmapFromResource(context.getContentResolver(), imageUri, displayWidth, displayHeight);
                     return bm;
                 } catch (IOException e) {
-                    Log.e(HockeyLog.TAG, "Could not load image into ImageView.", e);
+                    HockeyLog.error(null, "Could not load image into ImageView.", e);
                 }
                 return null;
             }

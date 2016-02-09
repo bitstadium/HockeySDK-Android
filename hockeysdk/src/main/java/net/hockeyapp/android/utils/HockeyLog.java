@@ -34,50 +34,213 @@ import android.util.Log;
  * @author Benjamin Reimold
  */
 public class HockeyLog {
-    public static final String TAG = "HockeyApp";
+    public static final String HOCKEY_TAG = "HockeyApp";
 
-    private static boolean mDebugLogEnabled = false;
+    private static int sLogLevel = Log.ERROR;
 
     /**
-     * Check if debug logging has been enabled.
+     * Get the loglevel to find out how much data the HockeySDK spews into LogCat. The Default will be
+     * LOG_LEVEL.ERROR so only errors show up in LogCat.
      *
-     * @return true/falls to indicate if debug logging has been enabled.
+     * @return the log level
      */
-    public static boolean isDebugLogEnabled() {
-        return mDebugLogEnabled;
+    public static int getLogLevel() {
+        return sLogLevel;
     }
 
     /**
-     * Enable additional output to Log.d(...) by the SDK.
+     * Set the log level to determine the amount of info the HockeySDK spews info into LogCat.
      *
-     * @param debugLogEnabled
+     * @param hockeyLogLevel The log level for hockeySDK logging
      */
-    public static void setDebugLogEnabled(boolean debugLogEnabled) {
-        mDebugLogEnabled = debugLogEnabled;
+    public static void setLogLevel(int hockeyLogLevel) {
+        sLogLevel = hockeyLogLevel;
     }
 
     /**
-     * Log a message to Log.d(TAG, message) if debug logging has been enabled.
+     * Log a message with level VERBOSE
      *
-     * @param message the message to log to Log.d, if it is null, nothing will be logged.
+     * @param tag     the TAG
+     * @param message the log message
      */
-    public static void log(String message) {
-        log(null, message);
+    public static void verbose(String tag, String message) {
+        tag = sanitizeTag(tag);
+        if (sLogLevel <= Log.VERBOSE) {
+            Log.v(tag, message);
+        }
     }
 
     /**
-     * Log a message to Log.d(TAG, message) if debug logging has been enabled.
+     * Log a message with level VERBOSE
      *
-     * @param tag,    the tag used for logging. If null, it will default to HockeyApp
-     * @param message the message to log to Log.d, if it is null, nothing will be logged.
+     * @param tag       the TAG
+     * @param message   the log message
+     * @param throwable the throwable you want to log
      */
-    public static void log(String tag, String message) {
-        if (isDebugLogEnabled() && (message != null)) {
-            if (tag == null) {
-                tag = TAG;
-            }
+    public static void verbose(String tag, String message, Throwable throwable) {
+        tag = sanitizeTag(tag);
+        if (sLogLevel <= Log.VERBOSE) {
+            Log.v(tag, message, throwable);
+        }
+    }
 
+    /**
+     * Log a message with level DEBUG
+     *
+     * @param message the log message
+     */
+    public static void debug(String message) {
+        debug(null, message);
+    }
+
+    /**
+     * Log a message with level DEBUG
+     *
+     * @param tag     the TAG
+     * @param message the log message
+     */
+    public static void debug(String tag, String message) {
+        tag = sanitizeTag(tag);
+        if (sLogLevel <= Log.DEBUG) {
             Log.d(tag, message);
         }
     }
+
+    /**
+     * Log a message with level DEBUG
+     *
+     * @param tag       the TAG
+     * @param message   the log message
+     * @param throwable the throwable you want to log
+     */
+    public static void debug(String tag, String message, Throwable throwable) {
+        tag = sanitizeTag(tag);
+        if (sLogLevel <= Log.DEBUG) {
+            Log.d(tag, message, throwable);
+        }
+    }
+
+    /**
+     * Log a message with level INFO
+     *
+     * @param message the log message
+     */
+    public static void info(String message) {
+        info(null, message);
+    }
+
+    /**
+     * Log a message with level INFO
+     *
+     * @param tag     the TAG
+     * @param message the log message
+     */
+    public static void info(String tag, String message) {
+        tag = sanitizeTag(tag);
+        if (sLogLevel <= Log.INFO) {
+            Log.i(tag, message);
+        }
+    }
+
+    /**
+     * Log a message with level INFO
+     *
+     * @param tag       the TAG
+     * @param message   the log message
+     * @param throwable the throwable you want to log
+     */
+    public static void info(String tag, String message, Throwable throwable) {
+        tag = sanitizeTag(tag);
+        if (sLogLevel <= Log.INFO) {
+            Log.i(tag, message, throwable);
+        }
+    }
+
+    /**
+     * Log a message with level WARN
+     *
+     * @param message the log message
+     */
+    public static void warn(String message) {
+        warn(null, message);
+    }
+
+    /**
+     * Log a message with level WARN
+     *
+     * @param tag     the TAG
+     * @param message the log message
+     */
+    public static void warn(String tag, String message) {
+        tag = sanitizeTag(tag);
+        if (sLogLevel <= Log.WARN) {
+            Log.w(tag, message);
+        }
+    }
+
+    /**
+     * Log a message with level WARN
+     *
+     * @param tag       the TAG
+     * @param message   the log message
+     * @param throwable the throwable you want to log
+     */
+    public static void warn(String tag, String message, Throwable throwable) {
+        tag = sanitizeTag(tag);
+        if (sLogLevel <= Log.WARN) {
+            Log.w(tag, message, throwable);
+        }
+    }
+
+    /**
+     * Log a message with level ERROR
+     *
+     * @param message the log message
+     */
+    public static void error(String message) {
+        error(null, message);
+    }
+
+    /**
+     * Log a message with level ERROR
+     *
+     * @param tag     the TAG
+     * @param message the log message
+     */
+    public static void error(String tag, String message) {
+        tag = sanitizeTag(tag);
+        if (sLogLevel <= Log.ERROR) {
+            Log.e(tag, message);
+        }
+    }
+
+    /**
+     * Log a message with level ERROR
+     *
+     * @param tag       the TAG
+     * @param message   the log message
+     * @param throwable the throwable you want to log
+     */
+    public static void error(String tag, String message, Throwable throwable) {
+        tag = sanitizeTag(tag);
+        if (sLogLevel <= Log.ERROR) {
+            Log.e(tag, message, throwable);
+        }
+    }
+
+    /**
+     * Sanitize a TAG string
+     *
+     * @param tag the tag for the logging
+     * @return a sanitized TAG, defaults to 'HockeyApp' in case the tag is null, empty or longer than
+     * 23 characters.
+     */
+    static String sanitizeTag(String tag) {
+        if ((tag == null) || (tag.length() == 0) || (tag.length() > 23)) {
+            tag = HOCKEY_TAG;
+        }
+
+        return tag;
+    }
+
 }

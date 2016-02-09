@@ -72,7 +72,7 @@ class Channel {
                     synchronize();
                 }
             } else {
-                HockeyLog.log(TAG, "Unable to add item to queue");
+                HockeyLog.verbose(TAG, "Unable to add item to queue");
             }
         }
     }
@@ -132,17 +132,17 @@ class Channel {
             try {
                 envelope = createEnvelope((Data<Domain>) data);
             } catch (ClassCastException e) {
-                HockeyLog.log(TAG, "Telemetry not enqueued, could not create Envelope, must be of type ITelemetry");
+                HockeyLog.debug(TAG, "Telemetry not enqueued, could not create Envelope, must be of type ITelemetry");
             }
 
             if (envelope != null) {
                 // enqueueData to queue
                 String serializedEnvelope = serializeEnvelope(envelope);
                 enqueue(serializedEnvelope);
-                HockeyLog.log(TAG, "enqueued telemetry: " + envelope.getName());
+                HockeyLog.debug(TAG, "enqueued telemetry: " + envelope.getName());
             }
         } else {
-            HockeyLog.log(TAG, "Telemetry not enqueued, must be of type ITelemetry");
+            HockeyLog.debug(TAG, "Telemetry not enqueued, must be of type ITelemetry");
         }
     }
 
@@ -158,10 +158,10 @@ class Channel {
                 envelope.serialize(stringWriter);
                 return stringWriter.toString();
             }
-            HockeyLog.log(TAG, "Envelope wasn't empty but failed to serialize anything, returning null");
+            HockeyLog.debug(TAG, "Envelope wasn't empty but failed to serialize anything, returning null");
             return null;
         } catch (IOException e) {
-            HockeyLog.log(TAG, "Failed to save data with exception: " + e.toString());
+            HockeyLog.debug(TAG, "Failed to save data with exception: " + e.toString());
             return null;
         }
     }

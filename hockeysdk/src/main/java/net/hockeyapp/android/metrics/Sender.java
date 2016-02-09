@@ -86,7 +86,7 @@ public class Sender {
                     }
             );
         } else {
-            HockeyLog.log(TAG, "We have already 10 pending requests, not sending anything.");
+            HockeyLog.debug(TAG, "We have already 10 pending requests, not sending anything.");
         }
     }
 
@@ -134,9 +134,9 @@ public class Sender {
                 onResponse(connection, responseCode, persistedData, file);
             } catch (IOException e) {
                 //Probably offline
-                HockeyLog.log(TAG, "Couldn't send data with IOException: " + e.toString());
+                HockeyLog.debug(TAG, "Couldn't send data with IOException: " + e.toString());
                 if (this.getPersistence() != null) {
-                    HockeyLog.log(TAG, "Persisting because of IOException: We're probably offline.");
+                    HockeyLog.debug(TAG, "Persisting because of IOException: We're probably offline.");
                     this.getPersistence().makeAvailable(file); //send again later
                 }
             }
@@ -209,11 +209,11 @@ public class Sender {
     protected void onResponse(HttpURLConnection connection, int responseCode, String payload, File
             fileToSend) {
         mRequestCount.getAndDecrement();
-        HockeyLog.log(TAG, "response code " + Integer.toString(responseCode));
+        HockeyLog.debug(TAG, "response code " + Integer.toString(responseCode));
 
         boolean isRecoverableError = isRecoverableError(responseCode);
         if (isRecoverableError) {
-            HockeyLog.log(TAG, "Recoverable error (probably a server error), persisting data:\n" + payload);
+            HockeyLog.debug(TAG, "Recoverable error (probably a server error), persisting data:\n" + payload);
             if (this.getPersistence() != null) {
                 this.getPersistence().makeAvailable(fileToSend);
             }
@@ -255,7 +255,7 @@ public class Sender {
         builder.append("\n");
 
         // log the unexpected response
-        HockeyLog.log(TAG, message);
+        HockeyLog.debug(TAG, message);
 
         // attempt to read the response stream
         this.readResponse(connection, builder);
@@ -272,20 +272,20 @@ public class Sender {
         Writer writer = null;
         try {
             if ((connection != null) && (payload != null)) {
-                HockeyLog.log(TAG, "Sending payload:\n" + payload);
-                HockeyLog.log(TAG, "Using URL:" + connection.getURL().toString());
+                HockeyLog.debug(TAG, "Sending payload:\n" + payload);
+                HockeyLog.debug(TAG, "Using URL:" + connection.getURL().toString());
                 writer = getWriter(connection);
                 writer.write(payload);
                 writer.flush();
             }
         } catch (IOException e) {
-            HockeyLog.log(TAG, "Couldn't log data with: " + e.toString());
+            HockeyLog.debug(TAG, "Couldn't log data with: " + e.toString());
         } finally {
             if (writer != null) {
                 try {
                     writer.close();
                 } catch (IOException e) {
-                    HockeyLog.log(TAG, "Couldn't close writer with: " + e.toString());
+                    HockeyLog.error(TAG, "Couldn't close writer with: " + e.toString());
                 }
             }
         }
