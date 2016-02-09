@@ -34,6 +34,7 @@ This document contains the following sections:
   3. [Update Distribution](#updatedistribution-advanced)
   4. [In-App Feedback](#feedback-advanced)
   5. [Strings & Localization](#strings-advanced)
+  6. [Permissions](#permissions-advanced)
 5. [Documentation](#documentation)
 6. [Troubleshooting](#troubleshooting)
 7. [Contributing](#contributing)
@@ -52,6 +53,8 @@ This document contains the following sections:
 We recommend integration of our compiled library into your project using Android Studio and Gradle.
 For other ways to setup the SDK, see [Advanced Setup](#advancedsetup).
 A sample integration can be found in [this GitHub repository](https://github.com/bitstadium/HockeySDK-AndroidDemo).
+
+**Note:** For initial setup it is assumed that you want to use all of HockeyApp's features such as crash reporting, update distribution, and feedback. This means your app also needs all the basic permissions. If you only want to use a subset of features and thus only need to ask for a subset of permissions, please see the [permissions section](#permissions-advanced) of the advanced setup section.
 
 <a id="app-identifier"></a>
 ### 2.1 Obtain an App Identifier
@@ -259,6 +262,8 @@ You can access the full changelog in our [releases-section](https://github.com/b
  <activity android:name="net.hockeyapp.android.PaintActivity" />
 ```
 
+5. Permissions get automatically merged into your manifest. If your app does not use update distribution you might consider removing the permission `WRITE_EXTERNAL_STORAGE` - see the [advanced permissions section](#permissions-advanced) for details.
+
 <a id="advancedsetup"></a> 
 ## 4. Advanced Setup
 
@@ -362,6 +367,40 @@ Our base strings resource file is located in [`hockeysdk/src/main/res/values/str
 
 In case you want to add a localization, please also consider [creating a pull request](#contributing).
 
+<a id="permissions-advanced"></a>
+### 4.6 Permissions
+
+HockeySDK requires some permissions to be granted for its operation. These are:
+
+* `android.permission.ACCESS_NETWORK_STATE`: Required to verify if network connectivity is available, as a preliminary measure before sending crash reports, checking for updates, and transmitting feedback.
+* `android.permission.INTERNET`: Required to actually transmit data to HockeyApp's servers for crash reports, update distribution and feedback.
+* `android.permission.WRITE_EXTERNAL_STORAGE`: Required for downloading app updates to a location that is reachable by the Android package installer which takes care of update installation.
+
+HockeyApp registers these permissions with your app's `AndroidManifest.xml` through [manifest merging](http://tools.android.com/tech-docs/new-build-system/user-guide/manifest-merger). By default, all three permissions get added to your app's manifest file.
+
+### 4.6.1 Removing external storage permission
+If your app does not require access to external storage – for example if it doesn't use HockeyApp's update distribution – you might want to remove the `WRITE_EXTERNAL_STORAGE`-permission since it might not be needed by your app. To perform this, use a [remove instruction](http://tools.android.com/tech-docs/new-build-system/user-guide/manifest-merger#TOC-tools:node-markers) for manifest merging:
+
+
+1. Open your `AndroidManifest.xml` file.
+2. Add the tools-namespace to the root element if not already present:
+
+  ```xml
+  <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:tools="http://schemas.android.com/tools" …>
+  ```
+3. Add the remove instruction for the `WRITE_EXTERNAL_STORAGE`-permission after the other permissions:
+
+  ```xml
+  <uses-permission
+          android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+          tools:node="remove" />
+  ```
+4. Build your app.
+
+The crucial part in this is the `tools:node="remove"`-part which will make sure the complete node will get removed from the resulting manifest file.
+
+**Note:** If you later decide to use update distribution or any of your apps' dependencies requires write access to external storage, you will have to revert this change.
 
 <a id="documentation"></a>
 ## 5. Documentation
