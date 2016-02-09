@@ -10,11 +10,11 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.ImageView;
 
 import net.hockeyapp.android.Constants;
+import net.hockeyapp.android.utils.HockeyLog;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -79,7 +79,7 @@ public class PaintView extends ImageView {
             return ratio > 1 ? ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE : ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
 
         } catch (IOException e) {
-            Log.e(Constants.TAG, "Unable to determine necessary screen orientation.", e);
+            HockeyLog.error(Constants.TAG, "Unable to determine necessary screen orientation.", e);
             return ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
         }
     }
@@ -184,7 +184,7 @@ public class PaintView extends ImageView {
                     Bitmap bm = decodeSampledBitmapFromResource(context.getContentResolver(), imageUri, displayWidth, displayHeight);
                     return bm;
                 } catch (IOException e) {
-                    Log.e(Constants.TAG, "Could not load image into ImageView.", e);
+                    HockeyLog.error(Constants.TAG, "Could not load image into ImageView.", e);
                 }
                 return null;
             }

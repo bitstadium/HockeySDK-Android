@@ -23,6 +23,7 @@ import net.hockeyapp.android.objects.FeedbackUserDataElement;
 import net.hockeyapp.android.tasks.ParseFeedbackTask;
 import net.hockeyapp.android.tasks.SendFeedbackTask;
 import net.hockeyapp.android.utils.AsyncTaskUtils;
+import net.hockeyapp.android.utils.HockeyLog;
 import net.hockeyapp.android.utils.PrefsUtil;
 import net.hockeyapp.android.utils.Util;
 
@@ -389,7 +390,7 @@ public class FeedbackManager {
                     out.close();
                     return true;
                 } catch (IOException e) {
-                    Log.e(Constants.TAG, "Could not save screenshot.", e);
+                    HockeyLog.error(Constants.TAG, "Could not save screenshot.", e);
                 }
                 return false;
             }
