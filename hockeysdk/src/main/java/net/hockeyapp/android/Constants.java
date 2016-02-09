@@ -60,7 +60,7 @@ public class Constants {
     /**
      * Tag for internal logging statements.
      */
-    public static final String TAG = "HockeyApp";
+    private static final String TAG = "HockeyApp";
     /**
      * HockeyApp API URL.
      */
