@@ -361,14 +361,14 @@ You can configure a notification to show to the user. When they select the notif
 
 HockeySDK requires some permissions to be granted for its operation. These are:
 
-* `android.permission.ACCESS_NETWORK_STATE`: To verify if network connectivity is available, as a preliminary measure before sending crash reports, checking for updates, and transmitting feedback.
+* `android.permission.ACCESS_NETWORK_STATE`: Required to verify if network connectivity is available, as a preliminary measure before sending crash reports, checking for updates, and transmitting feedback.
 * `android.permission.INTERNET`: Required to actually transmit data to HockeyApp's servers for crash reports, update distribution and feedback.
-* `android.permission.WRITE_EXTERNAL_STORAGE`: For downloading app updates to a location that is reachable by the Android package installer which takes care of update installation.
+* `android.permission.WRITE_EXTERNAL_STORAGE`: Required for downloading app updates to a location that is availble to the Android package installer which takes care of update installation.
 
-HockeyApp registers these permissions with your app's `AndroidManifest.xml` through [manifest merging](http://tools.android.com/tech-docs/new-build-system/user-guide/manifest-merger). By default all three permissions get added to your app's manifest file.
+HockeyApp registers these permissions with your app's `AndroidManifest.xml` through [manifest merging](http://tools.android.com/tech-docs/new-build-system/user-guide/manifest-merger). By default, all three permissions get added to your app's manifest file.
 
 ### 4.5.1 Removing external storage permission
-If your app does not require access to external storage – for example if it doesn't use HockeyApp's update distribution – you might remove the `WRITE_EXTERNAL_STORAGE` permission request since it's not needed by your app. To perform this, use a [remove instruction](http://tools.android.com/tech-docs/new-build-system/user-guide/manifest-merger#TOC-tools:node-markers) for manifest merging:
+If your app does not require access to external storage – for example if it doesn't use HockeyApp's update distribution – you might want to remove the `WRITE_EXTERNAL_STORAGE` permission request since it's might not be needed by your app. To perform this, use a [remove instruction](http://tools.android.com/tech-docs/new-build-system/user-guide/manifest-merger#TOC-tools:node-markers) for manifest merging:
 
 1. Open your `AndroidManifest.xml` file.
 2. Add the tools-namespace to the root element if not already present:
@@ -386,7 +386,7 @@ If your app does not require access to external storage – for example if it do
   ```
 4. Build your app.
 
-The crucial part in this is the `tools:node="remove"` part which will make sure the complete node will get removed from the resulting manifest file.
+The crucial part in this is the `tools:node="remove"`-part which will make sure the complete node will get removed from the resulting manifest file.
 
 **Note:** If you later decide to use update distribution or any of your apps' dependencies requires write access to external storage, you will have to revert this change.
 
