@@ -14,7 +14,6 @@ import java.io.File;
 import java.net.HttpURLConnection;
 
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -53,23 +52,22 @@ public class SenderTests extends InstrumentationTestCase {
 
     @Test
     public void testSending() {
+//        Sender sut = new Sender();
         HttpURLConnection connection1 = sut.createConnection();
         File mockFile1 = mock(File.class);
-        Persistence publicPersistence = new PublicPersistence(getInstrumentation().getContext(), mock
-                (File.class), null);
-        sut.setPersistence(publicPersistence);
+
+        PublicPersistence persistenceMock = mock(PublicPersistence.class);
+        when(persistenceMock.nextAvailableFileInDirectory()).thenReturn(mock(File.class));
+
+        sut.setPersistence(persistenceMock);
         sut.triggerSendingForTesting(connection1, mockFile1, "test1");
         Assert.assertEquals(1, sut.requestCount());
-        spy(publicPersistence).nextAvailableFileInDirectory();
-        spy(publicPersistence).load(mockFile1);
 
-        File mockFile2 = mock(File.class);
-        HttpURLConnection connection2 = sut.createConnection();
-        sut.triggerSendingForTesting(connection2, mockFile2, "test2");
-        Assert.assertEquals(2, sut.requestCount());
-        spy(sut.getPersistence()).nextAvailableFileInDirectory();
-        spy(sut.getPersistence()).load(mockFile2);
+        sut.send();
+        verify(persistenceMock).nextAvailableFileInDirectory();
     }
+
+
 
     @Test
     public void testResponseCodeHandling() {

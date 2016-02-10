@@ -155,7 +155,7 @@ public class Sender {
         if (this.getPersistence() != null) {
             if (file != null) {
                 persistedData = this.getPersistence().load(file);
-                if (persistedData.isEmpty()) {
+                if ((persistedData != null) && (persistedData.isEmpty())) {
                     this.getPersistence().deleteFile(file);
                 }
             }
