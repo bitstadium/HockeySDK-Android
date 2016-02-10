@@ -190,12 +190,12 @@ public class AttachmentDownloader {
             FeedbackAttachment attachment = downloadJob.getFeedbackAttachment();
 
             if (attachment.isAvailableInCache()) {
-                HockeyLog.error(Constants.TAG, "Cached...");
+                HockeyLog.error("Cached...");
                 loadImageThumbnail();
                 return true;
 
             } else {
-                HockeyLog.error(Constants.TAG, "Downloading...");
+                HockeyLog.error("Downloading...");
                 boolean success = downloadAttachment(attachment.getUrl(), attachment.getCacheId());
                 if (success) {
                     loadImageThumbnail();

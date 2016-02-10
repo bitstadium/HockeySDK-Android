@@ -103,7 +103,7 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
             // Create filename from a random uuid
             String filename = UUID.randomUUID().toString();
             String path = Constants.FILES_PATH + "/" + filename + ".stacktrace";
-            HockeyLog.debug(Constants.TAG, "Writing unhandled exception to: " + path);
+            HockeyLog.debug("Writing unhandled exception to: " + path);
 
             // Write the stacktrace to disk
             writer = new BufferedWriter(new FileWriter(path));
@@ -138,14 +138,14 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
                 writeValueToFile(listener.getDescription(), filename + ".description");
             }
         } catch (IOException another) {
-            HockeyLog.error(Constants.TAG, "Error saving exception stacktrace!\n", another);
+            HockeyLog.error("Error saving exception stacktrace!\n", another);
         } finally {
             try {
                 if (writer != null) {
                     writer.close();
                 }
             } catch (IOException e) {
-                HockeyLog.error(Constants.TAG, "Error saving exception stacktrace!\n", e);
+                HockeyLog.error("Error saving exception stacktrace!\n", e);
                 e.printStackTrace();
             }
         }
