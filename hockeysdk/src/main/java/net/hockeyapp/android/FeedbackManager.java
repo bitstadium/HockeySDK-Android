@@ -15,7 +15,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -390,7 +389,7 @@ public class FeedbackManager {
                     out.close();
                     return true;
                 } catch (IOException e) {
-                    HockeyLog.error(Constants.TAG, "Could not save screenshot.", e);
+                    HockeyLog.error("Could not save screenshot.", e);
                 }
                 return false;
             }
@@ -477,7 +476,7 @@ public class FeedbackManager {
 
         @Override
         public void onScanCompleted(String path, Uri uri) {
-            Log.i(Constants.TAG, String.format("Scanned path %s -> URI = %s", path, uri.toString()));
+            HockeyLog.verbose(String.format("Scanned path %s -> URI = %s", path, uri.toString()));
             connection.disconnect();
         }
     }
