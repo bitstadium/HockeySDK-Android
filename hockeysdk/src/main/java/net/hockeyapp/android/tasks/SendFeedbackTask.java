@@ -62,6 +62,7 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
     public static final String BUNDLE_REQUEST_TYPE = "request_type";
 
     private static final String TAG = "SendFeedbackTask";
+    private static final String FILE_TAG = "HockeyApp";
 
     private Context mContext;
     private Handler mHandler;
@@ -179,7 +180,7 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
     private void clearTemporaryFolder(HashMap<String, String> result) {
         String status = result.get("status");
         if ((status != null) && (status.startsWith("2")) && (mContext != null)) {
-            File folder = new File(mContext.getCacheDir(), "HockeyApp");
+            File folder = new File(mContext.getCacheDir(), FILE_TAG);
             if ((folder != null) && folder.exists()) {
                 for (File file : folder.listFiles()) {
                     if (file != null) {

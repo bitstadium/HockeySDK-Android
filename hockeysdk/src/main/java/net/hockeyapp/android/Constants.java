@@ -58,10 +58,6 @@ import java.security.MessageDigest;
 public class Constants {
 
     /**
-     * Tag for internal logging statements.
-     */
-    private static final String TAG = "HockeyApp";
-    /**
      * HockeyApp API URL.
      */
     public static final String BASE_URL = "https://sdk.hockeyapp.net/";
@@ -69,6 +65,8 @@ public class Constants {
      * Name of this SDK.
      */
     public static final String SDK_NAME = "HockeySDK";
+
+    public static final String FILES_DIRECTORY_NAME = "HockeyApp";
    
     /**
      * Permissions request for the update task.
@@ -132,7 +130,7 @@ public class Constants {
     public static File getHockeyAppStorageDir() {
         File externalStorage = Environment.getExternalStorageDirectory();
 
-        File dir = new File(externalStorage.getAbsolutePath() + "/" + Constants.TAG);
+        File dir = new File(externalStorage.getAbsolutePath() + "/" + Constants.FILES_DIRECTORY_NAME);
         Boolean success = dir.mkdirs();
         if (!success) {
             HockeyLog.warn("Couldn't create HockeyApp Storage dir");
@@ -157,7 +155,7 @@ public class Constants {
                     Constants.FILES_PATH = file.getAbsolutePath();
                 }
             } catch (Exception e) {
-                Log.e(TAG, "Exception thrown when accessing the files dir:");
+                HockeyLog.error("Exception thrown when accessing the files dir:");
                 e.printStackTrace();
             }
         }
@@ -183,7 +181,7 @@ public class Constants {
                     Constants.APP_VERSION = "" + buildNumber;
                 }
             } catch (PackageManager.NameNotFoundException e) {
-                HockeyLog.error(TAG, "Exception thrown when accessing the package info:");
+                HockeyLog.error("Exception thrown when accessing the package info:");
                 e.printStackTrace();
             }
         }
@@ -203,7 +201,7 @@ public class Constants {
                 return metaData.getInt(BUNDLE_BUILD_NUMBER, 0);
             }
         } catch (PackageManager.NameNotFoundException e) {
-            HockeyLog.error(TAG, "Exception thrown when accessing the application info:");
+            HockeyLog.error("Exception thrown when accessing the application info:");
             e.printStackTrace();
         }
 

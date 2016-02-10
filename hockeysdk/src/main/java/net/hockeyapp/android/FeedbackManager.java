@@ -389,7 +389,7 @@ public class FeedbackManager {
                     out.close();
                     return true;
                 } catch (IOException e) {
-                    HockeyLog.error(null, "Could not save screenshot.", e);
+                    HockeyLog.error("Could not save screenshot.", e);
                 }
                 return false;
             }
@@ -476,7 +476,7 @@ public class FeedbackManager {
 
         @Override
         public void onScanCompleted(String path, Uri uri) {
-            HockeyLog.verbose(null, String.format("Scanned path %s -> URI = %s", path, uri.toString()));
+            HockeyLog.verbose(String.format("Scanned path %s -> URI = %s", path, uri.toString()));
             connection.disconnect();
         }
     }

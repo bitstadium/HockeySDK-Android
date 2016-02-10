@@ -138,14 +138,14 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
                 writeValueToFile(listener.getDescription(), filename + ".description");
             }
         } catch (IOException another) {
-            HockeyLog.error(null, "Error saving exception stacktrace!\n", another);
+            HockeyLog.error("Error saving exception stacktrace!\n", another);
         } finally {
             try {
                 if (writer != null) {
                     writer.close();
                 }
             } catch (IOException e) {
-                HockeyLog.error(null, "Error saving exception stacktrace!\n", e);
+                HockeyLog.error("Error saving exception stacktrace!\n", e);
                 e.printStackTrace();
             }
         }

@@ -186,7 +186,7 @@ public class PaintActivity extends Activity {
                     out.close();
                 } catch (IOException e) {
                     e.printStackTrace();
-                    HockeyLog.error(null, "Could not save image.", e);
+                    HockeyLog.error("Could not save image.", e);
                 }
                 return null;
             }
