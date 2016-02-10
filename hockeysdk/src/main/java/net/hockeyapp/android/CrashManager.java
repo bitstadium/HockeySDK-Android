@@ -82,6 +82,8 @@ public class CrashManager {
      */
     private static boolean submitting = false;
 
+    private static boolean sDidCrashInLastSession = false;
+
     /**
      * Shared preferences key for always send dialog button.
      */
@@ -187,6 +189,7 @@ public class CrashManager {
 
         int foundOrSend = hasStackTraces(weakContext);
         if (foundOrSend == 1) {
+            sDidCrashInLastSession = true;
             Boolean autoSend = !(context instanceof Activity);
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             autoSend |= prefs.getBoolean(ALWAYS_SEND_KEY, false);
@@ -256,6 +259,10 @@ public class CrashManager {
         }
 
         return result;
+    }
+
+    public static boolean didCrashInLastSession() {
+        return sDidCrashInLastSession;
     }
 
     /**
