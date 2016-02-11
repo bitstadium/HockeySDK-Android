@@ -131,7 +131,7 @@ public class Constants {
         File externalStorage = Environment.getExternalStorageDirectory();
 
         File dir = new File(externalStorage.getAbsolutePath() + "/" + Constants.FILES_DIRECTORY_NAME);
-        Boolean success = dir.mkdirs();
+        boolean success = dir.exists() || dir.mkdirs();
         if (!success) {
             HockeyLog.warn("Couldn't create HockeyApp Storage dir");
         }
