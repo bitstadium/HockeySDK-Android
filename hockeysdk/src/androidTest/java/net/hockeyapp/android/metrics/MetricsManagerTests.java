@@ -1,39 +1,50 @@
 package net.hockeyapp.android.metrics;
 
 import android.app.Application;
+import android.support.test.InstrumentationRegistry;
+import android.support.test.runner.AndroidJUnit4;
 import android.test.InstrumentationTestCase;
 
-import static org.mockito.Mockito.mock;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+
+@RunWith(AndroidJUnit4.class)
 public class MetricsManagerTests extends InstrumentationTestCase {
 
-    @Override
+    @Before
     public void setUp() throws Exception {
         super.setUp();
-        System.setProperty("dexmaker.dexcache", getInstrumentation().getTargetContext()
-                .getCacheDir()
-                .getPath());
+        injectInstrumentation(InstrumentationRegistry.getInstrumentation());
+
     }
 
-    @Override
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
     }
 
-    public void testInitializationWorks() {
-        TelemetryContext mockTelemetryContext = mock(PublicTelemetryContext.class);
-        Persistence mockPersistence = mock(PublicPersistence.class);
-        Channel mockChannel = mock(PublicChannel.class);
-        Sender mockSender = mock(PublicSender.class);
+    @Test
+    public void initializationWorks() {
+        PublicTelemetryContext mockTelemetryContext = mock(PublicTelemetryContext.class);
+        PublicChannel mockChannel = mock(PublicChannel.class);
+        PublicSender mockSender = mock(PublicSender.class);
+        PublicPersistence mockPersistence = mock(PublicPersistence.class);
         MetricsManager sut = new MetricsManager(getInstrumentation().getContext(),
                 mockTelemetryContext, mockSender, mockPersistence, mockChannel);
+        verify(mockSender).setPersistence(mockPersistence);
+        verify(mockPersistence).setSender(mockSender);
         assertNotNull(sut);
         assertNotNull(sut.getSender());
         assertNotNull(sut.getChannel());
-        assertNotNull(sut.getSender().getPersistence());
     }
 
-    public void testRegisterWorks() {
+    @Test
+    public void registerWorks() {
         Persistence mockPersistence = mock(PublicPersistence.class);
         Channel mockChannel = mock(PublicChannel.class);
         Sender mockSender = mock(PublicSender.class);
@@ -41,10 +52,8 @@ public class MetricsManagerTests extends InstrumentationTestCase {
 
         MetricsManager.register(getInstrumentation().getContext(), mockApplication, "12345678901234567890123456789032",
                 mockSender, mockPersistence, mockChannel);
-
         assertNotNull(MetricsManager.getSender());
         assertNotNull(MetricsManager.getChannel());
-        assertNotNull(MetricsManager.getSender().getPersistence());
     }
 
 }

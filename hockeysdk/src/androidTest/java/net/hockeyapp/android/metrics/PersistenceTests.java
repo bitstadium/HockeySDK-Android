@@ -53,12 +53,15 @@ public class PersistenceTests extends InstrumentationTestCase {
 
     @Test
     public void testCallingPersistTriggersWriteToDisk() {
-        PublicPersistence spy = spy(sut);
+        Context context = getInstrumentation().getContext();
+        Sender mockSender = mock(Sender.class);
+        PublicPersistence sut = new PublicPersistence(context, mockSender);
+
+        Persistence spy = spy(sut);
         String[] testData = {"test", "data"};
         String testSerializedString = "test\ndata";
 
         spy.persist(testData);
-
         verify(spy).writeToDisk(testSerializedString);
     }
 
