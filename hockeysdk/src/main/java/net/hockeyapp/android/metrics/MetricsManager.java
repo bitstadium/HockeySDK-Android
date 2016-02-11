@@ -137,6 +137,8 @@ public class MetricsManager implements Application.ActivityLifecycleCallbacks {
 
         if (persistence == null) {
             persistence = new Persistence(context, sender);
+        } else {
+            persistence.setSender(sender);
         }
 
         //Link sender
@@ -148,7 +150,6 @@ public class MetricsManager implements Application.ActivityLifecycleCallbacks {
         } else {
             sChannel = channel;
         }
-
     }
 
     /**
