@@ -82,6 +82,8 @@ public class CrashManager {
      */
     private static boolean submitting = false;
 
+    private static long initializeTimestamp;
+
     private static boolean didCrashInLastSession = false;
 
     /**
@@ -476,6 +478,7 @@ public class CrashManager {
      */
     private static void initialize(Context context, String urlString, String appIdentifier, CrashManagerListener listener, boolean registerHandler) {
         if (context != null) {
+            CrashManager.initializeTimestamp = System.currentTimeMillis();
             CrashManager.urlString = urlString;
             CrashManager.identifier = Util.sanitizeAppIdentifier(appIdentifier);
             CrashManager.didCrashInLastSession = false;
@@ -774,5 +777,9 @@ public class CrashManager {
             HockeyLog.debug(Constants.TAG, "Can't search for exception as file path is null.");
             return null;
         }
+    }
+
+    public static long getInitializeTimestamp() {
+        return initializeTimestamp;
     }
 }

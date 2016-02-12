@@ -94,6 +94,7 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
      */
     public static void saveException(Throwable exception, Thread thread, CrashManagerListener listener) {
         final Date now = new Date();
+        final Date startDate = new Date(CrashManager.getInitializeTimestamp());
         final Writer result = new StringWriter();
         final PrintWriter printWriter = new PrintWriter(result);
         BufferedWriter writer = null;
@@ -128,6 +129,7 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
             }
 
             writer.write("Date: " + now + "\n");
+            writer.write("Start Date: " + startDate + "\n");
             writer.write("\n");
             writer.write(result.toString());
             writer.flush();
