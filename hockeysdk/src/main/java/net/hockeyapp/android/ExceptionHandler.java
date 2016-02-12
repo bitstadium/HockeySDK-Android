@@ -116,6 +116,7 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
 
             if ((listener == null) || (listener.includeDeviceData())) {
                 writer.write("Android: " + Constants.ANDROID_VERSION + "\n");
+                writer.write("Android Build: " + Constants.ANDROID_BUILD + "\n");
                 writer.write("Manufacturer: " + Constants.PHONE_MANUFACTURER + "\n");
                 writer.write("Model: " + Constants.PHONE_MODEL + "\n");
             }
