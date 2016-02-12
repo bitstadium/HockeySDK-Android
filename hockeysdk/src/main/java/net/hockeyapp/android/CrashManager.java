@@ -478,7 +478,9 @@ public class CrashManager {
      */
     private static void initialize(Context context, String urlString, String appIdentifier, CrashManagerListener listener, boolean registerHandler) {
         if (context != null) {
-            CrashManager.initializeTimestamp = System.currentTimeMillis();
+            if (CrashManager.initializeTimestamp == 0) {
+                CrashManager.initializeTimestamp = System.currentTimeMillis();
+            }
             CrashManager.urlString = urlString;
             CrashManager.identifier = Util.sanitizeAppIdentifier(appIdentifier);
             CrashManager.didCrashInLastSession = false;
