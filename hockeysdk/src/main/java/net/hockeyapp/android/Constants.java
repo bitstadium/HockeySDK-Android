@@ -96,6 +96,11 @@ public class Constants {
      */
     public static String ANDROID_VERSION = null;
     /**
+     * The device's OS build.
+     */
+    public static String ANDROID_BUILD = null;
+
+    /**
      * The device's model name.
      */
     public static String PHONE_MODEL = null;
@@ -116,6 +121,7 @@ public class Constants {
      */
     public static void loadFromContext(Context context) {
         Constants.ANDROID_VERSION = android.os.Build.VERSION.RELEASE;
+        Constants.ANDROID_BUILD = android.os.Build.VERSION.BASE_OS;
         Constants.PHONE_MODEL = android.os.Build.MODEL;
         Constants.PHONE_MANUFACTURER = android.os.Build.MANUFACTURER;
 
