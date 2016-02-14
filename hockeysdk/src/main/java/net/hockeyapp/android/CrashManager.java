@@ -237,14 +237,7 @@ public class CrashManager {
         int result = STACK_TRACES_FOUND_NONE;
         if ((filenames != null) && (filenames.length > 0)) {
             try {
-                Context context = null;
-                if (weakContext != null) {
-                    context = weakContext.get();
-                    if (context != null) {
-                        SharedPreferences preferences = context.getSharedPreferences("HockeySDK", Context.MODE_PRIVATE);
-                        confirmedFilenames = Arrays.asList(preferences.getString("ConfirmedFilenames", "").split("\\|"));
-                    }
-                }
+                confirmedFilenames = getConfirmedFilenames(weakContext);
 
             } catch (Exception e) {
                 // Just in case, we catch all exceptions here
@@ -783,6 +776,18 @@ public class CrashManager {
             HockeyLog.debug(Constants.TAG, "Can't search for exception as file path is null.");
             return null;
         }
+    }
+
+    private static List<String> getConfirmedFilenames(WeakReference<Context> weakContext) {
+        List<String> result = null;
+        if (weakContext != null) {
+            Context context = weakContext.get();
+            if (context != null) {
+                SharedPreferences preferences = context.getSharedPreferences("HockeySDK", Context.MODE_PRIVATE);
+                result = Arrays.asList(preferences.getString("ConfirmedFilenames", "").split("\\|"));
+            }
+        }
+        return result;
     }
 
     public static long getInitializeTimestamp() {
