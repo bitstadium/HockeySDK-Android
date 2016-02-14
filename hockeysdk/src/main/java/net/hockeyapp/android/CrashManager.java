@@ -759,7 +759,7 @@ public class CrashManager {
     }
 
     /**
-     * Searches .stacktrace files and returns then as array.
+     * Searches .stacktrace files and returns them as array.
      */
     private static String[] searchForStackTraces() {
         if (Constants.FILES_PATH != null) {
