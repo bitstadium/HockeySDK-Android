@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.preference.PreferenceManager;
 
+import net.hockeyapp.android.objects.CrashDetails;
 import net.hockeyapp.android.objects.CrashManagerUserInput;
 import net.hockeyapp.android.objects.CrashMetaData;
 import net.hockeyapp.android.utils.HockeyLog;
@@ -262,6 +263,40 @@ public class CrashManager {
 
     public static boolean didCrashInLastSession() {
         return didCrashInLastSession;
+    }
+
+    public static CrashDetails getLastCrashDetails() {
+        if (Constants.FILES_PATH == null || !didCrashInLastSession()) {
+            return null;
+        }
+
+        File dir = new File(Constants.FILES_PATH + "/");
+        File[] files = dir.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String filename) {
+                return filename.endsWith(".stacktrace");
+            }
+        });
+
+        long lastModification = 0;
+        File lastModifiedFile = null;
+        CrashDetails result = null;
+        for (File file : files) {
+            if (file.lastModified() > lastModification) {
+                lastModification = file.lastModified();
+                lastModifiedFile = file;
+            }
+        }
+
+        if (lastModifiedFile != null && lastModifiedFile.exists()) {
+            try {
+                result = CrashDetails.fromFile(lastModifiedFile);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        return result;
     }
 
     /**
