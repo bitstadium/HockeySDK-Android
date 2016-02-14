@@ -91,6 +91,10 @@ public class CrashManager {
      */
     private static final String ALWAYS_SEND_KEY = "always_send_crash_reports";
 
+    private static final int STACK_TRACES_FOUND_NONE = 0;
+    private static final int STACK_TRACES_FOUND_NEW = 1;
+    private static final int STACK_TRACES_FOUND_CONFIRMED = 2;
+
     /**
      * Registers new crash manager and handles existing crash logs.
      * HockeyApp App Identifier is read from configuration values in AndroidManifest.xml
@@ -190,7 +194,7 @@ public class CrashManager {
         WeakReference<Context> weakContext = new WeakReference<Context>(context);
 
         int foundOrSend = hasStackTraces(weakContext);
-        if (foundOrSend == 1) {
+        if (foundOrSend == STACK_TRACES_FOUND_NEW) {
             didCrashInLastSession = true;
             Boolean autoSend = !(context instanceof Activity);
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -208,7 +212,7 @@ public class CrashManager {
             } else {
                 sendCrashes(weakContext, listener, ignoreDefaultHandler);
             }
-        } else if (foundOrSend == 2) {
+        } else if (foundOrSend == STACK_TRACES_FOUND_CONFIRMED) {
             if (listener != null) {
                 listener.onConfirmedCrashesFound();
             }
@@ -223,14 +227,14 @@ public class CrashManager {
      * Checks if there are any saved stack traces in the files dir.
      *
      * @param weakContext The context to use. Usually your Activity object.
-     * @return 0 if there are no stack traces,
-     * 1 if there are any new stack traces,
-     * 2 if there are confirmed stack traces
+     * @return STACK_TRACES_FOUND_NONE if there are no stack traces,
+     * STACK_TRACES_FOUND_NEW if there are any new stack traces,
+     * STACK_TRACES_FOUND_CONFIRMED if there only are confirmed stack traces.
      */
     public static int hasStackTraces(WeakReference<Context> weakContext) {
         String[] filenames = searchForStackTraces();
         List<String> confirmedFilenames = null;
-        int result = 0;
+        int result = STACK_TRACES_FOUND_NONE;
         if ((filenames != null) && (filenames.length > 0)) {
             try {
                 Context context = null;
@@ -247,16 +251,16 @@ public class CrashManager {
             }
 
             if (confirmedFilenames != null) {
-                result = 2;
+                result = STACK_TRACES_FOUND_CONFIRMED;
 
                 for (String filename : filenames) {
                     if (!confirmedFilenames.contains(filename)) {
-                        result = 1;
+                        result = STACK_TRACES_FOUND_NEW;
                         break;
                     }
                 }
             } else {
-                result = 1;
+                result = STACK_TRACES_FOUND_NEW;
             }
         }
 
