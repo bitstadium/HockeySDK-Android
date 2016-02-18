@@ -61,7 +61,7 @@
             android:layout_alignParentLeft="true"
             android:layout_below="@id/label_version"
             android:layout_margin="20dp"
-            android:background="@drawable/btn_background"
+            android:background="@drawable/hockeyapp_btn_background"
             android:paddingBottom="10dp"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
@@ -75,7 +75,7 @@
     <WebView
         android:id="@+id/web_update_details"
         android:layout_width="match_parent"
-        android:layout_height="400dp"
+        android:layout_height="match_parent"
         android:layout_below="@id/view_header"
         android:background="@color/background_white" />
 

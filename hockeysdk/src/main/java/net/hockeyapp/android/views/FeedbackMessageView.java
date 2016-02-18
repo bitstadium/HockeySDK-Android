@@ -74,7 +74,7 @@ public class FeedbackMessageView extends LinearLayout {
         super(context, attrs);
         mContext = context;
 
-        LayoutInflater.from(context).inflate(R.layout.view_feedback_message, this);
+        LayoutInflater.from(context).inflate(R.layout.hockeyapp_view_feedback_message, this);
 
         mAuthorTextView = (TextView) findViewById(R.id.label_author);
         mDateTextView = (TextView) findViewById(R.id.label_date);

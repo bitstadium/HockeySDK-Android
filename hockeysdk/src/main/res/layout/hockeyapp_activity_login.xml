@@ -59,7 +59,7 @@
             android:textColor="@color/text_white"
             android:textSize="15sp"
             android:padding="20dp"
-            android:background="@drawable/btn_background" />
+            android:background="@drawable/hockeyapp_btn_background" />
 
     </LinearLayout>
 
