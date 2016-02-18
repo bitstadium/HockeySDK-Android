@@ -10,7 +10,6 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -24,6 +23,7 @@ import net.hockeyapp.android.listeners.DownloadFileListener;
 import net.hockeyapp.android.tasks.DownloadFileTask;
 import net.hockeyapp.android.tasks.GetFileSizeTask;
 import net.hockeyapp.android.utils.AsyncTaskUtils;
+import net.hockeyapp.android.utils.HockeyLog;
 import net.hockeyapp.android.utils.VersionHelper;
 
 import org.json.JSONArray;
@@ -209,7 +209,7 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
                 startDownloadTask(getActivity());
             } else {
                 // Permission denied, show user alert
-                Log.w(Constants.TAG, "User denied write permission, can't continue with updater task.");
+                HockeyLog.warn("User denied write permission, can't continue with updater task.");
 
                 UpdateManagerListener listener = UpdateManager.getLastListener();
                 if (listener != null) {

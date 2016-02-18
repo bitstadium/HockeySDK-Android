@@ -57,10 +57,20 @@ public class HockeyLog {
         sLogLevel = hockeyLogLevel;
     }
 
+
+    /**
+     * Log a message with level VERBOSE with the default tag
+     *
+     * @param message the log message
+     */
+    public static void verbose(String message) {
+        verbose(null, message);
+    }
+
     /**
      * Log a message with level VERBOSE
      *
-     * @param tag     the TAG
+     * @param tag     the log tag for your message
      * @param message the log message
      */
     public static void verbose(String tag, String message) {
@@ -71,9 +81,19 @@ public class HockeyLog {
     }
 
     /**
+     * Log a message with level VERBOSE with the default tag
+     *
+     * @param message   the log message
+     * @param throwable the throwable you want to log
+     */
+    public static void verbose(String message, Throwable throwable) {
+        verbose(null, message, throwable);
+    }
+
+    /**
      * Log a message with level VERBOSE
      *
-     * @param tag       the TAG
+     * @param tag       the log tag for your message
      * @param message   the log message
      * @param throwable the throwable you want to log
      */
@@ -85,7 +105,7 @@ public class HockeyLog {
     }
 
     /**
-     * Log a message with level DEBUG
+     * Log a message with level DEBUG with the default tag
      *
      * @param message the log message
      */
@@ -96,7 +116,7 @@ public class HockeyLog {
     /**
      * Log a message with level DEBUG
      *
-     * @param tag     the TAG
+     * @param tag     the log tag for your message
      * @param message the log message
      */
     public static void debug(String tag, String message) {
@@ -107,9 +127,19 @@ public class HockeyLog {
     }
 
     /**
+     * Log a message with level DEBUG with the default tag
+     *
+     * @param message   the log message
+     * @param throwable the throwable you want to log
+     */
+    public static void debug(String message, Throwable throwable) {
+        debug(null, message, throwable);
+    }
+
+    /**
      * Log a message with level DEBUG
      *
-     * @param tag       the TAG
+     * @param tag       the log tag for your message
      * @param message   the log message
      * @param throwable the throwable you want to log
      */
@@ -121,7 +151,7 @@ public class HockeyLog {
     }
 
     /**
-     * Log a message with level INFO
+     * Log a message with level INFO with the default tag
      *
      * @param message the log message
      */
@@ -132,7 +162,7 @@ public class HockeyLog {
     /**
      * Log a message with level INFO
      *
-     * @param tag     the TAG
+     * @param tag     the log tag for your message
      * @param message the log message
      */
     public static void info(String tag, String message) {
@@ -143,9 +173,19 @@ public class HockeyLog {
     }
 
     /**
+     * Log a message with level INFO with the default tag
+     *
+     * @param message   the log message
+     * @param throwable the throwable you want to log
+     */
+    public static void info(String message, Throwable throwable) {
+        info(message, throwable);
+    }
+
+    /**
      * Log a message with level INFO
      *
-     * @param tag       the TAG
+     * @param tag       the log tag for your message
      * @param message   the log message
      * @param throwable the throwable you want to log
      */
@@ -157,7 +197,7 @@ public class HockeyLog {
     }
 
     /**
-     * Log a message with level WARN
+     * Log a message with level WARN with the default tag
      *
      * @param message the log message
      */
@@ -179,9 +219,19 @@ public class HockeyLog {
     }
 
     /**
+     * Log a message with level WARN with the default tag
+     *
+     * @param message   the log message
+     * @param throwable the throwable you want to log
+     */
+    public static void warn(String message, Throwable throwable) {
+        warn(null, message, throwable);
+    }
+
+    /**
      * Log a message with level WARN
      *
-     * @param tag       the TAG
+     * @param tag       the log tag for your message
      * @param message   the log message
      * @param throwable the throwable you want to log
      */
@@ -193,7 +243,7 @@ public class HockeyLog {
     }
 
     /**
-     * Log a message with level ERROR
+     * Log a message with level ERROR with the default tag
      *
      * @param message the log message
      */
@@ -204,7 +254,7 @@ public class HockeyLog {
     /**
      * Log a message with level ERROR
      *
-     * @param tag     the TAG
+     * @param tag     the log tag for your message
      * @param message the log message
      */
     public static void error(String tag, String message) {
@@ -215,9 +265,19 @@ public class HockeyLog {
     }
 
     /**
+     * Log a message with level ERROR with the default tag
+     *
+     * @param message   the log message
+     * @param throwable the throwable you want to log
+     */
+    public static void error(String message, Throwable throwable) {
+        error(null, message, throwable);
+    }
+
+    /**
      * Log a message with level ERROR
      *
-     * @param tag       the TAG
+     * @param tag       the log tag for your message
      * @param message   the log message
      * @param throwable the throwable you want to log
      */
@@ -231,8 +291,8 @@ public class HockeyLog {
     /**
      * Sanitize a TAG string
      *
-     * @param tag the tag for the logging
-     * @return a sanitized TAG, defaults to 'HockeyApp' in case the tag is null, empty or longer than
+     * @param tag the log tag for your message for the logging
+     * @return a sanitized TAG, defaults to 'HockeyApp' in case the log tag for your message is null, empty or longer than
      * 23 characters.
      */
     static String sanitizeTag(String tag) {

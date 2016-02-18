@@ -134,7 +134,7 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
                 writeValueToFile(limitedString(listener.getContact()), filename + ".contact");
                 writeValueToFile(listener.getDescription(), filename + ".description");
             } catch (IOException e) {
-                HockeyLog.error(Constants.TAG, "Error saving crash meta data!", e);
+                HockeyLog.error("Error saving crash meta data!", e);
             }
 
         }
