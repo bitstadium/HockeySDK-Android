@@ -114,18 +114,18 @@ public class FeedbackMessageView extends LinearLayout {
     public void setIndex(int index) {
         if (index % 2 == 0) {
 
-            setBackgroundColor(getResources().getColor(R.color.background_light));
-            mAuthorTextView.setTextColor(getResources().getColor(R.color.text_white));
-            mDateTextView.setTextColor(getResources().getColor(R.color.text_white));
+            setBackgroundColor(getResources().getColor(R.color.hockeyapp_background_light));
+            mAuthorTextView.setTextColor(getResources().getColor(R.color.hockeyapp_text_white));
+            mDateTextView.setTextColor(getResources().getColor(R.color.hockeyapp_text_white));
 
         } else {
 
-            setBackgroundColor(getResources().getColor(R.color.background_white));
-            mAuthorTextView.setTextColor(getResources().getColor(R.color.text_light));
-            mDateTextView.setTextColor(getResources().getColor(R.color.text_light));
+            setBackgroundColor(getResources().getColor(R.color.hockeyapp_background_white));
+            mAuthorTextView.setTextColor(getResources().getColor(R.color.hockeyapp_text_light));
+            mDateTextView.setTextColor(getResources().getColor(R.color.hockeyapp_text_light));
 
         }
-        mMessageTextView.setTextColor(getResources().getColor(R.color.text_black));
+        mMessageTextView.setTextColor(getResources().getColor(R.color.hockeyapp_text_black));
     }
 
 

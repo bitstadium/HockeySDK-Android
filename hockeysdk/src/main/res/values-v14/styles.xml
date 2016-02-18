@@ -7,8 +7,8 @@
         <item name="android:layout_marginTop">10dp</item>
         <item name="android:layout_marginBottom">10dp</item>
         <item name="android:textSize">15sp</item>
-        <item name="android:textColor">@color/text_normal</item>
-        <item name="android:textColorHint">@color/text_light</item>
+        <item name="android:textColor">@color/hockeyapp_text_normal</item>
+        <item name="android:textColorHint">@color/hockeyapp_text_light</item>
         <item name="android:typeface">normal</item>
         <item name="android:imeOptions">actionNext</item>
     </style>
@@ -18,7 +18,7 @@
     </style>
 
     <style name="HockeyApp.ButtonStyle" parent="android:Widget.Button">
-        <item name="android:textColor">@color/text_white</item>
+        <item name="android:textColor">@color/hockeyapp_text_white</item>
         <item name="android:textSize">15sp</item>
         <item name="android:gravity">center</item>
         <item name="android:background">@drawable/hockeyapp_btn_background</item>

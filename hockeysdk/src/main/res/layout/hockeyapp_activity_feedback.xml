@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_white"
+    android:background="@color/hockeyapp_background_white"
     android:orientation="vertical">
 
     <ScrollView
@@ -96,12 +96,12 @@
             android:ellipsize="end"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
-            android:shadowColor="@color/background_white"
+            android:shadowColor="@color/hockeyapp_background_white"
             android:shadowDy="1"
             android:shadowRadius="1"
             android:singleLine="true"
             android:text="@string/hockeyapp_feedback_last_updated_text"
-            android:textColor="@color/text_normal"
+            android:textColor="@color/hockeyapp_text_normal"
             android:textSize="15sp"
             android:typeface="normal" />
 
