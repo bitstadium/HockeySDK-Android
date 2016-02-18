@@ -140,7 +140,7 @@ public class CrashDetails {
 
     public void writeCrashReport() {
         String path = Constants.FILES_PATH + "/" + crashIdentifier + ".stacktrace";
-        HockeyLog.debug(Constants.TAG, "Writing unhandled exception to: " + path);
+        HockeyLog.debug("Writing unhandled exception to: " + path);
 
         BufferedWriter writer = null;
 
@@ -166,14 +166,14 @@ public class CrashDetails {
             writer.flush();
 
         } catch (IOException e) {
-            HockeyLog.error(Constants.TAG, "Error saving crash report!", e);
+            HockeyLog.error("Error saving crash report!", e);
         } finally {
             try {
                 if (writer != null) {
                     writer.close();
                 }
             } catch (IOException e1) {
-                HockeyLog.error(Constants.TAG, "Error saving crash report!", e1);
+                HockeyLog.error("Error saving crash report!", e1);
             }
         }
 
