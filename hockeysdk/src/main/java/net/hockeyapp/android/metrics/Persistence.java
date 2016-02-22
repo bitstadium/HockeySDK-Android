@@ -246,8 +246,13 @@ class Persistence {
             Context context = getContext();
             if (context != null) {
                 String path = (context.getFilesDir() + BIT_TELEMETRY_DIRECTORY);
-                File dir = new File(path);
-                return (dir.listFiles().length < MAX_FILE_COUNT);
+                
+                if(path != null && (path.length() > 0)) {
+                    File dir = new File(path);
+                    if(dir != null) {
+                        return (dir.listFiles().length < MAX_FILE_COUNT);
+                    }
+                }
             }
             return false;
         }
