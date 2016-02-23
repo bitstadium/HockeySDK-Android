@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.preference.PreferenceManager;
 
+import net.hockeyapp.android.objects.CrashDetails;
 import net.hockeyapp.android.objects.CrashManagerUserInput;
 import net.hockeyapp.android.objects.CrashMetaData;
 import net.hockeyapp.android.utils.HockeyLog;
@@ -82,10 +83,18 @@ public class CrashManager {
      */
     private static boolean submitting = false;
 
+    private static long initializeTimestamp;
+
+    private static boolean didCrashInLastSession = false;
+
     /**
      * Shared preferences key for always send dialog button.
      */
     private static final String ALWAYS_SEND_KEY = "always_send_crash_reports";
+
+    private static final int STACK_TRACES_FOUND_NONE = 0;
+    private static final int STACK_TRACES_FOUND_NEW = 1;
+    private static final int STACK_TRACES_FOUND_CONFIRMED = 2;
 
     /**
      * Registers new crash manager and handles existing crash logs.
@@ -186,7 +195,8 @@ public class CrashManager {
         WeakReference<Context> weakContext = new WeakReference<Context>(context);
 
         int foundOrSend = hasStackTraces(weakContext);
-        if (foundOrSend == 1) {
+        if (foundOrSend == STACK_TRACES_FOUND_NEW) {
+            didCrashInLastSession = true;
             Boolean autoSend = !(context instanceof Activity);
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             autoSend |= prefs.getBoolean(ALWAYS_SEND_KEY, false);
@@ -203,7 +213,7 @@ public class CrashManager {
             } else {
                 sendCrashes(weakContext, listener, ignoreDefaultHandler);
             }
-        } else if (foundOrSend == 2) {
+        } else if (foundOrSend == STACK_TRACES_FOUND_CONFIRMED) {
             if (listener != null) {
                 listener.onConfirmedCrashesFound();
             }
@@ -218,40 +228,71 @@ public class CrashManager {
      * Checks if there are any saved stack traces in the files dir.
      *
      * @param weakContext The context to use. Usually your Activity object.
-     * @return 0 if there are no stack traces,
-     * 1 if there are any new stack traces,
-     * 2 if there are confirmed stack traces
+     * @return STACK_TRACES_FOUND_NONE if there are no stack traces,
+     * STACK_TRACES_FOUND_NEW if there are any new stack traces,
+     * STACK_TRACES_FOUND_CONFIRMED if there only are confirmed stack traces.
      */
     public static int hasStackTraces(WeakReference<Context> weakContext) {
         String[] filenames = searchForStackTraces();
         List<String> confirmedFilenames = null;
-        int result = 0;
+        int result = STACK_TRACES_FOUND_NONE;
         if ((filenames != null) && (filenames.length > 0)) {
             try {
-                Context context = null;
-                if (weakContext != null) {
-                    context = weakContext.get();
-                    if (context != null) {
-                        SharedPreferences preferences = context.getSharedPreferences("HockeySDK", Context.MODE_PRIVATE);
-                        confirmedFilenames = Arrays.asList(preferences.getString("ConfirmedFilenames", "").split("\\|"));
-                    }
-                }
+                confirmedFilenames = getConfirmedFilenames(weakContext);
 
             } catch (Exception e) {
                 // Just in case, we catch all exceptions here
             }
 
             if (confirmedFilenames != null) {
-                result = 2;
+                result = STACK_TRACES_FOUND_CONFIRMED;
 
                 for (String filename : filenames) {
                     if (!confirmedFilenames.contains(filename)) {
-                        result = 1;
+                        result = STACK_TRACES_FOUND_NEW;
                         break;
                     }
                 }
             } else {
-                result = 1;
+                result = STACK_TRACES_FOUND_NEW;
+            }
+        }
+
+        return result;
+    }
+
+    public static boolean didCrashInLastSession() {
+        return didCrashInLastSession;
+    }
+
+    public static CrashDetails getLastCrashDetails() {
+        if (Constants.FILES_PATH == null || !didCrashInLastSession()) {
+            return null;
+        }
+
+        File dir = new File(Constants.FILES_PATH + "/");
+        File[] files = dir.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String filename) {
+                return filename.endsWith(".stacktrace");
+            }
+        });
+
+        long lastModification = 0;
+        File lastModifiedFile = null;
+        CrashDetails result = null;
+        for (File file : files) {
+            if (file.lastModified() > lastModification) {
+                lastModification = file.lastModified();
+                lastModifiedFile = file;
+            }
+        }
+
+        if (lastModifiedFile != null && lastModifiedFile.exists()) {
+            try {
+                result = CrashDetails.fromFile(lastModifiedFile);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
         }
 
@@ -469,8 +510,12 @@ public class CrashManager {
      */
     private static void initialize(Context context, String urlString, String appIdentifier, CrashManagerListener listener, boolean registerHandler) {
         if (context != null) {
+            if (CrashManager.initializeTimestamp == 0) {
+                CrashManager.initializeTimestamp = System.currentTimeMillis();
+            }
             CrashManager.urlString = urlString;
             CrashManager.identifier = Util.sanitizeAppIdentifier(appIdentifier);
+            CrashManager.didCrashInLastSession = false;
 
             Constants.loadFromContext(context);
 
@@ -742,7 +787,7 @@ public class CrashManager {
     }
 
     /**
-     * Searches .stacktrace files and returns then as array.
+     * Searches .stacktrace files and returns them as array.
      */
     private static String[] searchForStackTraces() {
         if (Constants.FILES_PATH != null) {
@@ -766,5 +811,21 @@ public class CrashManager {
             HockeyLog.debug("Can't search for exception as file path is null.");
             return null;
         }
+    }
+
+    private static List<String> getConfirmedFilenames(WeakReference<Context> weakContext) {
+        List<String> result = null;
+        if (weakContext != null) {
+            Context context = weakContext.get();
+            if (context != null) {
+                SharedPreferences preferences = context.getSharedPreferences("HockeySDK", Context.MODE_PRIVATE);
+                result = Arrays.asList(preferences.getString("ConfirmedFilenames", "").split("\\|"));
+            }
+        }
+        return result;
+    }
+
+    public static long getInitializeTimestamp() {
+        return initializeTimestamp;
     }
 }
