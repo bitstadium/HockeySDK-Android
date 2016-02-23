@@ -250,9 +250,7 @@ class Persistence {
                 String path = filesDir.getAbsolutePath() + BIT_TELEMETRY_DIRECTORY;
                 if (!TextUtils.isEmpty(path)) {
                     File dir = new File(path);
-                    if (dir != null) {
-                        return (dir.listFiles().length < MAX_FILE_COUNT);
-                    }
+                    return (dir.listFiles().length < MAX_FILE_COUNT);
                 }
             }
             return false;
