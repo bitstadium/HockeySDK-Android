@@ -341,11 +341,11 @@ public class CrashManager {
 
                         if (crashMetaData != null) {
                             final String crashMetaDataUserID = crashMetaData.getUserID();
-                            if (TextUtils.isEmpty(crashMetaDataUserID) == false) {
+                            if (!TextUtils.isEmpty(crashMetaDataUserID)) {
                                 userID = crashMetaDataUserID;
                             }
                             final String crashMetaDataContact = crashMetaData.getUserEmail();
-                            if (TextUtils.isEmpty(crashMetaDataContact) == false) {
+                            if (!TextUtils.isEmpty(crashMetaDataContact)) {
                                 contact = crashMetaDataContact;
                             }
                         }
@@ -353,8 +353,8 @@ public class CrashManager {
                         // Append application log to user provided description if present, if not, just send application log
                         final String applicationLog = contentsOfFile(weakContext, filename.replace(".stacktrace", ".description"));
                         String description = crashMetaData != null ? crashMetaData.getUserDescription() : "";
-                        if (TextUtils.isEmpty(applicationLog) == false) {
-                            if (TextUtils.isEmpty(description) == false) {
+                        if (!TextUtils.isEmpty(applicationLog)) {
+                            if (!TextUtils.isEmpty(description)) {
                                 description = String.format("%s\n\nLog:\n%s", description, applicationLog);
                             } else {
                                 description = String.format("Log:\n%s", applicationLog);
@@ -623,7 +623,7 @@ public class CrashManager {
      * Registers the exception handler.
      */
     private static void registerHandler(WeakReference<Context> weakContext, CrashManagerListener listener, boolean ignoreDefaultHandler) {
-        if ((TextUtils.isEmpty(Constants.APP_VERSION) == false) && (TextUtils.isEmpty(Constants.APP_PACKAGE) == false)) {
+        if (!TextUtils.isEmpty(Constants.APP_VERSION) && !TextUtils.isEmpty(Constants.APP_PACKAGE)) {
             // Get current handler
             UncaughtExceptionHandler currentHandler = Thread.getDefaultUncaughtExceptionHandler();
             if (currentHandler != null) {

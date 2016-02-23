@@ -221,7 +221,7 @@ public class Constants {
      */
     private static void loadCrashIdentifier(Context context) {
         String deviceIdentifier = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
-        if ((TextUtils.isEmpty(Constants.APP_PACKAGE) == false) && (TextUtils.isEmpty(deviceIdentifier) == false)) {
+        if (!TextUtils.isEmpty(Constants.APP_PACKAGE) && !TextUtils.isEmpty(deviceIdentifier)) {
             String combined = Constants.APP_PACKAGE + ":" + deviceIdentifier + ":" + createSalt(context);
             try {
                 MessageDigest digest = MessageDigest.getInstance("SHA-1");

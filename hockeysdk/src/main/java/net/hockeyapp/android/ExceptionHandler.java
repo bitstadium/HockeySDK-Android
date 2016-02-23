@@ -164,7 +164,7 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
         BufferedWriter writer = null;
         try {
             String path = Constants.FILES_PATH + "/" + filename;
-            if ((TextUtils.isEmpty(value) == false) && value.trim().length() > 0) {
+            if (!TextUtils.isEmpty(value) && TextUtils.getTrimmedLength(value) > 0) {
                 writer = new BufferedWriter(new FileWriter(path));
                 writer.write(value);
                 writer.flush();
@@ -179,7 +179,7 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
     }
 
     private static String limitedString(String string) {
-        if ((TextUtils.isEmpty(string) == false) && (string.length() > 255)) {
+        if (!TextUtils.isEmpty(string) && string.length() > 255) {
             string = string.substring(0, 255);
         }
         return string;

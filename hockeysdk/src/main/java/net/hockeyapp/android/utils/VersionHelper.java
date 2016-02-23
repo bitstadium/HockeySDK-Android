@@ -182,7 +182,7 @@ public class VersionHelper {
         StringBuilder result = new StringBuilder();
 
         String versionID = getVersionID(version);
-        if (TextUtils.isEmpty(versionID) == false) {
+        if (!TextUtils.isEmpty(versionID)) {
             result.append("<a href='restore:" + versionID + "'  style='background: #c8c8c8; color: #000; display: block; float: right; padding: 7px; margin: 0px 10px 10px; text-decoration: none;'>Restore</a>");
         }
 
