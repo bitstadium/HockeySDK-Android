@@ -2,23 +2,20 @@ package net.hockeyapp.android;
 
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
-import android.test.ActivityInstrumentationTestCase2;
+import android.test.InstrumentationTestCase;
+
+import net.hockeyapp.android.util.StacktraceFilenameFilter;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.File;
-import java.io.FilenameFilter;
 
 @RunWith(AndroidJUnit4.class)
-public class ExceptionHandlerTest extends ActivityInstrumentationTestCase2<UpdateActivity> {
+public class ExceptionHandlerTest extends InstrumentationTestCase {
 
     private File filesDirectory;
-
-    public ExceptionHandlerTest() {
-        super(UpdateActivity.class);
-    }
 
     @Before
     public void setUp() throws Exception {
@@ -27,7 +24,7 @@ public class ExceptionHandlerTest extends ActivityInstrumentationTestCase2<Updat
         injectInstrumentation(InstrumentationRegistry.getInstrumentation());
 
         if (Constants.FILES_PATH == null) {
-            Constants.loadFromContext(getActivity());
+            Constants.loadFromContext(getInstrumentation().getTargetContext());
         }
 
         filesDirectory = new File(Constants.FILES_PATH);
@@ -41,12 +38,16 @@ public class ExceptionHandlerTest extends ActivityInstrumentationTestCase2<Updat
     @Test
     public void saveExceptionTest() {
 
-        Throwable tr = new RuntimeException("Just a test exception");
-
-        ExceptionHandler.saveException(tr, null, null);
+        fakeCrashReport();
 
         File[] files = filesDirectory.listFiles(new StacktraceFilenameFilter());
         assertEquals(1, files.length);
+
+        fakeCrashReport();
+        fakeCrashReport();
+
+        files = filesDirectory.listFiles(new StacktraceFilenameFilter());
+        assertEquals(3, files.length);
     }
 
     @SuppressWarnings("ThrowableInstanceNeverThrown")
@@ -62,12 +63,9 @@ public class ExceptionHandlerTest extends ActivityInstrumentationTestCase2<Updat
         assertEquals(1, files.length);
     }
 
-    static class StacktraceFilenameFilter implements FilenameFilter {
-
-        @Override
-        public boolean accept(File dir, String filename) {
-            return filename.endsWith(".stacktrace");
-        }
+    private static void fakeCrashReport() {
+        Throwable tr = new RuntimeException("Just a test exception");
+        ExceptionHandler.saveException(tr, Thread.currentThread(), null);
     }
 
 }
