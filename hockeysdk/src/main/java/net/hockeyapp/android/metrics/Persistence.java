@@ -1,6 +1,7 @@
 package net.hockeyapp.android.metrics;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -70,7 +71,7 @@ class Persistence {
      * @param context android Context object
      */
     protected Persistence(Context context, Sender sender) {
-        this(context, new File(context.getFilesDir().getPath() + BIT_TELEMETRY_DIRECTORY), null);
+        this(context, new File(context.getFilesDir().getAbsolutePath() + BIT_TELEMETRY_DIRECTORY), null);
         this.setSender(sender);
     }
 
@@ -244,12 +245,12 @@ class Persistence {
     protected Boolean isFreeSpaceAvailable() {
         synchronized (this.LOCK) {
             Context context = getContext();
-            if (context != null) {
-                String path = (context.getFilesDir() + BIT_TELEMETRY_DIRECTORY);
-                
-                if(path != null && (path.length() > 0)) {
+            if ((context.getFilesDir()) != null) {
+                File filesDir = context.getFilesDir();
+                String path = filesDir.getAbsolutePath() + BIT_TELEMETRY_DIRECTORY;
+                if (TextUtils.isEmpty(path) == false) {
                     File dir = new File(path);
-                    if(dir != null) {
+                    if (dir != null) {
                         return (dir.listFiles().length < MAX_FILE_COUNT);
                     }
                 }
