@@ -307,7 +307,7 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
      */
     public View getLayoutView() {
         LinearLayout layout = new LinearLayout(getActivity());
-        LayoutInflater.from(getActivity()).inflate(R.layout.fragment_update, layout);
+        LayoutInflater.from(getActivity()).inflate(R.layout.hockeyapp_fragment_update, layout);
         return layout;
     }
 }

@@ -233,7 +233,7 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
      */
     public ViewGroup getLayoutView() {
         LinearLayout layout = new LinearLayout(this);
-        LayoutInflater.from(this).inflate(R.layout.activity_update, layout);
+        LayoutInflater.from(this).inflate(R.layout.hockeyapp_activity_update, layout);
         return layout;
     }
 
