@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 
 import net.hockeyapp.android.tasks.LoginTask;
 import net.hockeyapp.android.utils.AsyncTaskUtils;
@@ -106,7 +107,7 @@ public class LoginManager {
      */
     public static void register(final Context context, String appSecret, int mode) {
         String appIdentifier = Util.getAppIdentifier(context);
-        if (appIdentifier == null || appIdentifier.length() == 0) {
+        if (TextUtils.isEmpty(appIdentifier)) {
             throw new IllegalArgumentException("HockeyApp app identifier was not configured correctly in manifest or build configuration.");
         }
         register(context, appIdentifier, appSecret, mode, (Class<?>) null);

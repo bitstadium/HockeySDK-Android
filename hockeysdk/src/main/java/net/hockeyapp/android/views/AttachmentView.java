@@ -236,7 +236,7 @@ public class AttachmentView extends FrameLayout {
         mTextView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams
                 .WRAP_CONTENT, Gravity.CENTER));
         mTextView.setGravity(Gravity.CENTER);
-        mTextView.setTextColor(context.getResources().getColor(R.color.text_white));
+        mTextView.setTextColor(context.getResources().getColor(R.color.hockeyapp_text_white));
         mTextView.setSingleLine();
         mTextView.setEllipsize(TextUtils.TruncateAt.MIDDLE);
 
