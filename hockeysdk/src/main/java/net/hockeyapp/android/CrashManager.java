@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 
 import net.hockeyapp.android.objects.CrashDetails;
 import net.hockeyapp.android.objects.CrashManagerUserInput;
@@ -106,7 +107,7 @@ public class CrashManager {
      */
     public static void register(Context context) {
         String appIdentifier = Util.getAppIdentifier(context);
-        if (appIdentifier == null || appIdentifier.length() == 0) {
+        if (TextUtils.isEmpty(appIdentifier)) {
             throw new IllegalArgumentException("HockeyApp app identifier was not configured correctly in manifest or build configuration.");
         }
         register(context, appIdentifier);
@@ -340,11 +341,11 @@ public class CrashManager {
 
                         if (crashMetaData != null) {
                             final String crashMetaDataUserID = crashMetaData.getUserID();
-                            if (crashMetaDataUserID != null && crashMetaDataUserID.length() > 0) {
+                            if (!TextUtils.isEmpty(crashMetaDataUserID)) {
                                 userID = crashMetaDataUserID;
                             }
                             final String crashMetaDataContact = crashMetaData.getUserEmail();
-                            if (crashMetaDataContact != null && crashMetaDataContact.length() > 0) {
+                            if (!TextUtils.isEmpty(crashMetaDataContact)) {
                                 contact = crashMetaDataContact;
                             }
                         }
@@ -352,8 +353,8 @@ public class CrashManager {
                         // Append application log to user provided description if present, if not, just send application log
                         final String applicationLog = contentsOfFile(weakContext, filename.replace(".stacktrace", ".description"));
                         String description = crashMetaData != null ? crashMetaData.getUserDescription() : "";
-                        if (applicationLog != null && applicationLog.length() > 0) {
-                            if (description != null && description.length() > 0) {
+                        if (!TextUtils.isEmpty(applicationLog)) {
+                            if (!TextUtils.isEmpty(description)) {
                                 description = String.format("%s\n\nLog:\n%s", description, applicationLog);
                             } else {
                                 description = String.format("Log:\n%s", applicationLog);
@@ -622,7 +623,7 @@ public class CrashManager {
      * Registers the exception handler.
      */
     private static void registerHandler(WeakReference<Context> weakContext, CrashManagerListener listener, boolean ignoreDefaultHandler) {
-        if ((Constants.APP_VERSION != null) && (Constants.APP_PACKAGE != null)) {
+        if (!TextUtils.isEmpty(Constants.APP_VERSION) && !TextUtils.isEmpty(Constants.APP_PACKAGE)) {
             // Get current handler
             UncaughtExceptionHandler currentHandler = Thread.getDefaultUncaughtExceptionHandler();
             if (currentHandler != null) {
