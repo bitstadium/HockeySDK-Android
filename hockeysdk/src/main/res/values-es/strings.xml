@@ -1,0 +1,89 @@
+<resources>
+    <!-- Crash Dialog -->
+    <string name="hockeyapp_crash_dialog_app_name_fallback">Esta aplicación</string>
+    <string name="hockeyapp_crash_dialog_title">%s se ha cerrado de forma inesperada</string>
+    <string name="hockeyapp_crash_dialog_message">¿Te gustaría enviar un informe anónimo para que podamos arreglar el problema?</string>
+    <string name="hockeyapp_crash_dialog_negative_button">No enviar</string>
+    <string name="hockeyapp_crash_dialog_neutral_button">Enviar siempre</string>
+    <string name="hockeyapp_crash_dialog_positive_button">Enviar informe</string>
+
+    <!-- Download Failed -->
+    <string name="hockeyapp_download_failed_dialog_title">Descarga fallida</string>
+    <string name="hockeyapp_download_failed_dialog_message">No se pudo descargar la actualización. ¿Quieres volver a intentarlo?</string>
+    <string name="hockeyapp_download_failed_dialog_negative_button">Cancelar</string>
+    <string name="hockeyapp_download_failed_dialog_positive_button">Reintentar</string>
+
+    <!-- Update -->
+    <string name="hockeyapp_update_mandatory_toast">¡%s está disponible y es una actualización obligatoria!</string>
+    <string name="hockeyapp_update_dialog_title">Actualización disponible</string>
+    <string name="hockeyapp_update_button">Actualizar</string>
+    <string name="hockeyapp_update_dialog_message">¿Mostrar información sobre la actualización?</string>
+    <string name="hockeyapp_update_dialog_negative_button">Ignorar</string>
+    <string name="hockeyapp_update_dialog_positive_button">Mostrar</string>
+
+    <!-- Expiry Info -->
+    <string name="hockeyapp_expiry_info_title">Versión caducada</string>
+    <string name="hockeyapp_expiry_info_text">%s ha caducado. Por favor consulta HockeyApp para ver posibles actualizaciones.</string>
+
+    <!-- Feedback Activity -->
+    <string name="hockeyapp_feedback_failed_title">Pendiente</string>
+    <string name="hockeyapp_feedback_failed_text">¿Quieres volver a enviar tus comentarios?</string>
+    <string name="hockeyapp_feedback_name_hint">Nombre</string>
+    <string name="hockeyapp_feedback_email_hint">Email</string>
+    <string name="hockeyapp_feedback_subject_hint">Asunto</string>
+    <string name="hockeyapp_feedback_message_hint">Mensaje</string>
+    <string name="hockeyapp_feedback_last_updated_text">Última actualización: </string>
+    <string name="hockeyapp_feedback_attachment_button_text">Adjuntar fichero</string>
+    <string name="hockeyapp_feedback_send_button_text">Enviar comentarios</string>
+    <string name="hockeyapp_feedback_response_button_text">Responder</string>
+    <string name="hockeyapp_feedback_refresh_button_text">Refrescar</string>
+    <string name="hockeyapp_feedback_title">Feedback</string>
+    <string name="hockeyapp_feedback_send_generic_error">No se pudo enviar el mensaje. Por favor comprueba todos los campos y tu conexión a internet, luego vuelve a intentarlo.</string>
+    <string name="hockeyapp_feedback_send_network_error">No ha habido respuesta desde el servidor. Por favor, comprueba tu conexión a internet y vuelve a intentarlo.</string>
+    <string name="hockeyapp_feedback_validate_subject_error">Por favor, introduce un asunto</string>
+    <string name="hockeyapp_feedback_validate_email_error">Por favor, introduce un nombre</string>
+    <string name="hockeyapp_feedback_validate_email_empty">Por favor, introduce una dirección de email</string>
+    <string name="hockeyapp_feedback_validate_name_error">Por favor, introduce tus comentarios</string>
+    <string name="hockeyapp_feedback_validate_text_error">No se pudo enviar el mensaje. Por favor, comprueba el formato de tu dirección de email.</string>
+    <string name="hockeyapp_feedback_generic_error">Ha ocurrido un error</string>
+    <string name="hockeyapp_feedback_attach_file">Adjuntar fichero</string>
+    <string name="hockeyapp_feedback_attach_picture">Adjuntar imagen</string>
+    <string name="hockeyapp_feedback_select_file">Seleccionar fichero</string>
+    <string name="hockeyapp_feedback_select_picture">Seleccionar imagen</string>
+    <string name="hockeyapp_feedback_max_attachments_allowed">Sólo se permiten %s adjuntos.</string>
+    <string name="hockeyapp_feedback_attachment_loading">Cargando…</string>
+    <string name="hockeyapp_feedback_attachment_error">Error</string>
+
+    <!-- Login Activity -->
+    <string name="hockeyapp_login_headline_text">Por favor introduce email y contraseña de tu cuenta de HockeyApp para autorizar el acceso a esta aplicación.</string>
+    <string name="hockeyapp_login_missing_credentials_toast">Por favor, introduce los campos que faltan.</string>
+    <string name="hockeyapp_login_email_hint">Email</string>
+    <string name="hockeyapp_login_password_hint">Contraseña</string>
+    <string name="hockeyapp_login_login_button_text">Entrar</string>
+
+    <!-- Paint Activity -->
+    <string name="hockeyapp_paint_indicator_toast">¡Dibuja algo!</string>
+    <string name="hockeyapp_paint_menu_save">Guardar</string>
+    <string name="hockeyapp_paint_menu_undo">Deshacer</string>
+    <string name="hockeyapp_paint_menu_clear">Limpiar</string>
+    <string name="hockeyapp_paint_dialog_message">¿Quieres guardar lo que has dibujado?</string>
+    <string name="hockeyapp_paint_dialog_negative_button">Descartar</string>
+    <string name="hockeyapp_paint_dialog_positive_button">Guardar</string>
+    <string name="hockeyapp_paint_dialog_neutral_button">Cancelar</string>
+
+    <!-- Permissions -->
+    <string name="hockeyapp_permission_update_title">Necesita acceso al almacenamiento</string>
+    <string name="hockeyapp_permission_update_message">Para descargar e instalar actualizaciones tienes que dar permiso a la aplicación para que acceda al almacenamiento de tu dispositivo.</string>
+    <string name="hockeyapp_permission_dialog_negative_button">Cancelar</string>
+    <string name="hockeyapp_permission_dialog_positive_button">Reintentar</string>
+
+    <!-- Dialogs -->
+    <string name="hockeyapp_dialog_positive_button">OK</string>
+    <string name="hockeyapp_dialog_negative_button">Cancelar</string>
+    <string name="hockeyapp_dialog_error_title">Error</string>
+    <string name="hockeyapp_dialog_error_message">Ha ocurrido un error</string>
+
+    <!-- Misc -->
+    <string name="hockeyapp_error_no_network_message">Tu dispositivo no está conectado a internet. Por favor, resuelve el problema y vuelve a intentarlo.</string>
+
+</resources>
