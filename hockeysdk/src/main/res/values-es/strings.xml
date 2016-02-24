@@ -56,6 +56,7 @@
 
     <!-- Login Activity -->
     <string name="hockeyapp_login_headline_text">Por favor introduce email y contraseña de tu cuenta de HockeyApp para autorizar el acceso a esta aplicación.</string>
+    <string name="hockeyapp_login_headline_text_email_only">Por favor introduce email de tu cuenta de HockeyApp para autorizar el acceso a esta aplicación.</string>
     <string name="hockeyapp_login_missing_credentials_toast">Por favor, introduce los campos que faltan.</string>
     <string name="hockeyapp_login_email_hint">Email</string>
     <string name="hockeyapp_login_password_hint">Contraseña</string>
