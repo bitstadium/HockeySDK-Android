@@ -9,7 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
-import android.util.Log;
+import android.text.TextUtils;
 
 import net.hockeyapp.android.utils.HockeyLog;
 
@@ -94,6 +94,11 @@ public class Constants {
      */
     public static String ANDROID_VERSION = null;
     /**
+     * The device's OS build.
+     */
+    public static String ANDROID_BUILD = null;
+
+    /**
      * The device's model name.
      */
     public static String PHONE_MODEL = null;
@@ -114,6 +119,7 @@ public class Constants {
      */
     public static void loadFromContext(Context context) {
         Constants.ANDROID_VERSION = android.os.Build.VERSION.RELEASE;
+        Constants.ANDROID_BUILD = android.os.Build.DISPLAY;
         Constants.PHONE_MODEL = android.os.Build.MODEL;
         Constants.PHONE_MANUFACTURER = android.os.Build.MANUFACTURER;
 
@@ -215,7 +221,7 @@ public class Constants {
      */
     private static void loadCrashIdentifier(Context context) {
         String deviceIdentifier = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
-        if ((Constants.APP_PACKAGE != null) && (deviceIdentifier != null)) {
+        if (!TextUtils.isEmpty(Constants.APP_PACKAGE) && !TextUtils.isEmpty(deviceIdentifier)) {
             String combined = Constants.APP_PACKAGE + ":" + deviceIdentifier + ":" + createSalt(context);
             try {
                 MessageDigest digest = MessageDigest.getInstance("SHA-1");
@@ -225,6 +231,7 @@ public class Constants {
 
                 Constants.CRASH_IDENTIFIER = bytesToHex(bytes);
             } catch (Throwable e) {
+                //TODO handle the exeption
             }
         }
     }
