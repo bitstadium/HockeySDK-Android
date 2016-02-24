@@ -214,7 +214,7 @@ public class FeedbackActivity extends Activity implements OnClickListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_feedback);
+        setContentView(R.layout.hockeyapp_activity_feedback);
 
         setTitle(getString(R.string.hockeyapp_feedback_title));
         mContext = this;

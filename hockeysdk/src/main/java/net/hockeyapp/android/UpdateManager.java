@@ -71,7 +71,7 @@ public class UpdateManager {
      */
     public static void register(Activity activity) {
         String appIdentifier = Util.getAppIdentifier(activity);
-        if (appIdentifier == null || appIdentifier.length() == 0) {
+        if (TextUtils.isEmpty(appIdentifier)) {
             throw new IllegalArgumentException("HockeyApp app identifier was not configured correctly in manifest or build configuration.");
         }
         register(activity, appIdentifier);

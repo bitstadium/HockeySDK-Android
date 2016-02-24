@@ -106,7 +106,7 @@ public class LoginActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.hockeyapp_activity_login);
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
