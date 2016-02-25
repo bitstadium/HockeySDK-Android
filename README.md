@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/bitstadium/HockeySDK-Android.svg?branch=develop)](https://travis-ci.org/bitstadium/HockeySDK-Android)
 
-## Version 3.7.0
+## Version 3.7.1
 
 ## Introduction
 
@@ -8,9 +8,9 @@ HockeySDK-Android implements support for using HockeyApp in your Android applica
 
 The following features are currently supported:
 
-1. **Collect crash reports:** If your app crashes, a crash log is written to the device's storage. If the user starts the app again, they will be asked asked to submit the crash report to HockeyApp. This works for both beta and live apps, i.e. those submitted to Google Play or other app stores! Crash logs contain viable information for you to help resolve the issue. Furthermore you as a developer can add additional information to the report as well.
+1. **Collect Crash Reports:** If your app crashes, a crash log is written to the device's storage. If the user starts the app again, they will be asked asked to submit the crash report to HockeyApp. This works for both beta and live apps, i.e. those submitted to Google Play or other app stores! Crash logs contain viable information for you to help resolve the issue. Furthermore, you as a developer can add additional information to the report as well.
 
-2. **Update Alpha/Beta apps:** The app will check with HockeyApp if a new version for your alpha/beta build is available. If yes, it will show a dialog to the user and let him see the release notes, the version history and start the installation process right away. You can even force the installation of certain updates.
+2. **Update Alpha/Beta Apps:** The app will check with HockeyApp if a new version for your alpha/beta build is available. If yes, it will show a dialog to the user and let him see the release notes, the version history and start the installation process right away. You can even force the installation of certain updates.
 
 3. **Feedback:** Besides crash reports, collecting feedback from your users from within your app is a great option to help with improving your app. You act and answer feedback directly from the HockeyApp backend.
 
@@ -35,6 +35,7 @@ This document contains the following sections:
   4. [In-App Feedback](#feedback-advanced)
   5. [Strings & Localization](#strings-advanced)
   6. [Permissions](#permissions-advanced)
+  7. [Control Output to LogCat](#logcat-output)
 5. [Documentation](#documentation)
 6. [Troubleshooting](#troubleshooting)
 7. [Contributing](#contributing)
@@ -67,7 +68,7 @@ Please see the "[How to create a new app](http://support.hockeyapp.net/kb/about-
 Add the SDK to your app module's dependencies in Android Studio by adding the following line to your `dependencies { ... }` configuration:
 
 ```groovy
-compile 'net.hockeyapp.android:HockeySDK:3.7.0'
+compile 'net.hockeyapp.android:HockeySDK:3.7.1'
 ```
 also make sure your repository configuration contains
 
@@ -277,7 +278,7 @@ If you don't want to use Gradle or Maven dependency management you can also down
 4. Configure your development tools to use the .aar/.jar file.
 5. In Android Studio, create a new module via `File > New > New Module`
 6. Select **Import .JAR/.AAR Package** and click **Next**.
-7. In the next menu select the .aar/.jar file you just copied to the libs folder. You can rename the module to whatever you want, but we in general recommend leaving it as is. If you don't rename the module, it will match the name of the .aar/.jar file, in this case **HockeySDK-3.7.0**. This way you'll quickly know which version of the SDK you are using in the future.
+7. In the next menu select the .aar/.jar file you just copied to the libs folder. You can rename the module to whatever you want, but we in general recommend leaving it as is. If you don't rename the module, it will match the name of the .aar/.jar file, in this case **HockeySDK-3.7.1**. This way you'll quickly know which version of the SDK you are using in the future.
 8. Make sure Android Studio added the necessary code to integrate the HockeySDK:
 
 Head over to your app's `build.gradle` to verify the dependency was added correctly. It should look like this:
@@ -287,19 +288,19 @@ dependencies {
 	//your other dependencies
 	//...
 	
-    compile project(':HockeySDK-3.7.0')
+    compile project(':HockeySDK-3.7.1')
 }
 ```
 Next, make sure your `settings.gradle` contains the new module:
 
 ```groovy
-include ':app', ':HockeySDK-3.7.0'
+include ':app', ':HockeySDK-3.7.1'
 ```
 
 Finally, check the `build.gradle` of the newly added module:
 ```groovy
 configurations.maybeCreate("default")
-artifacts.add("default", file('HockeySDK-3.7.0.aar'))
+artifacts.add("default", file('HockeySDK-3.7.1.aar'))
 ```
 
 Once you have verified that everything necessary has been added, proceed with [SDK integration](#integrate-sdk).
@@ -314,7 +315,7 @@ To configure a custom `CrashManagerListener` use the following `register()` meth
   CrashManager.register(context, APP_ID, new MyCustomCrashManagerListener());
 ```
 
-#### 4.2.1 Autosend crash reports
+#### 4.2.1 Autosend Crash Reports
 Crashes are usually sent the next time the app starts. If your custom crash manager listener returns `true` for `shouldAutoUploadCrashes()`, crashes will be sent without any user interaction, otherwise a dialog will appear allowing the user to decide whether they want to send the report or not.
 
 ```java
@@ -326,7 +327,7 @@ public class MyCustomCrashManagerListener extends CrashManagerListener {
 }
 ```
 
-#### 4.2.2 Attach additional meta data
+#### 4.2.2 Attach Additional Meta Data
 Starting with HockeyApp 3.6.0, you can add additional meta data (e.g. user-provided information) to a crash report. 
 To achieve this call `CrashManager.handleUserInput()` and provide an instance of `net.hockeyapp.android.objects.CrashMetaData`.
 
@@ -341,7 +342,7 @@ To configure a custom `UpdateManagerListener` use the following `register()` met
   UpdateManager.register(context, APP_ID, new MyCustomUpdateManagerListener());
 ```
 
-### 4.3.1 Providing your own user interface for the update process
+### 4.3.1 Providing your Own User Interface for the Update Process
 The `UpdateManager` will select a suitable activity or fragment depending on the availability of the feature. You can also supply your own by overriding the respective methods `getUpdateActivityClass()` and `getUpdateFragmentClass()` in your UpdateManagerListener subclass.
 
 
@@ -349,7 +350,7 @@ The `UpdateManager` will select a suitable activity or fragment depending on the
 ### 4.4 In-App Feedback
 As stated in the setup guide you'll typically want to show the feedback interface from an `onClick`, `onMenuItemSelected`, or `onOptionsItemSelected` listener method.
 
-### 4.4.1 Capturing a screenshot for feedback
+### 4.4.1 Capturing a Screenshot for Feedback
 You can configure a notification to show to the user. When they select the notification the SDK will create a screenshot from the app in its current state and create a new feedback draft from it.
 
 1. Open the activity from which you want to enable the screenshot.
@@ -378,7 +379,7 @@ HockeySDK requires some permissions to be granted for its operation. These are:
 
 HockeyApp registers these permissions with your app's `AndroidManifest.xml` through [manifest merging](http://tools.android.com/tech-docs/new-build-system/user-guide/manifest-merger). By default, all three permissions get added to your app's manifest file.
 
-### 4.6.1 Removing external storage permission
+### 4.6.1 Removing External Storage Permission
 If your app does not require access to external storage – for example if it doesn't use HockeyApp's update distribution – you might want to remove the `WRITE_EXTERNAL_STORAGE`-permission since it might not be needed by your app. To perform this, use a [remove instruction](http://tools.android.com/tech-docs/new-build-system/user-guide/manifest-merger#TOC-tools:node-markers) for manifest merging:
 
 
@@ -402,10 +403,32 @@ The crucial part in this is the `tools:node="remove"`-part which will make sure 
 
 **Note:** If you later decide to use update distribution or any of your apps' dependencies requires write access to external storage, you will have to revert this change.
 
+<a id="logcat-output"></a>
+### 4.7 Control Output to LogCat
+
+HockeySDK-Android now allows you to control the amount of log messages that show up in LogCat.
+By default, we keep the noise as low as possible, only errors will show up in LogCat.
+To enable additional logging, i.e. while debugging, add the following line of code:
+
+```java
+HockeyLog.setLogLevel(Log.DEBUG);
+```
+
+The different log levels match Android's own log levels.
+
+```java
+HockeyLog.setLogLevel(Log.VERBOSE); //all log statements will show up
+HockeyLog.setLogLevel(Log.DEBUG); //most log statements will show up in LogCat. Useful for debugging.
+HockeyLog.setLogLevel(Log.INFO); //messages with Leg.INFO or higher will show up
+HockeyLog.setLogLevel(Log.WARN); //warnings and errors will show up
+HockeyLog.setLogLevel(Log.ERROR); //the default log level
+```
+
+
 <a id="documentation"></a>
 ## 5. Documentation
 
-Our documentation can be found on [HockeyApp](http://hockeyapp.net/help/sdk/android/3.7.0/index.html).
+Our documentation can be found on [HockeyApp](http://hockeyapp.net/help/sdk/android/3.7.1/index.html).
 
 <a id="troubleshooting"></a>
 ## 6.Troubleshooting
