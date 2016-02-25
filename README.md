@@ -14,7 +14,7 @@ The following features are currently supported:
 
 3. **Feedback:** Besides crash reports, collecting feedback from your users from within your app is a great option to help with improving your app. You act and answer feedback directly from the HockeyApp backend.
 
-4. **Authenticate:** To help you stay in control of closed tester groups you can identify and authenticate users against your registered testers with the HockeyApp backend. The authentication feature supports several ways of authentication.
+4. **Authentication:** To help you stay in control of closed tester groups you can identify and authenticate users against your registered testers with the HockeyApp backend. The authentication feature supports several ways of authentication.
 
 This document contains the following sections:
 
@@ -35,7 +35,7 @@ This document contains the following sections:
   4. [In-App Feedback](#feedback-advanced)
   5. [Strings & Localization](#strings-advanced)
   6. [Permissions](#permissions-advanced)
-  7. [Control Output to LogCat](#logcat-output)
+  7. [Control Output to logcat](#logcat-output)
 5. [Documentation](#documentation)
 6. [Troubleshooting](#troubleshooting)
 7. [Contributing](#contributing)
@@ -327,7 +327,7 @@ public class MyCustomCrashManagerListener extends CrashManagerListener {
 }
 ```
 
-#### 4.2.2 Attach Additional Meta Data
+#### 4.2.2 Attach additional Meta Data
 Starting with HockeyApp 3.6.0, you can add additional meta data (e.g. user-provided information) to a crash report. 
 To achieve this call `CrashManager.handleUserInput()` and provide an instance of `net.hockeyapp.android.objects.CrashMetaData`.
 
@@ -342,7 +342,7 @@ To configure a custom `UpdateManagerListener` use the following `register()` met
   UpdateManager.register(context, APP_ID, new MyCustomUpdateManagerListener());
 ```
 
-### 4.3.1 Providing your Own User Interface for the Update Process
+### 4.3.1 Providing your own User Interface for the Update Process
 The `UpdateManager` will select a suitable activity or fragment depending on the availability of the feature. You can also supply your own by overriding the respective methods `getUpdateActivityClass()` and `getUpdateFragmentClass()` in your UpdateManagerListener subclass.
 
 
@@ -404,11 +404,9 @@ The crucial part in this is the `tools:node="remove"`-part which will make sure 
 **Note:** If you later decide to use update distribution or any of your apps' dependencies requires write access to external storage, you will have to revert this change.
 
 <a id="logcat-output"></a>
-### 4.7 Control Output to LogCat
+### 4.7 Control Output to logcat
 
-HockeySDK-Android now allows you to control the amount of log messages that show up in LogCat.
-By default, we keep the noise as low as possible, only errors will show up in LogCat.
-To enable additional logging, i.e. while debugging, add the following line of code:
+You can control the amount of log messages from HockeySDK that show up in logcat. By default, we keep the noise as low as possible, only errors will show up in logcat. To enable additional logging, i.e. while debugging, add the following line of code:
 
 ```java
 HockeyLog.setLogLevel(Log.DEBUG);
@@ -417,11 +415,11 @@ HockeyLog.setLogLevel(Log.DEBUG);
 The different log levels match Android's own log levels.
 
 ```java
-HockeyLog.setLogLevel(Log.VERBOSE); //all log statements will show up
-HockeyLog.setLogLevel(Log.DEBUG); //most log statements will show up in LogCat. Useful for debugging.
-HockeyLog.setLogLevel(Log.INFO); //messages with Leg.INFO or higher will show up
-HockeyLog.setLogLevel(Log.WARN); //warnings and errors will show up
-HockeyLog.setLogLevel(Log.ERROR); //the default log level
+HockeyLog.setLogLevel(Log.VERBOSE); // show all log statements
+HockeyLog.setLogLevel(Log.DEBUG); // show most log statements – useful for debugging
+HockeyLog.setLogLevel(Log.INFO); // show informative or higher log messages
+HockeyLog.setLogLevel(Log.WARN); // show warnings and errors
+HockeyLog.setLogLevel(Log.ERROR); // show only errors – the default log level
 ```
 
 
