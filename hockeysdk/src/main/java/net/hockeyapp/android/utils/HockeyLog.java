@@ -13,7 +13,6 @@ import android.util.Log;
  * @see android.util.Log
  *
  * <h3>License</h3>
- * <p/>
  * <pre>
  * Copyright (c) 2011-2015 Bit Stadium GmbH
  *
