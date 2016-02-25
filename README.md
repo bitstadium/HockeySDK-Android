@@ -35,7 +35,7 @@ This document contains the following sections:
   4. [In-App Feedback](#feedback-advanced)
   5. [Strings & Localization](#strings-advanced)
   6. [Permissions](#permissions-advanced)
-  7. [Control Output to logcat](#logcat-output)
+  7. [Control Output to LogCat](#logcat-output)
 5. [Documentation](#documentation)
 6. [Troubleshooting](#troubleshooting)
 7. [Contributing](#contributing)
@@ -404,9 +404,9 @@ The crucial part in this is the `tools:node="remove"`-part which will make sure 
 **Note:** If you later decide to use update distribution or any of your apps' dependencies requires write access to external storage, you will have to revert this change.
 
 <a id="logcat-output"></a>
-### 4.7 Control Output to logcat
+### 4.7 Control Output to LogCat
 
-You can control the amount of log messages from HockeySDK that show up in logcat. By default, we keep the noise as low as possible, only errors will show up in logcat. To enable additional logging, i.e. while debugging, add the following line of code:
+You can control the amount of log messages from HockeySDK that show up in LogCat. By default, we keep the noise as low as possible, only errors will show up. To enable additional logging, i.e. while debugging, add the following line of code:
 
 ```java
 HockeyLog.setLogLevel(Log.DEBUG);
