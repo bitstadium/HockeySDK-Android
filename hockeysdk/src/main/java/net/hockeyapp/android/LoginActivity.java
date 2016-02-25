@@ -10,6 +10,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import net.hockeyapp.android.tasks.LoginTask;
@@ -105,7 +106,7 @@ public class LoginActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.hockeyapp_activity_login);
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -163,6 +164,9 @@ public class LoginActivity extends Activity {
             EditText passwordInput = (EditText) findViewById(R.id.input_password);
             passwordInput.setVisibility(View.INVISIBLE);
         }
+
+        TextView headlineText = (TextView) findViewById(R.id.text_headline);
+        headlineText.setText(mMode == LoginManager.LOGIN_MODE_EMAIL_ONLY ? R.string.hockeyapp_login_headline_text_email_only : R.string.hockeyapp_login_headline_text);
 
         mButtonLogin = (Button) findViewById(R.id.button_login);
         mButtonLogin.setOnClickListener(new View.OnClickListener() {

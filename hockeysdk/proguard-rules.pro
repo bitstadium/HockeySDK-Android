@@ -1,59 +1,27 @@
--optimizationpasses 5
--dontusemixedcaseclassnames
+# The following options are set by default.
+# Make sure they are always set, even if the default proguard config changes.
 -dontskipnonpubliclibraryclasses
--dontpreverify
 -verbose
--optimizations !code/simplification/arithmetic,!field/*,!class/merging/*
 
+# Keep all default Android classes probably defined in manifest
 -keep public class * extends android.app.Activity
 -keep public class * extends android.app.Application
--keep public class * extends android.app.Fragment
 -keep public class * extends android.app.Service
 -keep public class * extends android.content.BroadcastReceiver
 -keep public class * extends android.content.ContentProvider
--keep public class * extends android.app.backup.BackupAgentHelper
--keep public class * extends android.preference.Preference
--keep public class com.android.vending.licensing.ILicensingService
 
--keepclasseswithmembernames class * {
-    native <methods>;
-}
-
--keepclasseswithmembers class * {
+# Keep all custom view classes
+-keepclasseswithmembers class * extends android.view.View {
+    public <init>(android.content.Context);
     public <init>(android.content.Context, android.util.AttributeSet);
-}
-
--keepclasseswithmembers class * {
     public <init>(android.content.Context, android.util.AttributeSet, int);
-}
-
--keepclassmembers class * extends android.app.Activity {
-   public void *(android.view.View);
-}
-
--keepclassmembers enum * {
-    public static **[] values();
-    public static ** valueOf(java.lang.String);
+    public void set*(...);
 }
 
 -keep class * implements android.os.Parcelable {
-  public static final android.os.Parcelable$Creator *;
+    public static final android.os.Parcelable$Creator *;
 }
 
--keep public class javax.net.ssl.**
--keepclassmembers public class javax.net.ssl.** {
-  *;
-}
-
--keep public class org.apache.http.**
--keepclassmembers public class org.apache.http.** {
-  *;
-}
-
--keepclassmembers class * { 
-  public void onClickUpdate(android.view.View); 
-}
-
--keepclassmembers class net.hockeyapp.android.UpdateFragment { 
-  *;
+-keepclassmembers class * extends android.app.Fragment {
+    *;
 }

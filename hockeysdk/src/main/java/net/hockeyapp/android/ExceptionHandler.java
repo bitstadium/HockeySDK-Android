@@ -1,7 +1,9 @@
 package net.hockeyapp.android;
 
 import android.text.TextUtils;
-import android.util.Log;
+
+import net.hockeyapp.android.objects.CrashDetails;
+import net.hockeyapp.android.utils.HockeyLog;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -15,13 +17,11 @@ import java.util.UUID;
 
 /**
  * <h3>Description</h3>
- *
  * Helper class to catch exceptions. Saves the stack trace
  * as a file and executes callback methods to ask the app for
  * additional information and meta data (see CrashManagerListener).
- *
+
  * <h3>License</h3>
- *
  * <pre>
  * Copyright (c) 2009 nullwire aps
  * Copyright (c) 2011-2014 Bit Stadium GmbH
@@ -73,11 +73,11 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
 
     /**
      * Save a caught exception to disk.
-     * @deprecated in 3.7.0-beta.2. Use saveException(Throwable exception, Thread thread,
-     * CrashManagerListener listener) instead.
      *
      * @param exception Exception to save.
      * @param listener  Custom CrashManager listener instance.
+     * @deprecated in 3.7.0-beta.2. Use saveException(Throwable exception, Thread thread,
+     * CrashManagerListener listener) instead.
      */
     @Deprecated
     @SuppressWarnings("unused")
@@ -87,66 +87,54 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
 
     /**
      * Save a caught exception to disk.
+     *
      * @param exception Exception to save.
      * @param thread    Thread that crashed.
      * @param listener  Custom CrashManager listener instance.
      */
     public static void saveException(Throwable exception, Thread thread, CrashManagerListener listener) {
         final Date now = new Date();
+        final Date startDate = new Date(CrashManager.getInitializeTimestamp());
         final Writer result = new StringWriter();
         final PrintWriter printWriter = new PrintWriter(result);
         BufferedWriter writer = null;
         exception.printStackTrace(printWriter);
 
-        try {
-            // Create filename from a random uuid
-            String filename = UUID.randomUUID().toString();
-            String path = Constants.FILES_PATH + "/" + filename + ".stacktrace";
-            Log.d(Constants.TAG, "Writing unhandled exception to: " + path);
+        String filename = UUID.randomUUID().toString();
 
-            // Write the stacktrace to disk
-            writer = new BufferedWriter(new FileWriter(path));
+        CrashDetails crashDetails = new CrashDetails(filename, exception);
+        crashDetails.setAppPackage(Constants.APP_PACKAGE);
+        crashDetails.setAppVersionCode(Constants.APP_VERSION);
+        crashDetails.setAppVersionName(Constants.APP_VERSION_NAME);
+        crashDetails.setAppStartDate(startDate);
+        crashDetails.setAppCrashDate(now);
 
-            // HockeyApp expects the package name in the first line!
-            writer.write("Package: " + Constants.APP_PACKAGE + "\n");
-            writer.write("Version Code: " + Constants.APP_VERSION + "\n");
-            writer.write("Version Name: " + Constants.APP_VERSION_NAME + "\n");
+        if ((listener == null) || (listener.includeDeviceData())) {
+            crashDetails.setOsVersion(Constants.ANDROID_VERSION);
+            crashDetails.setOsBuild(Constants.ANDROID_BUILD);
+            crashDetails.setDeviceManufacturer(Constants.PHONE_MANUFACTURER);
+            crashDetails.setDeviceModel(Constants.PHONE_MODEL);
+        }
 
-            if ((listener == null) || (listener.includeDeviceData())) {
-                writer.write("Android: " + Constants.ANDROID_VERSION + "\n");
-                writer.write("Manufacturer: " + Constants.PHONE_MANUFACTURER + "\n");
-                writer.write("Model: " + Constants.PHONE_MODEL + "\n");
-            }
+        if (thread != null && ((listener == null) || (listener.includeThreadDetails()))) {
+            crashDetails.setThreadName(thread.getName() + "-" + thread.getId());
+        }
 
-            if (thread != null && ((listener == null) || (listener.includeThreadDetails()))) {
-                writer.write("Thread: " + thread.getName() + "-" + thread.getId() + "\n");
-            }
+        if (Constants.CRASH_IDENTIFIER != null && (listener == null || listener.includeDeviceIdentifier())) {
+            crashDetails.setReporterKey(Constants.CRASH_IDENTIFIER);
+        }
 
-            if (Constants.CRASH_IDENTIFIER != null && (listener == null || listener.includeDeviceIdentifier())) {
-                writer.write("CrashReporter Key: " + Constants.CRASH_IDENTIFIER + "\n");
-            }
+        crashDetails.writeCrashReport();
 
-            writer.write("Date: " + now + "\n");
-            writer.write("\n");
-            writer.write(result.toString());
-            writer.flush();
-
-            if (listener != null) {
+        if (listener != null) {
+            try {
                 writeValueToFile(limitedString(listener.getUserID()), filename + ".user");
                 writeValueToFile(limitedString(listener.getContact()), filename + ".contact");
                 writeValueToFile(listener.getDescription(), filename + ".description");
-            }
-        } catch (IOException another) {
-            Log.e(Constants.TAG, "Error saving exception stacktrace!\n", another);
-        } finally {
-            try {
-                if (writer != null) {
-                    writer.close();
-                }
             } catch (IOException e) {
-                Log.e(Constants.TAG, "Error saving exception stacktrace!\n", e);
-                e.printStackTrace();
+                HockeyLog.error("Error saving crash meta data!", e);
             }
+
         }
     }
 
@@ -174,7 +162,7 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
         BufferedWriter writer = null;
         try {
             String path = Constants.FILES_PATH + "/" + filename;
-            if (value.trim().length() > 0) {
+            if (!TextUtils.isEmpty(value) && TextUtils.getTrimmedLength(value) > 0) {
                 writer = new BufferedWriter(new FileWriter(path));
                 writer.write(value);
                 writer.flush();
@@ -189,7 +177,7 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
     }
 
     private static String limitedString(String string) {
-        if ((string != null) && (string.length() > 255)) {
+        if (!TextUtils.isEmpty(string) && string.length() > 255) {
             string = string.substring(0, 255);
         }
         return string;

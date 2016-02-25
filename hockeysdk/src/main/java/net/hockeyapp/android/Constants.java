@@ -9,7 +9,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
-import android.util.Log;
+import android.text.TextUtils;
+
+import net.hockeyapp.android.utils.HockeyLog;
 
 import java.io.File;
 import java.security.MessageDigest;
@@ -56,10 +58,6 @@ import java.security.MessageDigest;
 public class Constants {
 
     /**
-     * Tag for internal logging statements.
-     */
-    public static final String TAG = "HockeyApp";
-    /**
      * HockeyApp API URL.
      */
     public static final String BASE_URL = "https://sdk.hockeyapp.net/";
@@ -67,6 +65,8 @@ public class Constants {
      * Name of this SDK.
      */
     public static final String SDK_NAME = "HockeySDK";
+
+    public static final String FILES_DIRECTORY_NAME = "HockeyApp";
    
     /**
      * Permissions request for the update task.
@@ -94,6 +94,11 @@ public class Constants {
      */
     public static String ANDROID_VERSION = null;
     /**
+     * The device's OS build.
+     */
+    public static String ANDROID_BUILD = null;
+
+    /**
      * The device's model name.
      */
     public static String PHONE_MODEL = null;
@@ -114,6 +119,7 @@ public class Constants {
      */
     public static void loadFromContext(Context context) {
         Constants.ANDROID_VERSION = android.os.Build.VERSION.RELEASE;
+        Constants.ANDROID_BUILD = android.os.Build.DISPLAY;
         Constants.PHONE_MODEL = android.os.Build.MODEL;
         Constants.PHONE_MANUFACTURER = android.os.Build.MANUFACTURER;
 
@@ -130,10 +136,10 @@ public class Constants {
     public static File getHockeyAppStorageDir() {
         File externalStorage = Environment.getExternalStorageDirectory();
 
-        File dir = new File(externalStorage.getAbsolutePath() + "/" + Constants.TAG);
-        Boolean success = dir.mkdirs();
+        File dir = new File(externalStorage.getAbsolutePath() + "/" + Constants.FILES_DIRECTORY_NAME);
+        boolean success = dir.exists() || dir.mkdirs();
         if (!success) {
-            Log.d(TAG, "Couldn't create HockeyApp Storage dir");
+            HockeyLog.warn("Couldn't create HockeyApp Storage dir");
         }
         return dir;
     }
@@ -155,7 +161,7 @@ public class Constants {
                     Constants.FILES_PATH = file.getAbsolutePath();
                 }
             } catch (Exception e) {
-                Log.e(TAG, "Exception thrown when accessing the files dir:");
+                HockeyLog.error("Exception thrown when accessing the files dir:");
                 e.printStackTrace();
             }
         }
@@ -181,7 +187,7 @@ public class Constants {
                     Constants.APP_VERSION = "" + buildNumber;
                 }
             } catch (PackageManager.NameNotFoundException e) {
-                Log.e(TAG, "Exception thrown when accessing the package info:");
+                HockeyLog.error("Exception thrown when accessing the package info:");
                 e.printStackTrace();
             }
         }
@@ -201,7 +207,7 @@ public class Constants {
                 return metaData.getInt(BUNDLE_BUILD_NUMBER, 0);
             }
         } catch (PackageManager.NameNotFoundException e) {
-            Log.e(TAG, "Exception thrown when accessing the application info:");
+            HockeyLog.error("Exception thrown when accessing the application info:");
             e.printStackTrace();
         }
 
@@ -215,7 +221,7 @@ public class Constants {
      */
     private static void loadCrashIdentifier(Context context) {
         String deviceIdentifier = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
-        if ((Constants.APP_PACKAGE != null) && (deviceIdentifier != null)) {
+        if (!TextUtils.isEmpty(Constants.APP_PACKAGE) && !TextUtils.isEmpty(deviceIdentifier)) {
             String combined = Constants.APP_PACKAGE + ":" + deviceIdentifier + ":" + createSalt(context);
             try {
                 MessageDigest digest = MessageDigest.getInstance("SHA-1");
@@ -225,6 +231,7 @@ public class Constants {
 
                 Constants.CRASH_IDENTIFIER = bytesToHex(bytes);
             } catch (Throwable e) {
+                //TODO handle the exeption
             }
         }
     }

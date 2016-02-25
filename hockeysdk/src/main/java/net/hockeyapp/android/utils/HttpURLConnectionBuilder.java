@@ -143,49 +143,45 @@ public class HttpURLConnectionBuilder {
         return this;
     }
 
-    public HttpURLConnection build() {
+    public HttpURLConnection build() throws IOException {
         HttpURLConnection connection;
-        try {
-            URL url = new URL(mUrlString);
-            connection = (HttpURLConnection) url.openConnection();
+        URL url = new URL(mUrlString);
+        connection = (HttpURLConnection) url.openConnection();
 
-            connection.setConnectTimeout(mTimeout);
-            connection.setReadTimeout(mTimeout);
+        connection.setConnectTimeout(mTimeout);
+        connection.setReadTimeout(mTimeout);
 
-            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.GINGERBREAD) {
-                connection.setRequestProperty("Connection", "close");
-            }
-
-            if (!TextUtils.isEmpty(mRequestMethod)) {
-                connection.setRequestMethod(mRequestMethod);
-                if (!TextUtils.isEmpty(mRequestBody) || mRequestMethod.equalsIgnoreCase("POST") || mRequestMethod.equalsIgnoreCase("PUT")) {
-                    connection.setDoOutput(true);
-                }
-            }
-
-            for (String name : mHeaders.keySet()) {
-                connection.setRequestProperty(name, mHeaders.get(name));
-            }
-
-            if (!TextUtils.isEmpty(mRequestBody)) {
-                OutputStream outputStream = connection.getOutputStream();
-                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream, DEFAULT_CHARSET));
-                writer.write(mRequestBody);
-                writer.flush();
-                writer.close();
-            }
-
-            if (mMultipartEntity != null) {
-                connection.setRequestProperty("Content-Length", String.valueOf(mMultipartEntity.getContentLength()));
-                BufferedOutputStream outputStream = new BufferedOutputStream(connection.getOutputStream());
-                outputStream.write(mMultipartEntity.getOutputStream().toByteArray());
-                outputStream.flush();
-                outputStream.close();
-            }
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.GINGERBREAD) {
+            connection.setRequestProperty("Connection", "close");
         }
+
+        if (!TextUtils.isEmpty(mRequestMethod)) {
+            connection.setRequestMethod(mRequestMethod);
+            if (!TextUtils.isEmpty(mRequestBody) || mRequestMethod.equalsIgnoreCase("POST") || mRequestMethod.equalsIgnoreCase("PUT")) {
+                connection.setDoOutput(true);
+            }
+        }
+
+        for (String name : mHeaders.keySet()) {
+            connection.setRequestProperty(name, mHeaders.get(name));
+        }
+
+        if (!TextUtils.isEmpty(mRequestBody)) {
+            OutputStream outputStream = connection.getOutputStream();
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream, DEFAULT_CHARSET));
+            writer.write(mRequestBody);
+            writer.flush();
+            writer.close();
+        }
+
+        if (mMultipartEntity != null) {
+            connection.setRequestProperty("Content-Length", String.valueOf(mMultipartEntity.getContentLength()));
+            BufferedOutputStream outputStream = new BufferedOutputStream(connection.getOutputStream());
+            outputStream.write(mMultipartEntity.getOutputStream().toByteArray());
+            outputStream.flush();
+            outputStream.close();
+        }
+
         return connection;
     }
 

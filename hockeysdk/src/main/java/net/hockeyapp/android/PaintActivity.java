@@ -12,7 +12,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -20,6 +19,7 @@ import android.view.MenuItem;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import net.hockeyapp.android.utils.HockeyLog;
 import net.hockeyapp.android.views.PaintView;
 
 import java.io.File;
@@ -64,7 +64,7 @@ public class PaintActivity extends Activity {
 
         if (currentOrientation != desiredOrientation) {
       /* Activity will be destroyed again.. skip the following expensive operations. */
-            Log.d(Constants.TAG, "Image loading skipped because activity will be destroyed for orientation change.");
+            HockeyLog.debug("Image loading skipped because activity will be destroyed for orientation change.");
             return;
         }
 
@@ -163,7 +163,7 @@ public class PaintActivity extends Activity {
     }
 
     private void makeResult() {
-        File hockeyAppCache = new File(getCacheDir(), Constants.TAG);
+        File hockeyAppCache = new File(getCacheDir(), "HockeyApp");
         hockeyAppCache.mkdir();
 
         String filename = mImageName + ".jpg";
@@ -186,7 +186,7 @@ public class PaintActivity extends Activity {
                     out.close();
                 } catch (IOException e) {
                     e.printStackTrace();
-                    Log.e(Constants.TAG, "Could not save image.", e);
+                    HockeyLog.error("Could not save image.", e);
                 }
                 return null;
             }

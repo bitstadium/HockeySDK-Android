@@ -728,11 +728,11 @@ public class Base64 {
                 }
 
                 if (tailLen != 0) {
-                    Log.e(TAG, "Error during encoding");
+                    HockeyLog.error(TAG, "Error during encoding");
                     //throw new AssertionError();
                 }
                 if (p != len) {
-                    Log.e(TAG, "Error during encoding");
+                    HockeyLog.error(TAG, "Error during encoding");
                     //throw new AssertionError();
                 }
             } else {
