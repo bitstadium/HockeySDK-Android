@@ -122,8 +122,8 @@ public class MetricsManager implements Application.ActivityLifecycleCallbacks {
      * @param telemetryContext telemetry context, contains meta-information necessary for metrics
      *                         feature of the SDK
      * @param sender           usually null, included for unit testing/dependency injection
-     * @param persistence,     included for unit testing/dependency injection
-     * @param channel,         included for unit testing/dependency injection
+     * @param persistence      included for unit testing/dependency injection
+     * @param channel          included for unit testing/dependency injection
      */
     protected MetricsManager(Context context, TelemetryContext telemetryContext, Sender sender,
                              Persistence persistence, Channel channel) {
