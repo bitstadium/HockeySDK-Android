@@ -4,8 +4,15 @@ package net.hockeyapp.android.utils;
 import android.util.Log;
 
 /**
+ * <h3>Description</h3>
+ *
+ * Wrapper class for logging in the SDK as well as
+ * setting the desired log level for end users.
+ * Log levels correspond to those of android.util.Log.
+ *
+ * @see android.util.Log
+ *
  * <h3>License</h3>
- * <p/>
  * <pre>
  * Copyright (c) 2011-2015 Bit Stadium GmbH
  *
