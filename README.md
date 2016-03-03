@@ -36,6 +36,7 @@ This document contains the following sections:
   5. [Strings & localization](#strings-advanced)
   6. [Permissions](#permissions-advanced)
   7. [Control output to LogCat](#logcat-output)
+  8. [ProGuard](#proguard)
 5. [Documentation](#documentation)
 6. [Troubleshooting](#troubleshooting)
 7. [Contributing](#contributing)
@@ -421,6 +422,22 @@ HockeyLog.setLogLevel(Log.DEBUG); // show most log statements – useful for deb
 HockeyLog.setLogLevel(Log.INFO); // show informative or higher log messages
 HockeyLog.setLogLevel(Log.WARN); // show warnings and errors
 HockeyLog.setLogLevel(Log.ERROR); // show only errors – the default log level
+```
+<a id="proguard"></a>
+
+### 4.8 ProGuard
+
+Starting with our 3.7.0 release, the SDK ships with the [required ProGuard configuration](https://github.com/bitstadium/HockeySDK-Android/blob/develop/hockeysdk/proguard-rules.pro) out of the box, so typically you won't have to do anything.
+
+However if you provide a custom user interface fragment for the update distribution module, e.g. by overriding [`UpdateManagerListener.getUpdateFragmentClass()`](https://github.com/bitstadium/HockeySDK-Android/blob/ac386d5e2a02d4c3e1c9dac3cdf7ea68b2c1165e/hockeysdk/src/main/java/net/hockeyapp/android/UpdateManagerListener.java#L56) you will have to add an exception to your ProGuard configuration, since this class is instantiated via reflection. Follow these steps:
+
+1. Open your app module's ProGuard configuration (`proguard-rules.pro` in your app's module in Android Studio)
+2. Add the following lines at the end of your existing configuration, using the full class name of your custom update fragment:
+
+```
+-keepclassmembers class your.custom.UpdateFragment { 
+  *;
+}
 ```
 
 
