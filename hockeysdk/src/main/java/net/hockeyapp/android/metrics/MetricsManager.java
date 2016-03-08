@@ -8,13 +8,9 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-
 import net.hockeyapp.android.Constants;
-import net.hockeyapp.android.metrics.model.Data;
-import net.hockeyapp.android.metrics.model.Domain;
-import net.hockeyapp.android.metrics.model.SessionState;
-import net.hockeyapp.android.metrics.model.SessionStateData;
-import net.hockeyapp.android.metrics.model.TelemetryData;
+import net.hockeyapp.android.PrivateEventManager;
+import net.hockeyapp.android.metrics.model.*;
 import net.hockeyapp.android.utils.AsyncTaskUtils;
 import net.hockeyapp.android.utils.HockeyLog;
 import net.hockeyapp.android.utils.Util;
@@ -211,6 +207,15 @@ public class MetricsManager implements Application.ActivityLifecycleCallbacks {
                 }
 
             }
+
+            PrivateEventManager.addEventListener(new PrivateEventManager.HockeyEventListener() {
+                @Override
+                public void onHockeyEvent(PrivateEventManager.Event event) {
+                    if (event.getType() == PrivateEventManager.EVENT_TYPE_UNCAUGHT_EXCEPTION) {
+                        sChannel.synchronize();
+                    }
+                }
+            });
         }
     }
 
