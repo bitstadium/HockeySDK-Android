@@ -410,7 +410,7 @@ public class MetricsManager implements Application.ActivityLifecycleCallbacks {
      * @param telemetryData The telemetry event to be persisted and sent
      * @return a base data object containing the telemetry data
      */
-    protected Data<Domain> createData(TelemetryData telemetryData) {
+    protected static Data<Domain> createData(TelemetryData telemetryData) {
         Data<Domain> data = new Data<>();
         data.setBaseData(telemetryData);
         data.setBaseType(telemetryData.getBaseType());
@@ -418,5 +418,19 @@ public class MetricsManager implements Application.ActivityLifecycleCallbacks {
 
         return data;
     }
+
+    public static void trackEvent(final String eventName) {
+        AsyncTaskUtils.execute(new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                EventData eventItem = new EventData();
+                eventItem.setName(eventName);
+                Data<Domain> data = createData(eventItem);
+                sChannel.enqueueData(data);
+                return null;
+            }
+        });
+    }
+
 }
 
