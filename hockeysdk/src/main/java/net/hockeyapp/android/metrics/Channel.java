@@ -33,7 +33,7 @@ class Channel {
     /**
      * Number of queue items which will trigger a flush (testing).
      */
-    protected static int mMaxBatchCount = 1;
+    protected static int mMaxBatchCount = 10;
     /**
      * The linked queue for this queue.
      */
