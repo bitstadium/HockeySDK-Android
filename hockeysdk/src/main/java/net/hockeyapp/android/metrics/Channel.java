@@ -35,7 +35,7 @@ class Channel {
     /**
      * Number of queue items which will trigger synchronization with the persistence layer.
      */
-    protected static int mMaxBatchCount = 10;
+    protected static int mMaxBatchCount = 50;
     /**
      * Maximum time interval in milliseconds after which a synchronize will be triggered, regardless of queue size.
      */
