@@ -14,6 +14,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * <h3>Description</h3>
@@ -31,9 +33,13 @@ class Channel {
      */
     private static final Object LOCK = new Object();
     /**
-     * Number of queue items which will trigger a flush (testing).
+     * Number of queue items which will trigger synchronization with the persistence layer.
      */
     protected static int mMaxBatchCount = 10;
+    /**
+     * Maximum time interval in milliseconds after which a synchronize will be triggered, regardless of queue size.
+     */
+    protected static int mMaxBatchInterval = 15 * 1000;
     /**
      * The linked queue for this queue.
      */
@@ -46,6 +52,14 @@ class Channel {
      * Persistence used for storing telemetry items before they get sent out.
      */
     private final Persistence mPersistence;
+    /**
+     * Timer to run scheduled tasks on.
+     */
+    private final Timer mTimer;
+    /**
+     * Task to be scheduled for synchronizing at a certain max interval.
+     */
+    private SynchronizeChannelTask mSynchronizeTask;
 
     /**
      * Instantiates a new INSTANCE of Channel
@@ -54,6 +68,7 @@ class Channel {
         mTelemetryContext = telemetryContext;
         mQueue = new LinkedList<>();
         mPersistence = persistence;
+        mTimer = new Timer("HockeyApp User Metrics Sender Queue", true);
     }
 
     /**
@@ -70,6 +85,8 @@ class Channel {
             if (mQueue.add(serializedItem)) {
                 if ((mQueue.size() >= mMaxBatchCount)) {
                     synchronize();
+                } else if (mQueue.size() == 1) {
+                    scheduleSynchronizeTask();
                 }
             } else {
                 HockeyLog.verbose(TAG, "Unable to add item to queue");
@@ -81,6 +98,10 @@ class Channel {
      * Persist all pending items.
      */
     protected void synchronize() {
+        if (mSynchronizeTask != null) {
+            mSynchronizeTask.cancel();
+        }
+
         String[] data;
         if (!mQueue.isEmpty()) {
             data = new String[mQueue.size()];
@@ -118,6 +139,11 @@ class Channel {
             envelope.setTags(tags);
         }
         return envelope;
+    }
+
+    protected void scheduleSynchronizeTask() {
+        mSynchronizeTask = new SynchronizeChannelTask();
+        mTimer.schedule(mSynchronizeTask, mMaxBatchInterval);
     }
 
     /**
@@ -163,6 +189,20 @@ class Channel {
         } catch (IOException e) {
             HockeyLog.debug(TAG, "Failed to save data with exception: " + e.toString());
             return null;
+        }
+    }
+
+    private class SynchronizeChannelTask extends TimerTask {
+
+        /**
+         * The sender INSTANCE is provided to the constructor as a test hook
+         */
+        public SynchronizeChannelTask() {
+        }
+
+        @Override
+        public void run() {
+            synchronize();
         }
     }
 }
