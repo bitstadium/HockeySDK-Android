@@ -146,6 +146,11 @@ public class MetricsManager implements Application.ActivityLifecycleCallbacks {
         } else {
             sChannel = channel;
         }
+
+        // check if any previous events are in persistence and send them out in case
+        if (persistence.hasFilesAvailable()) {
+            persistence.getSender().triggerSending();
+        }
     }
 
     /**

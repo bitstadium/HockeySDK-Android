@@ -175,6 +175,15 @@ class Persistence {
     }
 
     /**
+     * Checks if files are available for sending.
+     *
+     * @return true if files are available
+     */
+    protected boolean hasFilesAvailable() {
+        return nextAvailableFileInDirectory() != null;
+    }
+
+    /**
      * @return reference to the next available file, null if no file is available
      */
     protected File nextAvailableFileInDirectory() {
