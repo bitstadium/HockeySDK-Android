@@ -283,7 +283,7 @@ class TelemetryContext {
     }
 
     /**
-     * Sets the internal package context
+     * Sets the internal package context.
      */
     protected void configInternalContext() {
         String sdkVersionString = BuildConfig.VERSION_NAME;

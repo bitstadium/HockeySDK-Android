@@ -27,49 +27,59 @@ import java.util.zip.GZIPOutputStream;
 /**
  * <h3>Description</h3>
  * <p/>
- * Either calls execute or executeOnExecutor on an AsyncTask depending on the
- * API level.
+ * Transmits given telemetry data to the ingestion endpoint. Transmission is done
+ * asynchronously to not block the main thread.
  **/
 
 public class Sender {
 
     /**
-     * Default endpoint where all data will be send.
+     * Default endpoint to send the telemetry data to.
      */
     static final String DEFAULT_ENDPOINT_URL = "https://gate.hockeyapp.net/v2/track";
-
+    /**
+     * Read timeout for transmission.
+     */
     static final int DEFAULT_SENDER_READ_TIMEOUT = 10 * 1000;
+    /**
+     * Connect timeout for transmission.
+     */
     static final int DEFAULT_SENDER_CONNECT_TIMEOUT = 15 * 1000;
+    /**
+     * The max number of requests to perform in parallel.
+     */
     static final int MAX_REQUEST_COUNT = 10;
-
+    /**
+     * The logging tag.
+     */
     private static final String TAG = "HockeyApp-Metrics";
-
     /**
      * Persistence object used to reserve, free, or delete files.
      */
     protected WeakReference<Persistence> mWeakPersistence;
     /**
-     * Thread safe counter to keep track of num of operations
+     * Thread safe counter to keep track of number of concurrent operations.
      */
     private AtomicInteger mRequestCount;
-
     /**
-     * Field to hold custom server URL. Will be ignored if null.
+     * Custom ingestion endpoint URL.
      */
     private String mCustomServerURL;
 
     /**
-     * Create a Sender instance
-     * Call setPersistence immediately after creating the Sender object
+     * Creates and initializes a new instance.
+     * <p/>
+     * Persistence has to be configured separately and has to be set directly
+     * after initialization.
      */
     protected Sender() {
         mRequestCount = new AtomicInteger(0);
     }
 
     /**
-     * Method that triggers an async task that will check for persisted telemetry and send it to
-     * the server if the number of running requests didn't exceed the maximum number of
-     * running requests as defined in MAX_REQUEST_COUNT.
+     * Triggers sending of available telemetry data in an AsyncTask. Checks with persistence
+     * for available data, if the max amount of concurrent requests is not reached yet.
+     * Does nothing, if the maximum number of concurrent requests is already reached or exceeded.
      */
     protected void triggerSending() {
         if (requestCount() < MAX_REQUEST_COUNT) {
@@ -120,6 +130,13 @@ public class Sender {
         }
     }
 
+    /**
+     * Send a file to the ingestion endpoint.
+     *
+     * @param connection
+     * @param file
+     * @param persistedData
+     */
     protected void send(HttpURLConnection connection, File file, String persistedData) {
         logRequest(connection, persistedData);
         if (connection != null && file != null && persistedData != null) {
@@ -144,10 +161,10 @@ public class Sender {
     }
 
     /**
-     * Retrieve a specified file from the persistence layer
+     * Read the contents of a file from the persistence layer.
      *
-     * @param file the file to load
-     * @return persisted data as String
+     * @param file The file to read.
+     * @return Persisted data as String, or null if the persistence is not set or the file does not exist.
      */
     protected String loadData(File file) {
         String persistedData = null;
@@ -199,10 +216,10 @@ public class Sender {
     }
 
     /**
-     * Callback for the http response from the sender
+     * Callback for the http response from the sender.
      *
-     * @param connection   a connection containing a response
-     * @param responseCode the response code from the connection
+     * @param connection   The connection containing the response.
+     * @param responseCode The response code from the connection.
      * @param payload      the payload which generated this response
      * @param fileToSend   reference to the file we want to send
      */
@@ -234,6 +251,12 @@ public class Sender {
         }
     }
 
+    /**
+     * Determines if an HTTP response code denotes an error from which we can recover by sending the data again.
+     *
+     * @param responseCode The response code to check.
+     * @return True, if we can recover from this error code, otherwise false.
+     */
     protected boolean isRecoverableError(int responseCode) {
         /*
             429 -> TOO MANY REQUESTS
@@ -245,14 +268,22 @@ public class Sender {
         return recoverableCodes.contains(responseCode);
     }
 
+    /**
+     * Determines if an HTTP response code denotes a status which we regard as successful completion.
+     *
+     * @param responseCode The response code to check.
+     * @return True, if the response code means a successful operation, otherwise false.
+     */
     protected boolean isExpected(int responseCode) {
         return (HttpURLConnection.HTTP_OK <= responseCode && responseCode <= HttpURLConnection.HTTP_NOT_AUTHORITATIVE);
     }
 
     /**
-     * @param connection   a connection containing a response
-     * @param responseCode the response code from the connection
-     * @param builder      a string builder for storing the response
+     * Handler to be called if an unexpected response was returned from the ingestion endpoint.
+     *
+     * @param connection   The connection containing the response.
+     * @param responseCode The response code from the connection.
+     * @param builder      A string builder for storing the response.
      */
     protected void onUnexpected(HttpURLConnection connection, int responseCode, StringBuilder
             builder) {
