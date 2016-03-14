@@ -138,6 +138,8 @@ public class Sender {
      * @param persistedData
      */
     protected void send(HttpURLConnection connection, File file, String persistedData) {
+        // TODO Why does this get the file and persistedData reference, even though everything is in the connection?
+        // TODO Looks like this will have to be rewritten for its own AsyncTask subclass.
         logRequest(connection, persistedData);
         if (connection != null && file != null && persistedData != null) {
             mRequestCount.getAndIncrement();
@@ -196,11 +198,14 @@ public class Sender {
                 url = new URL(DEFAULT_ENDPOINT_URL);
             } else {
                 url = new URL(this.mCustomServerURL);
+                // TODO The constructor of URL() will never return null but rather throw a MalformedURLException
+                // TODO this being caught below, makes this code redundant.
                 if (url == null) {
                     url = new URL(DEFAULT_ENDPOINT_URL);
                 }
             }
 
+            // TODO Replace with HttpUrlConnectionBuilder calls - expand this if necessary.
             connection = (HttpURLConnection) url.openConnection();
             connection.setReadTimeout(DEFAULT_SENDER_READ_TIMEOUT);
             connection.setConnectTimeout(DEFAULT_SENDER_CONNECT_TIMEOUT);
@@ -225,6 +230,8 @@ public class Sender {
      */
     protected void onResponse(HttpURLConnection connection, int responseCode, String payload, File
             fileToSend) {
+        // TODO Remove possible redundancy between response code and connection which also provides the same response code.
+        // TODO This looks like a weird solution to keep the reference to the payload and the sent file.
         mRequestCount.getAndDecrement();
         HockeyLog.debug(TAG, "response code " + Integer.toString(responseCode));
 

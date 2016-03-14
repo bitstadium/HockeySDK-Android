@@ -56,6 +56,7 @@ class Persistence {
     /**
      * List with paths of telemetry files which are currently being used by the sender for transmission.
      */
+    // TODO This looks like a violation of separation of concerns. Look into moving this to the sender.
     protected ArrayList<File> mServedFiles;
 
     /**
@@ -202,6 +203,7 @@ class Persistence {
      * @return Reference to the next available file, null if no file is available.
      */
     protected File nextAvailableFileInDirectory() {
+        // TODO Separation of concerns. The persistence should provide all files, the sender would pick the right one.
         synchronized (LOCK) {
             if (mTelemetryDirectory != null) {
                 File[] files = mTelemetryDirectory.listFiles();
@@ -269,6 +271,7 @@ class Persistence {
      * @return True if there is still space for another telemetry file.
      */
     protected boolean isFreeSpaceAvailable() {
+        // TODO Check for available disk space as well.
         synchronized (LOCK) {
             Context context = getContext();
             if ((context.getFilesDir()) != null) {
