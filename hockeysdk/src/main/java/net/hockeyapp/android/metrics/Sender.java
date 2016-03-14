@@ -235,12 +235,18 @@ public class Sender {
     }
 
     protected boolean isRecoverableError(int responseCode) {
-        List<Integer> recoverableCodes = Arrays.asList(408, 429, 500, 503, 511);
+        /*
+            429 -> TOO MANY REQUESTS
+            503 -> SERVICE UNAVAILABLE
+            511 -> NETWORK AUTHENTICATION REQUIRED
+            All not available in HttpUrlConnection, thus listed here for reference.
+         */
+        List<Integer> recoverableCodes = Arrays.asList(HttpURLConnection.HTTP_CLIENT_TIMEOUT, 429, HttpURLConnection.HTTP_INTERNAL_ERROR, 503, 511);
         return recoverableCodes.contains(responseCode);
     }
 
     protected boolean isExpected(int responseCode) {
-        return (199 < responseCode && responseCode <= 203);
+        return (HttpURLConnection.HTTP_OK <= responseCode && responseCode <= HttpURLConnection.HTTP_NOT_AUTHORITATIVE);
     }
 
     /**
