@@ -98,7 +98,7 @@ class Persistence {
             getSender().triggerSending();
         } else {
             StringBuilder buffer = new StringBuilder();
-            Boolean isSuccess;
+            boolean isSuccess;
             for (String aData : data) {
                 if (buffer.length() > 0) {
                     buffer.append('\n');
@@ -127,7 +127,7 @@ class Persistence {
         Boolean isSuccess = false;
         FileOutputStream outputStream = null;
         try {
-            synchronized (this.LOCK) {
+            synchronized (LOCK) {
                 File filesDir = new File(mTelemetryDirectory + "/" + uuid);
                 outputStream = new FileOutputStream(filesDir, true);
                 outputStream.write(data.getBytes());
@@ -159,7 +159,7 @@ class Persistence {
         if (file != null) {
             BufferedReader reader = null;
             try {
-                synchronized (this.LOCK) {
+                synchronized (LOCK) {
                     FileInputStream inputStream = new FileInputStream(file);
                     InputStreamReader streamReader = new InputStreamReader(inputStream);
                     reader = new BufferedReader(streamReader);
@@ -202,7 +202,7 @@ class Persistence {
      * @return Reference to the next available file, null if no file is available.
      */
     protected File nextAvailableFileInDirectory() {
-        synchronized (this.LOCK) {
+        synchronized (LOCK) {
             if (mTelemetryDirectory != null) {
                 File[] files = mTelemetryDirectory.listFiles();
                 File file;
@@ -236,7 +236,7 @@ class Persistence {
      */
     protected void deleteFile(File file) {
         if (file != null) {
-            synchronized (this.LOCK) {
+            synchronized (LOCK) {
                 boolean deletedFile = file.delete();
                 if (!deletedFile) {
                     Log.w(TAG, "Error deleting telemetry file " + file.toString());
@@ -257,7 +257,7 @@ class Persistence {
      * @param file Reference to the file to remove from the list.
      */
     protected void makeAvailable(File file) {
-        synchronized (this.LOCK) {
+        synchronized (LOCK) {
             if (file != null) {
                 mServedFiles.remove(file);
             }
@@ -269,7 +269,7 @@ class Persistence {
      * @return True if there is still space for another telemetry file.
      */
     protected boolean isFreeSpaceAvailable() {
-        synchronized (this.LOCK) {
+        synchronized (LOCK) {
             Context context = getContext();
             if ((context.getFilesDir()) != null) {
                 File filesDir = context.getFilesDir();
