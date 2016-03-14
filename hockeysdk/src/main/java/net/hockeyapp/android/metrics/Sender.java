@@ -88,7 +88,7 @@ public class Sender {
                         @Override
                         protected Void doInBackground(Void... params) {
                             // Send the persisted data
-                            send();
+                            sendAvailableFiles();
                             return null;
                         }
                     }
@@ -118,7 +118,7 @@ public class Sender {
     /**
      * Checks the persistence for available files and sends them.
      */
-    protected void send() {
+    protected void sendAvailableFiles() {
         if (this.getPersistence() != null) {
             File fileToSend = this.getPersistence().nextAvailableFileInDirectory();
             String persistedData = loadData(fileToSend);
