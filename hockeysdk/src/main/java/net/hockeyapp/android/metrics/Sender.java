@@ -73,8 +73,6 @@ public class Sender {
      */
     protected void triggerSending() {
         if (requestCount() < MAX_REQUEST_COUNT) {
-            mRequestCount.getAndIncrement();
-
             AsyncTaskUtils.execute(
                     new AsyncTask<Void, Void, Void>() {
                         @Override
@@ -125,6 +123,7 @@ public class Sender {
     protected void send(HttpURLConnection connection, File file, String persistedData) {
         logRequest(connection, persistedData);
         if (connection != null && file != null && persistedData != null) {
+            mRequestCount.getAndIncrement();
             try {
                 // Starts the query
                 connection.connect();
@@ -135,6 +134,7 @@ public class Sender {
             } catch (IOException e) {
                 //Probably offline
                 HockeyLog.debug(TAG, "Couldn't send data with IOException: " + e.toString());
+                mRequestCount.getAndDecrement();
                 if (this.getPersistence() != null) {
                     HockeyLog.debug(TAG, "Persisting because of IOException: We're probably offline.");
                     this.getPersistence().makeAvailable(file); //send again later
