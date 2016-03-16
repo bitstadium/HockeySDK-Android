@@ -21,6 +21,7 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.zip.GZIPOutputStream;
 
@@ -83,16 +84,20 @@ public class Sender {
      */
     protected void triggerSending() {
         if (requestCount() < MAX_REQUEST_COUNT) {
-            AsyncTaskUtils.execute(
-                    new AsyncTask<Void, Void, Void>() {
-                        @Override
-                        protected Void doInBackground(Void... params) {
-                            // Send the persisted data
-                            sendAvailableFiles();
-                            return null;
+            try {
+                AsyncTaskUtils.execute(
+                        new AsyncTask<Void, Void, Void>() {
+                            @Override
+                            protected Void doInBackground(Void... params) {
+                                // Send the persisted data
+                                sendAvailableFiles();
+                                return null;
+                            }
                         }
-                    }
-            );
+                );
+            } catch (RejectedExecutionException e) {
+                HockeyLog.error("Could not send events. Executor rejected async task.", e);
+            }
         } else {
             HockeyLog.debug(TAG, "We have already 10 pending requests, not sending anything.");
         }

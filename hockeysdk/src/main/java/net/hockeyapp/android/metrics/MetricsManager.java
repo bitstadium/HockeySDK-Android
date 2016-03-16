@@ -24,6 +24,7 @@ import net.hockeyapp.android.utils.Util;
 import java.lang.ref.WeakReference;
 import java.util.Date;
 import java.util.UUID;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -377,16 +378,21 @@ public class MetricsManager implements Application.ActivityLifecycleCallbacks {
      * @param sessionState value that determines whether the session started or ended
      */
     private void trackSessionState(final SessionState sessionState) {
-        AsyncTaskUtils.execute(new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
-                SessionStateData sessionItem = new SessionStateData();
-                sessionItem.setState(sessionState);
-                Data<Domain> data = createData(sessionItem);
-                sChannel.enqueueData(data);
-                return null;
-            }
-        });
+        try {
+            AsyncTaskUtils.execute(new AsyncTask<Void, Void, Void>() {
+                @Override
+                protected Void doInBackground(Void... params) {
+                    SessionStateData sessionItem = new SessionStateData();
+                    sessionItem.setState(sessionState);
+                    Data<Domain> data = createData(sessionItem);
+                    sChannel.enqueueData(data);
+                    return null;
+                }
+            });
+        } catch (RejectedExecutionException e) {
+            HockeyLog.error("Could not track session state. Executor rejected async task.", e);
+        }
+
     }
 
     /**
@@ -405,16 +411,21 @@ public class MetricsManager implements Application.ActivityLifecycleCallbacks {
     }
 
     public static void trackEvent(final String eventName) {
-        AsyncTaskUtils.execute(new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
-                EventData eventItem = new EventData();
-                eventItem.setName(eventName);
-                Data<Domain> data = createData(eventItem);
-                sChannel.enqueueData(data);
-                return null;
-            }
-        });
+        try {
+            AsyncTaskUtils.execute(new AsyncTask<Void, Void, Void>() {
+                @Override
+                protected Void doInBackground(Void... params) {
+                    EventData eventItem = new EventData();
+                    eventItem.setName(eventName);
+                    Data<Domain> data = createData(eventItem);
+                    sChannel.enqueueData(data);
+                    return null;
+                }
+            });
+        } catch (RejectedExecutionException e) {
+            HockeyLog.error("Could not track custom event. Executor rejected async task.", e);
+        }
+
     }
 
 }
