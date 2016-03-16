@@ -7,6 +7,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 
 import net.hockeyapp.android.Constants;
@@ -411,6 +412,9 @@ public class MetricsManager implements Application.ActivityLifecycleCallbacks {
     }
 
     public static void trackEvent(final String eventName) {
+        if (TextUtils.isEmpty(eventName)) {
+            return;
+        }
         try {
             AsyncTaskUtils.execute(new AsyncTask<Void, Void, Void>() {
                 @Override
