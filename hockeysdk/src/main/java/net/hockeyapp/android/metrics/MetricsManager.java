@@ -254,7 +254,7 @@ public class MetricsManager {
      */
     public static void setSessionTrackingDisabled(Boolean disabled) {
         if (instance == null || !isUserMetricsEnabled()) {
-            Log.w(TAG, "MetricsManager hasn't been registered or User Metrics has been disabled. No Metrics will be collected!");
+            Log.w(TAG, "MetricsManager hasn't been registered or User Metrics has been disabled. No User Metrics will be collected!");
         } else {
             synchronized (LOCK) {
                 if (Util.sessionTrackingSupported()) {
