@@ -428,6 +428,10 @@ public class MetricsManager {
         if (TextUtils.isEmpty(eventName)) {
             return;
         }
+        if (instance == null) {
+            Log.w(TAG, "MetricsManager hasn't been registered or User Metrics has been disabled. No User Metrics will be collected!");
+            return;
+        }
         if (!isUserMetricsEnabled()) {
             HockeyLog.warn("User Metrics is disabled. Will not track event.");
             return;
