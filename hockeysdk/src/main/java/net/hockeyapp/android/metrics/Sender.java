@@ -318,6 +318,7 @@ public class Sender {
      * @param payload    the payload of telemetry data
      */
     private void logRequest(HttpURLConnection connection, String payload) {
+        // TODO Rename this to reflect the true nature of this method: Sending the payload
         Writer writer = null;
         try {
             if ((connection != null) && (payload != null)) {
