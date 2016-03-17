@@ -236,6 +236,11 @@ public class MetricsManager {
 
     private static void setUserMetricsEnabled(boolean enabled) {
         sUserMetricsEnabled = enabled;
+        if (sUserMetricsEnabled) {
+            instance.registerTelemetryLifecycleCallbacks();
+        } else {
+            instance.unregisterTelemetryLifecycleCallbacks();
+        }
     }
 
     /**
@@ -282,6 +287,9 @@ public class MetricsManager {
 
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     private void unregisterTelemetryLifecycleCallbacks() {
+        if (mTelemetryLifecycleCallbacks == null) {
+            return;
+        }
         getApplication().unregisterActivityLifecycleCallbacks(mTelemetryLifecycleCallbacks);
         mTelemetryLifecycleCallbacks = null;
     }
