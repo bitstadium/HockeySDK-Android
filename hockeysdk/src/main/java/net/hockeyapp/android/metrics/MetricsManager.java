@@ -41,6 +41,13 @@ public class MetricsManager {
     private static final String TAG = "HA-MetricsManager";
 
     /**
+     * Whether User Metrics should be globally enabled or not.
+     * Includes both user/session telemetry as well as custom events.
+     * Default is true.
+     */
+    private static boolean sUserMetricsEnabled = true;
+
+    /**
      * The activity counter.
      */
     protected static final AtomicInteger ACTIVITY_COUNT = new AtomicInteger(0);
@@ -208,12 +215,36 @@ public class MetricsManager {
     }
 
     /**
+     * Disables User Metrics collection and transmission. Use this if your user opts out of
+     * telemetry collection.
+     */
+    public static void disableUserMetrics() {
+        setUserMetricsEnabled(false);
+    }
+
+    /**
+     * Re-enables User Metrics collection and transmission. Use this if your user granted you
+     * telemetry collection. User Metrics collection is enabled by default.
+     */
+    public static void enableUserMetrics() {
+        setUserMetricsEnabled(true);
+    }
+
+    public static boolean isUserMetricsEnabled() {
+        return sUserMetricsEnabled;
+    }
+
+    private static void setUserMetricsEnabled(boolean enabled) {
+        sUserMetricsEnabled = enabled;
+    }
+
+    /**
      * Determines if session tracking was enabled.
      *
      * @return YES if session tracking is enabled
      */
     public static boolean sessionTrackingEnabled() {
-        return !instance.mSessionTrackingDisabled;
+        return isUserMetricsEnabled() && !instance.mSessionTrackingDisabled;
     }
 
     /**
@@ -222,8 +253,8 @@ public class MetricsManager {
      * @param disabled flag to indicate
      */
     public static void setSessionTrackingDisabled(Boolean disabled) {
-        if (instance == null) {
-            Log.w(TAG, "MetricsManager hasn't been registered. No Metrics will be collected!");
+        if (instance == null || !isUserMetricsEnabled()) {
+            Log.w(TAG, "MetricsManager hasn't been registered or User Metrics has been disabled. No Metrics will be collected!");
         } else {
             synchronized (LOCK) {
                 if (Util.sessionTrackingSupported()) {
@@ -387,6 +418,10 @@ public class MetricsManager {
 
     public static void trackEvent(final String eventName) {
         if (TextUtils.isEmpty(eventName)) {
+            return;
+        }
+        if (!isUserMetricsEnabled()) {
+            HockeyLog.warn("User Metrics is disabled. Will not track event.");
             return;
         }
         try {
