@@ -59,8 +59,7 @@ import java.util.concurrent.atomic.AtomicLong;
  *
  * @author Benjamin Reimold
  **/
-@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-public class MetricsManager implements Application.ActivityLifecycleCallbacks {
+public class MetricsManager {
 
     /**
      * The activity counter
@@ -112,6 +111,8 @@ public class MetricsManager implements Application.ActivityLifecycleCallbacks {
      * Default is false.
      */
     private volatile boolean mSessionTrackingDisabled;
+
+    private TelemetryLifecycleCallbacks mTelemetryLifecycleCallbacks;
 
     /**
      * Restrict access to the default constructor
@@ -238,14 +239,28 @@ public class MetricsManager implements Application.ActivityLifecycleCallbacks {
                     //TODO persist this setting so the dev doesn't have to take care of this
                     //between launches?
                     if (!disabled) {
-                        getApplication().registerActivityLifecycleCallbacks(instance);
+                        instance.registerTelemetryLifecycleCallbacks();
                     }
                 } else {
                     instance.mSessionTrackingDisabled = true;
-                    getApplication().unregisterActivityLifecycleCallbacks(instance);
+                    instance.unregisterTelemetryLifecycleCallbacks();
                 }
             }
         }
+    }
+
+    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+    private void registerTelemetryLifecycleCallbacks() {
+        if (mTelemetryLifecycleCallbacks == null) {
+            mTelemetryLifecycleCallbacks = new TelemetryLifecycleCallbacks();
+        }
+        getApplication().registerActivityLifecycleCallbacks(mTelemetryLifecycleCallbacks);
+    }
+
+    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+    private void unregisterTelemetryLifecycleCallbacks() {
+        getApplication().unregisterActivityLifecycleCallbacks(mTelemetryLifecycleCallbacks);
+        mTelemetryLifecycleCallbacks = null;
     }
 
     /**
@@ -302,47 +317,6 @@ public class MetricsManager implements Application.ActivityLifecycleCallbacks {
 
     protected static MetricsManager getInstance() {
         return instance;
-    }
-
-    @Override
-    public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-        // unused but required to implement ActivityLifecycleCallbacks
-        //NOTE:
-        //This callback doesn't work for the starting
-        //activity of the app because the SDK will be setup and initialized in the onCreate, so
-        //we don't get the very first call to an app activity's onCreate.
-    }
-
-    @Override
-    public void onActivityStarted(Activity activity) {
-        // unused but required to implement ActivityLifecycleCallbacks
-    }
-
-    @Override
-    public void onActivityResumed(Activity activity) {
-        updateSession();
-    }
-
-    @Override
-    public void onActivityPaused(Activity activity) {
-        //set the timestamp when the app was last send to the background. This will be continuously
-        //updated when the user navigates through the app.
-        LAST_BACKGROUND.set(this.getTime());
-    }
-
-    @Override
-    public void onActivityStopped(Activity activity) {
-        // unused but required to implement ActivityLifecycleCallbacks
-    }
-
-    @Override
-    public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
-        // unused but required to implement ActivityLifecycleCallbacks
-    }
-
-    @Override
-    public void onActivityDestroyed(Activity activity) {
-        // unused but required to implement ActivityLifecycleCallbacks
     }
 
     /**
@@ -413,5 +387,50 @@ public class MetricsManager implements Application.ActivityLifecycleCallbacks {
 
         return data;
     }
-}
 
+    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+    private class TelemetryLifecycleCallbacks implements Application.ActivityLifecycleCallbacks {
+
+        @Override
+        public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+            // unused but required to implement ActivityLifecycleCallbacks
+            //NOTE:
+            //This callback doesn't work for the starting
+            //activity of the app because the SDK will be setup and initialized in the onCreate, so
+            //we don't get the very first call to an app activity's onCreate.
+        }
+
+        @Override
+        public void onActivityStarted(Activity activity) {
+            // unused but required to implement ActivityLifecycleCallbacks
+        }
+
+        @Override
+        public void onActivityResumed(Activity activity) {
+            updateSession();
+        }
+
+        @Override
+        public void onActivityPaused(Activity activity) {
+            //set the timestamp when the app was last send to the background. This will be continuously
+            //updated when the user navigates through the app.
+            LAST_BACKGROUND.set(getTime());
+        }
+
+        @Override
+        public void onActivityStopped(Activity activity) {
+            // unused but required to implement ActivityLifecycleCallbacks
+        }
+
+        @Override
+        public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
+            // unused but required to implement ActivityLifecycleCallbacks
+        }
+
+        @Override
+        public void onActivityDestroyed(Activity activity) {
+            // unused but required to implement ActivityLifecycleCallbacks
+        }
+    }
+
+}
