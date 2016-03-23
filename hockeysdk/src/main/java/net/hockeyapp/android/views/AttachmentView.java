@@ -1,5 +1,6 @@
 package net.hockeyapp.android.views;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -60,6 +61,7 @@ import java.io.File;
  *
  * @author Patrick Eschenbach
  */
+@SuppressLint("ViewConstructor")
 public class AttachmentView extends FrameLayout {
 
     private final static int IMAGES_PER_ROW_PORTRAIT = 3;
