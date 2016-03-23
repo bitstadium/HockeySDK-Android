@@ -167,13 +167,13 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
                     if (task instanceof GetFileSizeTask) {
                         long appSize = ((GetFileSizeTask) task).getSize();
                         String appSizeString = String.format("%.2f", appSize / (1024.0f * 1024.0f)) + " MB";
-                        versionLabel.setText(versionString + "\n" + fileDate + " - " + appSizeString);
+                        versionLabel.setText(getString(R.string.hockeyapp_update_version_details_label, versionString, fileDate, appSizeString));
                     }
                 }
             });
             AsyncTaskUtils.execute(task);
         }
-        versionLabel.setText(versionString + "\n" + fileDate + " - " + appSizeString);
+        versionLabel.setText(getString(R.string.hockeyapp_update_version_details_label, versionString, fileDate, appSizeString));
 
         Button updateButton = (Button) view.findViewById(R.id.button_update);
         updateButton.setOnClickListener(this);

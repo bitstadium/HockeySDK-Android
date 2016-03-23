@@ -20,6 +20,7 @@
     <string name="hockeyapp_update_dialog_message">Show information about the new update?</string>
     <string name="hockeyapp_update_dialog_negative_button">Ignore</string>
     <string name="hockeyapp_update_dialog_positive_button">Show</string>
+    <string name="hockeyapp_update_version_details_label" translatable="false">%1$s\n%2$s - %3$s</string>
 
     <!-- Expiry Info -->
     <string name="hockeyapp_expiry_info_title">Build Expired</string>
@@ -53,6 +54,10 @@
     <string name="hockeyapp_feedback_max_attachments_allowed">Only %s attachments allowed.</string>
     <string name="hockeyapp_feedback_attachment_loading">Loading…</string>
     <string name="hockeyapp_feedback_attachment_error">Error</string>
+
+    <!-- Send Feedback Task -->
+    <string name="hockeyapp_feedback_sending_feedback_text">Sending feedback…</string>
+    <string name="hockeyapp_feedback_fetching_feedback_text">Retrieving discussions…</string>
 
     <!-- Login Activity -->
     <string name="hockeyapp_login_headline_text">Please enter your HockeyApp account\'s email address and password to authorize access to this app.</string>

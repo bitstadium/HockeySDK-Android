@@ -1,5 +1,6 @@
 package net.hockeyapp.android.views;
 
+import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
@@ -53,6 +54,7 @@ import java.util.Stack;
  *
  * @author Patrick Eschenbach
  */
+@SuppressLint("ViewConstructor")
 public class PaintView extends ImageView {
 
     private static final float TOUCH_TOLERANCE = 4;
