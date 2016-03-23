@@ -20,6 +20,9 @@ android {
             minifyEnabled false
         }
     }
+    lintOptions {
+        disable 'GoogleAppIndexingWarning'
+    }
 }
 
 //Upload to Bintray/jcenter
