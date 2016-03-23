@@ -214,7 +214,7 @@ public class FeedbackActivity extends Activity implements OnClickListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.hockeyapp_activity_feedback);
+        setContentView(getLayoutView());
 
         setTitle(getString(R.string.hockeyapp_feedback_title));
         mContext = this;
@@ -459,6 +459,11 @@ public class FeedbackActivity extends Activity implements OnClickListener {
             }
 
         } else return;
+    }
+
+    @SuppressLint("InflateParams")
+    public View getLayoutView() {
+        return getLayoutInflater().inflate(R.layout.hockeyapp_activity_feedback, null);
     }
 
     /**
