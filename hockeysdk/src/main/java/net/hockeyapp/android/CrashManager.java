@@ -567,7 +567,7 @@ public class CrashManager {
             }
         });
 
-        builder.setPositiveButton(R.string.hockeyapp_dialog_positive_button, new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.hockeyapp_crash_dialog_positive_button, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 handleUserInput(CrashManagerUserInput.CrashManagerUserInputSend, null, listener,
                         weakContext, ignoreDefaultHandler);

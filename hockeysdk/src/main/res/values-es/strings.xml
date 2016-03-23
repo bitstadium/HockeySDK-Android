@@ -54,6 +54,10 @@
     <string name="hockeyapp_feedback_attachment_loading">Cargando…</string>
     <string name="hockeyapp_feedback_attachment_error">Error</string>
 
+    <!-- Send Feedback Task -->
+    <string name="hockeyapp_feedback_sending_feedback_text">Envío…</string>
+    <string name="hockeyapp_feedback_fetching_feedback_text">Carga de comentarios…</string>
+
     <!-- Login Activity -->
     <string name="hockeyapp_login_headline_text">Por favor introduce email y contraseña de tu cuenta de HockeyApp para autorizar el acceso a esta aplicación.</string>
     <string name="hockeyapp_login_headline_text_email_only">Por favor introduce email de tu cuenta de HockeyApp para autorizar el acceso a esta aplicación.</string>

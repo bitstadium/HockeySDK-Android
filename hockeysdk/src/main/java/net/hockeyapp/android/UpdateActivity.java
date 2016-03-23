@@ -13,13 +13,10 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import net.hockeyapp.android.listeners.DownloadFileListener;
@@ -231,10 +228,9 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
      *
      * @return Update view
      */
-    public ViewGroup getLayoutView() {
-        LinearLayout layout = new LinearLayout(this);
-        LayoutInflater.from(this).inflate(R.layout.hockeyapp_activity_update, layout);
-        return layout;
+    @SuppressLint("InflateParams")
+    public View getLayoutView() {
+        return getLayoutInflater().inflate(R.layout.hockeyapp_activity_update, null);
     }
 
     /**
