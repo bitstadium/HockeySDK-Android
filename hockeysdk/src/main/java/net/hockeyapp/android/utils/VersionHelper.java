@@ -349,6 +349,8 @@ public class VersionHelper {
             return "5.0";
         } else if (version.equalsIgnoreCase("M")) {
             return "6.0";
+        } else if (version.equalsIgnoreCase("N")) {
+            return "7.0";
         } else if (Pattern.matches("^[a-zA-Z]+", version)) {
             return VERSION_MAX;
         } else {

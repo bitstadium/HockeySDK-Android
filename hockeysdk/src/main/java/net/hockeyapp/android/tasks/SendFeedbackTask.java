@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.os.Message;
 
 import net.hockeyapp.android.Constants;
+import net.hockeyapp.android.R;
 import net.hockeyapp.android.utils.HockeyLog;
 import net.hockeyapp.android.utils.HttpURLConnectionBuilder;
 import net.hockeyapp.android.utils.Util;
@@ -141,9 +142,9 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
 
     @Override
     protected void onPreExecute() {
-        String loadingMessage = "Sending feedback..";
+        String loadingMessage = mContext.getString(R.string.hockeyapp_feedback_sending_feedback_text);
         if (mIsFetchMessages) {
-            loadingMessage = "Retrieving discussions...";
+            loadingMessage = mContext.getString(R.string.hockeyapp_feedback_fetching_feedback_text);
         }
 
         if ((mProgressDialog == null || !mProgressDialog.isShowing()) && mShowProgressDialog) {

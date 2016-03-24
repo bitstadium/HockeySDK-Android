@@ -13,13 +13,10 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import net.hockeyapp.android.listeners.DownloadFileListener;
@@ -231,10 +228,9 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
      *
      * @return Update view
      */
-    public ViewGroup getLayoutView() {
-        LinearLayout layout = new LinearLayout(this);
-        LayoutInflater.from(this).inflate(R.layout.hockeyapp_activity_update, layout);
-        return layout;
+    @SuppressLint("InflateParams")
+    public View getLayoutView() {
+        return getLayoutInflater().inflate(R.layout.hockeyapp_activity_update, null);
     }
 
     /**
@@ -269,13 +265,13 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
                     if (task instanceof GetFileSizeTask) {
                         long appSize = ((GetFileSizeTask) task).getSize();
                         String appSizeString = String.format("%.2f", appSize / (1024.0f * 1024.0f)) + " MB";
-                        versionLabel.setText(versionString + "\n" + fileDate + " - " + appSizeString);
+                        versionLabel.setText(getString(R.string.hockeyapp_update_version_details_label, versionString, fileDate, appSizeString));
                     }
                 }
             });
             AsyncTaskUtils.execute(task);
         }
-        versionLabel.setText(versionString + "\n" + fileDate + " - " + appSizeString);
+        versionLabel.setText(getString(R.string.hockeyapp_update_version_details_label, versionString, fileDate, appSizeString));
 
         Button updateButton = (Button) findViewById(R.id.button_update);
         updateButton.setOnClickListener(this);

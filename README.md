@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/bitstadium/HockeySDK-Android.svg?branch=develop)](https://travis-ci.org/bitstadium/HockeySDK-Android)
 
-## Preseason - Version 4.0.0-alpha.2
+## Preseason - Version 4.0.0-alpha.3
 =======
 
 ## Introduction
@@ -41,6 +41,7 @@ This document contains the following sections:
   5. [Strings & localization](#strings-advanced)
   6. [Permissions](#permissions-advanced)
   7. [Control output to LogCat](#logcat-output)
+  8. [ProGuard](#proguard)
 5. [Documentation](#documentation)
 6. [Troubleshooting](#troubleshooting)
 7. [Contributing](#contributing)
@@ -73,7 +74,7 @@ Please see the "[How to create a new app](http://support.hockeyapp.net/kb/about-
 Add the SDK to your app module's dependencies in Android Studio by adding the following line to your `dependencies { ... }` configuration:
 
 ```groovy
-compile 'net.hockeyapp.android:HockeySDK:4.0.0-alpha.2'
+compile 'net.hockeyapp.android:HockeySDK:4.0.0-alpha.3'
 ```
 
 also make sure your repository configuration contains our preseason repository:
@@ -290,7 +291,7 @@ If you don't want to use Gradle or Maven dependency management you can also down
 4. Configure your development tools to use the .aar/.jar file.
 5. In Android Studio, create a new module via `File > New > New Module`
 6. Select **Import .JAR/.AAR Package** and click **Next**.
-7. In the next menu select the .aar/.jar file you just copied to the libs folder. You can rename the module to whatever you want, but we in general recommend leaving it as is. If you don't rename the module, it will match the name of the .aar/.jar file, in this case **HockeySDK-4.0.0-alpha.2**. This way you'll quickly know which version of the SDK you are using in the future.
+7. In the next menu select the .aar/.jar file you just copied to the libs folder. You can rename the module to whatever you want, but we in general recommend leaving it as is. If you don't rename the module, it will match the name of the .aar/.jar file, in this case **HockeySDK-4.0.0-alpha.3**. This way you'll quickly know which version of the SDK you are using in the future.
 8. Make sure Android Studio added the necessary code to integrate the HockeySDK:
 
 Head over to your app's `build.gradle` to verify the dependency was added correctly. It should look like this:
@@ -300,19 +301,19 @@ dependencies {
 	//your other dependencies
 	//...
 	
-    compile project(':HockeySDK-4.0.0-alpha.2')
+    compile project(':HockeySDK-4.0.0-alpha.3')
 }
 ```
 Next, make sure your `settings.gradle` contains the new module:
 
 ```groovy
-include ':app', ':HockeySDK-4.0.0-alpha.2'
+include ':app', ':HockeySDK-4.0.0-alpha.3'
 ```
 
 Finally, check the `build.gradle` of the newly added module:
 ```groovy
 configurations.maybeCreate("default")
-artifacts.add("default", file('HockeySDK-4.0.0-alpha.2.aar'))
+artifacts.add("default", file('HockeySDK-4.0.0-alpha.3.aar'))
 ```
 
 Once you have verified that everything necessary has been added, proceed with [SDK integration](#integrate-sdk).
@@ -434,12 +435,28 @@ HockeyLog.setLogLevel(Log.INFO); // show informative or higher log messages
 HockeyLog.setLogLevel(Log.WARN); // show warnings and errors
 HockeyLog.setLogLevel(Log.ERROR); // show only errors – the default log level
 ```
+<a id="proguard"></a>
+
+### 4.8 ProGuard
+
+Starting with our 3.7.0 release, the SDK ships with the [required ProGuard configuration](https://github.com/bitstadium/HockeySDK-Android/blob/develop/hockeysdk/proguard-rules.pro) out of the box, so typically you won't have to do anything.
+
+However, if you provide a custom user interface fragment for the update distribution module, e.g. by overriding [`UpdateManagerListener.getUpdateFragmentClass()`](https://github.com/bitstadium/HockeySDK-Android/blob/ac386d5e2a02d4c3e1c9dac3cdf7ea68b2c1165e/hockeysdk/src/main/java/net/hockeyapp/android/UpdateManagerListener.java#L56), you will have to add an exception to your ProGuard configuration since this class is instantiated via reflection. Follow these steps:
+
+1. Open your app module's ProGuard configuration (`proguard-rules.pro` in your app's module in Android Studio)
+2. Add the following lines at the end of your existing configuration, using the full class name of your custom update fragment:
+
+```
+-keepclassmembers class your.custom.UpdateFragment { 
+  *;
+}
+```
 
 
 <a id="documentation"></a>
 ## 5. Documentation
 
-Our documentation can be found on [HockeyApp](http://hockeyapp.net/help/sdk/android/4.0.0-alpha.2/index.html).
+Our documentation can be found on [HockeyApp](http://hockeyapp.net/help/sdk/android/4.0.0-alpha.3/index.html).
 
 <a id="troubleshooting"></a>
 ## 6.Troubleshooting
