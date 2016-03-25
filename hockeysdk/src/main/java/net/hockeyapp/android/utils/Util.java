@@ -14,7 +14,6 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
-
 import net.hockeyapp.android.R;
 
 import java.io.UnsupportedEncodingException;
@@ -25,11 +24,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -80,9 +75,6 @@ public class Util {
     private static final String SDK_VERSION_KEY = "net.hockeyapp.android.sdkVersion";
 
     private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
-
-    private static final DateFormat DATE_FORMAT =
-            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.ROOT);
 
     /**
      * Returns the given param URL-encoded.
@@ -363,8 +355,7 @@ public class Util {
             }
 
             return new String(hexChars);
-        }
-        catch (NoSuchAlgorithmException e) {
+        } catch (NoSuchAlgorithmException e) {
             // All android devices should support SHA256, but if unavailable return ""
             return "";
         }
@@ -390,7 +381,10 @@ public class Util {
         if (localDate == null) {
             localDate = new Date();
         }
-        return DATE_FORMAT.format(localDate);
+
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
+        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        return dateFormat.format(localDate);
     }
 
     /**
