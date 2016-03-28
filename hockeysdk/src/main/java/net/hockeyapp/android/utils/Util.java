@@ -14,6 +14,7 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
+
 import net.hockeyapp.android.R;
 
 import java.io.UnsupportedEncodingException;
@@ -24,7 +25,12 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -59,6 +65,7 @@ import java.util.regex.Pattern;
  * @author Bogdan Nistor
  */
 public class Util {
+
     public static final String PREFS_FEEDBACK_TOKEN = "net.hockeyapp.android.prefs_feedback_token";
     public static final String PREFS_KEY_FEEDBACK_TOKEN = "net.hockeyapp.android.prefs_key_feedback_token";
 
@@ -75,6 +82,15 @@ public class Util {
     private static final String SDK_VERSION_KEY = "net.hockeyapp.android.sdkVersion";
 
     private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
+
+    private static final ThreadLocal<DateFormat> DATE_FORMAT_THREAD_LOCAL = new ThreadLocal<DateFormat>() {
+        @Override
+        protected DateFormat initialValue() {
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
+            dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+            return dateFormat;
+        }
+    };
 
     /**
      * Returns the given param URL-encoded.
@@ -381,10 +397,7 @@ public class Util {
         if (localDate == null) {
             localDate = new Date();
         }
-
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
-        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-        return dateFormat.format(localDate);
+        return DATE_FORMAT_THREAD_LOCAL.get().format(localDate);
     }
 
     /**
