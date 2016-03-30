@@ -14,11 +14,12 @@ The following features are currently supported:
 2. **Collect user metrics:** Get nice statistics about how many users you have and how they are using your app. This feature requires a minimum API level of 14 (Android 4.x Icecream Sandwich).
 
 3. **Update alpha/beta apps:** The app will check with HockeyApp if a new version for your alpha/beta build is available. If yes, it will show a dialog to the user and let him see the release notes, the version history and start the installation process right away. You can even force the installation of certain updates.
+
 4. **Authentication:** To help you stay in control of closed tester groups you can identify and authenticate users against your registered testers with the HockeyApp backend. The authentication feature supports several ways of authentication.
 
-4. **Feedback:** Besides crash reports, collecting feedback from your users from within your app is a great option to help with improving your app. You act and answer feedback directly from the HockeyApp backend.
+5. **Feedback:** Besides crash reports, collecting feedback from your users from within your app is a great option to help with improving your app. You act and answer feedback directly from the HockeyApp backend.
 
-5. **Authenticate:** To help you stay in control of closed tester groups you can identify and authenticate users against your registered testers with the HockeyApp backend. The authentication feature supports several ways of authentication.
+6. **Authenticate:** To help you stay in control of closed tester groups you can identify and authenticate users against your registered testers with the HockeyApp backend. The authentication feature supports several ways of authentication.
 
 This document contains the following sections:
 
