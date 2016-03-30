@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/bitstadium/HockeySDK-Android.svg?branch=develop)](https://travis-ci.org/bitstadium/HockeySDK-Android)
 
-## Preseason - Version 4.0.0-alpha.3
+## Preseason - Version 4.0.0-beta.1
 =======
 
 ## Introduction
@@ -74,7 +74,7 @@ Please see the "[How to create a new app](http://support.hockeyapp.net/kb/about-
 Add the SDK to your app module's dependencies in Android Studio by adding the following line to your `dependencies { ... }` configuration:
 
 ```groovy
-compile 'net.hockeyapp.android:HockeySDK:4.0.0-alpha.3'
+compile 'net.hockeyapp.android:HockeySDK:4.0.0-beta.1'
 ```
 
 also make sure your repository configuration contains our preseason repository:
@@ -291,7 +291,7 @@ If you don't want to use Gradle or Maven dependency management you can also down
 4. Configure your development tools to use the .aar/.jar file.
 5. In Android Studio, create a new module via `File > New > New Module`
 6. Select **Import .JAR/.AAR Package** and click **Next**.
-7. In the next menu select the .aar/.jar file you just copied to the libs folder. You can rename the module to whatever you want, but we in general recommend leaving it as is. If you don't rename the module, it will match the name of the .aar/.jar file, in this case **HockeySDK-4.0.0-alpha.3**. This way you'll quickly know which version of the SDK you are using in the future.
+7. In the next menu select the .aar/.jar file you just copied to the libs folder. You can rename the module to whatever you want, but we in general recommend leaving it as is. If you don't rename the module, it will match the name of the .aar/.jar file, in this case **HockeySDK-4.0.0-beta.1**. This way you'll quickly know which version of the SDK you are using in the future.
 8. Make sure Android Studio added the necessary code to integrate the HockeySDK:
 
 Head over to your app's `build.gradle` to verify the dependency was added correctly. It should look like this:
@@ -301,19 +301,19 @@ dependencies {
 	//your other dependencies
 	//...
 	
-    compile project(':HockeySDK-4.0.0-alpha.3')
+    compile project(':HockeySDK-4.0.0-beta.1')
 }
 ```
 Next, make sure your `settings.gradle` contains the new module:
 
 ```groovy
-include ':app', ':HockeySDK-4.0.0-alpha.3'
+include ':app', ':HockeySDK-4.0.0-beta.1'
 ```
 
 Finally, check the `build.gradle` of the newly added module:
 ```groovy
 configurations.maybeCreate("default")
-artifacts.add("default", file('HockeySDK-4.0.0-alpha.3.aar'))
+artifacts.add("default", file('HockeySDK-4.0.0-beta.1.aar'))
 ```
 
 Once you have verified that everything necessary has been added, proceed with [SDK integration](#integrate-sdk).
@@ -456,7 +456,7 @@ However, if you provide a custom user interface fragment for the update distribu
 <a id="documentation"></a>
 ## 5. Documentation
 
-Our documentation can be found on [HockeyApp](http://hockeyapp.net/help/sdk/android/4.0.0-alpha.3/index.html).
+Our documentation can be found on [HockeyApp](http://hockeyapp.net/help/sdk/android/4.0.0-beta.1/index.html).
 
 <a id="troubleshooting"></a>
 ## 6.Troubleshooting
