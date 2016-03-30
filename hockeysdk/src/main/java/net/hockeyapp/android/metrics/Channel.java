@@ -14,28 +14,34 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * <h3>Description</h3>
  * <p/>
  * Items get queued before they are persisted and sent out as a batch to save battery. This class
- * managed the queue, and forwards the batch to the persistence layer once the max batch count has
- * been reached.
+ * manages the queue, and forwards the batch to the persistence layer once the max batch count or
+ * batch interval time limit has been reached.
  **/
 class Channel {
 
     private static final String TAG = "HockeyApp-Metrics";
 
     /**
-     * Synchronization LOCK
+     * Synchronization lock.
      */
     private static final Object LOCK = new Object();
     /**
-     * Number of queue items which will trigger a flush (testing).
+     * Number of queue items which will trigger synchronization with the persistence layer.
      */
-    protected static int mMaxBatchCount = 1;
+    protected static int mMaxBatchCount = 50;
     /**
-     * The linked queue for this queue.
+     * Maximum time interval in milliseconds after which a synchronize will be triggered, regardless of queue size.
+     */
+    protected static int mMaxBatchInterval = 15 * 1000;
+    /**
+     * The backing store queue for the channel.
      */
     protected final List<String> mQueue;
     /**
@@ -43,23 +49,32 @@ class Channel {
      */
     protected final TelemetryContext mTelemetryContext;
     /**
-     * Persistence used for storing telemetry items before they get sent out.
+     * Persistence used for storing telemetry items before they get sent.
      */
     private final Persistence mPersistence;
+    /**
+     * Timer to run scheduled tasks on.
+     */
+    private final Timer mTimer;
+    /**
+     * Task to be scheduled for synchronizing at a certain max interval.
+     */
+    private SynchronizeChannelTask mSynchronizeTask;
 
     /**
-     * Instantiates a new INSTANCE of Channel
+     * Creates and initializes a new instance.
      */
     public Channel(TelemetryContext telemetryContext, Persistence persistence) {
         mTelemetryContext = telemetryContext;
         mQueue = new LinkedList<>();
         mPersistence = persistence;
+        mTimer = new Timer("HockeyApp User Metrics Sender Queue", true);
     }
 
     /**
-     * Adds an item to the sender queue
+     * Adds an item to the channel queue.
      *
-     * @param serializedItem a serialized telemetry item to enqueue
+     * @param serializedItem A serialized telemetry item to enqueue.
      */
     protected void enqueue(String serializedItem) {
 
@@ -70,6 +85,8 @@ class Channel {
             if (mQueue.add(serializedItem)) {
                 if ((mQueue.size() >= mMaxBatchCount)) {
                     synchronize();
+                } else if (mQueue.size() == 1) {
+                    scheduleSynchronizeTask();
                 }
             } else {
                 HockeyLog.verbose(TAG, "Unable to add item to queue");
@@ -78,9 +95,13 @@ class Channel {
     }
 
     /**
-     * Persist all pending items.
+     * Synchronize all pending telemetry items with persistence.
      */
     protected void synchronize() {
+        if (mSynchronizeTask != null) {
+            mSynchronizeTask.cancel();
+        }
+
         String[] data;
         if (!mQueue.isEmpty()) {
             data = new String[mQueue.size()];
@@ -94,10 +115,10 @@ class Channel {
     }
 
     /**
-     * Create an envelope with the given object as its base data
+     * Create a telemetry envelope with the given object as its base data.
      *
-     * @param data The telemetry we want to wrap inside an Envelope and send to the server
-     * @return the envelope that includes the telemetry data
+     * @param data The telemetry we want to wrap inside an Envelope and send to the server.
+     * @return The envelope that includes the telemetry data.
      */
     protected Envelope createEnvelope(Data<Domain> data) {
         Envelope envelope = new Envelope();
@@ -120,10 +141,15 @@ class Channel {
         return envelope;
     }
 
+    protected void scheduleSynchronizeTask() {
+        mSynchronizeTask = new SynchronizeChannelTask();
+        mTimer.schedule(mSynchronizeTask, mMaxBatchInterval);
+    }
+
     /**
-     * Records the passed in data.
+     * Enqueue data in the channel queue.
      *
-     * @param data the base object to enqueue
+     * @param data The base data object to enqueue.
      */
     @SuppressWarnings("unchecked")
     public void enqueueData(Base data) {
@@ -132,7 +158,7 @@ class Channel {
             try {
                 envelope = createEnvelope((Data<Domain>) data);
             } catch (ClassCastException e) {
-                HockeyLog.debug(TAG, "Telemetry not enqueued, could not create Envelope, must be of type ITelemetry");
+                HockeyLog.debug(TAG, "Telemetry not enqueued, could not create envelope, must be of type ITelemetry");
             }
 
             if (envelope != null) {
@@ -147,9 +173,9 @@ class Channel {
     }
 
     /**
-     * Converts an envelope to a JSON string.
+     * Serializes an envelope to a JSON string according to Common Schema.
      *
-     * @param envelope the envelope object to record
+     * @param envelope The envelope object to serialize.
      */
     protected String serializeEnvelope(Envelope envelope) {
         try {
@@ -163,6 +189,20 @@ class Channel {
         } catch (IOException e) {
             HockeyLog.debug(TAG, "Failed to save data with exception: " + e.toString());
             return null;
+        }
+    }
+
+    /**
+     * Task to fire off after batch time interval has passed.
+     */
+    private class SynchronizeChannelTask extends TimerTask {
+
+        public SynchronizeChannelTask() {
+        }
+
+        @Override
+        public void run() {
+            synchronize();
         }
     }
 }

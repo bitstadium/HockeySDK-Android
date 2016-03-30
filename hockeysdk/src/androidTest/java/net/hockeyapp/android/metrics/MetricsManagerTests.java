@@ -5,13 +5,19 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.InstrumentationTestCase;
 
+import net.hockeyapp.android.util.DummyExecutor;
+import net.hockeyapp.android.utils.AsyncTaskUtils;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.concurrent.Executor;
+
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 @RunWith(AndroidJUnit4.class)
 public class MetricsManagerTests extends InstrumentationTestCase {
@@ -54,6 +60,23 @@ public class MetricsManagerTests extends InstrumentationTestCase {
                 mockSender, mockPersistence, mockChannel);
         assertNotNull(MetricsManager.getSender());
         assertNotNull(MetricsManager.getChannel());
+    }
+
+    @Test
+    public void disableUserMetricsWorks() {
+        Executor dummyExecutor = mock(DummyExecutor.class);
+        AsyncTaskUtils.setCustomExecutor(dummyExecutor);
+
+        MetricsManager.disableUserMetrics();
+
+        assertFalse(MetricsManager.isUserMetricsEnabled());
+        assertFalse(MetricsManager.sessionTrackingEnabled());
+
+        verifyNoMoreInteractions(dummyExecutor);
+
+        MetricsManager.trackEvent("Test event");
+
+        AsyncTaskUtils.setCustomExecutor(null);
     }
 
 }

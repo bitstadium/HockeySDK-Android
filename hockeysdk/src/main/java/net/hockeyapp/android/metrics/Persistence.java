@@ -14,24 +14,31 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.UUID;
 
+/**
+ * <h3>Description</h3>
+ * <p/>
+ * Persistence layer to save and manage telemetry data on disk before sending.
+ * Telemetry data is saved in batches which make up one file. There is a maximum total number
+ * of telemetry files kept by the persistence, in order to not exceed disk storage limiations.
+ * If too many files are kept, the persistence will reject further persistence calls, but will
+ * not remove older telemetry files until they are sent.
+ */
 class Persistence {
 
     /**
-     * The tag for logging
+     * The tag for logging.
      */
     private static final String TAG = "HA-MetricsPersistence";
-
     /**
-     * Synchronization LOCK for setting static context.
+     * Synchronization lock.
      */
     private static final Object LOCK = new Object();
-
     /**
      * Path for storing telemetry data files.
      */
     private static final String BIT_TELEMETRY_DIRECTORY = "/net.hockeyapp.android/telemetry/";
     /**
-     * Maximum numbers of telemetry files on disk.
+     * Maximum number of telemetry files to allow on disk.
      */
     private static final Integer MAX_FILE_COUNT = 50;
     /**
@@ -39,7 +46,7 @@ class Persistence {
      */
     protected final File mTelemetryDirectory;
     /**
-     * A weak reference to the app context
+     * A weak reference to the app context.
      */
     private final WeakReference<Context> mWeakContext;
     /**
@@ -47,15 +54,17 @@ class Persistence {
      */
     protected WeakReference<Sender> mWeakSender;
     /**
-     * List with paths of telemetry files which are currently used by the sender.
+     * List with paths of telemetry files which are currently being used by the sender for transmission.
      */
+    // TODO This looks like a violation of separation of concerns. Look into moving this to the sender.
     protected ArrayList<File> mServedFiles;
 
     /**
-     * Restrict access to the default constructor
+     * Creates and initializes a new instance.
      *
-     * @param context            android Context object
-     * @param telemetryDirectory the directory where files should be saved
+     * @param context               Android Context object.
+     * @param telemetryDirectory    The directory where files should be saved.
+     * @param sender                Sender instance which will take care of telemetry transmission.
      */
     protected Persistence(Context context, File telemetryDirectory, Sender sender) {
         mWeakContext = new WeakReference<>(context);
@@ -66,9 +75,10 @@ class Persistence {
     }
 
     /**
-     * Restrict access to the default constructor
+     * Creates and initializes a new instance.
      *
-     * @param context android Context object
+     * @param context   Android Context object.
+     * @param sender    Sender instance which will take care of telemetry transmission.
      */
     protected Persistence(Context context, Sender sender) {
         this(context, new File(context.getFilesDir().getAbsolutePath() + BIT_TELEMETRY_DIRECTORY), null);
@@ -76,9 +86,11 @@ class Persistence {
     }
 
     /**
-     * Serializes a IJsonSerializable[] and calls:
+     * Persists serialized telemetry data to disk. Data points are joined by newlines, forming
+     * line delimited JSON streaming data. Triggers sending of the persisted data if writing
+     * was successful.
      *
-     * @param data the data to save to disk
+     * @param data The data to save to disk.
      * @see Persistence#writeToDisk(String)
      */
     protected void persist(String[] data) {
@@ -87,7 +99,7 @@ class Persistence {
             getSender().triggerSending();
         } else {
             StringBuilder buffer = new StringBuilder();
-            Boolean isSuccess;
+            boolean isSuccess;
             for (String aData : data) {
                 if (buffer.length() > 0) {
                     buffer.append('\n');
@@ -104,17 +116,19 @@ class Persistence {
     }
 
     /**
-     * Saves a string to disk.
+     * Saves a string of serialized telemetry data objects to disk.
+     * It will create a random UUID file in the storage directory
+     * and save the data to this file.
      *
-     * @param data the string to save
-     * @return true if the operation was successful, false otherwise
+     * @param data The complete data string to save.
+     * @return True if the operation was successful, false otherwise.
      */
     protected boolean writeToDisk(String data) {
         String uuid = UUID.randomUUID().toString();
         Boolean isSuccess = false;
         FileOutputStream outputStream = null;
         try {
-            synchronized (this.LOCK) {
+            synchronized (LOCK) {
                 File filesDir = new File(mTelemetryDirectory + "/" + uuid);
                 outputStream = new FileOutputStream(filesDir, true);
                 outputStream.write(data.getBytes());
@@ -136,17 +150,17 @@ class Persistence {
     }
 
     /**
-     * Retrieves the data from a given path.
+     * Retrieves string data from a given path.
      *
-     * @param file reference to a file on disk
-     * @return the next item from disk or empty string if anything goes wrong
+     * @param file Reference to a file on disk.
+     * @return The next item from disk, or empty string if anything goes wrong.
      */
     protected String load(File file) {
         StringBuilder buffer = new StringBuilder();
         if (file != null) {
             BufferedReader reader = null;
             try {
-                synchronized (this.LOCK) {
+                synchronized (LOCK) {
                     FileInputStream inputStream = new FileInputStream(file);
                     InputStreamReader streamReader = new InputStreamReader(inputStream);
                     reader = new BufferedReader(streamReader);
@@ -175,10 +189,22 @@ class Persistence {
     }
 
     /**
-     * @return reference to the next available file, null if no file is available
+     * Checks, if there are telemetry files available for sending.
+     *
+     * @return True if files are available, false otherwise.
+     */
+    protected boolean hasFilesAvailable() {
+        return nextAvailableFileInDirectory() != null;
+    }
+
+    /**
+     * Gets the next file with telemetry data to transmit.
+     *
+     * @return Reference to the next available file, null if no file is available.
      */
     protected File nextAvailableFileInDirectory() {
-        synchronized (this.LOCK) {
+        // TODO Separation of concerns. The persistence should provide all files, the sender would pick the right one.
+        synchronized (LOCK) {
             if (mTelemetryDirectory != null) {
                 File[] files = mTelemetryDirectory.listFiles();
                 File file;
@@ -206,13 +232,13 @@ class Persistence {
     }
 
     /**
-     * delete a file from disk and remove it from the list of served files if deletion was successful
+     * Deletes a file from disk and removes it from the list of served files, if deletion was successful.
      *
-     * @param file reference to the file we want to delete
+     * @param file Reference to the file to delete.
      */
     protected void deleteFile(File file) {
         if (file != null) {
-            synchronized (this.LOCK) {
+            synchronized (LOCK) {
                 boolean deletedFile = file.delete();
                 if (!deletedFile) {
                     Log.w(TAG, "Error deleting telemetry file " + file.toString());
@@ -227,12 +253,13 @@ class Persistence {
     }
 
     /**
-     * Make a file available to be served again
+     * Remove a file from the list of served files. Remove files from the served list
+     * that should be made available so it can be sent again later.
      *
-     * @param file reference to the file that should be made available so it can be sent again later
+     * @param file Reference to the file to remove from the list.
      */
     protected void makeAvailable(File file) {
-        synchronized (this.LOCK) {
+        synchronized (LOCK) {
             if (file != null) {
                 mServedFiles.remove(file);
             }
@@ -240,10 +267,12 @@ class Persistence {
     }
 
     /**
-     * Check if we haven't reached MAX_FILE_COUNT yet
+     * Checks whether there is a slot left for a telemetry file.
+     * @return True if there is still space for another telemetry file.
      */
-    protected Boolean isFreeSpaceAvailable() {
-        synchronized (this.LOCK) {
+    protected boolean isFreeSpaceAvailable() {
+        // TODO Check for available disk space as well.
+        synchronized (LOCK) {
             Context context = getContext();
             if ((context.getFilesDir()) != null) {
                 File filesDir = context.getFilesDir();
@@ -258,7 +287,7 @@ class Persistence {
     }
 
     /**
-     * Create local folders telemetry files if needed.
+     * Create directory structure for telemetry data.
      */
     protected void createDirectoriesIfNecessary() {
         String successMessage = "Successfully created directory";
@@ -273,9 +302,9 @@ class Persistence {
     }
 
     /**
-     * Retrieves the weak context reference.
+     * Retrieves the context from the weak reference.
      *
-     * @return the context object for this instance
+     * @return The context object for this instance.
      */
     private Context getContext() {
         Context context = null;
@@ -286,6 +315,11 @@ class Persistence {
         return context;
     }
 
+    /**
+     * Retrieves the sender from the weak reference.
+     *
+     * @return The sender object for this instance.
+     */
     protected Sender getSender() {
         Sender sender = null;
         if (mWeakSender != null) {
@@ -295,6 +329,11 @@ class Persistence {
         return sender;
     }
 
+    /**
+     * Set the sender for this instance. Stores a weak reference to the sender.
+     *
+     * @param sender The sender to store for this instance.
+     */
     protected void setSender(Sender sender) {
         this.mWeakSender = new WeakReference<>(sender);
     }
