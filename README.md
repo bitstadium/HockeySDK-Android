@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/bitstadium/HockeySDK-Android.svg?branch=develop)](https://travis-ci.org/bitstadium/HockeySDK-Android)
 
-## Preseason - Version 4.0.0-beta.1
+## Version 4.0.0-beta.1
 =======
 
 ## Introduction
@@ -76,14 +76,6 @@ Add the SDK to your app module's dependencies in Android Studio by adding the fo
 
 ```groovy
 compile 'net.hockeyapp.android:HockeySDK:4.0.0-beta.1'
-```
-
-also make sure your repository configuration contains our preseason repository:
-
-```java
-repositories {
-  maven { url 'http://download.hockeyapp.net/preseason/sdk/android' }
-}
 ```
 
 <a id="integrate-sdk"></a>
