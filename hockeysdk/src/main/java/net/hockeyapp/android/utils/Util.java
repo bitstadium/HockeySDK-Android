@@ -14,7 +14,6 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
-
 import net.hockeyapp.android.R;
 
 import java.io.UnsupportedEncodingException;
@@ -25,11 +24,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -339,11 +334,10 @@ public class Util {
     }
 
     /**
-     * Get a SHA-256 hash of the input string if the algorithm is available. If the algorithm is
-     * unavailable, return empty string.
-     *
      * @param input the string to hash.
      * @return a SHA-256 hash of the input or the empty string.
+     * @deprecated Get a SHA-256 hash of the input string if the algorithm is available. If the algorithm is
+     * unavailable, return empty string.
      */
     public static String tryHashStringSha256(String input) {
         String salt = "oRq=MAHHHC~6CCe|JfEqRZ+gc0ESI||g2Jlb^PYjc5UYN2P 27z_+21xxd2n";
@@ -363,8 +357,7 @@ public class Util {
             }
 
             return new String(hexChars);
-        }
-        catch (NoSuchAlgorithmException e) {
+        } catch (NoSuchAlgorithmException e) {
             // All android devices should support SHA256, but if unavailable return ""
             return "";
         }
