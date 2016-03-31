@@ -2,14 +2,9 @@ package net.hockeyapp.android.metrics;
 
 import android.content.Context;
 import android.text.TextUtils;
-import android.util.Log;
+import net.hockeyapp.android.utils.HockeyLog;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -83,7 +78,7 @@ class Persistence {
      */
     protected void persist(String[] data) {
         if (!this.isFreeSpaceAvailable()) {
-            Log.w(TAG, "Failed to persist file: Too many files on disk.");
+            HockeyLog.warn(TAG, "Failed to persist file: Too many files on disk.");
             getSender().triggerSending();
         } else {
             StringBuilder buffer = new StringBuilder();
@@ -118,11 +113,11 @@ class Persistence {
                 File filesDir = new File(mTelemetryDirectory + "/" + uuid);
                 outputStream = new FileOutputStream(filesDir, true);
                 outputStream.write(data.getBytes());
-                Log.w(TAG, "Saving data to: " + filesDir.toString());
+                HockeyLog.warn(TAG, "Saving data to: " + filesDir.toString());
             }
             isSuccess = true;
         } catch (Exception e) {
-            Log.w(TAG, "Failed to save data with exception: " + e.toString());
+            HockeyLog.warn(TAG, "Failed to save data with exception: " + e.toString());
         } finally {
             if (outputStream != null) {
                 try {
@@ -156,7 +151,7 @@ class Persistence {
                     }
                 }
             } catch (Exception e) {
-                Log.w(TAG, "Error reading telemetry data from file with exception message "
+                HockeyLog.warn(TAG, "Error reading telemetry data from file with exception message "
                         + e.getMessage());
             } finally {
 
@@ -165,7 +160,7 @@ class Persistence {
                         reader.close();
                     }
                 } catch (IOException e) {
-                    Log.w(TAG, "Error closing stream."
+                    HockeyLog.warn(TAG, "Error closing stream."
                             + e.getMessage());
                 }
             }
@@ -188,17 +183,17 @@ class Persistence {
 
                         file = files[i];
                         if (!mServedFiles.contains(file)) {
-                            Log.i(TAG, "The directory " + file.toString() + " (ADDING TO SERVED AND RETURN)");
+                            HockeyLog.info(TAG, "The directory " + file.toString() + " (ADDING TO SERVED AND RETURN)");
                             mServedFiles.add(file);
                             return file;
                         } else {
-                            Log.i(TAG, "The directory " + file.toString() + " (WAS ALREADY SERVED)");
+                            HockeyLog.info(TAG, "The directory " + file.toString() + " (WAS ALREADY SERVED)");
                         }
                     }
                 }
             }
             if (mTelemetryDirectory != null) {
-                Log.i(TAG, "The directory " + mTelemetryDirectory.toString() + " did not contain any " +
+                HockeyLog.info(TAG, "The directory " + mTelemetryDirectory.toString() + " did not contain any " +
                         "unserved files");
             }
             return null;
@@ -215,14 +210,14 @@ class Persistence {
             synchronized (this.LOCK) {
                 boolean deletedFile = file.delete();
                 if (!deletedFile) {
-                    Log.w(TAG, "Error deleting telemetry file " + file.toString());
+                    HockeyLog.warn(TAG, "Error deleting telemetry file " + file.toString());
                 } else {
-                    Log.w(TAG, "Successfully deleted telemetry file at: " + file.toString());
+                    HockeyLog.warn(TAG, "Successfully deleted telemetry file at: " + file.toString());
                     mServedFiles.remove(file);
                 }
             }
         } else {
-            Log.w(TAG, "Couldn't delete file, the reference to the file was null");
+            HockeyLog.warn(TAG, "Couldn't delete file, the reference to the file was null");
         }
     }
 
@@ -265,9 +260,9 @@ class Persistence {
         String errorMessage = "Error creating directory";
         if (mTelemetryDirectory != null && !mTelemetryDirectory.exists()) {
             if (mTelemetryDirectory.mkdirs()) {
-                Log.i(TAG, successMessage);
+                HockeyLog.info(TAG, successMessage);
             } else {
-                Log.i(TAG, errorMessage);
+                HockeyLog.info(TAG, errorMessage);
             }
         }
     }
