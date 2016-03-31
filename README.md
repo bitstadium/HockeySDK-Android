@@ -1,6 +1,7 @@
 [![Build Status](https://travis-ci.org/bitstadium/HockeySDK-Android.svg?branch=develop)](https://travis-ci.org/bitstadium/HockeySDK-Android)
 
-## Version 3.7.2
+## Version 4.0.0-beta.1
+=======
 
 ## Introduction
 
@@ -10,11 +11,15 @@ The following features are currently supported:
 
 1. **Collect crash reports:** If your app crashes, a crash log is written to the device's storage. If the user starts the app again, they will be asked asked to submit the crash report to HockeyApp. This works for both beta and live apps, i.e. those submitted to Google Play or other app stores! Crash logs contain viable information for you to help resolve the issue. Furthermore, you as a developer can add additional information to the report as well.
 
-2. **Update alpha/beta apps:** The app will check with HockeyApp if a new version for your alpha/beta build is available. If yes, it will show a dialog to the user and let him see the release notes, the version history and start the installation process right away. You can even force the installation of certain updates.
+2. **Collect user metrics:** Get nice statistics about how many users you have and how they are using your app. This feature requires a minimum API level of 14 (Android 4.x Icecream Sandwich).
 
-3. **Feedback:** Besides crash reports, collecting feedback from your users from within your app is a great option to help with improving your app. You act and answer feedback directly from the HockeyApp backend.
+3. **Update alpha/beta apps:** The app will check with HockeyApp if a new version for your alpha/beta build is available. If yes, it will show a dialog to the user and let him see the release notes, the version history and start the installation process right away. You can even force the installation of certain updates.
 
 4. **Authentication:** To help you stay in control of closed tester groups you can identify and authenticate users against your registered testers with the HockeyApp backend. The authentication feature supports several ways of authentication.
+
+5. **Feedback:** Besides crash reports, collecting feedback from your users from within your app is a great option to help with improving your app. You act and answer feedback directly from the HockeyApp backend.
+
+6. **Authenticate:** To help you stay in control of closed tester groups you can identify and authenticate users against your registered testers with the HockeyApp backend. The authentication feature supports several ways of authentication.
 
 This document contains the following sections:
 
@@ -24,9 +29,10 @@ This document contains the following sections:
   2. [Get the SDK](#get-sdk)
   3. [Integrate HockeySDK](#integrate-sdk)
   4. [Add crash reporting](#crashreporting)
-  5. [Add update distribution](#updatedistribution)
-  6. [Add in-app feedback](#feedback)
-  7. [Add authentication](#authentication)
+  5. [Add user metrics](#user-metrics)
+  6. [Add Update Distribution](#updatedistribution)
+  7. [Add in-app feedback](#feedback)
+  8. [Add authentication](#authentication)
 3. [Changelog](#changelog)
 4. [Advanced setup](#advancedsetup) 
   1. [Manual library dependency](#manualdependency)
@@ -69,36 +75,21 @@ Please see the "[How to create a new app](http://support.hockeyapp.net/kb/about-
 Add the SDK to your app module's dependencies in Android Studio by adding the following line to your `dependencies { ... }` configuration:
 
 ```groovy
-compile 'net.hockeyapp.android:HockeySDK:3.7.2'
-```
-also make sure your repository configuration contains
-
-```java
-repositories {
-  mavenCentral()
-}
-```
-
-or
-
-```java
-repositories {
-  jcenter()
-}
+compile 'net.hockeyapp.android:HockeySDK:4.0.0-beta.1'
 ```
 
 <a id="integrate-sdk"></a>
 ### 2.3 Integrate HockeySDK
 
-1. Open your module's build.gradle file.
+1. Open your module's `build.gradle` file.
 2. Add the following manifest placeholder to your configuration (typically the `defaultConfig`):
   
   ```groovy
   manifestPlaceholders = [HOCKEYAPP_APP_ID: "$APP_ID"]
   ```
 
-3. The param $APP_ID must be replaced by your HockeyApp App Identifier. The app identifier can be found on the app's page in the "Overview" section of the HockeyApp backend.
-4. Save your build.gradle file and make sure to trigger a Gradle build sync.
+3. The param `$APP_ID` must be replaced by your HockeyApp App Identifier. The app identifier can be found on the app's page in the "Overview" section of the HockeyApp backend.
+4. Save your `build.gradle` file and make sure to trigger a Gradle sync.
 5. Open your AndroidManifest.xml file and add a `meta-data`-tag for the HockeySDK.
 	
   ```xml
@@ -139,8 +130,22 @@ public class YourActivity extends Activity {
 
 When the activity is resumed, the crash manager is triggered and checks if a new crash was created before. If yes, it presents a dialog to ask the user whether they want to send the crash log to HockeyApp. On app launch the crash manager registers a new exception handler to recognize app crashes.
 
+<a id="user-metrics"></a>
+### 2.5 Add User Metrics
+
+This will add the user metrics feature to your app.
+
+1. Open your app's main activity.
+2. Add the following line to the activity's `onCreate`-callback:
+
+```java
+MetricsManager.register(this, getApplication());
+```
+
+Your app will now send metrics which you can use to count your active and overall usage numbers.
+
 <a id="updatedistribution"></a>
-### 2.5 Add update distribution
+### 2.6 Add update distribution
 This will add the in-app update mechanism to your app. For more configuration options of the update manager module see the section about [advanced setup](#advancedsetup).
 
 1. Open the activity where you want to inform the user about eventual updates. We'll assume you want to do this on startup of your main activity.
@@ -187,7 +192,7 @@ public class YourActivity extends Activity {
 When the activity is created, the update manager checks for new updates in the background. If it finds a new update, an alert dialog is shown and if the user presses Show, they will be taken to the update activity. The reason to only do this once upon creation is that the update check causes network traffic and therefore potential costs for your users.
 
 <a id="feedback"></a>
-### 2.6 Add in-app feedback
+### 2.7 Add in-app feedback
 This will add the ability for your users to provide feedback from right inside your app. Detailed configuration options are in [advanced setup](#advancedsetup).
 
 1. You'll typically only want to show the feedback interface upon user interaction, for this example we assume you have a button `feedback_button` in your view for this.
@@ -221,7 +226,7 @@ public class YourActivity extends Activitiy {
 When the user taps on the feedback button it will launch the feedback interface of the HockeySDK, where the user can create a new feedback discussion, add screenshots or other files for reference, and act on their previous feedback conversations.
 
 <a id="authentication"></a>
-### 2.7 Add authentication
+### 2.8 Add authentication
 You can force authentication of your users through the `LoginManager` class. This will show a login screen to users if they are not fully authenticated to protect your app.
 
 1. Retrieve your app secret from the HockeyApp backend. You can find this on the app details page in the backend right next to the "App ID" value. Click "Show" to access it. 
@@ -279,7 +284,7 @@ If you don't want to use Gradle or Maven dependency management you can also down
 4. Configure your development tools to use the .aar/.jar file.
 5. In Android Studio, create a new module via `File > New > New Module`
 6. Select **Import .JAR/.AAR Package** and click **Next**.
-7. In the next menu select the .aar/.jar file you just copied to the libs folder. You can rename the module to whatever you want, but we in general recommend leaving it as is. If you don't rename the module, it will match the name of the .aar/.jar file, in this case **HockeySDK-3.7.2**. This way you'll quickly know which version of the SDK you are using in the future.
+7. In the next menu select the .aar/.jar file you just copied to the libs folder. You can rename the module to whatever you want, but we in general recommend leaving it as is. If you don't rename the module, it will match the name of the .aar/.jar file, in this case **HockeySDK-4.0.0-beta.1**. This way you'll quickly know which version of the SDK you are using in the future.
 8. Make sure Android Studio added the necessary code to integrate the HockeySDK:
 
 Head over to your app's `build.gradle` to verify the dependency was added correctly. It should look like this:
@@ -289,19 +294,19 @@ dependencies {
 	//your other dependencies
 	//...
 	
-    compile project(':HockeySDK-3.7.2')
+    compile project(':HockeySDK-4.0.0-beta.1')
 }
 ```
 Next, make sure your `settings.gradle` contains the new module:
 
 ```groovy
-include ':app', ':HockeySDK-3.7.2'
+include ':app', ':HockeySDK-4.0.0-beta.1'
 ```
 
 Finally, check the `build.gradle` of the newly added module:
 ```groovy
 configurations.maybeCreate("default")
-artifacts.add("default", file('HockeySDK-3.7.2.aar'))
+artifacts.add("default", file('HockeySDK-4.0.0-beta.1.aar'))
 ```
 
 Once you have verified that everything necessary has been added, proceed with [SDK integration](#integrate-sdk).
@@ -444,7 +449,7 @@ However, if you provide a custom user interface fragment for the update distribu
 <a id="documentation"></a>
 ## 5. Documentation
 
-Our documentation can be found on [HockeyApp](http://hockeyapp.net/help/sdk/android/3.7.2/index.html).
+Our documentation can be found on [HockeyApp](http://hockeyapp.net/help/sdk/android/4.0.0-beta.1/index.html).
 
 <a id="troubleshooting"></a>
 ## 6.Troubleshooting

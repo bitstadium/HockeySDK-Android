@@ -21,8 +21,14 @@ import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 import java.net.URLEncoder;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -58,11 +64,11 @@ import java.util.regex.Pattern;
  * @author Bogdan Nistor
  */
 public class Util {
-    public static final String PREF_FEEDBACK_TOKEN = "net.hockeyapp.android.prefs_feedback_token";
-    public static final String PREF_KEY_FEEDBACK_TOKEN = "net.hockeyapp.android.prefs_key_feedback_token";
+    public static final String PREFS_FEEDBACK_TOKEN = "net.hockeyapp.android.prefs_feedback_token";
+    public static final String PREFS_KEY_FEEDBACK_TOKEN = "net.hockeyapp.android.prefs_key_feedback_token";
 
-    public static final String PREF_NAME_EMAIL_SUBJECT = "net.hockeyapp.android.prefs_name_email";
-    public static final String PREF_KEY_NAME_EMAIL_SUBJECT = "net.hockeyapp.android.prefs_key_name_email";
+    public static final String PREFS_NAME_EMAIL_SUBJECT = "net.hockeyapp.android.prefs_name_email";
+    public static final String PREFS_KEY_NAME_EMAIL_SUBJECT = "net.hockeyapp.android.prefs_key_name_email";
     public static final String APP_IDENTIFIER_PATTERN = "[0-9a-f]+";
     public static final int APP_IDENTIFIER_LENGTH = 32;
     public static final String APP_IDENTIFIER_KEY = "net.hockeyapp.android.appIdentifier";
@@ -70,6 +76,13 @@ public class Util {
     public static final String LOG_IDENTIFIER = "HockeyApp";
 
     private static final Pattern appIdentifierPattern = Pattern.compile(APP_IDENTIFIER_PATTERN, Pattern.CASE_INSENSITIVE);
+
+    private static final String SDK_VERSION_KEY = "net.hockeyapp.android.sdkVersion";
+
+    private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
+
+    private static final DateFormat DATE_FORMAT =
+            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.ROOT);
 
     /**
      * Returns the given param URL-encoded.
@@ -288,5 +301,104 @@ public class Util {
         String appTitle = (applicationInfo != null ? (String) packageManager.getApplicationLabel(applicationInfo)
                 : context.getString(R.string.hockeyapp_crash_dialog_app_name_fallback));
         return appTitle;
+    }
+
+    public static String getSdkVersionFromManifest(Context context) {
+        return getManifestString(context, SDK_VERSION_KEY);
+    }
+
+    /**
+     * Sanitizes an app identifier and adds dashes to it so that it conforms to the instrumentation
+     * key format of Application Insights.
+     *
+     * @param appIdentifier the app identifier to sanitize and convert
+     * @return the converted appIdentifier
+     * @throws java.lang.IllegalArgumentException if the app identifier can't be converted because
+     *                                            of unrecoverable input character errors
+     */
+    public static String convertAppIdentifierToGuid(String appIdentifier) throws
+            IllegalArgumentException {
+        String sanitizedAppIdentifier = null;
+        String guid = null;
+
+        try {
+            sanitizedAppIdentifier = sanitizeAppIdentifier(appIdentifier);
+        } catch (IllegalArgumentException e) {
+            throw e;
+        }
+
+        if (sanitizedAppIdentifier != null) {
+            StringBuffer idBuf = new StringBuffer(sanitizedAppIdentifier);
+            idBuf.insert(20, '-');
+            idBuf.insert(16, '-');
+            idBuf.insert(12, '-');
+            idBuf.insert(8, '-');
+            guid = idBuf.toString();
+        }
+        return guid;
+    }
+
+    /**
+     * Get a SHA-256 hash of the input string if the algorithm is available. If the algorithm is
+     * unavailable, return empty string.
+     *
+     * @param input the string to hash.
+     * @return a SHA-256 hash of the input or the empty string.
+     */
+    public static String tryHashStringSha256(String input) {
+        String salt = "oRq=MAHHHC~6CCe|JfEqRZ+gc0ESI||g2Jlb^PYjc5UYN2P 27z_+21xxd2n";
+        try {
+            // Get a Sha256 digest
+            MessageDigest hash = MessageDigest.getInstance("SHA-256");
+            hash.reset();
+            hash.update(input.getBytes());
+            hash.update(salt.getBytes());
+            byte[] hashedBytes = hash.digest();
+
+            char[] hexChars = new char[hashedBytes.length * 2];
+            for (int j = 0; j < hashedBytes.length; j++) {
+                int v = hashedBytes[j] & 0xFF;
+                hexChars[j * 2] = HEX_ARRAY[v >>> 4];
+                hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
+            }
+
+            return new String(hexChars);
+        }
+        catch (NoSuchAlgorithmException e) {
+            // All android devices should support SHA256, but if unavailable return ""
+            return "";
+        }
+    }
+
+    /**
+     * Determines whether the app is running on aan emulator or on a real device.
+     *
+     * @return YES if the app is running on an emulator, NO if it is running on a real device
+     */
+    public static boolean isEmulator() {
+        return Build.BRAND.equalsIgnoreCase("generic");
+    }
+
+    /**
+     * Convert a date object to an ISO 8601 formatted string
+     *
+     * @param date the date object to be formatted
+     * @return an ISO 8601 string representation of the date
+     */
+    public static String dateToISO8601(Date date) {
+        Date localDate = date;
+        if (localDate == null) {
+            localDate = new Date();
+        }
+        return DATE_FORMAT.format(localDate);
+    }
+
+    /**
+     * Determines if Session is possible for the current user or not.
+     *
+     * @return YES if app runs on at least OS 4.0
+     */
+    public static boolean sessionTrackingSupported() {
+        return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH);
     }
 }
