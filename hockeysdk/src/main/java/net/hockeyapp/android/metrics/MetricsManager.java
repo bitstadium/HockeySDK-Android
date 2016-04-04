@@ -248,20 +248,6 @@ public class MetricsManager {
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-    private void registerTelemetryLifecycleCallbacks() {
-        if (mTelemetryLifecycleCallbacks == null) {
-            mTelemetryLifecycleCallbacks = new TelemetryLifecycleCallbacks();
-        }
-        getApplication().registerActivityLifecycleCallbacks(mTelemetryLifecycleCallbacks);
-    }
-
-    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-    private void unregisterTelemetryLifecycleCallbacks() {
-        getApplication().unregisterActivityLifecycleCallbacks(mTelemetryLifecycleCallbacks);
-        mTelemetryLifecycleCallbacks = null;
-    }
-
     /**
      * Set the server url if you want metrics to be sent to a custom server
      *
@@ -316,6 +302,20 @@ public class MetricsManager {
 
     protected static MetricsManager getInstance() {
         return instance;
+    }
+
+    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+    private void registerTelemetryLifecycleCallbacks() {
+        if (mTelemetryLifecycleCallbacks == null) {
+            mTelemetryLifecycleCallbacks = new TelemetryLifecycleCallbacks();
+        }
+        getApplication().registerActivityLifecycleCallbacks(mTelemetryLifecycleCallbacks);
+    }
+
+    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+    private void unregisterTelemetryLifecycleCallbacks() {
+        getApplication().unregisterActivityLifecycleCallbacks(mTelemetryLifecycleCallbacks);
+        mTelemetryLifecycleCallbacks = null;
     }
 
     /**
