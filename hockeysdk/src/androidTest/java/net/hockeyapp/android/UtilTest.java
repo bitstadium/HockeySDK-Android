@@ -2,7 +2,7 @@ package net.hockeyapp.android;
 
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
-import android.test.ActivityInstrumentationTestCase2;
+import android.test.InstrumentationTestCase;
 
 import junit.framework.Assert;
 
@@ -13,10 +13,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(AndroidJUnit4.class)
-public class UtilTest extends ActivityInstrumentationTestCase2<UpdateActivity> {
-    public UtilTest() {
-        super(UpdateActivity.class);
-    }
+public class UtilTest extends InstrumentationTestCase {
 
     @Before
     public void setUp() throws Exception {

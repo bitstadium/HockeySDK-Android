@@ -3,18 +3,16 @@ package net.hockeyapp.android.util;
 
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
-import android.test.ActivityInstrumentationTestCase2;
+import android.test.InstrumentationTestCase;
+
 import net.hockeyapp.android.Constants;
-import net.hockeyapp.android.UpdateActivity;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(AndroidJUnit4.class)
-public class ConstantsTest extends ActivityInstrumentationTestCase2<UpdateActivity>{
-    public ConstantsTest() {
-        super(UpdateActivity.class);
-    }
+public class ConstantsTest extends InstrumentationTestCase {
 
     @Before
     public void setUp() throws Exception {
@@ -25,7 +23,7 @@ public class ConstantsTest extends ActivityInstrumentationTestCase2<UpdateActivi
 
     @Test
     public void testLoadingConstantsWorks() {
-        Constants.loadFromContext(getActivity());
+        Constants.loadFromContext(getInstrumentation().getContext());
         assertNotNull(Constants.BASE_URL);
         assertEquals("https://sdk.hockeyapp.net/", Constants.BASE_URL);
         assertNotNull(Constants.SDK_NAME);
@@ -44,7 +42,6 @@ public class ConstantsTest extends ActivityInstrumentationTestCase2<UpdateActivi
 
         //TODO add tests for other constants, too.
     }
-
 
 
 }
