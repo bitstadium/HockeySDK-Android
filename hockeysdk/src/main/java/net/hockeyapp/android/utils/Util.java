@@ -334,10 +334,12 @@ public class Util {
     }
 
     /**
-     * @param input the string to hash.
-     * @return a SHA-256 hash of the input or the empty string.
-     * @deprecated Get a SHA-256 hash of the input string if the algorithm is available. If the algorithm is
+     * Get a SHA-256 hash of the input string if the algorithm is available. If the algorithm is
      * unavailable, return empty string.
+     *
+     * @param input The string to hash.
+     * @return A SHA-256 hash of the input or the empty string.
+     * @deprecated Deprecated as of 4.0, not needed anymore.
      */
     public static String tryHashStringSha256(String input) {
         String salt = "oRq=MAHHHC~6CCe|JfEqRZ+gc0ESI||g2Jlb^PYjc5UYN2P 27z_+21xxd2n";
