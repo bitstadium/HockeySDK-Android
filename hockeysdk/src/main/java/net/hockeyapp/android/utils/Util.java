@@ -334,38 +334,6 @@ public class Util {
     }
 
     /**
-     * Get a SHA-256 hash of the input string if the algorithm is available. If the algorithm is
-     * unavailable, return empty string.
-     *
-     * @param input The string to hash.
-     * @return A SHA-256 hash of the input or the empty string.
-     * @deprecated Deprecated as of 4.0, not needed anymore.
-     */
-    public static String tryHashStringSha256(String input) {
-        String salt = "oRq=MAHHHC~6CCe|JfEqRZ+gc0ESI||g2Jlb^PYjc5UYN2P 27z_+21xxd2n";
-        try {
-            // Get a Sha256 digest
-            MessageDigest hash = MessageDigest.getInstance("SHA-256");
-            hash.reset();
-            hash.update(input.getBytes());
-            hash.update(salt.getBytes());
-            byte[] hashedBytes = hash.digest();
-
-            char[] hexChars = new char[hashedBytes.length * 2];
-            for (int j = 0; j < hashedBytes.length; j++) {
-                int v = hashedBytes[j] & 0xFF;
-                hexChars[j * 2] = HEX_ARRAY[v >>> 4];
-                hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
-            }
-
-            return new String(hexChars);
-        } catch (NoSuchAlgorithmException e) {
-            // All android devices should support SHA256, but if unavailable return ""
-            return "";
-        }
-    }
-
-    /**
      * Determines whether the app is running on aan emulator or on a real device.
      *
      * @return YES if the app is running on an emulator, NO if it is running on a real device
