@@ -7,7 +7,6 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 
 import net.hockeyapp.android.Constants;
 import net.hockeyapp.android.metrics.model.Data;
@@ -231,7 +230,7 @@ public class MetricsManager {
      */
     public static void setSessionTrackingDisabled(Boolean disabled) {
         if (instance == null) {
-            Log.w(TAG, "MetricsManager hasn't been registered. No Metrics will be collected!");
+            HockeyLog.warn(TAG, "MetricsManager hasn't been registered. No Metrics will be collected!");
         } else {
             synchronized (LOCK) {
                 if (Util.sessionTrackingSupported()) {
@@ -272,7 +271,7 @@ public class MetricsManager {
         if (sSender != null) {
             sSender.setCustomServerURL(serverURL);
         } else {
-            Log.w(TAG, "HockeyApp couldn't set the custom server url. Please register(...) the MetricsManager before setting the server URL.");
+            HockeyLog.warn(TAG, "HockeyApp couldn't set the custom server url. Please register(...) the MetricsManager before setting the server URL.");
         }
     }
 
