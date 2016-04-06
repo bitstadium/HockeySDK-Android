@@ -3,27 +3,17 @@ package net.hockeyapp.android.objects;
 import net.hockeyapp.android.Constants;
 import net.hockeyapp.android.utils.HockeyLog;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.Reader;
-import java.io.StringWriter;
-import java.io.Writer;
+import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-@Deprecated
 /**
- * This has been deprecated as of HockeySDK 4.0.0-beta.2 use
- * @see net.hockeyapp.android.objects.CrashReport instead.
+ * Model Object that represents a class method.
+ * Includes helper methods to for reading a CrashReport
  */
-public class CrashDetails {
+public class CrashReport {
 
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US);
 
@@ -59,11 +49,11 @@ public class CrashDetails {
 
     private String throwableStackTrace;
 
-    public CrashDetails(String crashIdentifier) {
+    public CrashReport(String crashIdentifier) {
         this.crashIdentifier = crashIdentifier;
     }
 
-    public CrashDetails(String crashIdentifier, Throwable throwable) {
+    public CrashReport(String crashIdentifier, Throwable throwable) {
         this(crashIdentifier);
 
         final Writer stackTraceResult = new StringWriter();
@@ -72,15 +62,16 @@ public class CrashDetails {
         throwableStackTrace = stackTraceResult.toString();
     }
 
-    public static CrashDetails fromFile(File file) throws IOException {
+    public static CrashReport fromFile(File file) throws IOException {
         String crashIdentifier = file.getName().substring(0, file.getName().indexOf(".stacktrace"));
         return fromReader(crashIdentifier, new FileReader(file));
     }
 
-    public static CrashDetails fromReader(String crashIdentifier, Reader in) throws IOException {
+    //TODO move this somewhere else to make sure CrashReport is a stupid POJO without reading/writing logic?
+    public static CrashReport fromReader(String crashIdentifier, Reader in) throws IOException {
         BufferedReader bufferedReader = new BufferedReader(in);
 
-        CrashDetails result = new CrashDetails(crashIdentifier);
+        CrashReport result = new CrashReport(crashIdentifier);
 
         String readLine, headerName, headerValue;
         boolean headersProcessed = false;
