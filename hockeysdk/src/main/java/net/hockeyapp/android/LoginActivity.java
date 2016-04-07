@@ -178,24 +178,7 @@ public class LoginActivity extends Activity {
     }
 
     private void initLoginHandler() {
-        mLoginHandler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                Bundle bundle = msg.getData();
-                boolean success = bundle.getBoolean(LoginTask.BUNDLE_SUCCESS);
-
-                if (success) {
-                    finish();
-
-                    if (LoginManager.listener != null) {
-                        LoginManager.listener.onSuccess();
-                    }
-                } else {
-                    Toast.makeText(LoginActivity.this, "Login failed. Check your credentials.", Toast.LENGTH_LONG)
-                            .show();
-                }
-            }
-        };
+        mLoginHandler = new LoginHandler(this);
     }
 
     private void performAuthentication() {
@@ -250,5 +233,31 @@ public class LoginActivity extends Activity {
             e.printStackTrace();
         }
         return "";
+    }
+
+    private static class LoginHandler extends Handler {
+
+        private final Activity mActivity;
+
+        public LoginHandler(Activity activity) {
+            mActivity = activity;
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            Bundle bundle = msg.getData();
+            boolean success = bundle.getBoolean(LoginTask.BUNDLE_SUCCESS);
+
+            if (success) {
+                mActivity.finish();
+
+                if (LoginManager.listener != null) {
+                    LoginManager.listener.onSuccess();
+                }
+            } else {
+                Toast.makeText(mActivity, "Login failed. Check your credentials.", Toast.LENGTH_LONG)
+                        .show();
+            }
+        }
     }
 }

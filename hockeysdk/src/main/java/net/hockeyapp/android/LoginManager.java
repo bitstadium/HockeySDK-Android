@@ -159,17 +159,7 @@ public class LoginManager {
             LoginManager.mainActivity = activity;
 
             if (LoginManager.validateHandler == null) {
-                LoginManager.validateHandler = new Handler() {
-                    @Override
-                    public void handleMessage(Message msg) {
-                        Bundle bundle = msg.getData();
-                        boolean success = bundle.getBoolean(LoginTask.BUNDLE_SUCCESS);
-
-                        if (!success) {
-                            startLoginActivity(context);
-                        }
-                    }
-                };
+                LoginManager.validateHandler = new LoginHandler(context);
             }
 
             Constants.loadFromContext(context);
@@ -254,5 +244,24 @@ public class LoginManager {
         }
 
         return urlString + "api/3/apps/" + identifier + "/identity/" + suffix;
+    }
+
+    private static class LoginHandler extends Handler {
+
+        private final Context mContext;
+
+        public LoginHandler(Context context) {
+            mContext = context;
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            Bundle bundle = msg.getData();
+            boolean success = bundle.getBoolean(LoginTask.BUNDLE_SUCCESS);
+
+            if (!success) {
+                startLoginActivity(mContext);
+            }
+        }
     }
 }
