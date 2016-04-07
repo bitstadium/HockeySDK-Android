@@ -17,6 +17,7 @@ import net.hockeyapp.android.tasks.LoginTask;
 import net.hockeyapp.android.utils.AsyncTaskUtils;
 import net.hockeyapp.android.utils.Util;
 
+import java.lang.ref.WeakReference;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
@@ -237,25 +238,31 @@ public class LoginActivity extends Activity {
 
     private static class LoginHandler extends Handler {
 
-        private final Activity mActivity;
+        private final WeakReference<Activity> mWeakActivity;
 
         public LoginHandler(Activity activity) {
-            mActivity = activity;
+            mWeakActivity = new WeakReference<>(activity);
         }
 
         @Override
         public void handleMessage(Message msg) {
+
+            final Activity activity = mWeakActivity.get();
+            if (activity == null) {
+                return;
+            }
+
             Bundle bundle = msg.getData();
             boolean success = bundle.getBoolean(LoginTask.BUNDLE_SUCCESS);
 
             if (success) {
-                mActivity.finish();
+                activity.finish();
 
                 if (LoginManager.listener != null) {
                     LoginManager.listener.onSuccess();
                 }
             } else {
-                Toast.makeText(mActivity, "Login failed. Check your credentials.", Toast.LENGTH_LONG)
+                Toast.makeText(activity, "Login failed. Check your credentials.", Toast.LENGTH_LONG)
                         .show();
             }
         }
