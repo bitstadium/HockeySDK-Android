@@ -130,7 +130,12 @@ When the activity is resumed, the crash manager is triggered and checks if a new
 <a id="user-metrics"></a>
 ### 2.5 Add User Metrics
 
-This will add the user metrics feature to your app.
+HockeyApp automatically provides you with nice, intelligible, and informative metrics about how your app is used and by whom.
+
+* **Sessions:** A new session is tracked by the SDK whenever the containing app is restarted (this refers to a 'cold start', i.e. when the app has not already been in memory prior to being launched) or whenever it becomes active again after having been in the background for 20 seconds or more.
+* **Users:** The SDK anonymously tracks the users of your app by creating a random UUID that is then securely stored. The UUID is securely stored in the preferences of the client app.
+
+To integrate User Metrics with your app, perform the following steps:
 
 1. Open your app's main activity.
 2. Add the following line to the activity's `onCreate`-callback:
