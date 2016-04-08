@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/bitstadium/HockeySDK-Android.svg?branch=develop)](https://travis-ci.org/bitstadium/HockeySDK-Android)
+[![Slack Status](https://slack.hockeyapp.net/badge.svg)](https://slack.hockeyapp.net)
 
 ## Version 4.0.0-beta.1
 
@@ -486,4 +487,4 @@ You must sign a [Contributor License Agreement](https://cla.microsoft.com/) befo
 <a id="contact"></a>
 ## 9. Contact
 
-If you have further questions or are running into trouble that cannot be resolved by any of the steps here, feel free to open a GitHub issue here or contact us at [support@hockeyapp.net](mailto:support@hockeyapp.net)
+If you have further questions or are running into trouble that cannot be resolved by any of the steps here, feel free to open a GitHub issue here or contact us at [support@hockeyapp.net](mailto:support@hockeyapp.net) or in our [public Slack channel](https://slack.hockeyapp.net).
