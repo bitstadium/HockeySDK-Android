@@ -1,16 +1,10 @@
 package net.hockeyapp.android;
 
 import android.text.TextUtils;
-
 import net.hockeyapp.android.objects.CrashDetails;
 import net.hockeyapp.android.utils.HockeyLog;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.Writer;
+import java.io.*;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.Date;
 import java.util.UUID;
@@ -93,12 +87,17 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
      * @param listener  Custom CrashManager listener instance.
      */
     public static void saveException(Throwable exception, Thread thread, CrashManagerListener listener) {
+        saveException(exception, thread, null, listener);
+    }
+
+    public static void saveException(Throwable exception, Thread thread, String managedExceptionString , CrashManagerListener listener) {
         final Date now = new Date();
         final Date startDate = new Date(CrashManager.getInitializeTimestamp());
         final Writer result = new StringWriter();
         final PrintWriter printWriter = new PrintWriter(result);
-        BufferedWriter writer = null;
         exception.printStackTrace(printWriter);
+
+        managedExceptionString = "System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw() Android.Runtime.JNIEnv.CallVoidMethod(IntPtr jobject, IntPtr jmethod, JValue* parms) Com.Microsoft.AI.Xamarinexample.ExampleClass.ForceAppCrash(Activity p0) XamarinTest.Droid.DummyLibraryAndroid.TriggerExceptionCrash() XamarinTest.DummyLibrary.TriggerExceptionCrash() XamarinTest.XamarinTestMasterView.TrackTelemetryData(TelemetryType type) XamarinTest.XamarinTestMasterView.<XamarinTestMasterView>m__3() at Xamarin.Forms.Command+<>c__DisplayClass2.<.ctor>b__0 (System.Object o) <0x9b13fb68 + 0x00014> in <filename unknown>:0 Xamarin.Forms.Command.Execute(object parameter) Xamarin.Forms.TextCell.OnTapped() Xamarin.Forms.TableView.TableSectionModel.OnRowSelected(object item) Xamarin.Forms.TableModel.RowSelected(object item) Xamarin.Forms.TableModel.RowSelected(int section, int row) Xamarin.Forms.Platform.Android.TableViewModelRenderer.HandleItemClick(AdapterView parent, View nview, int position, long id) Xamarin.Forms.Platform.Android.CellAdapter.OnItemClick(AdapterView parent, View view, int position, long id) Android.Widget.AdapterView.IOnItemClickListenerInvoker.n_OnItemClick_Landroid_widget_AdapterView_Landroid_view_View_IJ(IntPtr jnienv, IntPtr native__this, IntPtr native_parent, IntPtr native_view, int position, long id) at (wrapper dynamic-method) System.Object:ab525826-8008-474b-a02c-b5ae8ba471a3 (intptr,intptr,intptr,intptr,int,long)";
 
         String filename = UUID.randomUUID().toString();
 
@@ -108,6 +107,7 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
         crashDetails.setAppVersionName(Constants.APP_VERSION_NAME);
         crashDetails.setAppStartDate(startDate);
         crashDetails.setAppCrashDate(now);
+        crashDetails.setManagedExceptionString(managedExceptionString);
 
         if ((listener == null) || (listener.includeDeviceData())) {
             crashDetails.setOsVersion(Constants.ANDROID_VERSION);

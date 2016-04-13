@@ -33,6 +33,7 @@ public class CrashDetails {
     private static final String FIELD_APP_VERSION_NAME = "Version Name";
     private static final String FIELD_APP_VERSION_CODE = "Version Code";
     private static final String FIELD_THREAD_NAME = "Thread";
+    private static final String FIELD_MANAGED_EXCEPTION_STRING = "Managed Exception";
 
     private final String crashIdentifier;
 
@@ -53,6 +54,7 @@ public class CrashDetails {
     private String threadName;
 
     private String throwableStackTrace;
+    private String managedExceptionString;
 
     public CrashDetails(String crashIdentifier) {
         this.crashIdentifier = crashIdentifier;
@@ -128,6 +130,9 @@ public class CrashDetails {
                 } else if (headerName.equals(FIELD_THREAD_NAME)) {
                     result.setThreadName(headerValue);
                 }
+                else if (headerName.equals(FIELD_MANAGED_EXCEPTION_STRING)) {
+                    result.setManagedExceptionString(headerValue);
+                }
 
             } else {
                 stackTraceBuilder.append(readLine).append("\n");
@@ -159,6 +164,8 @@ public class CrashDetails {
 
             writeHeader(writer, FIELD_APP_START_DATE, DATE_FORMAT.format(appStartDate));
             writeHeader(writer, FIELD_APP_CRASH_DATE, DATE_FORMAT.format(appCrashDate));
+
+            writeHeader(writer, FIELD_MANAGED_EXCEPTION_STRING, managedExceptionString);
 
             writer.write("\n");
             writer.write(throwableStackTrace);
@@ -284,4 +291,7 @@ public class CrashDetails {
         this.throwableStackTrace = throwableStackTrace;
     }
 
+    public void setManagedExceptionString(String managedExceptionString) {
+        this.managedExceptionString = managedExceptionString;
+    }
 }
