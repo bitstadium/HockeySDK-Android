@@ -28,8 +28,13 @@ public class CrashManagerTest extends InstrumentationTestCase {
 
     private static void fakeCrashReport() {
         Throwable tr = new RuntimeException("Just a test exception");
-        String fakeManagedExceptionString = "System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw() Android.Runtime.JNIEnv.CallVoidMethod(IntPtr jobject, IntPtr jmethod, JValue* parms) Com.Microsoft.AI.Xamarinexample.ExampleClass.ForceAppCrash(Activity p0) XamarinTest.Droid.DummyLibraryAndroid.TriggerExceptionCrash() XamarinTest.DummyLibrary.TriggerExceptionCrash() XamarinTest.XamarinTestMasterView.TrackTelemetryData(TelemetryType type) XamarinTest.XamarinTestMasterView.<XamarinTestMasterView>m__3() at Xamarin.Forms.Command+<>c__DisplayClass2.<.ctor>b__0 (System.Object o) <0x9b13fb68 + 0x00014> in <filename unknown>:0 Xamarin.Forms.Command.Execute(object parameter) Xamarin.Forms.TextCell.OnTapped() Xamarin.Forms.TableView.TableSectionModel.OnRowSelected(object item) Xamarin.Forms.TableModel.RowSelected(object item) Xamarin.Forms.TableModel.RowSelected(int section, int row) Xamarin.Forms.Platform.Android.TableViewModelRenderer.HandleItemClick(AdapterView parent, View nview, int position, long id) Xamarin.Forms.Platform.Android.CellAdapter.OnItemClick(AdapterView parent, View view, int position, long id) Android.Widget.AdapterView.IOnItemClickListenerInvoker.n_OnItemClick_Landroid_widget_AdapterView_Landroid_view_View_IJ(IntPtr jnienv, IntPtr native__this, IntPtr native_parent, IntPtr native_view, int position, long id) at (wrapper dynamic-method) System.Object:ab525826-8008-474b-a02c-b5ae8ba471a3 (intptr,intptr,intptr,intptr,int,long)";
-        ExceptionHandler.saveException(tr, Thread.currentThread(), fakeManagedExceptionString, null);
+        ExceptionHandler.saveException(tr, Thread.currentThread(), null);
+    }
+
+    private static void fakeXamarinCrashReport() {
+        Throwable tr = new RuntimeException("That's the Java exception");
+        Throwable xamaTr = new RuntimeException("Outer Exception", new RuntimeException("Inner Exception"));
+        ExceptionHandler.saveXamarinException(tr, Thread.currentThread(), xamaTr, null);
     }
 
     private static File lastCrashReportFile() {
@@ -109,5 +114,23 @@ public class CrashManagerTest extends InstrumentationTestCase {
         assertNotNull(lastStackTrace);
 
         assertEquals(lastStackTrace.getName().substring(0, lastStackTrace.getName().indexOf(".stacktrace")), crashDetails.getCrashIdentifier());
+    }
+
+    @Test
+    public void xamarinCrashCorrect() {
+        cleanupReportsDir();
+
+        fakeXamarinCrashReport();
+
+        CrashManager.register(getInstrumentation().getTargetContext(), DUMMY_APP_IDENTIFIER);
+
+        fakeXamarinCrashReport();
+
+        CrashDetails crashDetails = CrashManager.getLastCrashDetails();
+        assertNotNull(crashDetails);
+        assertEquals(crashDetails.getFormat(), "Xamarin");
+        String throwableStackTrace = crashDetails.getThrowableStackTrace();
+        Boolean containsCausedByXamarin = throwableStackTrace.contains("Xamarin caused by:");
+        assertTrue(containsCausedByXamarin);
     }
 }

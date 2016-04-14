@@ -14,7 +14,7 @@ import java.util.UUID;
  * Helper class to catch exceptions. Saves the stack trace
  * as a file and executes callback methods to ask the app for
  * additional information and meta data (see CrashManagerListener).
-
+ *
  * <h3>License</h3>
  * <pre>
  * Copyright (c) 2009 nullwire aps
@@ -61,10 +61,6 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
         mCrashManagerListener = listener;
     }
 
-    public void setListener(CrashManagerListener listener) {
-        mCrashManagerListener = listener;
-    }
-
     /**
      * Save a caught exception to disk.
      *
@@ -87,27 +83,44 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
      * @param listener  Custom CrashManager listener instance.
      */
     public static void saveException(Throwable exception, Thread thread, CrashManagerListener listener) {
-        saveException(exception, thread, null, listener);
+        saveException(exception, thread, null, false, listener);
     }
 
-    public static void saveException(Throwable exception, Thread thread, String managedExceptionString , CrashManagerListener listener) {
+    /**
+     * Save exception(s) caught by HockeySDK-Xamarin to disk.
+     *
+     * @param exception Exception to save.
+     * @param thread    Thread that crashed.
+     * @param listener  Custom CrashManager listener instance.
+     */
+    @SuppressWarnings("unused")
+    public static void saveXamarinException(Throwable exception, Thread thread, Throwable xamarinException, CrashManagerListener listener) {
+        saveException(exception, thread, xamarinException, true, listener);
+    }
+
+
+    private static void saveException(Throwable exception, Thread thread, Throwable attachedException, Boolean fromXamarin, CrashManagerListener listener) {
         final Date now = new Date();
         final Date startDate = new Date(CrashManager.getInitializeTimestamp());
-        final Writer result = new StringWriter();
-        final PrintWriter printWriter = new PrintWriter(result);
-        exception.printStackTrace(printWriter);
-
-        managedExceptionString = "System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw() Android.Runtime.JNIEnv.CallVoidMethod(IntPtr jobject, IntPtr jmethod, JValue* parms) Com.Microsoft.AI.Xamarinexample.ExampleClass.ForceAppCrash(Activity p0) XamarinTest.Droid.DummyLibraryAndroid.TriggerExceptionCrash() XamarinTest.DummyLibrary.TriggerExceptionCrash() XamarinTest.XamarinTestMasterView.TrackTelemetryData(TelemetryType type) XamarinTest.XamarinTestMasterView.<XamarinTestMasterView>m__3() at Xamarin.Forms.Command+<>c__DisplayClass2.<.ctor>b__0 (System.Object o) <0x9b13fb68 + 0x00014> in <filename unknown>:0 Xamarin.Forms.Command.Execute(object parameter) Xamarin.Forms.TextCell.OnTapped() Xamarin.Forms.TableView.TableSectionModel.OnRowSelected(object item) Xamarin.Forms.TableModel.RowSelected(object item) Xamarin.Forms.TableModel.RowSelected(int section, int row) Xamarin.Forms.Platform.Android.TableViewModelRenderer.HandleItemClick(AdapterView parent, View nview, int position, long id) Xamarin.Forms.Platform.Android.CellAdapter.OnItemClick(AdapterView parent, View view, int position, long id) Android.Widget.AdapterView.IOnItemClickListenerInvoker.n_OnItemClick_Landroid_widget_AdapterView_Landroid_view_View_IJ(IntPtr jnienv, IntPtr native__this, IntPtr native_parent, IntPtr native_view, int position, long id) at (wrapper dynamic-method) System.Object:ab525826-8008-474b-a02c-b5ae8ba471a3 (intptr,intptr,intptr,intptr,int,long)";
-
         String filename = UUID.randomUUID().toString();
 
-        CrashDetails crashDetails = new CrashDetails(filename, exception);
+        final Writer result = new StringWriter();
+        final PrintWriter printWriter = new PrintWriter(result);
+        if (exception != null) {
+            exception.printStackTrace(printWriter);
+        }
+        if (attachedException != null) {
+            attachedException.printStackTrace(printWriter);
+        }
+
+
+        CrashDetails crashDetails = new CrashDetails(filename, exception, attachedException);
         crashDetails.setAppPackage(Constants.APP_PACKAGE);
         crashDetails.setAppVersionCode(Constants.APP_VERSION);
         crashDetails.setAppVersionName(Constants.APP_VERSION_NAME);
         crashDetails.setAppStartDate(startDate);
         crashDetails.setAppCrashDate(now);
-        crashDetails.setManagedExceptionString(managedExceptionString);
+        crashDetails.setIsXamarinException(fromXamarin);
 
         if ((listener == null) || (listener.includeDeviceData())) {
             crashDetails.setOsVersion(Constants.ANDROID_VERSION);
@@ -133,27 +146,6 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
                 writeValueToFile(listener.getDescription(), filename + ".description");
             } catch (IOException e) {
                 HockeyLog.error("Error saving crash meta data!", e);
-            }
-
-        }
-    }
-
-    public void uncaughtException(Thread thread, Throwable exception) {
-
-        PrivateEventManager.postEvent(new PrivateEventManager.Event(PrivateEventManager.EVENT_TYPE_UNCAUGHT_EXCEPTION));
-
-        if (Constants.FILES_PATH == null) {
-            // If the files path is null, the exception can't be stored
-            // Always call the default handler instead
-            mDefaultExceptionHandler.uncaughtException(thread, exception);
-        } else {
-            saveException(exception, thread, mCrashManagerListener);
-
-            if (!mIgnoreDefaultHandler) {
-                mDefaultExceptionHandler.uncaughtException(thread, exception);
-            } else {
-                android.os.Process.killProcess(android.os.Process.myPid());
-                System.exit(10);
             }
         }
     }
@@ -184,5 +176,29 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
             string = string.substring(0, 255);
         }
         return string;
+    }
+
+    public void setListener(CrashManagerListener listener) {
+        mCrashManagerListener = listener;
+    }
+
+    public void uncaughtException(Thread thread, Throwable exception) {
+
+        PrivateEventManager.postEvent(new PrivateEventManager.Event(PrivateEventManager.EVENT_TYPE_UNCAUGHT_EXCEPTION));
+
+        if (Constants.FILES_PATH == null) {
+            // If the files path is null, the exception can't be stored
+            // Always call the default handler instead
+            mDefaultExceptionHandler.uncaughtException(thread, exception);
+        } else {
+            saveException(exception, thread, mCrashManagerListener);
+
+            if (!mIgnoreDefaultHandler) {
+                mDefaultExceptionHandler.uncaughtException(thread, exception);
+            } else {
+                android.os.Process.killProcess(android.os.Process.myPid());
+                System.exit(10);
+            }
+        }
     }
 }

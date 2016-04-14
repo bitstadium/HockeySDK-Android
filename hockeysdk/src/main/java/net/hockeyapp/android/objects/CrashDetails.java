@@ -33,7 +33,12 @@ public class CrashDetails {
     private static final String FIELD_APP_VERSION_NAME = "Version Name";
     private static final String FIELD_APP_VERSION_CODE = "Version Code";
     private static final String FIELD_THREAD_NAME = "Thread";
-    private static final String FIELD_MANAGED_EXCEPTION_STRING = "Managed Exception";
+
+    private static final String FIELD_FORMAT = "Format";
+    private static final String FIELD_FORMAT_VALUE = "Xamarin";
+
+    private static final String FIELD_XAMARIN_CAUSED_BY = "Xamarin caused by:";
+
 
     private final String crashIdentifier;
 
@@ -54,19 +59,31 @@ public class CrashDetails {
     private String threadName;
 
     private String throwableStackTrace;
-    private String managedExceptionString;
+
+    private Boolean isXamarinException;
+
+    private String format;
 
     public CrashDetails(String crashIdentifier) {
         this.crashIdentifier = crashIdentifier;
     }
 
-    public CrashDetails(String crashIdentifier, Throwable throwable) {
+    public CrashDetails(String crashIdentifier, Throwable throwable, Throwable xamarinException) {
         this(crashIdentifier);
 
         final Writer stackTraceResult = new StringWriter();
         final PrintWriter printWriter = new PrintWriter(stackTraceResult);
-        throwable.printStackTrace(printWriter);
+        if(throwable != null) {
+            throwable.printStackTrace(printWriter);
+        }
+        if(xamarinException != null) {
+            isXamarinException = true;
+            setFormat(FIELD_FORMAT_VALUE);
+            printWriter.println(FIELD_XAMARIN_CAUSED_BY);
+            xamarinException.printStackTrace(printWriter);
+        }
         throwableStackTrace = stackTraceResult.toString();
+        HockeyLog.verbose("Foo", throwableStackTrace);
     }
 
     public static CrashDetails fromFile(File file) throws IOException {
@@ -130,12 +147,11 @@ public class CrashDetails {
                 } else if (headerName.equals(FIELD_THREAD_NAME)) {
                     result.setThreadName(headerValue);
                 }
-                else if (headerName.equals(FIELD_MANAGED_EXCEPTION_STRING)) {
-                    result.setManagedExceptionString(headerValue);
+                else if (headerName.equals(FIELD_FORMAT)) {
+                    result.setFormat(headerValue);
                 }
-
             } else {
-                stackTraceBuilder.append(readLine).append("\n");
+                stackTraceBuilder.append(readLine).append("\n"); //TODO distinguish managed and unmanaged exceptions?!
             }
         }
         result.setThrowableStackTrace(stackTraceBuilder.toString());
@@ -165,10 +181,15 @@ public class CrashDetails {
             writeHeader(writer, FIELD_APP_START_DATE, DATE_FORMAT.format(appStartDate));
             writeHeader(writer, FIELD_APP_CRASH_DATE, DATE_FORMAT.format(appCrashDate));
 
-            writeHeader(writer, FIELD_MANAGED_EXCEPTION_STRING, managedExceptionString);
+            if(isXamarinException) {
+                writeHeader(writer, FIELD_FORMAT, FIELD_FORMAT_VALUE);
+            }
 
             writer.write("\n");
             writer.write(throwableStackTrace);
+
+            writer.write("\n");
+            writer.write("\n");
 
             writer.flush();
 
@@ -291,7 +312,21 @@ public class CrashDetails {
         this.throwableStackTrace = throwableStackTrace;
     }
 
-    public void setManagedExceptionString(String managedExceptionString) {
-        this.managedExceptionString = managedExceptionString;
+    public Boolean getIsXamarinException() {
+        return isXamarinException;
+    }
+
+    public void setIsXamarinException(Boolean isXamarinException) {
+        this.isXamarinException = isXamarinException;
+    }
+
+
+    //We could to without a Format property and getters/setters, but we will eventually use this
+    public String getFormat() {
+        return format;
+    }
+
+    public void setFormat(String format) {
+        this.format = format;
     }
 }
