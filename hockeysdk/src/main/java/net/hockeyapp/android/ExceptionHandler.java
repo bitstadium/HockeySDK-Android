@@ -89,8 +89,9 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
     /**
      * Save exception(s) caught by HockeySDK-Xamarin to disk.
      *
-     * @param exception Exception to save.
+     * @param exception Java Exception to save.
      * @param thread    Thread that crashed.
+     * @param xamarinException Exception to save that represents the Xamarin exception.
      * @param listener  Custom CrashManager listener instance.
      */
     @SuppressWarnings("unused")
