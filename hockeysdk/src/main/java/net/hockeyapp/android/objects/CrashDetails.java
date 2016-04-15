@@ -37,7 +37,7 @@ public class CrashDetails {
     private static final String FIELD_FORMAT = "Format";
     private static final String FIELD_FORMAT_VALUE = "Xamarin";
 
-    private static final String FIELD_XAMARIN_CAUSED_BY = "Xamarin caused by:";
+    private static final String FIELD_XAMARIN_CAUSED_BY = "Xamarin caused by: "; //Field that marks a Xamarin Exception
 
 
     private final String crashIdentifier;
