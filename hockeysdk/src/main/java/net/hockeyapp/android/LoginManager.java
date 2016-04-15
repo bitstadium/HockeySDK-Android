@@ -13,6 +13,7 @@ import net.hockeyapp.android.tasks.LoginTask;
 import net.hockeyapp.android.utils.AsyncTaskUtils;
 import net.hockeyapp.android.utils.Util;
 
+import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -159,17 +160,7 @@ public class LoginManager {
             LoginManager.mainActivity = activity;
 
             if (LoginManager.validateHandler == null) {
-                LoginManager.validateHandler = new Handler() {
-                    @Override
-                    public void handleMessage(Message msg) {
-                        Bundle bundle = msg.getData();
-                        boolean success = bundle.getBoolean(LoginTask.BUNDLE_SUCCESS);
-
-                        if (!success) {
-                            startLoginActivity(context);
-                        }
-                    }
-                };
+                LoginManager.validateHandler = new LoginHandler(context);
             }
 
             Constants.loadFromContext(context);
@@ -254,5 +245,29 @@ public class LoginManager {
         }
 
         return urlString + "api/3/apps/" + identifier + "/identity/" + suffix;
+    }
+
+    private static class LoginHandler extends Handler {
+
+        private final WeakReference<Context> mWeakContext;
+
+        public LoginHandler(Context context) {
+            mWeakContext = new WeakReference<>(context);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            Bundle bundle = msg.getData();
+            boolean success = bundle.getBoolean(LoginTask.BUNDLE_SUCCESS);
+
+            Context context = mWeakContext.get();
+            if (context == null) {
+                return;
+            }
+
+            if (!success) {
+                startLoginActivity(context);
+            }
+        }
     }
 }

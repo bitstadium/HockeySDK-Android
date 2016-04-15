@@ -303,7 +303,7 @@ public class MetricsManager {
         if (sSender != null) {
             sSender.setCustomServerURL(serverURL);
         } else {
-            Log.w(TAG, "HockeyApp couldn't set the custom server url. Please register(...) the MetricsManager before setting the server URL.");
+            HockeyLog.warn(TAG, "HockeyApp couldn't set the custom server url. Please register(...) the MetricsManager before setting the server URL.");
         }
     }
 
