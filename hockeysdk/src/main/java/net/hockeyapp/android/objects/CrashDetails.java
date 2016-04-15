@@ -79,7 +79,7 @@ public class CrashDetails {
         if(xamarinException != null) {
             isXamarinException = true;
             setFormat(FIELD_FORMAT_VALUE);
-            printWriter.println(FIELD_XAMARIN_CAUSED_BY);
+            printWriter.print(FIELD_XAMARIN_CAUSED_BY);
             xamarinException.printStackTrace(printWriter);
         }
         throwableStackTrace = stackTraceResult.toString();
