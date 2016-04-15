@@ -89,18 +89,31 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
     /**
      * Save exception(s) caught by HockeySDK-Xamarin to disk.
      *
-     * @param exception Java Exception to save.
-     * @param thread    Thread that crashed.
-     * @param xamarinException Exception to save that represents the Xamarin exception.
-     * @param listener  Custom CrashManager listener instance.
+     * @param exception              The native java exception to save.
+     * @param managedExceptionString String representation of the full exception. Should be null for managed exceptions
+     * @param thread                 Thread that crashed.
+     * @param listener               Custom CrashManager listener instance.
      */
     @SuppressWarnings("unused")
-    public static void saveXamarinException(Throwable exception, Thread thread, Throwable xamarinException, CrashManagerListener listener) {
-        saveException(exception, thread, xamarinException, true, listener);
+    public static void saveException(Throwable exception, String managedExceptionString, Thread thread, CrashManagerListener listener) {
+        // the throwable will either be
+        // 1. a "native" Java exception. In this case managedExceptionString contains the full, "unconverted" exception
+        // which contains information about the managed exception, too. We don't want to loose that part. Sadly, passing a managed
+        // exception as a Throwable strips that info, so we pass in the full managed exception as a string
+        // and extract the first part that contains the info about the managed code that was calling the java code.
+        // 2. a "managed" C# exception. In this case, the managedExceptionString is NULL
+        if (!TextUtils.isEmpty(managedExceptionString)) {
+            String[] splits = managedExceptionString.split("--- End of managed exception stack trace ---", 2);
+            if (splits != null && splits.length > 0) {
+                managedExceptionString = splits[0];
+            }
+        }
+
+        saveException(exception, thread, managedExceptionString, true, listener);
     }
 
 
-    private static void saveException(Throwable exception, Thread thread, Throwable attachedException, Boolean fromXamarin, CrashManagerListener listener) {
+    private static void saveException(Throwable exception, Thread thread, String managedExceptionString, Boolean fromXamarin, CrashManagerListener listener) {
         final Date now = new Date();
         final Date startDate = new Date(CrashManager.getInitializeTimestamp());
         String filename = UUID.randomUUID().toString();
@@ -110,12 +123,8 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
         if (exception != null) {
             exception.printStackTrace(printWriter);
         }
-        if (attachedException != null) {
-            attachedException.printStackTrace(printWriter);
-        }
 
-
-        CrashDetails crashDetails = new CrashDetails(filename, exception, attachedException);
+        CrashDetails crashDetails = new CrashDetails(filename, exception, managedExceptionString);
         crashDetails.setAppPackage(Constants.APP_PACKAGE);
         crashDetails.setAppVersionCode(Constants.APP_VERSION);
         crashDetails.setAppVersionName(Constants.APP_VERSION_NAME);

@@ -68,20 +68,39 @@ public class CrashDetails {
         this.crashIdentifier = crashIdentifier;
     }
 
-    public CrashDetails(String crashIdentifier, Throwable throwable, Throwable xamarinException) {
+    public CrashDetails(String crashIdentifier, Throwable throwable, String managedExceptionString) {
         this(crashIdentifier);
 
         final Writer stackTraceResult = new StringWriter();
         final PrintWriter printWriter = new PrintWriter(stackTraceResult);
-        if(throwable != null) {
-            throwable.printStackTrace(printWriter);
-        }
-        if(xamarinException != null) {
+
+        //Exceptions that come from the Xamarin SDK will always have a manged String
+        if(managedExceptionString != null) {
             isXamarinException = true;
+
+            //Add the header field "Format" to the crash
+            //the value is "Xamarin", for now there are no other values and it's only set in case we have an exception coming from
+            //the Xamarin SDK. It can be a java exception, a mono exception, or a mono exception that contains also java code.
             setFormat(FIELD_FORMAT_VALUE);
+
+            //the throwable will be null in case of a managed exception by the xamarin SDK
+            if(throwable != null) {
+                throwable.printStackTrace(printWriter);
+            }
+
+            //add "Xamarin Caused By" before the managed stacktrace. No new line after it.
             printWriter.print(FIELD_XAMARIN_CAUSED_BY);
-            xamarinException.printStackTrace(printWriter);
+
+            //print the stacktrace
+            printWriter.print(managedExceptionString);
         }
+        else {
+            //Native Java exceptions will always have a throwable
+            if(throwable != null) {
+                throwable.printStackTrace(printWriter);
+            }
+        }
+
         throwableStackTrace = stackTraceResult.toString();
         HockeyLog.verbose("Foo", throwableStackTrace);
     }
