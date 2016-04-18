@@ -1,14 +1,17 @@
 package net.hockeyapp.android.tasks;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.provider.Settings;
 
+import android.text.TextUtils;
 import net.hockeyapp.android.BuildConfig;
 import net.hockeyapp.android.Constants;
 import net.hockeyapp.android.Tracking;
 import net.hockeyapp.android.UpdateManagerListener;
+import net.hockeyapp.android.utils.HockeyLog;
 import net.hockeyapp.android.utils.VersionCache;
 import net.hockeyapp.android.utils.VersionHelper;
 
@@ -200,6 +203,9 @@ public class CheckUpdateTask extends AsyncTask<Void, String, JSONArray> {
     @Override
     protected void onPostExecute(JSONArray updateInfo) {
         if (updateInfo != null) {
+            HockeyLog.verbose("HockeyUpdate", "Received Update Info");
+            HockeyLog.verbose("HockeyUpdate", updateInfo.toString());
+
             if (listener != null) {
                 listener.onUpdateAvailable(updateInfo, getURLString(APK));
             }
@@ -223,8 +229,19 @@ public class CheckUpdateTask extends AsyncTask<Void, String, JSONArray> {
         builder.append("?format=" + format);
 
         String deviceIdentifier = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
-        if (deviceIdentifier != null) {
+        if (!TextUtils.isEmpty(deviceIdentifier)) {
             builder.append("&udid=" + encodeParam(Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID)));
+        }
+
+        SharedPreferences prefs = context.getSharedPreferences("net.hockeyapp.android.login", 0);
+        String auid = prefs.getString("auid", null);
+        if (!TextUtils.isEmpty(auid)) {
+            builder.append("&auid=" + encodeParam(auid));
+        }
+
+        String iuid = prefs.getString("iuid", null);
+        if(!TextUtils.isEmpty(iuid)) {
+            builder.append("&iuid=" + encodeParam(iuid));
         }
 
         builder.append("&os=Android");
@@ -236,6 +253,8 @@ public class CheckUpdateTask extends AsyncTask<Void, String, JSONArray> {
         builder.append("&sdk_version=" + encodeParam(BuildConfig.VERSION_NAME));
         builder.append("&lang=" + encodeParam(Locale.getDefault().getLanguage()));
         builder.append("&usage_time=" + usageTime);
+
+        HockeyLog.verbose("HockeyAuth", "URL is: " + builder.toString());
 
         return builder.toString();
     }

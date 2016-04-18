@@ -11,6 +11,7 @@ import android.text.TextUtils;
 
 import net.hockeyapp.android.Constants;
 import net.hockeyapp.android.LoginManager;
+import net.hockeyapp.android.utils.HockeyLog;
 import net.hockeyapp.android.utils.HttpURLConnectionBuilder;
 
 import org.json.JSONException;
@@ -202,11 +203,15 @@ public class LoginTask extends ConnectionTask<Void, Void, Boolean> {
             if (TextUtils.isEmpty(status)) {
                 return false;
             }
+            HockeyLog.verbose("HockeyAuth", "Status is: " + status);
 
             if (mMode == LoginManager.LOGIN_MODE_EMAIL_ONLY) {
                 if (status.equals("identified")) {
+                    HockeyLog.verbose("HockeyAuth", "Identified!");
                     String iuid = response.getString("iuid");
                     if (!TextUtils.isEmpty(iuid)) {
+                        HockeyLog.verbose("HockeyAuth", "Saving iuid");
+
                         prefs.edit()
                                 .putString("iuid", iuid)
                                 .apply();
@@ -216,7 +221,10 @@ public class LoginTask extends ConnectionTask<Void, Void, Boolean> {
             } else if (mMode == LoginManager.LOGIN_MODE_EMAIL_PASSWORD) {
                 if (status.equals("authorized")) {
                     String auid = response.getString("auid");
+                    HockeyLog.verbose("HockeyAuth", "Authorized");
+
                     if (!TextUtils.isEmpty(auid)) {
+                        HockeyLog.verbose("HockeyAuth", "Saving auid");
                         prefs.edit()
                                 .putString("auid", auid)
                                 .apply();
@@ -225,6 +233,7 @@ public class LoginTask extends ConnectionTask<Void, Void, Boolean> {
                 }
             } else if (mMode == LoginManager.LOGIN_MODE_VALIDATE) {
                 if (status.equals("validated")) {
+                    HockeyLog.verbose("HockeyAuth", "Validated");
                     return true;
                 } else {
                     prefs.edit()
