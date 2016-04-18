@@ -8,9 +8,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
-
 import net.hockeyapp.android.tasks.LoginTask;
 import net.hockeyapp.android.utils.AsyncTaskUtils;
+import net.hockeyapp.android.utils.HockeyLog;
 import net.hockeyapp.android.utils.Util;
 
 import java.lang.ref.WeakReference;
@@ -160,7 +160,7 @@ public class LoginManager {
             LoginManager.mainActivity = activity;
 
             if (LoginManager.validateHandler == null) {
-                LoginManager.validateHandler = new LoginHandler(context);
+                LoginManager.validateHandler = new LoginHandler(context, false);
             }
 
             Constants.loadFromContext(context);
@@ -184,13 +184,14 @@ public class LoginManager {
             }
         }
 
-        if (context == null || mode == LOGIN_MODE_ANONYMOUS || mode == LOGIN_MODE_VALIDATE) {
+        if (context == null || mode == LOGIN_MODE_ANONYMOUS) {
             return;
         }
 
         SharedPreferences prefs = context.getSharedPreferences("net.hockeyapp.android.login", 0);
         int currentMode = prefs.getInt("mode", -1);
         if (currentMode != mode) {
+            HockeyLog.verbose("HockeyAuth", "Mode has changed, delete info from prefs, require re-auth");
             prefs.edit()
                     .remove("auid")
                     .remove("iuid")
@@ -201,35 +202,43 @@ public class LoginManager {
         String auid = prefs.getString("auid", null);
         String iuid = prefs.getString("iuid", null);
 
-        boolean notAuthenticated = auid == null && iuid == null;
-        boolean auidMissing = auid == null && mode == LOGIN_MODE_EMAIL_PASSWORD;
-        boolean iuidMissing = iuid == null && mode == LOGIN_MODE_EMAIL_ONLY;
+        boolean notAuthenticated = (auid == null) && (iuid == null);
+        boolean auidMissing = (auid == null) && ((mode == LOGIN_MODE_EMAIL_PASSWORD) || mode == LOGIN_MODE_VALIDATE);
+        boolean iuidMissing = (iuid == null) && (mode == LOGIN_MODE_EMAIL_ONLY);
 
         if (notAuthenticated || auidMissing || iuidMissing) {
-            startLoginActivity(context);
+            HockeyLog.verbose("HockeyAuth", "Not authenticated or correct ID missing, re-authenticate");
+
+            Boolean isLoginModeValidate = (mode == LOGIN_MODE_VALIDATE) ? true : false;
+            startLoginActivity(context, isLoginModeValidate);
             return;
         }
 
-        Map<String, String> params = new HashMap<String, String>();
-        if (auid != null) {
-            params.put("type", "auid");
-            params.put("id", auid);
-        } else if (iuid != null) {
-            params.put("type", "iuid");
-            params.put("id", iuid);
-        }
+        if (mode == LOGIN_MODE_VALIDATE) {
+            HockeyLog.verbose("HockeyAuth", "We require validation of the user's info!");
 
-        LoginTask verifyTask = new LoginTask(context, validateHandler, getURLString(LOGIN_MODE_VALIDATE), LOGIN_MODE_VALIDATE, params);
-        verifyTask.setShowProgressDialog(false);
-        AsyncTaskUtils.execute(verifyTask);
+            Map<String, String> params = new HashMap<String, String>();
+            if (auid != null) {
+                params.put("type", "auid");
+                params.put("id", auid);
+            } else if (iuid != null) {
+                params.put("type", "iuid");
+                params.put("id", iuid);
+            }
+
+            LoginTask verifyTask = new LoginTask(context, validateHandler, getURLString(LOGIN_MODE_VALIDATE), LOGIN_MODE_VALIDATE, params);
+            verifyTask.setShowProgressDialog(false);
+            AsyncTaskUtils.execute(verifyTask);
+        }
     }
 
-    private static void startLoginActivity(Context context) {
+    private static void startLoginActivity(Context context, Boolean isLoginModeValidate) {
         Intent intent = new Intent();
+        int tempMode = (isLoginModeValidate) ? LOGIN_MODE_EMAIL_PASSWORD : mode;
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY);
         intent.setClass(context, LoginActivity.class);
-        intent.putExtra(LoginActivity.EXTRA_URL, getURLString(mode));
-        intent.putExtra(LoginActivity.EXTRA_MODE, mode);
+        intent.putExtra(LoginActivity.EXTRA_URL, getURLString(tempMode));
+        intent.putExtra(LoginActivity.EXTRA_MODE, tempMode);
         intent.putExtra(LoginActivity.EXTRA_SECRET, secret);
         context.startActivity(intent);
     }
@@ -250,9 +259,11 @@ public class LoginManager {
     private static class LoginHandler extends Handler {
 
         private final WeakReference<Context> mWeakContext;
+        boolean mIsValidationTaskAlready;
 
-        public LoginHandler(Context context) {
+        public LoginHandler(Context context, Boolean isValidationTaskAlready) {
             mWeakContext = new WeakReference<>(context);
+            mIsValidationTaskAlready = isValidationTaskAlready;
         }
 
         @Override
@@ -266,7 +277,32 @@ public class LoginManager {
             }
 
             if (!success) {
-                startLoginActivity(context);
+                    startLoginActivity(context, true);
+                //TODO should show a message that user didn't have enough rights!
+            }
+            else {
+                HockeyLog.verbose("HockeyAuth", "We authenticated successfully");
+
+                if (mode == LOGIN_MODE_VALIDATE && !mIsValidationTaskAlready) {
+                    HockeyLog.verbose("HockeyAuth", "We authenticated, we now require validation of the user's info!");
+                    SharedPreferences prefs = context.getSharedPreferences("net.hockeyapp.android.login", 0);
+
+                    String auid = prefs.getString("auid", null);
+                    String iuid = prefs.getString("iuid", null);
+
+                    Map<String, String> params = new HashMap<String, String>();
+                    if (auid != null) {
+                        params.put("type", "auid");
+                        params.put("id", auid);
+                    } else if (iuid != null) {
+                        params.put("type", "iuid");
+                        params.put("id", iuid);
+                    }
+
+                    LoginTask verifyTask = new LoginTask(context, validateHandler, getURLString(LOGIN_MODE_VALIDATE), LOGIN_MODE_VALIDATE, params);
+                    verifyTask.setShowProgressDialog(false);
+                    AsyncTaskUtils.execute(verifyTask);
+                }
             }
         }
     }
