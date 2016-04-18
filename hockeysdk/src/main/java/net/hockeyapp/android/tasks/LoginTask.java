@@ -11,6 +11,7 @@ import android.text.TextUtils;
 
 import net.hockeyapp.android.Constants;
 import net.hockeyapp.android.LoginManager;
+import net.hockeyapp.android.utils.HockeyLog;
 import net.hockeyapp.android.utils.HttpURLConnectionBuilder;
 
 import org.json.JSONException;
@@ -169,21 +170,26 @@ public class LoginTask extends ConnectionTask<Void, Void, Boolean> {
 
     private HttpURLConnection makeRequest(int mode, Map<String, String> params) throws IOException {
         if (mode == LoginManager.LOGIN_MODE_EMAIL_ONLY) {
-
+            HockeyLog.verbose("HockeyAuth", "Create Email Only request");
             return new HttpURLConnectionBuilder(mUrlString)
                     .setRequestMethod("POST")
                     .writeFormFields(params)
                     .build();
         } else if (mode == LoginManager.LOGIN_MODE_EMAIL_PASSWORD) {
+            HockeyLog.verbose("HockeyAuth", "Create Email and PW request");
 
             return new HttpURLConnectionBuilder(mUrlString)
                     .setRequestMethod("POST")
                     .setBasicAuthorization(params.get("email"), params.get("password"))
                     .build();
         } else if (mode == LoginManager.LOGIN_MODE_VALIDATE) {
+            HockeyLog.verbose("HockeyAuth", "Validate Request");
+
             String type = params.get("type");
             String id = params.get("id");
             String paramUrl = mUrlString + "?" + type + "=" + id;
+
+            HockeyLog.verbose("HockeyAuth", "The param url is: " + paramUrl);
 
             return new HttpURLConnectionBuilder(paramUrl)
                     .build();
