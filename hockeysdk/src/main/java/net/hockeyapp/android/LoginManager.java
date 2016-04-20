@@ -60,12 +60,12 @@ public class LoginManager {
     public static final int LOGIN_MODE_ANONYMOUS = 0;
 
     /**
-     * Testers/users need a HockeyApp account have to provide their email address to use the app.
+     * Testers/users need a HockeyApp account and have to provide their email address to use the app.
      */
     public static final int LOGIN_MODE_EMAIL_ONLY = 1;
 
     /**
-     * Testers/users need a HockeyApp account have to provide their email address and password to use the app.
+     * Testers/users need a HockeyApp account and have to provide their email address and password to use the app.
      */
     public static final int LOGIN_MODE_EMAIL_PASSWORD = 2;
 
@@ -202,12 +202,13 @@ public class LoginManager {
             }
         }
 
-        //Don't verify anythin if we're in LOGIN_MODE_ANONYMOUS
+        //Don't verify anything if we're in LOGIN_MODE_ANONYMOUS
         if (context == null || mode == LOGIN_MODE_ANONYMOUS) {
             return;
         }
 
-        //Check if the LOGIN_MODE has changed. Delete IUID and AUID This requires re-authentication.
+        //Check if the LOGIN_MODE has changed. Delete IUID and AUID if it has changed.
+        //This requires re-authentication.
         SharedPreferences prefs = context.getSharedPreferences("net.hockeyapp.android.login", 0);
         int currentMode = prefs.getInt("mode", -1);
         if (currentMode != mode) {
