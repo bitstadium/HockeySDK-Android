@@ -90,6 +90,7 @@ public class CheckUpdateTaskWithUI extends CheckUpdateTask {
     @Override
     protected void onPostExecute(JSONArray updateInfo) {
         super.onPostExecute(updateInfo);
+
         if ((updateInfo != null) && (mIsDialogRequired)) {
             showDialog(updateInfo);
         }
@@ -97,7 +98,11 @@ public class CheckUpdateTaskWithUI extends CheckUpdateTask {
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     private void showDialog(final JSONArray updateInfo) {
+
+        //Reason for enabled Caching
+        //we want to prevent users from being able to weasle around mandatory updates by going offline.
         if (getCachingEnabled()) {
+            HockeyLog.verbose("HockeyUpdate", "Caching is enabled. Setting version to cached one.");
             VersionCache.setVersionInfo(mActivity, updateInfo.toString());
         }
 

@@ -20,8 +20,6 @@ import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 import java.net.URLEncoder;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -68,9 +66,8 @@ public class Util {
     public static final String APP_IDENTIFIER_PATTERN = "[0-9a-f]+";
     public static final int APP_IDENTIFIER_LENGTH = 32;
     public static final String APP_IDENTIFIER_KEY = "net.hockeyapp.android.appIdentifier";
-
     public static final String LOG_IDENTIFIER = "HockeyApp";
-
+    private static final String APP_SECRET_KEY = "net.hockeyapp.android.appSecret";
     private static final Pattern appIdentifierPattern = Pattern.compile(APP_IDENTIFIER_PATTERN, Pattern.CASE_INSENSITIVE);
 
     private static final String SDK_VERSION_KEY = "net.hockeyapp.android.sdkVersion";
@@ -262,8 +259,24 @@ public class Util {
         }
     }
 
+    /**
+     * Retrieve the HockeyApp AppIdentifier from the Manifest
+     *
+     * @param context usually your Activity
+     * @return the HockeyApp AppIdentifier
+     */
     public static String getAppIdentifier(Context context) {
         return getManifestString(context, APP_IDENTIFIER_KEY);
+    }
+
+    /**
+     * Retrieve the HockeyApp appSecret from the Manifest
+     *
+     * @param context usually your Activity
+     * @return the HockeyApp appSecret
+     */
+    public static String getAppSecret(Context context) {
+        return getManifestString(context, APP_SECRET_KEY);
     }
 
     public static String getManifestString(Context context, String key) {
