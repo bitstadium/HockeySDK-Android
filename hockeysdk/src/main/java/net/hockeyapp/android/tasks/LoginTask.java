@@ -8,12 +8,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
-
 import net.hockeyapp.android.Constants;
 import net.hockeyapp.android.LoginManager;
-import net.hockeyapp.android.utils.HockeyLog;
 import net.hockeyapp.android.utils.HttpURLConnectionBuilder;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -62,15 +59,13 @@ public class LoginTask extends ConnectionTask<Void, Void, Boolean> {
      * Key for login success in the returend bundle
      */
     public static final String BUNDLE_SUCCESS = "success";
-
+    private final int mMode;
+    private final String mUrlString;
+    private final Map<String, String> mParams;
     private Context mContext;
     private Handler mHandler;
     private ProgressDialog mProgressDialog;
     private boolean mShowProgressDialog;
-
-    private final int mMode;
-    private final String mUrlString;
-    private final Map<String, String> mParams;
 
     /**
      * Send feedback {@link AsyncTask}.
@@ -170,27 +165,23 @@ public class LoginTask extends ConnectionTask<Void, Void, Boolean> {
 
     private HttpURLConnection makeRequest(int mode, Map<String, String> params) throws IOException {
         if (mode == LoginManager.LOGIN_MODE_EMAIL_ONLY) {
-            HockeyLog.verbose("HockeyAuth", "Create Email Only request");
+
             return new HttpURLConnectionBuilder(mUrlString)
                     .setRequestMethod("POST")
                     .writeFormFields(params)
                     .build();
         } else if (mode == LoginManager.LOGIN_MODE_EMAIL_PASSWORD) {
-            HockeyLog.verbose("HockeyAuth", "Create Email and PW request");
 
             return new HttpURLConnectionBuilder(mUrlString)
                     .setRequestMethod("POST")
                     .setBasicAuthorization(params.get("email"), params.get("password"))
                     .build();
         } else if (mode == LoginManager.LOGIN_MODE_VALIDATE) {
-            HockeyLog.verbose("HockeyAuth", "Validate Request");
 
             String type = params.get("type");
             String id = params.get("id");
             String paramUrl = mUrlString + "?" + type + "=" + id;
-
-            HockeyLog.verbose("HockeyAuth", "The param url is: " + paramUrl);
-
+            
             return new HttpURLConnectionBuilder(paramUrl)
                     .build();
         } else {
@@ -208,14 +199,11 @@ public class LoginTask extends ConnectionTask<Void, Void, Boolean> {
             if (TextUtils.isEmpty(status)) {
                 return false;
             }
-            HockeyLog.verbose("HockeyAuth", "Status is: " + status);
 
             if (mMode == LoginManager.LOGIN_MODE_EMAIL_ONLY) {
                 if (status.equals("identified")) {
-                    HockeyLog.verbose("HockeyAuth", "Identified!");
                     String iuid = response.getString("iuid");
                     if (!TextUtils.isEmpty(iuid)) {
-                        HockeyLog.verbose("HockeyAuth", "Saving iuid");
 
                         prefs.edit()
                                 .putString("iuid", iuid)
@@ -226,10 +214,8 @@ public class LoginTask extends ConnectionTask<Void, Void, Boolean> {
             } else if (mMode == LoginManager.LOGIN_MODE_EMAIL_PASSWORD) {
                 if (status.equals("authorized")) {
                     String auid = response.getString("auid");
-                    HockeyLog.verbose("HockeyAuth", "Authorized");
 
                     if (!TextUtils.isEmpty(auid)) {
-                        HockeyLog.verbose("HockeyAuth", "Saving auid");
                         prefs.edit()
                                 .putString("auid", auid)
                                 .apply();
@@ -238,7 +224,6 @@ public class LoginTask extends ConnectionTask<Void, Void, Boolean> {
                 }
             } else if (mMode == LoginManager.LOGIN_MODE_VALIDATE) {
                 if (status.equals("validated")) {
-                    HockeyLog.verbose("HockeyAuth", "Validated");
                     return true;
                 } else {
                     prefs.edit()

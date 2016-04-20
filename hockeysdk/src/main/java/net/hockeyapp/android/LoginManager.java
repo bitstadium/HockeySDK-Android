@@ -211,7 +211,7 @@ public class LoginManager {
         SharedPreferences prefs = context.getSharedPreferences("net.hockeyapp.android.login", 0);
         int currentMode = prefs.getInt("mode", -1);
         if (currentMode != mode) {
-            HockeyLog.verbose("HockeyAuth", "Mode has changed, delete info from prefs, require re-auth.");
+            HockeyLog.verbose("HockeyAuth", "Mode has changed, require re-auth.");
             prefs.edit()
                     .remove("auid")
                     .remove("iuid")
@@ -235,7 +235,7 @@ public class LoginManager {
 
         //Validate the user's auth data in case LOGIN_MODE_AUTH is set.
         if (mode == LOGIN_MODE_VALIDATE) {
-            HockeyLog.verbose("HockeyAuth", "LOGIN_MODE_VALIDATE, We require validation of the user's info!");
+            HockeyLog.verbose("HockeyAuth", "LOGIN_MODE_VALIDATE, Validate the user's info!");
 
             Map<String, String> params = new HashMap<String, String>();
             if (auid != null) {

@@ -130,17 +130,9 @@ public class CheckUpdateTask extends AsyncTask<Void, String, JSONArray> {
             int versionCode = getVersionCode();
 
             JSONArray json = new JSONArray(VersionCache.getVersionInfo(context));
-            if(getCachingEnabled()) {
-                HockeyLog.verbose("HockeyUpdate", "Caching is enabled. Setting JSON to VersionCache.");
-            }
-
-            if(findNewVersion(json, versionCode)){
-                HockeyLog.verbose("HockeyUpdate", "No new version in JSON");
-            }
 
             if ((getCachingEnabled()) && (findNewVersion(json, versionCode))) {
-                HockeyLog.verbose("HockeyUpdate", "Returning cached/old JSON");
-
+                HockeyLog.verbose("HockeyUpdate", "Returning cached JSON");
                 return json;
             }
 
@@ -154,8 +146,6 @@ public class CheckUpdateTask extends AsyncTask<Void, String, JSONArray> {
 
             json = new JSONArray(jsonString);
             if (findNewVersion(json, versionCode)) {
-                HockeyLog.verbose("HockeyUpdate", "Return limited JSON because findNewVersion.");
-
                 json = limitResponseSize(json);
                 return json;
             }
@@ -216,19 +206,14 @@ public class CheckUpdateTask extends AsyncTask<Void, String, JSONArray> {
     protected void onPostExecute(JSONArray updateInfo) {
         if (updateInfo != null) {
             HockeyLog.verbose("HockeyUpdate", "Received Update Info");
-            HockeyLog.verbose("HockeyUpdate", updateInfo.toString());
 
             if (listener != null) {
-                HockeyLog.verbose("HockeyUpdate", "listener != null");
-
                 listener.onUpdateAvailable(updateInfo, getURLString(APK));
             }
         } else {
-            HockeyLog.verbose("HockeyUpdate", "NO Update Info available");
+            HockeyLog.verbose("HockeyUpdate", "No Update Info available");
 
             if (listener != null) {
-                HockeyLog.verbose("HockeyUpdate", "listener != null");
-
                 listener.onNoUpdateAvailable();
             }
         }
@@ -271,8 +256,6 @@ public class CheckUpdateTask extends AsyncTask<Void, String, JSONArray> {
         builder.append("&sdk_version=" + encodeParam(BuildConfig.VERSION_NAME));
         builder.append("&lang=" + encodeParam(Locale.getDefault().getLanguage()));
         builder.append("&usage_time=" + usageTime);
-
-        HockeyLog.verbose("HockeyUpdate", "URL is: " + builder.toString());
 
         return builder.toString();
     }

@@ -91,9 +91,6 @@ public class CheckUpdateTaskWithUI extends CheckUpdateTask {
     protected void onPostExecute(JSONArray updateInfo) {
         super.onPostExecute(updateInfo);
 
-        HockeyLog.verbose("HockeyUpdate", "Received Update Info");
-        HockeyLog.verbose("HockeyUpdate", updateInfo.toString());
-
         if ((updateInfo != null) && (mIsDialogRequired)) {
             showDialog(updateInfo);
         }
@@ -105,7 +102,7 @@ public class CheckUpdateTaskWithUI extends CheckUpdateTask {
         //Reason for enabled Caching
         //we want to prevent users from being able to weasle around mandatory updates by going offline.
         if (getCachingEnabled()) {
-            HockeyLog.verbose("HockeyAuth", "Caching is enabled. Setting version to cached one.");
+            HockeyLog.verbose("HockeyUpdate", "Caching is enabled. Setting version to cached one.");
             VersionCache.setVersionInfo(mActivity, updateInfo.toString());
         }
 

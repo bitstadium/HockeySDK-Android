@@ -31,7 +31,7 @@ import java.util.Map;
  * <h3>License</h3>
  *
  * <pre>
- * Copyright (c) 2011-2014 Bit Stadium GmbH
+ * Copyright (c) 2011-2016 Bit Stadium GmbH
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -56,6 +56,8 @@ import java.util.Map;
  * </pre>
  *
  * @author Patrick Eschenbach
+ * @author Matthias Wenz
+ * @author Benjamin Reimold
  **/
 public class LoginActivity extends Activity {
 
