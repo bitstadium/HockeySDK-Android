@@ -87,7 +87,7 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
     }
 
     /**
-     * Save exception(s) caught by HockeySDK-Xamarin to disk.
+     * Save java exception(s) caught by HockeySDK-Xamarin to disk.
      *
      * @param exception              The native java exception to save.
      * @param managedExceptionString String representation of the full exception. Should be null for managed exceptions
@@ -95,7 +95,7 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
      * @param listener               Custom CrashManager listener instance.
      */
     @SuppressWarnings("unused")
-    public static void saveException(Throwable exception, String managedExceptionString, Thread thread, CrashManagerListener listener) {
+    public static void saveNativeException(Throwable exception, String managedExceptionString, Thread thread, CrashManagerListener listener) {
         // the throwable will either be
         // 1. a "native" Java exception. In this case managedExceptionString contains the full, "unconverted" exception
         // which contains information about the managed exception, too. We don't want to loose that part. Sadly, passing a managed
@@ -112,6 +112,17 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
         saveException(exception, thread, managedExceptionString, true, listener);
     }
 
+    /**
+     * Save managed exception(s) caught by HockeySDK-Xamarin to disk.
+     *
+     * @param exception              The managed exception to save.
+     * @param thread                 Thread that crashed.
+     * @param listener               Custom CrashManager listener instance.
+     */
+    @SuppressWarnings("unused")
+    public static void saveManagedException(Throwable exception, Thread thread, CrashManagerListener listener) {
+        saveException(exception, thread, null, true, listener);
+    }
 
     private static void saveException(Throwable exception, Thread thread, String managedExceptionString, Boolean fromXamarin, CrashManagerListener listener) {
         final Date now = new Date();

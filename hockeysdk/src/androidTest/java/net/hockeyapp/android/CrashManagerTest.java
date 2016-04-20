@@ -34,7 +34,7 @@ public class CrashManagerTest extends InstrumentationTestCase {
     private static void fakeXamarinCrashReport() {
         Throwable tr = new RuntimeException("That's the Java exception");
         Throwable xamaTr = new RuntimeException("Outer Exception", new RuntimeException("Inner Exception"));
-        ExceptionHandler.saveException(tr, xamaTr.toString(), Thread.currentThread(), null);
+        ExceptionHandler.saveNativeException(tr, xamaTr.toString(), Thread.currentThread(), null);
     }
 
     private static File lastCrashReportFile() {
