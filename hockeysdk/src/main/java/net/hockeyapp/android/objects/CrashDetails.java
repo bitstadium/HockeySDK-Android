@@ -1,18 +1,10 @@
 package net.hockeyapp.android.objects;
 
+import android.text.TextUtils;
 import net.hockeyapp.android.Constants;
 import net.hockeyapp.android.utils.HockeyLog;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.Reader;
-import java.io.StringWriter;
-import java.io.Writer;
+import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -68,41 +60,53 @@ public class CrashDetails {
         this.crashIdentifier = crashIdentifier;
     }
 
-    public CrashDetails(String crashIdentifier, Throwable throwable, String managedExceptionString) {
+    public CrashDetails(String crashIdentifier, Throwable throwable, String managedExceptionString, Boolean isManagedException) {
         this(crashIdentifier);
 
         final Writer stackTraceResult = new StringWriter();
         final PrintWriter printWriter = new PrintWriter(stackTraceResult);
 
-        //Exceptions that come from the Xamarin SDK will always have a manged String
-        if(managedExceptionString != null) {
-            isXamarinException = true;
+        isXamarinException = true;
 
-            //Add the header field "Format" to the crash
-            //the value is "Xamarin", for now there are no other values and it's only set in case we have an exception coming from
-            //the Xamarin SDK. It can be a java exception, a mono exception, or a mono exception that contains also java code.
-            setFormat(FIELD_FORMAT_VALUE);
+        //Add the header field "Format" to the crash
+        //the value is "Xamarin", for now there are no other values and it's only set in case we have an exception coming from
+        //the Xamarin SDK. It can be a java exception, a managed exception, or a mixed one.
+        setFormat(FIELD_FORMAT_VALUE);
 
-            //the throwable will be null in case of a managed exception by the xamarin SDK
-            if(throwable != null) {
-                throwable.printStackTrace(printWriter);
-            }
-
+        if (isManagedException) {
             //add "Xamarin Caused By" before the managed stacktrace. No new line after it.
             printWriter.print(FIELD_XAMARIN_CAUSED_BY);
 
-            //print the stacktrace
-            printWriter.print(managedExceptionString);
-        }
-        else {
-            //Native Java exceptions will always have a throwable
-            if(throwable != null) {
+            //print the managed exception
+            throwable.printStackTrace(printWriter);
+        } else {
+            //If we have managedExceptionString, we hava a MIXED (Java & C#)
+            //exception, The throwable will be the Java exception.
+            if (TextUtils.isEmpty(managedExceptionString)) {
+                //Print the java exception
+                throwable.printStackTrace(printWriter);
+
+                //Add "Xamarin Caused By" before the managed stacktrace. No new line after it.
+                printWriter.print(FIELD_XAMARIN_CAUSED_BY);
+                //print the stacktrace of the managed exception
+                printWriter.print(managedExceptionString);
+            } else {
+                //we have a java exception, no "Xamarin Caused By:"
                 throwable.printStackTrace(printWriter);
             }
         }
 
         throwableStackTrace = stackTraceResult.toString();
-        HockeyLog.verbose("Foo", throwableStackTrace);
+    }
+
+
+    public CrashDetails(String crashIdentifier, Throwable throwable) {
+        this(crashIdentifier);
+
+        final Writer stackTraceResult = new StringWriter();
+        final PrintWriter printWriter = new PrintWriter(stackTraceResult);
+        throwable.printStackTrace(printWriter);
+        throwableStackTrace = stackTraceResult.toString();
     }
 
     public static CrashDetails fromFile(File file) throws IOException {
@@ -165,8 +169,7 @@ public class CrashDetails {
                     result.setAppVersionCode(headerValue);
                 } else if (headerName.equals(FIELD_THREAD_NAME)) {
                     result.setThreadName(headerValue);
-                }
-                else if (headerName.equals(FIELD_FORMAT)) {
+                } else if (headerName.equals(FIELD_FORMAT)) {
                     result.setFormat(headerValue);
                 }
             } else {
@@ -200,7 +203,7 @@ public class CrashDetails {
             writeHeader(writer, FIELD_APP_START_DATE, DATE_FORMAT.format(appStartDate));
             writeHeader(writer, FIELD_APP_CRASH_DATE, DATE_FORMAT.format(appCrashDate));
 
-            if(isXamarinException) {
+            if (isXamarinException) {
                 writeHeader(writer, FIELD_FORMAT, FIELD_FORMAT_VALUE);
             }
 
@@ -338,7 +341,6 @@ public class CrashDetails {
     public void setIsXamarinException(Boolean isXamarinException) {
         this.isXamarinException = isXamarinException;
     }
-
 
     //We could to without a Format property and getters/setters, but we will eventually use this
     public String getFormat() {

@@ -83,25 +83,65 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
      * @param listener  Custom CrashManager listener instance.
      */
     public static void saveException(Throwable exception, Thread thread, CrashManagerListener listener) {
-        saveException(exception, thread, null, false, listener);
+        final Date now = new Date();
+        final Date startDate = new Date(CrashManager.getInitializeTimestamp());
+        final Writer result = new StringWriter();
+        final PrintWriter printWriter = new PrintWriter(result);
+        BufferedWriter writer = null;
+        exception.printStackTrace(printWriter);
+
+        String filename = UUID.randomUUID().toString();
+
+        CrashDetails crashDetails = new CrashDetails(filename, exception);
+        crashDetails.setAppPackage(Constants.APP_PACKAGE);
+        crashDetails.setAppVersionCode(Constants.APP_VERSION);
+        crashDetails.setAppVersionName(Constants.APP_VERSION_NAME);
+        crashDetails.setAppStartDate(startDate);
+        crashDetails.setAppCrashDate(now);
+
+        if ((listener == null) || (listener.includeDeviceData())) {
+            crashDetails.setOsVersion(Constants.ANDROID_VERSION);
+            crashDetails.setOsBuild(Constants.ANDROID_BUILD);
+            crashDetails.setDeviceManufacturer(Constants.PHONE_MANUFACTURER);
+            crashDetails.setDeviceModel(Constants.PHONE_MODEL);
+        }
+
+        if (thread != null && ((listener == null) || (listener.includeThreadDetails()))) {
+            crashDetails.setThreadName(thread.getName() + "-" + thread.getId());
+        }
+
+        if (Constants.CRASH_IDENTIFIER != null && (listener == null || listener.includeDeviceIdentifier())) {
+            crashDetails.setReporterKey(Constants.CRASH_IDENTIFIER);
+        }
+
+        crashDetails.writeCrashReport();
+
+        if (listener != null) {
+            try {
+                writeValueToFile(limitedString(listener.getUserID()), filename + ".user");
+                writeValueToFile(limitedString(listener.getContact()), filename + ".contact");
+                writeValueToFile(listener.getDescription(), filename + ".description");
+            } catch (IOException e) {
+                HockeyLog.error("Error saving crash meta data!", e);
+            }
+        }
     }
 
     /**
      * Save java exception(s) caught by HockeySDK-Xamarin to disk.
      *
      * @param exception              The native java exception to save.
-     * @param managedExceptionString String representation of the full exception. Should be null for managed exceptions
+     * @param managedExceptionString String representation of the full exception including the managed exception.
      * @param thread                 Thread that crashed.
      * @param listener               Custom CrashManager listener instance.
      */
     @SuppressWarnings("unused")
     public static void saveNativeException(Throwable exception, String managedExceptionString, Thread thread, CrashManagerListener listener) {
-        // the throwable will either be
-        // 1. a "native" Java exception. In this case managedExceptionString contains the full, "unconverted" exception
+        // the throwable will a "native" Java exception. In this case managedExceptionString contains the full, "unconverted" exception
         // which contains information about the managed exception, too. We don't want to loose that part. Sadly, passing a managed
-        // exception as a Throwable strips that info, so we pass in the full managed exception as a string
+        // exception as an additional throwable strips that info, so we pass in the full managed exception as a string
         // and extract the first part that contains the info about the managed code that was calling the java code.
-        // 2. a "managed" C# exception. In this case, the managedExceptionString is NULL
+        // In case there is no managedExceptionString, we just forward the java exception
         if (!TextUtils.isEmpty(managedExceptionString)) {
             String[] splits = managedExceptionString.split("--- End of managed exception stack trace ---", 2);
             if (splits != null && splits.length > 0) {
@@ -109,7 +149,7 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
             }
         }
 
-        saveException(exception, thread, managedExceptionString, true, listener);
+        saveXamarinException(exception, thread, managedExceptionString, false, listener);
     }
 
     /**
@@ -121,13 +161,13 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
      */
     @SuppressWarnings("unused")
     public static void saveManagedException(Throwable exception, Thread thread, CrashManagerListener listener) {
-        saveException(exception, thread, null, true, listener);
+        saveXamarinException(exception, thread, null, true, listener);
     }
 
-    private static void saveException(Throwable exception, Thread thread, String managedExceptionString, Boolean fromXamarin, CrashManagerListener listener) {
-        final Date now = new Date();
+    private static void saveXamarinException(Throwable exception, Thread thread, String additionalManagedException, Boolean isManagedException, CrashManagerListener listener) {
         final Date startDate = new Date(CrashManager.getInitializeTimestamp());
         String filename = UUID.randomUUID().toString();
+        final Date now = new Date();
 
         final Writer result = new StringWriter();
         final PrintWriter printWriter = new PrintWriter(result);
@@ -135,13 +175,12 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
             exception.printStackTrace(printWriter);
         }
 
-        CrashDetails crashDetails = new CrashDetails(filename, exception, managedExceptionString);
+        CrashDetails crashDetails = new CrashDetails(filename, exception, additionalManagedException, isManagedException);
         crashDetails.setAppPackage(Constants.APP_PACKAGE);
         crashDetails.setAppVersionCode(Constants.APP_VERSION);
         crashDetails.setAppVersionName(Constants.APP_VERSION_NAME);
         crashDetails.setAppStartDate(startDate);
         crashDetails.setAppCrashDate(now);
-        crashDetails.setIsXamarinException(fromXamarin);
 
         if ((listener == null) || (listener.includeDeviceData())) {
             crashDetails.setOsVersion(Constants.ANDROID_VERSION);
