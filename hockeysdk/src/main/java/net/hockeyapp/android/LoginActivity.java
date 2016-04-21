@@ -17,6 +17,7 @@ import net.hockeyapp.android.tasks.LoginTask;
 import net.hockeyapp.android.utils.AsyncTaskUtils;
 import net.hockeyapp.android.utils.Util;
 
+import java.lang.ref.WeakReference;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
@@ -30,7 +31,7 @@ import java.util.Map;
  * <h3>License</h3>
  *
  * <pre>
- * Copyright (c) 2011-2014 Bit Stadium GmbH
+ * Copyright (c) 2011-2016 Bit Stadium GmbH
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -55,6 +56,8 @@ import java.util.Map;
  * </pre>
  *
  * @author Patrick Eschenbach
+ * @author Matthias Wenz
+ * @author Benjamin Reimold
  **/
 public class LoginActivity extends Activity {
 
@@ -178,24 +181,7 @@ public class LoginActivity extends Activity {
     }
 
     private void initLoginHandler() {
-        mLoginHandler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                Bundle bundle = msg.getData();
-                boolean success = bundle.getBoolean(LoginTask.BUNDLE_SUCCESS);
-
-                if (success) {
-                    finish();
-
-                    if (LoginManager.listener != null) {
-                        LoginManager.listener.onSuccess();
-                    }
-                } else {
-                    Toast.makeText(LoginActivity.this, "Login failed. Check your credentials.", Toast.LENGTH_LONG)
-                            .show();
-                }
-            }
-        };
+        mLoginHandler = new LoginHandler(this);
     }
 
     private void performAuthentication() {
@@ -250,5 +236,37 @@ public class LoginActivity extends Activity {
             e.printStackTrace();
         }
         return "";
+    }
+
+    private static class LoginHandler extends Handler {
+
+        private final WeakReference<Activity> mWeakActivity;
+
+        public LoginHandler(Activity activity) {
+            mWeakActivity = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+
+            final Activity activity = mWeakActivity.get();
+            if (activity == null) {
+                return;
+            }
+
+            Bundle bundle = msg.getData();
+            boolean success = bundle.getBoolean(LoginTask.BUNDLE_SUCCESS);
+
+            if (success) {
+                activity.finish();
+
+                if (LoginManager.listener != null) {
+                    LoginManager.listener.onSuccess();
+                }
+            } else {
+                Toast.makeText(activity, "Login failed. Check your credentials.", Toast.LENGTH_LONG)
+                        .show();
+            }
+        }
     }
 }

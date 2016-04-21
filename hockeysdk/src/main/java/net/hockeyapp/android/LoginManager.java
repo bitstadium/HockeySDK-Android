@@ -8,11 +8,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
-
 import net.hockeyapp.android.tasks.LoginTask;
 import net.hockeyapp.android.utils.AsyncTaskUtils;
+import net.hockeyapp.android.utils.HockeyLog;
 import net.hockeyapp.android.utils.Util;
 
+import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,7 +25,7 @@ import java.util.Map;
  * <h3>License</h3>
  *
  * <pre>
- * Copyright (c) 2011-2014 Bit Stadium GmbH
+ * Copyright (c) 2011-2016 Bit Stadium GmbH
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -49,11 +50,28 @@ import java.util.Map;
  * </pre>
  *
  * @author Patrick Eschenbach
+ * @author Matthias Wenz
+ * @author Benjamin Reimold
  **/
 public class LoginManager {
+    /**
+     * The default mode for authorization. User's won't be authorized.
+     */
     public static final int LOGIN_MODE_ANONYMOUS = 0;
+
+    /**
+     * Testers/users need a HockeyApp account and have to provide their email address to use the app.
+     */
     public static final int LOGIN_MODE_EMAIL_ONLY = 1;
+
+    /**
+     * Testers/users need a HockeyApp account and have to provide their email address and password to use the app.
+     */
     public static final int LOGIN_MODE_EMAIL_PASSWORD = 2;
+
+    /**
+     * Same as LOGIN_MODE_EMAIL_PASSWORD and HockeySDK will check if the user has access to the app.
+     */
     public static final int LOGIN_MODE_VALIDATE = 3;
 
     /**
@@ -159,17 +177,7 @@ public class LoginManager {
             LoginManager.mainActivity = activity;
 
             if (LoginManager.validateHandler == null) {
-                LoginManager.validateHandler = new Handler() {
-                    @Override
-                    public void handleMessage(Message msg) {
-                        Bundle bundle = msg.getData();
-                        boolean success = bundle.getBoolean(LoginTask.BUNDLE_SUCCESS);
-
-                        if (!success) {
-                            startLoginActivity(context);
-                        }
-                    }
-                };
+                LoginManager.validateHandler = new LoginHandler(context);
             }
 
             Constants.loadFromContext(context);
@@ -177,9 +185,10 @@ public class LoginManager {
     }
 
     /**
-     * Checks the authentication status. If not authenticated at all it will start the LoginActivity,
-     * otherwise it will verify if the user is still allowed to use this app. Also exits the app if the
-     * LoginActivity is exited with the back button.
+     * Checks the authentication status. If not authenticated at all it will start the LoginActivity.
+     * If the user has authenticated before, the SDK will not check for authorization again or validate the user's
+     * access to the app. In case of LOGIN_MODE_VALIDATE, it will verify if the user is still allowed to use this app.
+     * In case the user tries to navigate back from the login dialog (LoginActivity), it \aAlso exits the app.
      *
      * @param context The activity from which this method is called.
      * @param intent  The intent that the activity has been created with.
@@ -193,13 +202,17 @@ public class LoginManager {
             }
         }
 
-        if (context == null || mode == LOGIN_MODE_ANONYMOUS || mode == LOGIN_MODE_VALIDATE) {
+        //Don't verify anything if we're in LOGIN_MODE_ANONYMOUS
+        if (context == null || mode == LOGIN_MODE_ANONYMOUS) {
             return;
         }
 
+        //Check if the LOGIN_MODE has changed. Delete IUID and AUID if it has changed.
+        //This requires re-authentication.
         SharedPreferences prefs = context.getSharedPreferences("net.hockeyapp.android.login", 0);
         int currentMode = prefs.getInt("mode", -1);
         if (currentMode != mode) {
+            HockeyLog.verbose("HockeyAuth", "Mode has changed, require re-auth.");
             prefs.edit()
                     .remove("auid")
                     .remove("iuid")
@@ -207,38 +220,49 @@ public class LoginManager {
                     .apply();
         }
 
+        //Get auth ids and check if we're successfully authenticated.
         String auid = prefs.getString("auid", null);
         String iuid = prefs.getString("iuid", null);
 
-        boolean notAuthenticated = auid == null && iuid == null;
-        boolean auidMissing = auid == null && mode == LOGIN_MODE_EMAIL_PASSWORD;
-        boolean iuidMissing = iuid == null && mode == LOGIN_MODE_EMAIL_ONLY;
+        boolean notAuthenticated = (auid == null) && (iuid == null);
+        boolean auidMissing = (auid == null) && ((mode == LOGIN_MODE_EMAIL_PASSWORD) || mode == LOGIN_MODE_VALIDATE);
+        boolean iuidMissing = (iuid == null) && (mode == LOGIN_MODE_EMAIL_ONLY);
 
         if (notAuthenticated || auidMissing || iuidMissing) {
+            HockeyLog.verbose("HockeyAuth", "Not authenticated or correct ID missing, re-authenticate.");
             startLoginActivity(context);
             return;
         }
 
-        Map<String, String> params = new HashMap<String, String>();
-        if (auid != null) {
-            params.put("type", "auid");
-            params.put("id", auid);
-        } else if (iuid != null) {
-            params.put("type", "iuid");
-            params.put("id", iuid);
-        }
+        //Validate the user's auth data in case LOGIN_MODE_AUTH is set.
+        if (mode == LOGIN_MODE_VALIDATE) {
+            HockeyLog.verbose("HockeyAuth", "LOGIN_MODE_VALIDATE, Validate the user's info!");
 
-        LoginTask verifyTask = new LoginTask(context, validateHandler, getURLString(LOGIN_MODE_VALIDATE), LOGIN_MODE_VALIDATE, params);
-        verifyTask.setShowProgressDialog(false);
-        AsyncTaskUtils.execute(verifyTask);
+            Map<String, String> params = new HashMap<String, String>();
+            if (auid != null) {
+                params.put("type", "auid");
+                params.put("id", auid);
+            } else if (iuid != null) {
+                params.put("type", "iuid");
+                params.put("id", iuid);
+            }
+
+            LoginTask verifyTask = new LoginTask(context, validateHandler, getURLString(LOGIN_MODE_VALIDATE), LOGIN_MODE_VALIDATE, params);
+            verifyTask.setShowProgressDialog(false);
+            AsyncTaskUtils.execute(verifyTask);
+        }
     }
 
     private static void startLoginActivity(Context context) {
         Intent intent = new Intent();
+        //In case of LOGIN_MODE_VALIDATE, we have to authenticate with username and password first.
+        //So we override the mode variable with LOGIN_MODE_EMAIL_PASSWORD
+        Boolean isLoginModeValidate = (mode == LOGIN_MODE_VALIDATE) ? true : false;
+        int tempMode = (isLoginModeValidate) ? LOGIN_MODE_EMAIL_PASSWORD : mode;
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY);
         intent.setClass(context, LoginActivity.class);
-        intent.putExtra(LoginActivity.EXTRA_URL, getURLString(mode));
-        intent.putExtra(LoginActivity.EXTRA_MODE, mode);
+        intent.putExtra(LoginActivity.EXTRA_URL, getURLString(tempMode));
+        intent.putExtra(LoginActivity.EXTRA_MODE, tempMode);
         intent.putExtra(LoginActivity.EXTRA_SECRET, secret);
         context.startActivity(intent);
     }
@@ -254,5 +278,33 @@ public class LoginManager {
         }
 
         return urlString + "api/3/apps/" + identifier + "/identity/" + suffix;
+    }
+
+    private static class LoginHandler extends Handler {
+
+        private final WeakReference<Context> mWeakContext;
+
+        public LoginHandler(Context context) {
+            mWeakContext = new WeakReference<>(context);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            Bundle bundle = msg.getData();
+            boolean success = bundle.getBoolean(LoginTask.BUNDLE_SUCCESS);
+
+            Context context = mWeakContext.get();
+            if (context == null) {
+                return;
+            }
+
+            if (!success) {
+                    startLoginActivity(context);
+                //TODO should show a message that user didn't have enough rights?
+            }
+            else {
+                HockeyLog.verbose("HockeyAuth", "We authenticated or verified successfully");
+            }
+        }
     }
 }

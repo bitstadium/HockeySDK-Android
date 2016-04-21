@@ -14,23 +14,15 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
-
 import net.hockeyapp.android.R;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 import java.net.URLEncoder;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TimeZone;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -74,14 +66,11 @@ public class Util {
     public static final String APP_IDENTIFIER_PATTERN = "[0-9a-f]+";
     public static final int APP_IDENTIFIER_LENGTH = 32;
     public static final String APP_IDENTIFIER_KEY = "net.hockeyapp.android.appIdentifier";
-
     public static final String LOG_IDENTIFIER = "HockeyApp";
-
+    private static final String APP_SECRET_KEY = "net.hockeyapp.android.appSecret";
     private static final Pattern appIdentifierPattern = Pattern.compile(APP_IDENTIFIER_PATTERN, Pattern.CASE_INSENSITIVE);
 
     private static final String SDK_VERSION_KEY = "net.hockeyapp.android.sdkVersion";
-
-    private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
 
     private static final ThreadLocal<DateFormat> DATE_FORMAT_THREAD_LOCAL = new ThreadLocal<DateFormat>() {
         @Override
@@ -268,8 +257,24 @@ public class Util {
         }
     }
 
+    /**
+     * Retrieve the HockeyApp AppIdentifier from the Manifest
+     *
+     * @param context usually your Activity
+     * @return the HockeyApp AppIdentifier
+     */
     public static String getAppIdentifier(Context context) {
         return getManifestString(context, APP_IDENTIFIER_KEY);
+    }
+
+    /**
+     * Retrieve the HockeyApp appSecret from the Manifest
+     *
+     * @param context usually your Activity
+     * @return the HockeyApp appSecret
+     */
+    public static String getAppSecret(Context context) {
+        return getManifestString(context, APP_SECRET_KEY);
     }
 
     public static String getManifestString(Context context, String key) {
@@ -344,37 +349,6 @@ public class Util {
             guid = idBuf.toString();
         }
         return guid;
-    }
-
-    /**
-     * Get a SHA-256 hash of the input string if the algorithm is available. If the algorithm is
-     * unavailable, return empty string.
-     *
-     * @param input the string to hash.
-     * @return a SHA-256 hash of the input or the empty string.
-     */
-    public static String tryHashStringSha256(String input) {
-        String salt = "oRq=MAHHHC~6CCe|JfEqRZ+gc0ESI||g2Jlb^PYjc5UYN2P 27z_+21xxd2n";
-        try {
-            // Get a Sha256 digest
-            MessageDigest hash = MessageDigest.getInstance("SHA-256");
-            hash.reset();
-            hash.update(input.getBytes());
-            hash.update(salt.getBytes());
-            byte[] hashedBytes = hash.digest();
-
-            char[] hexChars = new char[hashedBytes.length * 2];
-            for (int j = 0; j < hashedBytes.length; j++) {
-                int v = hashedBytes[j] & 0xFF;
-                hexChars[j * 2] = HEX_ARRAY[v >>> 4];
-                hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
-            }
-
-            return new String(hexChars);
-        } catch (NoSuchAlgorithmException e) {
-            // All android devices should support SHA256, but if unavailable return ""
-            return "";
-        }
     }
 
     /**

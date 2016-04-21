@@ -2,7 +2,7 @@ package net.hockeyapp.android;
 
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
-import android.test.ActivityInstrumentationTestCase2;
+import android.test.InstrumentationTestCase;
 
 import junit.framework.Assert;
 
@@ -13,10 +13,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(AndroidJUnit4.class)
-public class UtilTest extends ActivityInstrumentationTestCase2<UpdateActivity> {
-    public UtilTest() {
-        super(UpdateActivity.class);
-    }
+public class UtilTest extends InstrumentationTestCase {
 
     @Before
     public void setUp() throws Exception {
@@ -48,6 +45,15 @@ public class UtilTest extends ActivityInstrumentationTestCase2<UpdateActivity> {
 
         invalidMail = "mail@example .com";
         Assert.assertFalse(Util.isValidEmail(invalidMail));
+    }
+
+    @Test
+    public void testValidAppIdentifierGetsConvertedToGuid() {
+        String appIdentifier = "ca2aba1482cb9458a67b917930b202c8";
+        String expected = "ca2aba14-82cb-9458-a67b-917930b202c8";
+
+        String actual = Util.convertAppIdentifierToGuid(appIdentifier);
+        Assert.assertEquals(expected, actual);
     }
 
 }
