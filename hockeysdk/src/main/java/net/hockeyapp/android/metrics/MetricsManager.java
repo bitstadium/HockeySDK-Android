@@ -259,7 +259,7 @@ public class MetricsManager {
      */
     public static void setSessionTrackingDisabled(Boolean disabled) {
         if (instance == null || !isUserMetricsEnabled()) {
-            Log.w(TAG, "MetricsManager hasn't been registered or User Metrics has been disabled. No User Metrics will be collected!");
+            HockeyLog.warn(TAG, "MetricsManager hasn't been registered. No Metrics will be collected!");
         } else {
             synchronized (LOCK) {
                 if (Util.sessionTrackingSupported()) {
@@ -293,6 +293,7 @@ public class MetricsManager {
         getApplication().unregisterActivityLifecycleCallbacks(mTelemetryLifecycleCallbacks);
         mTelemetryLifecycleCallbacks = null;
     }
+
 
     /**
      * Set the server url if you want metrics to be sent to a custom server
