@@ -8,11 +8,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
-
 import net.hockeyapp.android.Constants;
 import net.hockeyapp.android.LoginManager;
 import net.hockeyapp.android.utils.HttpURLConnectionBuilder;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -61,15 +59,13 @@ public class LoginTask extends ConnectionTask<Void, Void, Boolean> {
      * Key for login success in the returend bundle
      */
     public static final String BUNDLE_SUCCESS = "success";
-
+    private final int mMode;
+    private final String mUrlString;
+    private final Map<String, String> mParams;
     private Context mContext;
     private Handler mHandler;
     private ProgressDialog mProgressDialog;
     private boolean mShowProgressDialog;
-
-    private final int mMode;
-    private final String mUrlString;
-    private final Map<String, String> mParams;
 
     /**
      * Send feedback {@link AsyncTask}.
@@ -181,10 +177,11 @@ public class LoginTask extends ConnectionTask<Void, Void, Boolean> {
                     .setBasicAuthorization(params.get("email"), params.get("password"))
                     .build();
         } else if (mode == LoginManager.LOGIN_MODE_VALIDATE) {
+
             String type = params.get("type");
             String id = params.get("id");
             String paramUrl = mUrlString + "?" + type + "=" + id;
-
+            
             return new HttpURLConnectionBuilder(paramUrl)
                     .build();
         } else {
@@ -207,6 +204,7 @@ public class LoginTask extends ConnectionTask<Void, Void, Boolean> {
                 if (status.equals("identified")) {
                     String iuid = response.getString("iuid");
                     if (!TextUtils.isEmpty(iuid)) {
+
                         prefs.edit()
                                 .putString("iuid", iuid)
                                 .apply();
@@ -216,6 +214,7 @@ public class LoginTask extends ConnectionTask<Void, Void, Boolean> {
             } else if (mMode == LoginManager.LOGIN_MODE_EMAIL_PASSWORD) {
                 if (status.equals("authorized")) {
                     String auid = response.getString("auid");
+
                     if (!TextUtils.isEmpty(auid)) {
                         prefs.edit()
                                 .putString("auid", auid)
