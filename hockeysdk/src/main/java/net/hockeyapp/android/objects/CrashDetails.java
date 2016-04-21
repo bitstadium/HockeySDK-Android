@@ -28,9 +28,7 @@ public class CrashDetails {
 
     private static final String FIELD_FORMAT = "Format";
     private static final String FIELD_FORMAT_VALUE = "Xamarin";
-
     private static final String FIELD_XAMARIN_CAUSED_BY = "Xamarin caused by: "; //Field that marks a Xamarin Exception
-
 
     private final String crashIdentifier;
 
@@ -58,6 +56,15 @@ public class CrashDetails {
 
     public CrashDetails(String crashIdentifier) {
         this.crashIdentifier = crashIdentifier;
+    }
+
+    public CrashDetails(String crashIdentifier, Throwable throwable) {
+        this(crashIdentifier);
+
+        final Writer stackTraceResult = new StringWriter();
+        final PrintWriter printWriter = new PrintWriter(stackTraceResult);
+        throwable.printStackTrace(printWriter);
+        throwableStackTrace = stackTraceResult.toString();
     }
 
     public CrashDetails(String crashIdentifier, Throwable throwable, String managedExceptionString, Boolean isManagedException) {
@@ -99,15 +106,6 @@ public class CrashDetails {
         throwableStackTrace = stackTraceResult.toString();
     }
 
-
-    public CrashDetails(String crashIdentifier, Throwable throwable) {
-        this(crashIdentifier);
-
-        final Writer stackTraceResult = new StringWriter();
-        final PrintWriter printWriter = new PrintWriter(stackTraceResult);
-        throwable.printStackTrace(printWriter);
-        throwableStackTrace = stackTraceResult.toString();
-    }
 
     public static CrashDetails fromFile(File file) throws IOException {
         String crashIdentifier = file.getName().substring(0, file.getName().indexOf(".stacktrace"));
@@ -172,8 +170,9 @@ public class CrashDetails {
                 } else if (headerName.equals(FIELD_FORMAT)) {
                     result.setFormat(headerValue);
                 }
+
             } else {
-                stackTraceBuilder.append(readLine).append("\n"); //TODO distinguish managed and unmanaged exceptions?!
+                stackTraceBuilder.append(readLine).append("\n");
             }
         }
         result.setThrowableStackTrace(stackTraceBuilder.toString());
@@ -209,9 +208,6 @@ public class CrashDetails {
 
             writer.write("\n");
             writer.write(throwableStackTrace);
-
-            writer.write("\n");
-            writer.write("\n");
 
             writer.flush();
 
@@ -350,4 +346,6 @@ public class CrashDetails {
     public void setFormat(String format) {
         this.format = format;
     }
+
+
 }

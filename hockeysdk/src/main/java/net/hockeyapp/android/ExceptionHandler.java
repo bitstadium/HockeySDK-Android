@@ -1,10 +1,16 @@
 package net.hockeyapp.android;
 
 import android.text.TextUtils;
+
 import net.hockeyapp.android.objects.CrashDetails;
 import net.hockeyapp.android.utils.HockeyLog;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.Date;
 import java.util.UUID;
@@ -14,7 +20,7 @@ import java.util.UUID;
  * Helper class to catch exceptions. Saves the stack trace
  * as a file and executes callback methods to ask the app for
  * additional information and meta data (see CrashManagerListener).
- *
+
  * <h3>License</h3>
  * <pre>
  * Copyright (c) 2009 nullwire aps
@@ -58,6 +64,10 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
     public ExceptionHandler(UncaughtExceptionHandler defaultExceptionHandler, CrashManagerListener listener, boolean ignoreDefaultHandler) {
         mDefaultExceptionHandler = defaultExceptionHandler;
         mIgnoreDefaultHandler = ignoreDefaultHandler;
+        mCrashManagerListener = listener;
+    }
+
+    public void setListener(CrashManagerListener listener) {
         mCrashManagerListener = listener;
     }
 
@@ -124,6 +134,7 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
             } catch (IOException e) {
                 HockeyLog.error("Error saving crash meta data!", e);
             }
+
         }
     }
 
@@ -198,14 +209,21 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
         }
 
         crashDetails.writeCrashReport();
+    }
 
-        if (listener != null) {
-            try {
-                writeValueToFile(limitedString(listener.getUserID()), filename + ".user");
-                writeValueToFile(limitedString(listener.getContact()), filename + ".contact");
-                writeValueToFile(listener.getDescription(), filename + ".description");
-            } catch (IOException e) {
-                HockeyLog.error("Error saving crash meta data!", e);
+    public void uncaughtException(Thread thread, Throwable exception) {
+        if (Constants.FILES_PATH == null) {
+            // If the files path is null, the exception can't be stored
+            // Always call the default handler instead
+            mDefaultExceptionHandler.uncaughtException(thread, exception);
+        } else {
+            saveException(exception, thread, mCrashManagerListener);
+
+            if (!mIgnoreDefaultHandler) {
+                mDefaultExceptionHandler.uncaughtException(thread, exception);
+            } else {
+                android.os.Process.killProcess(android.os.Process.myPid());
+                System.exit(10);
             }
         }
     }
@@ -236,29 +254,5 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
             string = string.substring(0, 255);
         }
         return string;
-    }
-
-    public void setListener(CrashManagerListener listener) {
-        mCrashManagerListener = listener;
-    }
-
-    public void uncaughtException(Thread thread, Throwable exception) {
-
-        PrivateEventManager.postEvent(new PrivateEventManager.Event(PrivateEventManager.EVENT_TYPE_UNCAUGHT_EXCEPTION));
-
-        if (Constants.FILES_PATH == null) {
-            // If the files path is null, the exception can't be stored
-            // Always call the default handler instead
-            mDefaultExceptionHandler.uncaughtException(thread, exception);
-        } else {
-            saveException(exception, thread, mCrashManagerListener);
-
-            if (!mIgnoreDefaultHandler) {
-                mDefaultExceptionHandler.uncaughtException(thread, exception);
-            } else {
-                android.os.Process.killProcess(android.os.Process.myPid());
-                System.exit(10);
-            }
-        }
     }
 }
