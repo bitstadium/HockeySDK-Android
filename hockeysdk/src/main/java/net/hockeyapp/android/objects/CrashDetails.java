@@ -61,6 +61,8 @@ public class CrashDetails {
     public CrashDetails(String crashIdentifier, Throwable throwable) {
         this(crashIdentifier);
 
+        isXamarinException = false;
+
         final Writer stackTraceResult = new StringWriter();
         final PrintWriter printWriter = new PrintWriter(stackTraceResult);
         throwable.printStackTrace(printWriter);
