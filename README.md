@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/bitstadium/HockeySDK-Android.svg?branch=develop)](https://travis-ci.org/bitstadium/HockeySDK-Android)
+[![Slack Status](https://slack.hockeyapp.net/badge.svg)](https://slack.hockeyapp.net)
 
 ## Preseason - Version 4.1.0-beta.1
-=======
 
 ## Introduction
 
@@ -9,16 +9,15 @@ HockeySDK-Android implements support for using HockeyApp in your Android applica
 
 The following features are currently supported:
 
-1. **Collect crash reports:** If your app crashes, a crash log is written to the device's storage. If the user starts the app again, they will be asked asked to submit the crash report to HockeyApp. This works for both beta and live apps, i.e. those submitted to Google Play or other app stores! Crash logs contain viable information for you to help resolve the issue. Furthermore, you as a developer can add additional information to the report as well.
+1. **Crash reports:** If your app crashes, a crash log is written to the device's storage. If the user starts the app again, they will be asked asked to submit the crash report to HockeyApp. This works for both beta and live apps, i.e. those submitted to Google Play or other app stores. Crash logs contain viable information for you to help resolve the issue. Furthermore, you as a developer can add additional information to the report as well.
 
-2. **Collect user metrics:** Get nice statistics about how many users you have and how they are using your app. This feature requires a minimum API level of 14 (Android 4.x Icecream Sandwich).
+2. **User metrics:** Understand user behavior to improve your app. Track usage through daily and monthly active users. Monitor crash impacted users. Measure customer engagement through session count. This feature requires a minimum API level of 14 (Android 4.x Ice Cream Sandwich).
 
-3. **Update alpha/beta apps:** The app will check with HockeyApp if a new version for your alpha/beta build is available. If yes, it will show a dialog to the user and let him see the release notes, the version history and start the installation process right away. You can even force the installation of certain updates.
-4. **Authentication:** To help you stay in control of closed tester groups you can identify and authenticate users against your registered testers with the HockeyApp backend. The authentication feature supports several ways of authentication.
+3. **Update alpha/beta apps:** The app will check with HockeyApp if a new version for your alpha/beta build is available. If yes, it will show a dialog to users and let them see the release notes, the version history and start the installation process right away. You can even force the installation of certain updates.
 
-4. **Feedback:** Besides crash reports, collecting feedback from your users from within your app is a great option to help with improving your app. You act and answer feedback directly from the HockeyApp backend.
+4. **Feedback:** Besides crash reports, collecting feedback from your users from within your app is a great option to help with improving your app. You act on and answer feedback directly from the HockeyApp backend.
 
-5. **Authenticate:** To help you stay in control of closed tester groups you can identify and authenticate users against your registered testers with the HockeyApp backend. The authentication feature supports several ways of authentication.
+5. **Authenticate:** To help you stay in control of closed tester groups, you can identify and authenticate users against your registered testers with the HockeyApp backend. The authentication feature supports several ways of authentication.
 
 This document contains the following sections:
 
@@ -77,14 +76,6 @@ Add the SDK to your app module's dependencies in Android Studio by adding the fo
 compile 'net.hockeyapp.android:HockeySDK:4.1.0-beta.1'
 ```
 
-also make sure your repository configuration contains our preseason repository:
-
-```java
-repositories {
-  maven { url 'http://download.hockeyapp.net/preseason/sdk/android' }
-}
-```
-
 <a id="integrate-sdk"></a>
 ### 2.3 Integrate HockeySDK
 
@@ -140,7 +131,12 @@ When the activity is resumed, the crash manager is triggered and checks if a new
 <a id="user-metrics"></a>
 ### 2.5 Add User Metrics
 
-This will add the user metrics feature to your app.
+HockeyApp automatically provides you with nice, intelligible, and informative metrics about how your app is used and by whom.
+
+* **Sessions:** A new session is tracked by the SDK whenever the containing app is restarted (this refers to a 'cold start', i.e. when the app has not already been in memory prior to being launched) or whenever it becomes active again after having been in the background for 20 seconds or more.
+* **Users:** The SDK anonymously tracks the users of your app by creating a random UUID that is then securely stored. The UUID is securely stored in the preferences of the client app.
+
+To integrate User Metrics with your app, perform the following steps:
 
 1. Open your app's main activity.
 2. Add the following line to the activity's `onCreate`-callback:
@@ -491,4 +487,4 @@ You must sign a [Contributor License Agreement](https://cla.microsoft.com/) befo
 <a id="contact"></a>
 ## 9. Contact
 
-If you have further questions or are running into trouble that cannot be resolved by any of the steps here, feel free to open a GitHub issue here or contact us at [support@hockeyapp.net](mailto:support@hockeyapp.net)
+If you have further questions or are running into trouble that cannot be resolved by any of the steps here, feel free to open a GitHub issue here or contact us at [support@hockeyapp.net](mailto:support@hockeyapp.net) or in our [public Slack channel](https://slack.hockeyapp.net).

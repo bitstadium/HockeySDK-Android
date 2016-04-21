@@ -1,6 +1,7 @@
 package net.hockeyapp.android;
 
 import android.annotation.SuppressLint;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
@@ -10,11 +11,11 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
 import android.text.TextUtils;
-
 import net.hockeyapp.android.utils.HockeyLog;
 
 import java.io.File;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * <h3>Description</h3>
@@ -25,7 +26,7 @@ import java.security.MessageDigest;
  *
  * <pre>
  * Copyright (c) 2009 nullwire aps
- * Copyright (c) 2011-2014 Bit Stadium GmbH
+ * Copyright (c) 2011-2016 Bit Stadium GmbH
  *
  * Permission is hereby granted, free of charge, to any person
  * obtaining a copy of this software and associated documentation
@@ -67,7 +68,7 @@ public class Constants {
     public static final String SDK_NAME = "HockeySDK";
 
     public static final String FILES_DIRECTORY_NAME = "HockeyApp";
-   
+
     /**
      * Permissions request for the update task.
      */
@@ -107,9 +108,13 @@ public class Constants {
      */
     public static String PHONE_MANUFACTURER = null;
     /**
-     * Unique identifier for crash reports.
+     * Unique identifier for crash reports. This is package and device specific.
      */
     public static String CRASH_IDENTIFIER = null;
+    /**
+     * Unique identifier for device, not dependent on package or device.
+     */
+    public static String DEVICE_IDENTIFIER = null;
 
     /**
      * Initializes constants from the given context. The context is used to set
@@ -126,6 +131,7 @@ public class Constants {
         loadFilesPath(context);
         loadPackageData(context);
         loadCrashIdentifier(context);
+        loadDeviceIdentifier(context);
     }
 
     /**
@@ -231,8 +237,47 @@ public class Constants {
 
                 Constants.CRASH_IDENTIFIER = bytesToHex(bytes);
             } catch (Throwable e) {
+                HockeyLog.error("Couldn't create CrashIdentifier with Exception:" + e.toString());
                 //TODO handle the exeption
             }
+        }
+    }
+
+    /**
+     * Helper method to generate a device identifier for telemetry and crashes,
+     *
+     * @param context The context to use. Usually your Activity object.
+     */
+    private static void loadDeviceIdentifier(Context context) {
+        // get device ID
+        ContentResolver resolver = context.getContentResolver();
+        String deviceIdentifier = Settings.Secure.getString(resolver, Settings.Secure.ANDROID_ID);
+        if (deviceIdentifier != null) {
+            Constants.DEVICE_IDENTIFIER = tryHashStringSha256(context, deviceIdentifier);
+        }
+    }
+
+    /**
+     * Get a SHA-256 hash of the input string if the algorithm is available. If the algorithm is
+     * unavailable, return empty string.
+     *
+     * @param input the string to hash.
+     * @return a SHA-256 hash of the input or the input if SHA-256 is not available (should not happen).
+     */
+    private static String tryHashStringSha256(Context context, String input) {
+        String salt = createSalt(context);
+        try {
+            // Get a Sha256 digest
+            MessageDigest hash = MessageDigest.getInstance("SHA-256");
+            hash.reset();
+            hash.update(input.getBytes());
+            hash.update(salt.getBytes());
+            byte[] hashedBytes = hash.digest();
+
+            return bytesToHex(hashedBytes);
+        } catch (NoSuchAlgorithmException e) {
+            // All android devices should support SHA256, but if unavailable return input
+            return input;
         }
     }
 

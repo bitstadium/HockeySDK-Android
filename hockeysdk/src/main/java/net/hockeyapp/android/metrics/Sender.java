@@ -3,7 +3,6 @@ package net.hockeyapp.android.metrics;
 import android.annotation.TargetApi;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.util.Log;
 
 import net.hockeyapp.android.utils.AsyncTaskUtils;
 import net.hockeyapp.android.utils.HockeyLog;
@@ -220,7 +219,7 @@ public class Sender {
             connection.setDoInput(true);
             connection.setUseCaches(false);
         } catch (IOException e) {
-            Log.e(TAG, "Could not open connection for provided URL with exception: ", e);
+            HockeyLog.error(TAG, "Could not open connection for provided URL with exception: ", e);
         }
         return connection;
     }
@@ -367,13 +366,13 @@ public class Sender {
                 builder.append(connection.getResponseMessage());
             }
         } catch (IOException e) {
-            Log.e(TAG, e.toString());
+            HockeyLog.error(TAG, e.toString());
         } finally {
             if (reader != null) {
                 try {
                     reader.close();
                 } catch (IOException e) {
-                    Log.e(TAG, e.toString());
+                    HockeyLog.error(TAG, e.toString());
                 }
             }
         }
