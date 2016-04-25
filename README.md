@@ -140,7 +140,7 @@ HockeyApp automatically provides you with nice, intelligible, and informative me
 
 To integrate User Metrics with your app, perform the following steps:
 
-1. Open your app's main activity and add the import statement and one line of code to the activity's `onCreate`-callback:
+1. Open your app's main activity and add the import statement and one line of code to the activity's `onCreate`-callback. Add the `trackEvent()`-call wherever you want to track a custom event.
 
 ```java
 //add this import
@@ -148,12 +148,12 @@ To integrate User Metrics with your app, perform the following steps:
 
 //add this to your main activity's onCreate()-callback
 MetricsManager.register(this, getApplication());
-```
-2. To use ustom events, add the code above to your main activity and add the the following code where you want to track a custom event
 
-```java
+//add this wherever you want to track a custom event
 MetricsManager.trackEvent("YOUR_EVENT_NAME");
+
 ```
+
 Make sure to replace `"YOUR_EVENT_NAME"` with a name for your custom event, e.g. `"Login Button Pressed"`. 
 
 **Limits**
