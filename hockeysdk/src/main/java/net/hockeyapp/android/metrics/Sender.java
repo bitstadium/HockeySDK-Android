@@ -20,9 +20,9 @@ import java.util.zip.GZIPOutputStream;
 
 /**
  * <h3>Description</h3>
- * <p/>
- * Transmits given telemetry data to the ingestion endpoint. Transmission is done
- * asynchronously to not block the main thread.
+ *
+ * Either calls execute or executeOnExecutor on an AsyncTask depending on the
+ * API level.
  **/
 
 public class Sender {
