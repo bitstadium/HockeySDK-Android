@@ -3,7 +3,6 @@ package net.hockeyapp.android.objects;
 /**
  * Crash Manager user input
  *
- * @author Andreas Wörner
  */
 public enum CrashManagerUserInput {
     /**

@@ -19,7 +19,7 @@ import java.util.zip.GZIPOutputStream;
 
 /**
  * <h3>Description</h3>
- * <p/>
+ *
  * Either calls execute or executeOnExecutor on an AsyncTask depending on the
  * API level.
  **/
