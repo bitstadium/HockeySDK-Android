@@ -139,10 +139,13 @@ HockeyApp automatically provides you with nice, intelligible, and informative me
 
 To integrate User Metrics with your app, perform the following steps:
 
-1. Open your app's main activity.
-2. Add the following line to the activity's `onCreate`-callback:
+1. Open your app's main activity and add the import statement and one line of code to the activity's `onCreate`-callback:
 
 ```java
+//add this import
+#import net.hockeyapp.android.metrics.MetricsManager;
+
+//add this to your main activity's onCreate()-callback
 MetricsManager.register(this, getApplication());
 ```
 
@@ -254,13 +257,13 @@ public class YourActivity extends Activity {
 }
 ```
 
-Make sure to replace `APP_SECRET` with the value retrieved in step 1. This will launch the login activity every time a user launches your app.
+Make sure to replace `APP_SECRET` with the value retrieved in step 1. This will launch the login activity when a user launches your app the first time. To read more about the different, have a look in the chapter in our [advanced setup section ](#authentication-advanced).
 
 <a id="changelog"></a>
 ## 3. Changelog
 You can access the full changelog in our [releases-section](https://github.com/bitstadium/HockeySDK-Android/releases). The following paragraphs contain information what you might need to change when upgrading to the different new versions.
 
-## 3.1 Upgrading from 3.6.x to 3.7.0
+## 3.1 Upgrading from 3.6.x to 3.7.0 or newer
 
 1. We didn't introduce any breaking changes, except that we have raised the minimum API level to 9.
 2. Also consider switching to our new register-calls and adding your app id to your configuration as described above.
@@ -268,7 +271,7 @@ You can access the full changelog in our [releases-section](https://github.com/b
 4. If you integrate the SDK using Gradle, you can remove the previously required activities from your manifest file:
 
 ```xml
- <!-- HockeySDK Activities – no longer required as of 3.7.0! -->
+ <!-- HockeySDK Activities – no longer required as of 3.7.0 and up! -->
  <activity android:name="net.hockeyapp.android.UpdateActivity" />
  <activity android:name="net.hockeyapp.android.FeedbackActivity" />
  <activity android:name="net.hockeyapp.android.PaintActivity" />
@@ -387,11 +390,11 @@ LoginManager.register(this, APP_SECRET, LoginManager.LOGIN_MODE_ANONYMOUS);
 LoginManager.verifyLogin(this, getIntent());
 ```
 
-will switch off authentication.
+will switch the authentication feature off.
 
 ### 4.5.2 Authentication via email or email and password
 
-If you want users to authenticate when they first open the app, the following two modes require to enter their HockeyApp login data.
+If you want users to authenticate when they first open the app, the following two modes require them to enter their HockeyApp login data.
 
 While `LoginManager.LOGIN_MODE_EMAIL_ONLY` requires users to authenticate with their email address, `LoginManager.LOGIN_MODE_EMAIL_PASSWORD` also requires them to enter their password.
 
@@ -401,7 +404,7 @@ LoginManager.verifyLogin(this, getIntent());
 ```
 
 **NOTE**
-Both authentication modes don't restrict updates once the user has authenticated themself, so as long as the user has a HockeyApp account, they will continue to receive updates even if they are no longer part accociated with your app.
+Both authentication modes don't restrict updates once the user has authenticated themself, so as long as the user has a HockeyApp account, they will continue to receive updates even if they are no longer accociated with your app.
 Restricting a version to user's won't have any effect if you have chosen this authentication mode.
 
 ### 4.5.3 Verify the user's authentication status and restrict updates
@@ -415,11 +418,14 @@ LoginManager.verifyLogin(this, getIntent());
 ```
 
 If you chose this validation mode, the user will no longer be able to use the app if they have been removed from the app.
-This mode also affects in-app updates. If you have chosen this authentication mode, you can restrict versions to individual testers.
+
+`LOGIN_MODE_VALIDATE` also affects in-app updates. If you have chosen this authentication mode, you can restrict versions to individual testers.
+
+It also requires to user to have an internet connection to avoid users who want to circumvent your restriction by going into airplane mode.
 
 <a id="strings-advanced"></a>
 ### 4.6 Strings & localization
-HockeySDK for Android comes with English, French, and German localizations of all user interface strings. If you want to add further localizations or override certain strings to suit your app's user interface, you can simply override them and [resource merging](http://tools.android.com/tech-docs/new-build-system/resource-merging) takes care of the rest.
+HockeySDK for Android comes with English, French, German and Spanish localizations of all user interface strings. If you want to add further localizations or override certain strings to suit your app's user interface, you can simply override them and [resource merging](http://tools.android.com/tech-docs/new-build-system/resource-merging) takes care of the rest.
 
 Our base strings resource file is located in [`hockeysdk/src/main/res/values/strings.xml`](https://github.com/bitstadium/HockeySDK-Android/blob/master/hockeysdk/src/main/res/values/strings.xml). If your app overrides any of these strings in its `strings.xml` file, the overridden strings will be used in your app.
 
