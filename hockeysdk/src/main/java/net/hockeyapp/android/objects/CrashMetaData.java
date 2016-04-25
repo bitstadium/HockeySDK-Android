@@ -3,7 +3,6 @@ package net.hockeyapp.android.objects;
 /**
  * This class provides properties that can be attached to a crash report via a custom alert view flow
  *
- * @author Andreas Wörner
  */
 public class CrashMetaData {
     private String mUserDescription;

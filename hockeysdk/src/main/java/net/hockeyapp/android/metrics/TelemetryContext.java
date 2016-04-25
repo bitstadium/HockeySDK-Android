@@ -23,7 +23,7 @@ import java.util.Map;
 
 /**
  * <h3>Description</h3>
- * <p/>
+ *
  * Class that manages the context in which telemetry items get sent.
  **/
 class TelemetryContext {

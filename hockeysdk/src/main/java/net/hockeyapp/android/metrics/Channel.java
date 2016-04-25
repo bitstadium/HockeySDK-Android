@@ -17,7 +17,7 @@ import java.util.Map;
 
 /**
  * <h3>Description</h3>
- * <p/>
+ *
  * Items get queued before they are persisted and sent out as a batch to save battery. This class
  * managed the queue, and forwards the batch to the persistence layer once the max batch count has
  * been reached.
