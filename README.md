@@ -11,7 +11,7 @@ The following features are currently supported:
 
 1. **Crash reports:** If your app crashes, a crash log is written to the device's storage. If the user starts the app again, they will be asked asked to submit the crash report to HockeyApp. This works for both beta and live apps, i.e. those submitted to Google Play or other app stores. Crash logs contain viable information for you to help resolve the issue. Furthermore, you as a developer can add additional information to the report as well.
 
-2. **User metrics:** Understand user behavior to improve your app. Track usage through daily and monthly active users. Monitor crash impacted users. Measure customer engagement through session count. This feature requires a minimum API level of 14 (Android 4.x Ice Cream Sandwich).
+2. **User metrics:** Understand user behavior to improve your app. Track usage through daily and monthly active users. Monitor crash impacted users. Measure customer engagement through session count. Add custom tracking calls to learn which features your users are actually using. This feature requires a minimum API level of 14 (Android 4.x Ice Cream Sandwich).
 
 3. **Update alpha/beta apps:** The app will check with HockeyApp if a new version for your alpha/beta build is available. If yes, it will show a dialog to users and let them see the release notes, the version history and start the installation process right away. You can even force the installation of certain updates.
 
@@ -136,6 +136,7 @@ HockeyApp automatically provides you with nice, intelligible, and informative me
 
 * **Sessions:** A new session is tracked by the SDK whenever the containing app is restarted (this refers to a 'cold start', i.e. when the app has not already been in memory prior to being launched) or whenever it becomes active again after having been in the background for 20 seconds or more.
 * **Users:** The SDK anonymously tracks the users of your app by creating a random UUID that is then securely stored. The UUID is securely stored in the preferences of the client app.
+* **Custom Events:** Add custom events to your app to learn which features your users are using. For instance, you might want to track how many purchases occur in your app, how many users start (or end) a level in a game. HockeyApp will provide aggregates for the tracked events, but you will not be able to drill down and see the details of a specific event that occurred.
 
 To integrate User Metrics with your app, perform the following steps:
 
@@ -148,8 +149,18 @@ To integrate User Metrics with your app, perform the following steps:
 //add this to your main activity's onCreate()-callback
 MetricsManager.register(this, getApplication());
 ```
+2. To use ustom events, add the code above to your main activity and add the the following code where you want to track a custom event
 
-Your app will now send metrics which you can use to count your active and overall usage numbers.
+```java
+MetricsManager.trackEvent("YOUR_EVENT_NAME");
+```
+Make sure to replace `"YOUR_EVENT_NAME"` with a name for your custom event, e.g. `"Login Button Pressed"`. 
+
+**Limits**
+
+* Accepted characters for tracking events are: [a-zA-Z0-9_. -]. If you use other than the accepted characters, your events will not show up in the HockeyApp web portal.
+* There is currently a limit of 300 unique event names per app per week.
+* There is NO limit on the number of times an event can happen.
 
 <a id="updatedistribution"></a>
 ### 2.6 Add update distribution
