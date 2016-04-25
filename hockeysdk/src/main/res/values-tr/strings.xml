@@ -1,0 +1,95 @@
+<resources>
+    <!-- Crash Dialog -->
+    <string name="hockeyapp_crash_dialog_app_name_fallback">Bu Uygulama</string>
+    <string name="hockeyapp_crash_dialog_title">%s Beklenmedik Şekilde Kapandı</string>
+    <string name="hockeyapp_crash_dialog_message">Anonim olarak rapor gönderip, gerekli düzenlemeyi yapmamızı ister misiniz?</string>
+    <string name="hockeyapp_crash_dialog_negative_button">Gönderme</string>
+    <string name="hockeyapp_crash_dialog_neutral_button">Her Zaman Gönder</string>
+    <string name="hockeyapp_crash_dialog_positive_button">Rapor Gönder</string>
+
+    <!-- Download Failed -->
+    <string name="hockeyapp_download_failed_dialog_title">İndirme Başarısız Oldu</string>
+    <string name="hockeyapp_download_failed_dialog_message">Güncelleme indirilemedi. Tekrar denemek ister misiniz?</string>
+    <string name="hockeyapp_download_failed_dialog_negative_button">İptal Et</string>
+    <string name="hockeyapp_download_failed_dialog_positive_button">Tekrar Dene</string>
+
+    <!-- Update -->
+    <string name="hockeyapp_update_mandatory_toast">%s sürümü mevcut. Güncelleme zorunlu!</string>
+    <string name="hockeyapp_update_dialog_title">Güncelleme mevcut</string>
+    <string name="hockeyapp_update_button">Güncelle</string>
+    <string name="hockeyapp_update_dialog_message">Güncelleme hakkında bilgi gösterilsin mi?</string>
+    <string name="hockeyapp_update_dialog_negative_button">Yoksay</string>
+    <string name="hockeyapp_update_dialog_positive_button">Göster</string>
+
+    <!-- Expiry Info -->
+    <string name="hockeyapp_expiry_info_title">Sürüm Süresi Doldu</string>
+    <string name="hockeyapp_expiry_info_text">%s süresi doldu.Güncellemeler için lütfen HockeyApp\'i kontrol edin.</string>
+
+    <!-- Feedback Activity -->
+    <string name="hockeyapp_feedback_failed_title">Bekleniyor</string>
+    <string name="hockeyapp_feedback_failed_text">Geri bildiriminizi tekrar göndermek ister misiniz?</string>
+    <string name="hockeyapp_feedback_name_hint">İsim</string>
+    <string name="hockeyapp_feedback_email_hint">Eposta</string>
+    <string name="hockeyapp_feedback_subject_hint">Konu</string>
+    <string name="hockeyapp_feedback_message_hint">Mesaj</string>
+    <string name="hockeyapp_feedback_last_updated_text">Son Güncelleme: </string>
+    <string name="hockeyapp_feedback_attachment_button_text">Eklenti Ekle</string>
+    <string name="hockeyapp_feedback_send_button_text">Geri Bildirim Gönder</string>
+    <string name="hockeyapp_feedback_response_button_text">Yanıt Ekleyin</string>
+    <string name="hockeyapp_feedback_refresh_button_text">Yenile</string>
+    <string name="hockeyapp_feedback_title">Geri Bildirim</string>
+    <string name="hockeyapp_feedback_send_generic_error">Mesaj gönderilemedi. Lütfen giriş değerlerini ve bağlantınızı kontrol edip tekrar deneyin.</string>
+    <string name="hockeyapp_feedback_send_network_error">Sunucudan yanıt alınamadı.Lütfen bağlantınızı kontrol edeip tekrar deneyiniz.</string>
+    <string name="hockeyapp_feedback_validate_subject_error">Lütfen bi konu giriniz.</string>
+    <string name="hockeyapp_feedback_validate_email_error">Lütfen isim giriniz</string>
+    <string name="hockeyapp_feedback_validate_email_empty">Lütfen mail adresi giriniz</string>
+    <string name="hockeyapp_feedback_validate_name_error">Geri bildirim mesajı giriniz.</string>
+    <string name="hockeyapp_feedback_validate_text_error">Mesaj postalanamadı. Lütfen mail adres formatınızı kontrol ediniz.</string>
+    <string name="hockeyapp_feedback_generic_error">Bi Hata Oluştu</string>
+    <string name="hockeyapp_feedback_attach_file">Dosya Ekle</string>
+    <string name="hockeyapp_feedback_attach_picture">Resim Ekle</string>
+    <string name="hockeyapp_feedback_select_file">Dosya Seç</string>
+    <string name="hockeyapp_feedback_select_picture">Resim Seç</string>
+    <string name="hockeyapp_feedback_max_attachments_allowed">Sadece %s eklentiye izin veriliyor.</string>
+    <string name="hockeyapp_feedback_attachment_loading">Yükleniyor…</string>
+    <string name="hockeyapp_feedback_attachment_error">Hata</string>
+
+    <!-- Send Feedback Task -->
+    <string name="hockeyapp_feedback_sending_feedback_text">Sending feedback…</string>
+    <string name="hockeyapp_feedback_fetching_feedback_text">Tartışmalar alınıyor…</string>
+
+    <!-- Login Activity -->
+    <string name="hockeyapp_login_headline_text">
+        Uygulamaya yetki verebilmek için lütfen HockeyApp hesabınıza bağlı mail adresi ve şifrenizi giriniz.</string>
+    <string name="hockeyapp_login_headline_text_email_only">Uygulamaya yetki verebilmek için lütfen HockeyApp hesabınıza bağlı mail adresinizi giriniz.</string>
+    <string name="hockeyapp_login_missing_credentials_toast">Lütfen eksik hesap yetkilerini doldurunuz.</string>
+    <string name="hockeyapp_login_email_hint">E-posta</string>
+    <string name="hockeyapp_login_password_hint">Şifre</string>
+    <string name="hockeyapp_login_login_button_text">Giriş Yap</string>
+
+    <!-- Paint Activity -->
+    <string name="hockeyapp_paint_indicator_toast">Bişey Çiz!</string>
+    <string name="hockeyapp_paint_menu_save">Kaydet</string>
+    <string name="hockeyapp_paint_menu_undo">Geri Al</string>
+    <string name="hockeyapp_paint_menu_clear">Temizle</string>
+    <string name="hockeyapp_paint_dialog_message">Çizimlerinizi kaydetmek ister misiniz?</string>
+    <string name="hockeyapp_paint_dialog_negative_button">Vazgeç</string>
+    <string name="hockeyapp_paint_dialog_positive_button">Kaydet</string>
+    <string name="hockeyapp_paint_dialog_neutral_button">İptal Et</string>
+
+    <!-- Permissions -->
+    <string name="hockeyapp_permission_update_title">Depolama erişimine ihtiyaç var</string>
+    <string name="hockeyapp_permission_update_message">Uygulamayı yüklemek ve güncelleme yapabilmek için uygulamaya depolama aracına erişim izin verilmesi gerekmektedir.</string>
+    <string name="hockeyapp_permission_dialog_negative_button">İptal Et</string>
+    <string name="hockeyapp_permission_dialog_positive_button">Tekrar Dene</string>
+
+    <!-- Dialogs -->
+    <string name="hockeyapp_dialog_positive_button">TAMAM</string>
+    <string name="hockeyapp_dialog_negative_button">İptal Et</string>
+    <string name="hockeyapp_dialog_error_title">Hata</string>
+    <string name="hockeyapp_dialog_error_message">Hata Oluştu.</string>
+
+    <!-- Misc -->
+    <string name="hockeyapp_error_no_network_message">Cihazınız internet\'e bağlı değil. Lütfen bağlantı hatalarını çözüp tekrar deneyin.</string>
+
+</resources>
