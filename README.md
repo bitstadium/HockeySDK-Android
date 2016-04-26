@@ -130,7 +130,7 @@ public class YourActivity extends Activity {
 When the activity is resumed, the crash manager is triggered and checks if a new crash was created before. If there a crash log is present, it presents a dialog to ask the user whether they want to send the crash log to HockeyApp. On app launch the crash manager registers a new exception handler to recognize app crashes.
 
 <a id="user-metrics"></a>
-### 2.5 Add User Metrics
+### 2.5 Add user metrics
 
 HockeyApp automatically provides you with nice, intelligible, and informative metrics about how your app is used and by whom.
 
@@ -138,7 +138,7 @@ HockeyApp automatically provides you with nice, intelligible, and informative me
 * **Users:** The SDK anonymously tracks the users of your app by creating a random UUID that is then securely stored. The UUID is securely stored in the preferences of the client app.
 * **Custom Events:** Add custom events to your app to learn which features your users are using. For instance, you might want to track how many purchases occur in your app, how many users start (or end) a level in a game. HockeyApp will provide aggregates for the tracked events, but you will not be able to drill down and see the details of a specific event that occurred.
 
-To integrate User Metrics with your app, perform the following steps:
+To integrate user uetrics with your app, perform the following steps:
 
 1. Open your app's main activity and add the import statement and one line of code to the activity's `onCreate`-callback. Add the `trackEvent()`-call wherever you want to track a custom event.
 
@@ -525,9 +525,9 @@ Our documentation can be found on [HockeyApp](http://hockeyapp.net/help/sdk/andr
 
 2. Check if the `applicationId` in your `build.gradle` file matches the Bundle Identifier of the app in HockeyApp. HockeyApp accepts crashes only if both the App ID and the bundle identifier match their corresponding values in your app. Please note that the package value in your `AndroidManifest.xml` file might differ from the bundle identifier.
 
-3. If your app crashes and you start it again, does the dialog show up which asks the user to send the crash report? If not, please crash your app again, then connect the debugger and set a break point in CrashManager.java, method [register](https://github.com/bitstadium/HockeySDK-Android/blob/master/src/main/java/net/hockeyapp/android/CrashManager.java#L100) to see why the dialog is not shown.
+3. If your app crashes and you start it again, does the dialog show up which asks the user to send the crash report? If not, please crash your app again, then connect the debugger and set a break point in `CrashManager.java`'s [register](https://github.com/bitstadium/HockeySDK-Android/blob/master/src/main/java/net/hockeyapp/android/CrashManager.java#L100)-method to see why the dialog is not shown.
 
-4. If it still does not work, please [contact us](http://support.hockeyapp.net/discussion/new).
+4. If you continue to encouter issues, please [contact us](http://support.hockeyapp.net/discussion/new).
 
 <a id="contributing"></a>
 ## 7. Contributing
@@ -536,8 +536,8 @@ We're looking forward to your contributions via pull requests.
 
 **Coding style**
 
-* Please follow our [coding styleguide](https://github.com/bitstadium/android-guidelines)
-* Every check in should build and lint without errors
+* Please follow our [coding styleguide](https://github.com/bitstadium/android-guidelines).
+* Every PR should build and lint without errors.
 
 **Development environment**
 
