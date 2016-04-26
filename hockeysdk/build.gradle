@@ -5,7 +5,7 @@ def supportLibVersion = "23.3.0"
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    buildToolsVersion "23.0.3"
 
     defaultConfig {
         minSdkVersion 9
@@ -33,12 +33,15 @@ publish {
     publishVersion = VERSION_NAME
     desc = 'HockeySDK-Android implements support for using HockeyApp in your Android application. The following features are currently supported:\n' +
             '\n' +
-            'Collect crash reports: If your app crashes, a crash log is written to the device\'s storage. If the user starts the app again, he is asked to submit the crash report to HockeyApp. This works for both beta and live apps, i.e. those submitted to Google Play or other app stores! I\n' +
-            'Update Alpha/Beta apps: The app will check with HockeyApp if a new version for your alpha/beta build is available. If yes, it will show a dialog to the user and let him see the release notes, the version history and start the installation process right away.\n' +
+            'Collect crash reports:If your app crashes, a crash log is written to the device\'s storage. If the user starts the app again, they will be asked asked to submit the crash report to HockeyApp. This works for both beta and live apps, i.e. those submitted to Google Play or other app stores. Crash logs contain viable information for you to help resolve the issue. Furthermore, you as a developer can add additional information to the report as well.\n' +
             '\n' +
-            'Feedback: Collect feedback from your users from within your app and communicate directly with them using the HockeyApp backend.\n' +
+            'Update Alpha/Beta apps: The app will check with HockeyApp if a new version for your alpha/beta build is available. If yes, it will show a dialog to users and let them see the release notes, the version history and start the installation process right away. You can even force the installation of certain updates.\n' +
             '\n' +
-            'Authenticate: Identify and authenticate users against your registered testers with the HockeyApp backend'
+            'User Metrics: Understand user behavior to improve your app. Track usage through daily and monthly active users. Monitor crash impacted users. Measure customer engagement through session count. This feature requires a minimum API level of 14 (Android 4.x Ice Cream Sandwich)\n' +
+            '\n' +
+            'Feedback: Besides crash reports, collecting feedback from your users from within your app is a great option to help with improving your app. You act on and answer feedback directly from the HockeyApp backend.\n' +
+            '\n' +
+            'Authenticate: Identify and authenticate users against your registered testers with the HockeyApp backend. The authentication feature supports several ways of authentication.'
     website = 'https://github.com/bitstadium/hockeysdk-android'
     licences = ['MIT']
     autoPublish = false

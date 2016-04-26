@@ -29,6 +29,8 @@ import net.hockeyapp.android.utils.VersionHelper;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.util.Locale;
+
 /**
  * <h3>Description</h3>
  *
@@ -131,14 +133,14 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
         String appSizeString = "Unknown size";
         long appSize = mVersionHelper.getFileSizeBytes();
         if (appSize >= 0L) {
-            appSizeString = String.format("%.2f", appSize / (1024.0f * 1024.0f)) + " MB";
+            appSizeString = String.format(Locale.US, "%.2f", appSize / (1024.0f * 1024.0f)) + " MB";
         } else {
             GetFileSizeTask task = new GetFileSizeTask(getActivity(), mUrlString, new DownloadFileListener() {
                 @Override
                 public void downloadSuccessful(DownloadFileTask task) {
                     if (task instanceof GetFileSizeTask) {
                         long appSize = ((GetFileSizeTask) task).getSize();
-                        String appSizeString = String.format("%.2f", appSize / (1024.0f * 1024.0f)) + " MB";
+                        String appSizeString = String.format(Locale.US, "%.2f", appSize / (1024.0f * 1024.0f)) + " MB";
                         versionLabel.setText(getString(R.string.hockeyapp_update_version_details_label, versionString, fileDate, appSizeString));
                     }
                 }
