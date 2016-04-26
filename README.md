@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/bitstadium/HockeySDK-Android.svg?branch=develop)](https://travis-ci.org/bitstadium/HockeySDK-Android)
 [![Slack Status](https://slack.hockeyapp.net/badge.svg)](https://slack.hockeyapp.net)
 
-## Version 4.0.0
+## Preseason - Version 4.1.0-beta.1
 
 ## Introduction
 
@@ -9,9 +9,9 @@ HockeySDK-Android implements support for using HockeyApp in your Android applica
 
 The following features are currently supported:
 
-1. **Crash reports:** If your app crashes, a crash log is written to the device's storage. If the user starts the app again, they will be asked asked to submit the crash report to HockeyApp. This works for both beta and live apps, i.e. those submitted to Google Play or other app stores. Crash logs contain viable information for you to help resolve the issue. Furthermore, you as a developer can add additional information to the report as well.
+1. **Crash Reports:** If your app crashes, a crash log is written to the device's storage. If the user starts the app again, they will be asked asked to submit the crash report to HockeyApp. This works for both beta and live apps, i.e. those submitted to Google Play or other app stores. Crash logs contain viable information for you to help resolve the issue. Furthermore, you as a developer can add additional information to the report as well.
 
-2. **User metrics:** Understand user behavior to improve your app. Track usage through daily and monthly active users. Monitor crash impacted users. Measure customer engagement through session count. This feature requires a minimum API level of 14 (Android 4.x Ice Cream Sandwich).
+2. **User Metrics:** Understand user behavior to improve your app. Track usage through daily and monthly active users, monitor crash impacted users, as well as customer engagement through session count. If you are part of [Preseason](hockeyapp.net/preseason), you can now track Custom Events in your app, understand user actions and see the aggregates on the HockeyApp portal. User Metrics requires a minimum API level of 14 (Android 4.x Ice Cream Sandwich).
 
 3. **Update alpha/beta apps:** The app will check with HockeyApp if a new version for your alpha/beta build is available. If yes, it will show a dialog to users and let them see the release notes, the version history and start the installation process right away. You can even force the installation of certain updates.
 
@@ -26,15 +26,15 @@ This document contains the following sections:
   1. [Obtain an app identifier](#app-identifier)
   2. [Get the SDK](#get-sdk)
   3. [Integrate HockeySDK](#integrate-sdk)
-  4. [Add crash reporting](#crashreporting)
-  5. [Add user metrics](#user-metrics)
+  4. [Add Crash Reporting](#crashreporting)
+  5. [Add User Metrics](#user-metrics)
   6. [Add update distribution](#updatedistribution)
   7. [Add in-app feedback](#feedback)
   8. [Add authentication](#authentication)
 3. [Changelog](#changelog)
 4. [Advanced setup](#advancedsetup) 
   1. [Manual library dependency](#manualdependency)
-  2. [Crash reporting](#crashreporting-advanced)
+  2. [Crash Reporting](#crashreporting-advanced)
   3. [Update distribution](#updatedistribution-advanced)
   4. [In-App feedback](#feedback-advanced)
   5. [Authentication] (#authentication-advanced)
@@ -61,7 +61,7 @@ We recommend integration of our compiled library into your project using Android
 For other ways to setup the SDK, see [advanced setup](#advancedsetup).
 A sample integration can be found in [this GitHub repository](https://github.com/bitstadium/HockeySDK-AndroidDemo).
 
-**Note:** For initial setup it is assumed that you want to use all of HockeyApp's features such as crash reporting, update distribution, and feedback. This means your app also needs all the basic permissions. If you only want to use a subset of features and thus only need to ask for a subset of permissions, please see the [permissions section](#permissions-advanced) of the advanced setup section.
+**Note:** For initial setup it is assumed that you want to use all of HockeyApp's features such as Crash Reporting, update distribution, and feedback. This means your app also needs all the basic permissions. If you only want to use a subset of features and thus only need to ask for a subset of permissions, please see the [permissions section](#permissions-advanced) of the advanced setup section.
 
 <a id="app-identifier"></a>
 ### 2.1 Obtain an app identifier
@@ -74,7 +74,7 @@ Please see the "[How to create a new app](http://support.hockeyapp.net/kb/about-
 Add the SDK to your app module's dependencies in Android Studio by adding the following line to your `dependencies { ... }` configuration:
 
 ```groovy
-compile 'net.hockeyapp.android:HockeySDK:4.0.0'
+compile 'net.hockeyapp.android:HockeySDK:4.1.0-beta.1'
 ```
 
 <a id="integrate-sdk"></a>
@@ -103,8 +103,8 @@ compile 'net.hockeyapp.android:HockeySDK:4.0.0'
 Now that you've integrated the SDK with your project it's time to make use of its features.
 
 <a id="crashreporting"></a>
-### 2.4 Add crash reporting
-This will add crash reporting capabilities to your app. Advanced ways to configure crash reporting are covered in [advanced setup](#advancedsetup).
+### 2.4 Add Crash Reporting
+This will add Crash Reporting capabilities to your app. Advanced ways to configure Crash Reporting are covered in [advanced setup](#advancedsetup).
 
 1. Open your main activity.
 2. Add the following lines:
@@ -130,16 +130,17 @@ public class YourActivity extends Activity {
 When the activity is resumed, the crash manager is triggered and checks if a new crash was created before. If there a crash log is present, it presents a dialog to ask the user whether they want to send the crash log to HockeyApp. On app launch the crash manager registers a new exception handler to recognize app crashes.
 
 <a id="user-metrics"></a>
-### 2.5 Add user metrics
+### 2.5 Add User Metrics
 
 HockeyApp automatically provides you with nice, intelligible, and informative metrics about how your app is used and by whom.
 
 * **Sessions:** A new session is tracked by the SDK whenever the containing app is restarted (this refers to a 'cold start', i.e. when the app has not already been in memory prior to being launched) or whenever it becomes active again after having been in the background for 20 seconds or more.
 * **Users:** The SDK anonymously tracks the users of your app by creating a random UUID that is then securely stored. The UUID is securely stored in the preferences of the client app.
+* **Custom Events:** If you are part of [Preseason](hockeyapp.net/preseason), you can now track Custom Events in your app, understand user actions and see the aggregates on the HockeyApp portal.
 
-To integrate user uetrics with your app, perform the following steps:
+To integrate User Metrics with your app, perform the following steps:
 
-1. Open your app's main activity and add the import statement and one line of code to the activity's `onCreate`-callback:
+1. Open your app's main activity and add the import statement and one line of code to the activity's `onCreate`-callback. Add the `trackEvent()`-call wherever you want to track a Custom Event.
 
 ```java
 //add this import
@@ -147,9 +148,19 @@ To integrate user uetrics with your app, perform the following steps:
 
 //add this to your main activity's onCreate()-callback
 MetricsManager.register(this, getApplication());
+
+//add this wherever you want to track a custom event
+MetricsManager.trackEvent("YOUR_EVENT_NAME");
+
 ```
 
-Your app will now send metrics which you can use to count your active and overall usage numbers.
+Make sure to replace `"YOUR_EVENT_NAME"` with a name for your custom event, e.g. `"Login Button Pressed"`. 
+
+**Limits**
+
+* Accepted characters for tracking events are: [a-zA-Z0-9_. -]. If you use other than the accepted characters, your events will not show up in the HockeyApp web portal.
+* There is currently a limit of 300 unique event names per app per week.
+* There is NO limit on the number of times an event can happen.
 
 <a id="updatedistribution"></a>
 ### 2.6 Add update distribution
@@ -292,7 +303,7 @@ If you don't want to use Gradle or Maven dependency management you can also down
 4. Configure your development tools to use the .aar/.jar file.
 5. In Android Studio, create a new module via `File > New > New Module`
 6. Select **Import .JAR/.AAR Package** and click **Next**.
-7. In the next menu select the .aar/.jar file you just copied to the libs folder. You can rename the module to whatever you want, but we in general recommend leaving it as is. If you don't rename the module, it will match the name of the .aar/.jar file, in this case **HockeySDK-4.0.0**. This way you'll quickly know which version of the SDK you are using in the future.
+7. In the next menu select the .aar/.jar file you just copied to the libs folder. You can rename the module to whatever you want, but we in general recommend leaving it as is. If you don't rename the module, it will match the name of the .aar/.jar file, in this case **HockeySDK-4.1.0-beta.1**. This way you'll quickly know which version of the SDK you are using in the future.
 8. Make sure Android Studio added the necessary code to integrate the HockeySDK:
 
 Head over to your app's `build.gradle` to verify the dependency was added correctly. It should look like this:
@@ -302,26 +313,26 @@ dependencies {
 	//your other dependencies
 	//...
 	
-    compile project(':HockeySDK-4.0.0')
+    compile project(':HockeySDK-4.1.0-beta.1')
 }
 ```
 Next, make sure your `settings.gradle` contains the new module:
 
 ```groovy
-include ':app', ':HockeySDK-4.0.0'
+include ':app', ':HockeySDK-4.1.0-beta.1'
 ```
 
 Finally, check the `build.gradle` of the newly added module:
 ```groovy
 configurations.maybeCreate("default")
-artifacts.add("default", file('HockeySDK-4.0.0.aar'))
+artifacts.add("default", file('HockeySDK-4.1.0-beta.1.aar'))
 ```
 
 Once you have verified that everything necessary has been added, proceed with [SDK integration](#integrate-sdk).
 
 <a id="crashreporting-advanced"></a>
-### 4.2 Crash reporting
-The following options show only some of the many possibilities to interact and fine-tune the crash reporting feature. For more please check the full documentation of the classes `net.hockeyapp.android.CrashManager` and `net.hockeyapp.android.CrashManagerListener` in our [documentation](#documentation).
+### 4.2 Crash Reporting
+The following options show only some of the many possibilities to interact and fine-tune the Crash Reporting feature. For more please check the full documentation of the classes `net.hockeyapp.android.CrashManager` and `net.hockeyapp.android.CrashManagerListener` in our [documentation](#documentation).
 
 To configure a custom `CrashManagerListener` use the following `register()` method when configuring the manager:
 
@@ -329,7 +340,7 @@ To configure a custom `CrashManagerListener` use the following `register()` meth
   CrashManager.register(context, APP_ID, new MyCustomCrashManagerListener());
 ```
 
-#### 4.2.1 Autosend crash reports
+#### 4.2.1 Autosend Crash Reports
 Crashes are usually sent the next time the app starts. If your custom crash manager listener returns `true` for `shouldAutoUploadCrashes()`, crashes will be sent without any user interaction, otherwise a dialog will appear allowing the user to decide whether they want to send the report or not.
 
 ```java
@@ -342,7 +353,7 @@ public class MyCustomCrashManagerListener extends CrashManagerListener {
 ```
 
 #### 4.2.2 Attach additional meta data
-Starting with HockeyApp 3.6.0, you can add additional meta data (e.g. user-provided information) to a crash report. 
+Starting with HockeyApp 3.6.0, you can add additional meta data (e.g. user-provided information) to a Crash Report. 
 To achieve this call `CrashManager.handleUserInput()` and provide an instance of `net.hockeyapp.android.objects.CrashMetaData`.
 
 
@@ -373,8 +384,8 @@ You can configure a notification to show to the user. When they select the notif
 ```java
   FeedbackManager.setActivityForScreenshot(YourActivity.this);
 ```
-
 <a id="authentication-advanced"></a>
+
 ### 4.5 Authentication
 
 HockeySDK-Android currently supports 4 different authentication modes. The following code snippets usually make most sense in your main activity's `onCreate()`-callback.
@@ -505,7 +516,7 @@ However, if you provide a custom user interface fragment for the update distribu
 <a id="documentation"></a>
 ## 5. Documentation
 
-Our documentation can be found on [HockeyApp](http://hockeyapp.net/help/sdk/android/4.0.0/index.html).
+Our documentation can be found on [HockeyApp](http://hockeyapp.net/help/sdk/android/4.1.0-beta.1/index.html).
 
 <a id="troubleshooting"></a>
 ## 6.Troubleshooting

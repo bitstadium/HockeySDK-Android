@@ -105,6 +105,9 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
     }
 
     public void uncaughtException(Thread thread, Throwable exception) {
+
+        PrivateEventManager.postEvent(new PrivateEventManager.Event(PrivateEventManager.EVENT_TYPE_UNCAUGHT_EXCEPTION));
+
         if (Constants.FILES_PATH == null) {
             // If the files path is null, the exception can't be stored
             // Always call the default handler instead
