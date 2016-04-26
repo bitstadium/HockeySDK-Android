@@ -96,7 +96,7 @@ subprojects {
                         developers {
                             developer {
                                 id 'HockeyApp'
-                                name 'BitStadium GmbH'
+                                name 'Microsoft Corporation'
                                 email 'support@hockeyapp.net'
                             }
                         }
