@@ -8,34 +8,6 @@ import android.content.SharedPreferences;
  *
  * {@link SharedPreferences} helper class
  *
- * <h3>License</h3>
- *
- * <pre>
- * Copyright (c) 2011-2014 Bit Stadium GmbH
- *
- * Permission is hereby granted, free of charge, to any person
- * obtaining a copy of this software and associated documentation
- * files (the "Software"), to deal in the Software without
- * restriction, including without limitation the rights to use,
- * copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the
- * Software is furnished to do so, subject to the following
- * conditions:
- *
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
- * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
- * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
- * OTHER DEALINGS IN THE SOFTWARE.
- * </pre>
- *
- * @author Bogdan Nistor
  */
 public class PrefsUtil {
     private SharedPreferences mFeedbackTokenPrefs;
@@ -74,10 +46,10 @@ public class PrefsUtil {
      */
     public void saveFeedbackTokenToPrefs(Context context, String token) {
         if (context != null) {
-            mFeedbackTokenPrefs = context.getSharedPreferences(Util.PREF_FEEDBACK_TOKEN, 0);
+            mFeedbackTokenPrefs = context.getSharedPreferences(Util.PREFS_FEEDBACK_TOKEN, 0);
             if (mFeedbackTokenPrefs != null) {
                 mFeedbackTokenPrefsEditor = mFeedbackTokenPrefs.edit();
-                mFeedbackTokenPrefsEditor.putString(Util.PREF_KEY_FEEDBACK_TOKEN, token);
+                mFeedbackTokenPrefsEditor.putString(Util.PREFS_KEY_FEEDBACK_TOKEN, token);
                 mFeedbackTokenPrefsEditor.apply();
             }
         }
@@ -94,12 +66,12 @@ public class PrefsUtil {
             return null;
         }
 
-        mFeedbackTokenPrefs = context.getSharedPreferences(Util.PREF_FEEDBACK_TOKEN, 0);
+        mFeedbackTokenPrefs = context.getSharedPreferences(Util.PREFS_FEEDBACK_TOKEN, 0);
         if (mFeedbackTokenPrefs == null) {
             return null;
         }
 
-        return mFeedbackTokenPrefs.getString(Util.PREF_KEY_FEEDBACK_TOKEN, null);
+        return mFeedbackTokenPrefs.getString(Util.PREFS_KEY_FEEDBACK_TOKEN, null);
     }
 
     /**
@@ -112,13 +84,13 @@ public class PrefsUtil {
      */
     public void saveNameEmailSubjectToPrefs(Context context, String name, String email, String subject) {
         if (context != null) {
-            mNameEmailSubjectPrefs = context.getSharedPreferences(Util.PREF_NAME_EMAIL_SUBJECT, 0);
+            mNameEmailSubjectPrefs = context.getSharedPreferences(Util.PREFS_NAME_EMAIL_SUBJECT, 0);
             if (mNameEmailSubjectPrefs != null) {
                 mNameEmailSubjectPrefsEditor = mNameEmailSubjectPrefs.edit();
                 if (name == null || email == null || subject == null) {
-                    mNameEmailSubjectPrefsEditor.putString(Util.PREF_KEY_NAME_EMAIL_SUBJECT, null);
+                    mNameEmailSubjectPrefsEditor.putString(Util.PREFS_KEY_NAME_EMAIL_SUBJECT, null);
                 } else {
-                    mNameEmailSubjectPrefsEditor.putString(Util.PREF_KEY_NAME_EMAIL_SUBJECT, String.format("%s|%s|%s",
+                    mNameEmailSubjectPrefsEditor.putString(Util.PREFS_KEY_NAME_EMAIL_SUBJECT, String.format("%s|%s|%s",
                             name, email, subject));
                 }
 
@@ -138,12 +110,12 @@ public class PrefsUtil {
             return null;
         }
 
-        mNameEmailSubjectPrefs = context.getSharedPreferences(Util.PREF_NAME_EMAIL_SUBJECT, 0);
+        mNameEmailSubjectPrefs = context.getSharedPreferences(Util.PREFS_NAME_EMAIL_SUBJECT, 0);
         if (mNameEmailSubjectPrefs == null) {
             return null;
         }
 
-        return mNameEmailSubjectPrefs.getString(Util.PREF_KEY_NAME_EMAIL_SUBJECT, null);
+        return mNameEmailSubjectPrefs.getString(Util.PREFS_KEY_NAME_EMAIL_SUBJECT, null);
     }
 
 }

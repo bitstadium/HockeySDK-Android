@@ -46,6 +46,7 @@ import net.hockeyapp.android.utils.Util;
 import net.hockeyapp.android.views.AttachmentListView;
 import net.hockeyapp.android.views.AttachmentView;
 
+import java.lang.ref.WeakReference;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -58,36 +59,6 @@ import java.util.List;
  *
  * Activity to show the feedback form.
  *
- * <h3>License</h3>
- *
- * <pre>
- * Copyright (c) 2011-2014 Bit Stadium GmbH
- *
- * Permission is hereby granted, free of charge, to any person
- * obtaining a copy of this software and associated documentation
- * files (the "Software"), to deal in the Software without
- * restriction, including without limitation the rights to use,
- * copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the
- * Software is furnished to do so, subject to the following
- * conditions:
- *
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
- * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
- * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
- * OTHER DEALINGS IN THE SOFTWARE.
- * </pre>
- *
- * @author Bogdan Nistor
- * @author Patrick Eschenbach
- * @author Thomas Dohmke
  **/
 public class FeedbackActivity extends Activity implements OnClickListener {
 
@@ -640,97 +611,14 @@ public class FeedbackActivity extends Activity implements OnClickListener {
      * Initializes the Feedback response {@link Handler}
      */
     private void initFeedbackHandler() {
-        mFeedbackHandler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                boolean success = false;
-                mError = new ErrorObject();
-
-                if (msg != null && msg.getData() != null) {
-                    Bundle bundle = msg.getData();
-                    String responseString = bundle.getString(SendFeedbackTask.BUNDLE_FEEDBACK_RESPONSE);
-                    String statusCode = bundle.getString(SendFeedbackTask.BUNDLE_FEEDBACK_STATUS);
-                    String requestType = bundle.getString(SendFeedbackTask.BUNDLE_REQUEST_TYPE);
-                    if ((requestType.equals("send") && ((responseString == null) || (Integer.parseInt(statusCode) != 201)))) {
-                        // Send feedback went wrong if response is empty or status code != 201
-                        mError.setMessage(getString(R.string.hockeyapp_feedback_send_generic_error));
-                    } else if ((requestType.equals("fetch") && (statusCode != null) && ((Integer.parseInt(statusCode) == 404) || (Integer.parseInt(statusCode) == 422)))) {
-                        // Fetch feedback went wrong if status code is 404 or 422
-                        resetFeedbackView();
-                        success = true;
-                    } else if (responseString != null) {
-                        startParseFeedbackTask(responseString, requestType);
-                        success = true;
-                    } else {
-                        mError.setMessage(getString(R.string.hockeyapp_feedback_send_network_error));
-                    }
-                } else {
-                    mError.setMessage(getString(R.string.hockeyapp_feedback_send_generic_error));
-                }
-
-                if (!success) {
-                    runOnUiThread(new Runnable() {
-
-                        @SuppressWarnings("deprecation")
-                        @Override
-                        public void run() {
-                            enableDisableSendFeedbackButton(true);
-                            showDialog(DIALOG_ERROR_ID);
-                        }
-                    });
-                }
-
-                onSendFeedbackResult(success);
-            }
-        };
+        mFeedbackHandler = new FeedbackHandler(this);
     }
 
     /**
      * Initialize the Feedback response parse result {@link Handler}
      */
     private void initParseFeedbackHandler() {
-        mParseFeedbackHandler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                boolean success = false;
-                mError = new ErrorObject();
-
-                if (msg != null && msg.getData() != null) {
-                    Bundle bundle = msg.getData();
-                    FeedbackResponse feedbackResponse = (FeedbackResponse) bundle.getSerializable(ParseFeedbackTask.BUNDLE_PARSE_FEEDBACK_RESPONSE);
-                    if (feedbackResponse != null) {
-                        if (feedbackResponse.getStatus().equalsIgnoreCase("success")) {
-                            /** We have a valid result from JSON parsing */
-                            success = true;
-
-                            if (feedbackResponse.getToken() != null) {
-                                /** Save the Token to SharedPreferences */
-                                PrefsUtil.getInstance().saveFeedbackTokenToPrefs(mContext, feedbackResponse.getToken());
-                                /** Load the existing feedback messages */
-                                loadFeedbackMessages(feedbackResponse);
-                                mInSendFeedback = false;
-                            }
-                        } else {
-                            success = false;
-                        }
-                    }
-                }
-
-                /** Something went wrong, so display an error dialog */
-                if (!success) {
-                    runOnUiThread(new Runnable() {
-
-                        @SuppressWarnings("deprecation")
-                        @Override
-                        public void run() {
-                            showDialog(DIALOG_ERROR_ID);
-                        }
-                    });
-                }
-
-                enableDisableSendFeedbackButton(true);
-            }
-        };
+        mParseFeedbackHandler = new ParseFeedbackHandler(this);
     }
 
     /**
@@ -761,7 +649,7 @@ public class FeedbackActivity extends Activity implements OnClickListener {
                     /** Set the lastUpdatedTextView text as the date of the latest feedback message */
                     try {
                         date = format.parse(mFeedbackMessages.get(0).getCreatedAt());
-                        mLastUpdatedTextView.setText(String.format(getString(R.string.hockeyapp_feedback_last_updated_text) + " %s", formatNew.format(date)));
+                        mLastUpdatedTextView.setText(getString(R.string.hockeyapp_feedback_last_updated_text, formatNew.format(date)));
                     } catch (ParseException e1) {
                         e1.printStackTrace();
                     }
@@ -874,5 +762,120 @@ public class FeedbackActivity extends Activity implements OnClickListener {
     private void startParseFeedbackTask(String feedbackResponseString, String requestType) {
         createParseFeedbackTask(feedbackResponseString, requestType);
         AsyncTaskUtils.execute(mParseFeedbackTask);
+    }
+
+    private static class FeedbackHandler extends Handler {
+
+        private final WeakReference<FeedbackActivity> mWeakFeedbackActivity;
+
+        public FeedbackHandler(FeedbackActivity feedbackActivity) {
+            mWeakFeedbackActivity = new WeakReference<>(feedbackActivity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            boolean success = false;
+            ErrorObject error = new ErrorObject();
+
+            final FeedbackActivity feedbackActivity = mWeakFeedbackActivity.get();
+            if (feedbackActivity == null) {
+                return;
+            }
+
+            if (msg != null && msg.getData() != null) {
+                Bundle bundle = msg.getData();
+                String responseString = bundle.getString(SendFeedbackTask.BUNDLE_FEEDBACK_RESPONSE);
+                String statusCode = bundle.getString(SendFeedbackTask.BUNDLE_FEEDBACK_STATUS);
+                String requestType = bundle.getString(SendFeedbackTask.BUNDLE_REQUEST_TYPE);
+                if ((requestType.equals("send") && ((responseString == null) || (Integer.parseInt(statusCode) != 201)))) {
+                    // Send feedback went wrong if response is empty or status code != 201
+                    error.setMessage(feedbackActivity.getString(R.string.hockeyapp_feedback_send_generic_error));
+                } else if ((requestType.equals("fetch") && (statusCode != null) && ((Integer.parseInt(statusCode) == 404) || (Integer.parseInt(statusCode) == 422)))) {
+                    // Fetch feedback went wrong if status code is 404 or 422
+                    feedbackActivity.resetFeedbackView();
+                    success = true;
+                } else if (responseString != null) {
+                    feedbackActivity.startParseFeedbackTask(responseString, requestType);
+                    success = true;
+                } else {
+                    error.setMessage(feedbackActivity.getString(R.string.hockeyapp_feedback_send_network_error));
+                }
+            } else {
+                error.setMessage(feedbackActivity.getString(R.string.hockeyapp_feedback_send_generic_error));
+            }
+
+            feedbackActivity.mError = error;
+
+            if (!success) {
+                feedbackActivity.runOnUiThread(new Runnable() {
+
+                    @SuppressWarnings("deprecation")
+                    @Override
+                    public void run() {
+                        feedbackActivity.enableDisableSendFeedbackButton(true);
+                        feedbackActivity.showDialog(DIALOG_ERROR_ID);
+                    }
+                });
+            }
+
+            feedbackActivity.onSendFeedbackResult(success);
+        }
+
+    }
+
+    private static class ParseFeedbackHandler extends Handler {
+
+        private final WeakReference<FeedbackActivity> mWeakFeedbackActivity;
+
+        public ParseFeedbackHandler(FeedbackActivity feedbackActivity) {
+            mWeakFeedbackActivity = new WeakReference<>(feedbackActivity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            boolean success = false;
+
+            final FeedbackActivity feedbackActivity = mWeakFeedbackActivity.get();
+            if (feedbackActivity == null) {
+                return;
+            }
+
+            feedbackActivity.mError = new ErrorObject();
+
+            if (msg != null && msg.getData() != null) {
+                Bundle bundle = msg.getData();
+                FeedbackResponse feedbackResponse = (FeedbackResponse) bundle.getSerializable(ParseFeedbackTask.BUNDLE_PARSE_FEEDBACK_RESPONSE);
+                if (feedbackResponse != null) {
+                    if (feedbackResponse.getStatus().equalsIgnoreCase("success")) {
+                        /** We have a valid result from JSON parsing */
+                        success = true;
+
+                        if (feedbackResponse.getToken() != null) {
+                            /** Save the Token to SharedPreferences */
+                            PrefsUtil.getInstance().saveFeedbackTokenToPrefs(feedbackActivity, feedbackResponse.getToken());
+                            /** Load the existing feedback messages */
+                            feedbackActivity.loadFeedbackMessages(feedbackResponse);
+                            feedbackActivity.mInSendFeedback = false;
+                        }
+                    } else {
+                        success = false;
+                    }
+                }
+            }
+
+            /** Something went wrong, so display an error dialog */
+            if (!success) {
+                feedbackActivity.runOnUiThread(new Runnable() {
+
+                    @SuppressWarnings("deprecation")
+                    @Override
+                    public void run() {
+                        feedbackActivity.showDialog(DIALOG_ERROR_ID);
+                    }
+                });
+            }
+
+            feedbackActivity.enableDisableSendFeedbackButton(true);
+        }
     }
 }

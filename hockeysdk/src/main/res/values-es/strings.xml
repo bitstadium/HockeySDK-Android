@@ -32,7 +32,7 @@
     <string name="hockeyapp_feedback_email_hint">Email</string>
     <string name="hockeyapp_feedback_subject_hint">Asunto</string>
     <string name="hockeyapp_feedback_message_hint">Mensaje</string>
-    <string name="hockeyapp_feedback_last_updated_text">Última actualización: </string>
+    <string name="hockeyapp_feedback_last_updated_text">Última actualización: %s</string>
     <string name="hockeyapp_feedback_attachment_button_text">Adjuntar archivo</string>
     <string name="hockeyapp_feedback_send_button_text">Enviar comentarios</string>
     <string name="hockeyapp_feedback_response_button_text">Responder</string>
