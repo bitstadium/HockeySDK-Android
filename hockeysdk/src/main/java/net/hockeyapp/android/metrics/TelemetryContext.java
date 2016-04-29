@@ -1,25 +1,18 @@
 package net.hockeyapp.android.metrics;
 
 import android.annotation.SuppressLint;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.os.Build;
-import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.view.Display;
 import android.view.WindowManager;
-
 import net.hockeyapp.android.BuildConfig;
 import net.hockeyapp.android.Constants;
-import net.hockeyapp.android.metrics.model.Application;
-import net.hockeyapp.android.metrics.model.Device;
-import net.hockeyapp.android.metrics.model.Internal;
-import net.hockeyapp.android.metrics.model.Session;
-import net.hockeyapp.android.metrics.model.User;
+import net.hockeyapp.android.metrics.model.*;
 import net.hockeyapp.android.utils.HockeyLog;
 import net.hockeyapp.android.utils.Util;
 
@@ -30,7 +23,7 @@ import java.util.Map;
 
 /**
  * <h3>Description</h3>
- * <p/>
+ *
  * Class that manages the context in which telemetry items get sent.
  **/
 class TelemetryContext {
@@ -213,13 +206,7 @@ class TelemetryContext {
         setOsLocale(Locale.getDefault().toString());
         setOsLanguage(Locale.getDefault().getLanguage());
         updateScreenResolution();
-
-        // get device ID
-        ContentResolver resolver = mContext.getContentResolver();
-        String deviceIdentifier = Settings.Secure.getString(resolver, Settings.Secure.ANDROID_ID);
-        if (deviceIdentifier != null) {
-            setDeviceId(Util.tryHashStringSha256(deviceIdentifier));
-        }
+        setDeviceId(Constants.DEVICE_IDENTIFIER);
 
         // check device type
         final TelephonyManager telephonyManager = (TelephonyManager)

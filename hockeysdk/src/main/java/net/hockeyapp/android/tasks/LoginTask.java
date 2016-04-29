@@ -8,11 +8,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
-
 import net.hockeyapp.android.Constants;
 import net.hockeyapp.android.LoginManager;
 import net.hockeyapp.android.utils.HttpURLConnectionBuilder;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -26,34 +24,6 @@ import java.util.Map;
  *
  * Perform the authentication process.
  *
- * <h3>License</h3>
- *
- * <pre>
- * Copyright (c) 2011-2014 Bit Stadium GmbH
- *
- * Permission is hereby granted, free of charge, to any person
- * obtaining a copy of this software and associated documentation
- * files (the "Software"), to deal in the Software without
- * restriction, including without limitation the rights to use,
- * copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the
- * Software is furnished to do so, subject to the following
- * conditions:
- *
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
- * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
- * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
- * OTHER DEALINGS IN THE SOFTWARE.
- * </pre>
- *
- * @author Patrick Eschenbach
  **/
 public class LoginTask extends ConnectionTask<Void, Void, Boolean> {
 
@@ -61,15 +31,13 @@ public class LoginTask extends ConnectionTask<Void, Void, Boolean> {
      * Key for login success in the returend bundle
      */
     public static final String BUNDLE_SUCCESS = "success";
-
+    private final int mMode;
+    private final String mUrlString;
+    private final Map<String, String> mParams;
     private Context mContext;
     private Handler mHandler;
     private ProgressDialog mProgressDialog;
     private boolean mShowProgressDialog;
-
-    private final int mMode;
-    private final String mUrlString;
-    private final Map<String, String> mParams;
 
     /**
      * Send feedback {@link AsyncTask}.
@@ -181,10 +149,11 @@ public class LoginTask extends ConnectionTask<Void, Void, Boolean> {
                     .setBasicAuthorization(params.get("email"), params.get("password"))
                     .build();
         } else if (mode == LoginManager.LOGIN_MODE_VALIDATE) {
+
             String type = params.get("type");
             String id = params.get("id");
             String paramUrl = mUrlString + "?" + type + "=" + id;
-
+            
             return new HttpURLConnectionBuilder(paramUrl)
                     .build();
         } else {
@@ -207,6 +176,7 @@ public class LoginTask extends ConnectionTask<Void, Void, Boolean> {
                 if (status.equals("identified")) {
                     String iuid = response.getString("iuid");
                     if (!TextUtils.isEmpty(iuid)) {
+
                         prefs.edit()
                                 .putString("iuid", iuid)
                                 .apply();
@@ -216,6 +186,7 @@ public class LoginTask extends ConnectionTask<Void, Void, Boolean> {
             } else if (mMode == LoginManager.LOGIN_MODE_EMAIL_PASSWORD) {
                 if (status.equals("authorized")) {
                     String auid = response.getString("auid");
+
                     if (!TextUtils.isEmpty(auid)) {
                         prefs.edit()
                                 .putString("auid", auid)

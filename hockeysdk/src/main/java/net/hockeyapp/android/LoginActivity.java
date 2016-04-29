@@ -17,6 +17,7 @@ import net.hockeyapp.android.tasks.LoginTask;
 import net.hockeyapp.android.utils.AsyncTaskUtils;
 import net.hockeyapp.android.utils.Util;
 
+import java.lang.ref.WeakReference;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
@@ -27,34 +28,6 @@ import java.util.Map;
  *
  * Activity to authenticate the user.
  *
- * <h3>License</h3>
- *
- * <pre>
- * Copyright (c) 2011-2014 Bit Stadium GmbH
- *
- * Permission is hereby granted, free of charge, to any person
- * obtaining a copy of this software and associated documentation
- * files (the "Software"), to deal in the Software without
- * restriction, including without limitation the rights to use,
- * copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the
- * Software is furnished to do so, subject to the following
- * conditions:
- *
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
- * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
- * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
- * OTHER DEALINGS IN THE SOFTWARE.
- * </pre>
- *
- * @author Patrick Eschenbach
  **/
 public class LoginActivity extends Activity {
 
@@ -178,24 +151,7 @@ public class LoginActivity extends Activity {
     }
 
     private void initLoginHandler() {
-        mLoginHandler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                Bundle bundle = msg.getData();
-                boolean success = bundle.getBoolean(LoginTask.BUNDLE_SUCCESS);
-
-                if (success) {
-                    finish();
-
-                    if (LoginManager.listener != null) {
-                        LoginManager.listener.onSuccess();
-                    }
-                } else {
-                    Toast.makeText(LoginActivity.this, "Login failed. Check your credentials.", Toast.LENGTH_LONG)
-                            .show();
-                }
-            }
-        };
+        mLoginHandler = new LoginHandler(this);
     }
 
     private void performAuthentication() {
@@ -250,5 +206,37 @@ public class LoginActivity extends Activity {
             e.printStackTrace();
         }
         return "";
+    }
+
+    private static class LoginHandler extends Handler {
+
+        private final WeakReference<Activity> mWeakActivity;
+
+        public LoginHandler(Activity activity) {
+            mWeakActivity = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+
+            final Activity activity = mWeakActivity.get();
+            if (activity == null) {
+                return;
+            }
+
+            Bundle bundle = msg.getData();
+            boolean success = bundle.getBoolean(LoginTask.BUNDLE_SUCCESS);
+
+            if (success) {
+                activity.finish();
+
+                if (LoginManager.listener != null) {
+                    LoginManager.listener.onSuccess();
+                }
+            } else {
+                Toast.makeText(activity, "Login failed. Check your credentials.", Toast.LENGTH_LONG)
+                        .show();
+            }
+        }
     }
 }

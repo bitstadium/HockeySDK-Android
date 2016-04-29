@@ -3,18 +3,11 @@ package net.hockeyapp.android.metrics;
 import android.annotation.TargetApi;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.util.Log;
-
+import android.text.TextUtils;
 import net.hockeyapp.android.utils.AsyncTaskUtils;
 import net.hockeyapp.android.utils.HockeyLog;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
+import java.io.*;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -27,9 +20,9 @@ import java.util.zip.GZIPOutputStream;
 
 /**
  * <h3>Description</h3>
- * <p/>
- * Transmits given telemetry data to the ingestion endpoint. Transmission is done
- * asynchronously to not block the main thread.
+ *
+ * Either calls execute or executeOnExecutor on an AsyncTask depending on the
+ * API level.
  **/
 
 public class Sender {
@@ -220,7 +213,7 @@ public class Sender {
             connection.setDoInput(true);
             connection.setUseCaches(false);
         } catch (IOException e) {
-            Log.e(TAG, "Could not open connection for provided URL with exception: ", e);
+            HockeyLog.error(TAG, "Could not open connection for provided URL with exception: ", e);
         }
         return connection;
     }
@@ -255,7 +248,6 @@ public class Sender {
             //trigger send next file or log unexpected responses
             StringBuilder builder = new StringBuilder();
             if (isExpected(responseCode)) {
-                this.readResponse(connection, builder);
                 triggerSending();
             } else {
                 this.onUnexpected(connection, responseCode, builder);
@@ -348,32 +340,42 @@ public class Sender {
      * @param builder    a string builder for storing the response
      */
     protected void readResponse(HttpURLConnection connection, StringBuilder builder) {
-        BufferedReader reader = null;
+        String result = null;
+        StringBuffer buffer = new StringBuffer();
+        InputStream inputStream = null;
+
         try {
-            InputStream inputStream = connection.getErrorStream();
+            inputStream = connection.getErrorStream();
             if (inputStream == null) {
                 inputStream = connection.getInputStream();
             }
 
-            if (inputStream != null) {
-                InputStreamReader streamReader = new InputStreamReader(inputStream, "UTF-8");
-                reader = new BufferedReader(streamReader);
-                String responseLine = reader.readLine();
-                while (responseLine != null) {
-                    builder.append(responseLine);
-                    responseLine = reader.readLine();
+            if(inputStream != null){
+                BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+                String inputLine = "";
+                while ((inputLine = br.readLine()) != null) {
+                    buffer.append(inputLine);
                 }
-            } else {
-                builder.append(connection.getResponseMessage());
+                result = buffer.toString();
+            }
+            else {
+                result = connection.getResponseMessage();
+            }
+
+            if(!TextUtils.isEmpty(result)) {
+                HockeyLog.verbose(result);
+            }
+            else {
+                HockeyLog.verbose(TAG, "Couldn't log response, result is null or empty string");
             }
         } catch (IOException e) {
-            Log.e(TAG, e.toString());
+            HockeyLog.error(TAG, e.toString());
         } finally {
-            if (reader != null) {
+            if (inputStream != null) {
                 try {
-                    reader.close();
+                    inputStream.close();
                 } catch (IOException e) {
-                    Log.e(TAG, e.toString());
+                    HockeyLog.error(TAG, e.toString());
                 }
             }
         }
