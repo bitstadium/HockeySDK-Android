@@ -16,6 +16,7 @@ import net.hockeyapp.android.utils.HockeyLog;
 import java.io.File;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.UUID;
 
 /**
  * <h3>Description</h3>
@@ -204,7 +205,7 @@ public class Constants {
                 Constants.CRASH_IDENTIFIER = bytesToHex(bytes);
             } catch (Throwable e) {
                 HockeyLog.error("Couldn't create CrashIdentifier with Exception:" + e.toString());
-                //TODO handle the exeption
+                //TODO handle the exception
             }
         }
     }
@@ -219,7 +220,9 @@ public class Constants {
         ContentResolver resolver = context.getContentResolver();
         String deviceIdentifier = Settings.Secure.getString(resolver, Settings.Secure.ANDROID_ID);
         if (deviceIdentifier != null) {
-            Constants.DEVICE_IDENTIFIER = tryHashStringSha256(context, deviceIdentifier);
+            String deviceIdentifierAnonymized = tryHashStringSha256(context, deviceIdentifier);
+            // if anonymized device identifier is null we should use a random UUID
+            Constants.DEVICE_IDENTIFIER = deviceIdentifierAnonymized != null ? deviceIdentifierAnonymized : UUID.randomUUID().toString();
         }
     }
 
@@ -228,7 +231,7 @@ public class Constants {
      * unavailable, return empty string.
      *
      * @param input the string to hash.
-     * @return a SHA-256 hash of the input or the input if SHA-256 is not available (should not happen).
+     * @return a SHA-256 hash of the input or null if SHA-256 is not available (should never happen).
      */
     private static String tryHashStringSha256(Context context, String input) {
         String salt = createSalt(context);
@@ -242,8 +245,8 @@ public class Constants {
 
             return bytesToHex(hashedBytes);
         } catch (NoSuchAlgorithmException e) {
-            // All android devices should support SHA256, but if unavailable return input
-            return input;
+            // All android devices should support SHA256, but if unavailable return null
+            return null;
         }
     }
 
