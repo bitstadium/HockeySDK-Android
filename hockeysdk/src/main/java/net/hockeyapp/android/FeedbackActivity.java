@@ -231,7 +231,9 @@ public class FeedbackActivity extends Activity implements OnClickListener {
             ViewGroup attachmentList = (ViewGroup) findViewById(R.id.wrapper_attachments);
             ArrayList<Uri> attachmentsUris = savedInstanceState.getParcelableArrayList("attachments");
             for (Uri attachmentUri : attachmentsUris) {
-                attachmentList.addView(new AttachmentView(this, attachmentList, attachmentUri, true));
+                if (!mInitialAttachments.contains(attachmentUri)) {
+                    attachmentList.addView(new AttachmentView(this, attachmentList, attachmentUri, true));
+                }
             }
 
             mFeedbackViewInitialized = savedInstanceState.getBoolean("feedbackViewInitialized");
