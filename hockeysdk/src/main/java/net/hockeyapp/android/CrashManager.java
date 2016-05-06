@@ -8,20 +8,15 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
-
 import net.hockeyapp.android.objects.CrashDetails;
 import net.hockeyapp.android.objects.CrashManagerUserInput;
 import net.hockeyapp.android.objects.CrashMetaData;
+import net.hockeyapp.android.objects.CrashReport;
 import net.hockeyapp.android.utils.HockeyLog;
 import net.hockeyapp.android.utils.HttpURLConnectionBuilder;
 import net.hockeyapp.android.utils.Util;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
@@ -238,6 +233,14 @@ public class CrashManager {
         return didCrashInLastSession;
     }
 
+    @Deprecated
+    /**
+     * Access the CrashDetails of the last Crash (the Crash Object).
+     * This method was deprecated with 4.0.0-beta.1 of the SDK in favor of
+     * @see #getLastCrashReport()
+     *
+     * @return CrashDetails
+     */
     public static CrashDetails getLastCrashDetails() {
         if (Constants.FILES_PATH == null || !didCrashInLastSession()) {
             return null;
@@ -264,6 +267,45 @@ public class CrashManager {
         if (lastModifiedFile != null && lastModifiedFile.exists()) {
             try {
                 result = CrashDetails.fromFile(lastModifiedFile);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Access the last CrashReport.
+     *
+     * @return CrashReport the latest CrashReport, null if the app didn't crash in the last session or there are no CrashReports
+     */
+    public static CrashReport getLastCrashReport() {
+        if (Constants.FILES_PATH == null || !didCrashInLastSession()) {
+            return null;
+        }
+
+        File dir = new File(Constants.FILES_PATH + "/");
+        File[] files = dir.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String filename) {
+                return filename.endsWith(".stacktrace");
+            }
+        });
+
+        long lastModification = 0;
+        File lastModifiedFile = null;
+        CrashReport result = null;
+        for (File file : files) {
+            if (file.lastModified() > lastModification) {
+                lastModification = file.lastModified();
+                lastModifiedFile = file;
+            }
+        }
+
+        if (lastModifiedFile != null && lastModifiedFile.exists()) {
+            try {
+                result = CrashReport.fromFile(lastModifiedFile);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

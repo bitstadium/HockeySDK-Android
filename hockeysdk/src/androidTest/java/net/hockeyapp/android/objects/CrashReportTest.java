@@ -4,10 +4,8 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.InstrumentationTestCase;
 import android.text.TextUtils;
-
 import net.hockeyapp.android.Constants;
 import net.hockeyapp.android.ExceptionHandler;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,9 +14,8 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 
-@Deprecated
 @RunWith(AndroidJUnit4.class)
-public class CrashDetailsTest extends InstrumentationTestCase {
+public class CrashReportTest extends InstrumentationTestCase {
 
     private File filesDirectory;
 
@@ -49,7 +46,7 @@ public class CrashDetailsTest extends InstrumentationTestCase {
     }
 
     @Test
-    public void testCrashDetailParsing() throws IOException {
+    public void testCrashReportParsing() throws IOException {
         Throwable tr = new RuntimeException("Just a test exception");
         ExceptionHandler.saveException(tr, Thread.currentThread(), null);
 
@@ -65,7 +62,7 @@ public class CrashDetailsTest extends InstrumentationTestCase {
         File stackTraceFile = stackTraceFiles[0];
         String crashIdentifier = stackTraceFile.getName().substring(0, stackTraceFile.getName().indexOf(".stacktrace"));
 
-        CrashDetails details = CrashDetails.fromFile(stackTraceFile);
+        CrashReport details = CrashReport.fromFile(stackTraceFile);
         assertNotNull(details);
 
         assertFalse(TextUtils.isEmpty(details.getCrashIdentifier()));

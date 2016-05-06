@@ -3,10 +3,8 @@ package net.hockeyapp.android;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.InstrumentationTestCase;
-
-import net.hockeyapp.android.objects.CrashDetails;
+import net.hockeyapp.android.objects.CrashReport;
 import net.hockeyapp.android.util.StacktraceFilenameFilter;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -48,11 +46,11 @@ public class CrashManagerTest extends InstrumentationTestCase {
         CrashManager.register(getInstrumentation().getTargetContext(), DUMMY_APP_IDENTIFIER);
 
         assertTrue(CrashManager.didCrashInLastSession());
-        assertNotNull(CrashManager.getLastCrashDetails());
+        assertNotNull(CrashManager.getLastCrashReport());
     }
 
     @Test
-    public void crashDetailsInLastSessionCorrect() {
+    public void crashReportInLastSessionCorrect() {
         assertNotNull(Constants.FILES_PATH);
 
         cleanupReportsDir();
@@ -60,7 +58,7 @@ public class CrashManagerTest extends InstrumentationTestCase {
 
         CrashManager.register(getInstrumentation().getTargetContext(), DUMMY_APP_IDENTIFIER);
 
-        CrashDetails crashDetails = CrashManager.getLastCrashDetails();
+        CrashReport crashDetails = CrashManager.getLastCrashReport();
 
         assertNotNull(crashDetails);
 
@@ -74,7 +72,7 @@ public class CrashManagerTest extends InstrumentationTestCase {
         fakeCrashReport();
         fakeCrashReport();
 
-        crashDetails = CrashManager.getLastCrashDetails();
+        crashDetails = CrashManager.getLastCrashReport();
 
         assertNotNull(crashDetails);
 
