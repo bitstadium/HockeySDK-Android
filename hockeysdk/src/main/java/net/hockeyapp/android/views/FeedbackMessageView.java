@@ -1,6 +1,5 @@
 package net.hockeyapp.android.views;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -12,9 +11,12 @@ import net.hockeyapp.android.objects.FeedbackAttachment;
 import net.hockeyapp.android.objects.FeedbackMessage;
 import net.hockeyapp.android.tasks.AttachmentDownloader;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * <h3>Description</h3>
@@ -24,20 +26,29 @@ import java.util.Date;
  **/
 public class FeedbackMessageView extends LinearLayout {
 
-    @SuppressLint("SimpleDateFormat")
-    private final static SimpleDateFormat DATE_FORMAT_IN = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-    @SuppressLint("SimpleDateFormat")
-    private final static SimpleDateFormat DATE_FORMAT_OUT = new SimpleDateFormat("d MMM h:mm a");
+    private final static ThreadLocal<DateFormat> DATE_FORMAT_IN = new ThreadLocal<DateFormat>() {
+        @Override
+        protected DateFormat initialValue() {
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
+            dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+            return dateFormat;
+        }
+    };
 
+    private final static ThreadLocal<DateFormat> DATE_FORMAT_OUT = new ThreadLocal<DateFormat>() {
+        @Override
+        protected DateFormat initialValue() {
+            DateFormat dateFormat = new SimpleDateFormat("d MMM h:mm a z", Locale.US);
+            dateFormat.setTimeZone(TimeZone.getDefault());
+            return dateFormat;
+        }
+    };
+    private final Context mContext;
     private TextView mAuthorTextView;
     private TextView mDateTextView;
     private TextView mMessageTextView;
     private AttachmentListView mAttachmentListView;
-
     private FeedbackMessage mFeedbackMessage;
-
-    private final Context mContext;
-
     @SuppressWarnings("unused")
     @Deprecated
     private boolean ownMessage;//TODO why surpress this?! Intended for future use?
@@ -59,8 +70,8 @@ public class FeedbackMessageView extends LinearLayout {
         mFeedbackMessage = feedbackMessage;
 
         try {
-            Date date = DATE_FORMAT_IN.parse(mFeedbackMessage.getCreatedAt());
-            mDateTextView.setText(DATE_FORMAT_OUT.format(date));
+            Date date = DATE_FORMAT_IN.get().parse(mFeedbackMessage.getCreatedAt());
+            mDateTextView.setText(DATE_FORMAT_OUT.get().format(date));
         } catch (ParseException e) {
             e.printStackTrace();
         }

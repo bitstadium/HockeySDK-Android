@@ -53,6 +53,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 /**
  * <h3>Description</h3>
@@ -637,7 +638,9 @@ public class FeedbackActivity extends Activity implements OnClickListener {
                 configureFeedbackView(true);
 
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-                SimpleDateFormat formatNew = new SimpleDateFormat("d MMM h:mm a");
+                format.setTimeZone(TimeZone.getTimeZone("UTC"));
+                SimpleDateFormat formatNew = new SimpleDateFormat("d MMM h:mm a z");
+                formatNew.setTimeZone(TimeZone.getDefault());
 
                 Date date = null;
                 if (feedbackResponse != null && feedbackResponse.getFeedback() != null &&
