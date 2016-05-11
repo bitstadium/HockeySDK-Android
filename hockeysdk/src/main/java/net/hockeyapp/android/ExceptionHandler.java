@@ -175,6 +175,17 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
         }
 
         crashDetails.writeCrashReport();
+
+        if (listener != null) {
+            try {
+                writeValueToFile(limitedString(listener.getUserID()), filename + ".user");
+                writeValueToFile(limitedString(listener.getContact()), filename + ".contact");
+                writeValueToFile(listener.getDescription(), filename + ".description");
+            } catch (IOException e) {
+                HockeyLog.error("Error saving crash meta data!", e);
+            }
+
+        }
     }
 
     public void uncaughtException(Thread thread, Throwable exception) {
