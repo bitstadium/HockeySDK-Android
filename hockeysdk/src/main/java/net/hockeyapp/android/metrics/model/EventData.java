@@ -48,7 +48,7 @@ public class EventData extends TelemetryData {
      * Base Type for this telemetry.
      */
     public String getBaseType() {
-        return "Microsoft.ApplicationInsights.EventData";
+        return "EventData";
     }
 
     /**
