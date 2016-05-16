@@ -247,7 +247,7 @@ public class Sender {
         builder.append("\n");
 
         // log the unexpected response
-        HockeyLog.debug(TAG, message);
+        HockeyLog.error(TAG, message);
 
         // attempt to read the response stream
         this.readResponse(connection, builder);
