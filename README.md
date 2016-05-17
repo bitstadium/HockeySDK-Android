@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/bitstadium/HockeySDK-Android.svg?branch=develop)](https://travis-ci.org/bitstadium/HockeySDK-Android)
 [![Slack Status](https://slack.hockeyapp.net/badge.svg)](https://slack.hockeyapp.net)
 
-## Preseason - Version 4.1.0-beta.1
+## Preseason - Version 4.1.0-beta.2
 
 ## Introduction
 
@@ -11,7 +11,7 @@ The following features are currently supported:
 
 1. **Crash Reports:** If your app crashes, a crash log is written to the device's storage. If the user starts the app again, they will be asked asked to submit the crash report to HockeyApp. This works for both beta and live apps, i.e. those submitted to Google Play or other app stores. Crash logs contain viable information for you to help resolve the issue. Furthermore, you as a developer can add additional information to the report as well.
 
-2. **User Metrics:** Understand user behavior to improve your app. Track usage through daily and monthly active users, monitor crash impacted users, as well as customer engagement through session count. If you are part of [Preseason](hockeyapp.net/preseason), you can now track Custom Events in your app, understand user actions and see the aggregates on the HockeyApp portal. User Metrics requires a minimum API level of 14 (Android 4.x Ice Cream Sandwich).
+2. **User Metrics:** Understand user behavior to improve your app. Track usage through daily and monthly active users, monitor crash impacted users, as well as customer engagement through session count. User Metrics requires a minimum API level of 14 (Android 4.x Ice Cream Sandwich).
 
 3. **Update alpha/beta apps:** The app will check with HockeyApp if a new version for your alpha/beta build is available. If yes, it will show a dialog to users and let them see the release notes, the version history and start the installation process right away. You can even force the installation of certain updates.
 
@@ -76,7 +76,7 @@ Please see the "[How to create a new app](http://support.hockeyapp.net/kb/about-
 Add the SDK to your app module's dependencies in Android Studio by adding the following line to your `dependencies { ... }` configuration:
 
 ```groovy
-compile 'net.hockeyapp.android:HockeySDK:4.1.0-beta.1'
+compile 'net.hockeyapp.android:HockeySDK:4.1.0-beta.2'
 ```
 
 <a id="integrate-sdk"></a>
@@ -305,7 +305,7 @@ If you don't want to use Gradle or Maven dependency management you can also down
 4. Configure your development tools to use the .aar/.jar file.
 5. In Android Studio, create a new module via `File > New > New Module`
 6. Select **Import .JAR/.AAR Package** and click **Next**.
-7. In the next menu select the .aar/.jar file you just copied to the libs folder. You can rename the module to whatever you want, but we in general recommend leaving it as is. If you don't rename the module, it will match the name of the .aar/.jar file, in this case **HockeySDK-4.1.0-beta.1**. This way you'll quickly know which version of the SDK you are using in the future.
+7. In the next menu select the .aar/.jar file you just copied to the libs folder. You can rename the module to whatever you want, but we in general recommend leaving it as is. If you don't rename the module, it will match the name of the .aar/.jar file, in this case **HockeySDK-4.1.0-beta.2**. This way you'll quickly know which version of the SDK you are using in the future.
 8. Make sure Android Studio added the necessary code to integrate the HockeySDK:
 
 Head over to your app's `build.gradle` to verify the dependency was added correctly. It should look like this:
@@ -315,19 +315,19 @@ dependencies {
 	//your other dependencies
 	//...
 	
-    compile project(':HockeySDK-4.1.0-beta.1')
+    compile project(':HockeySDK-4.1.0-beta.2')
 }
 ```
 Next, make sure your `settings.gradle` contains the new module:
 
 ```groovy
-include ':app', ':HockeySDK-4.1.0-beta.1'
+include ':app', ':HockeySDK-4.1.0-beta.2'
 ```
 
 Finally, check the `build.gradle` of the newly added module:
 ```groovy
 configurations.maybeCreate("default")
-artifacts.add("default", file('HockeySDK-4.1.0-beta.1.aar'))
+artifacts.add("default", file('HockeySDK-4.1.0-beta.2.aar'))
 ```
 
 Once you have verified that everything necessary has been added, proceed with [SDK integration](#integrate-sdk).
@@ -386,8 +386,8 @@ You can configure a notification to show to the user. When they select the notif
 ```java
   FeedbackManager.setActivityForScreenshot(YourActivity.this);
 ```
-<a id="authentication-advanced"></a>
 
+<a id="authentication-advanced"></a>
 ### 4.5 Authentication
 
 HockeySDK-Android currently supports 4 different authentication modes. The following code snippets usually make most sense in your main activity's `onCreate()`-callback.
@@ -518,7 +518,7 @@ However, if you provide a custom user interface fragment for the update distribu
 <a id="documentation"></a>
 ## 5. Documentation
 
-Our documentation can be found on [HockeyApp](http://hockeyapp.net/help/sdk/android/4.1.0-beta.1/index.html).
+Our documentation can be found on [HockeyApp](http://hockeyapp.net/help/sdk/android/4.1.0-beta.2/index.html).
 
 <a id="troubleshooting"></a>
 ## 6.Troubleshooting
