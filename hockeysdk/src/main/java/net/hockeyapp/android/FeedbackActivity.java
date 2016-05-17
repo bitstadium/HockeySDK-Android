@@ -651,7 +651,7 @@ public class FeedbackActivity extends Activity implements OnClickListener {
                     /** Set the lastUpdatedTextView text as the date of the latest feedback message */
                     try {
                         date = format.parse(mFeedbackMessages.get(0).getCreatedAt());
-                        mLastUpdatedTextView.setText(getString(R.string.hockeyapp_feedback_last_updated_text, formatNew.format(date)));
+                        mLastUpdatedTextView.setText(String.format(getString(R.string.hockeyapp_feedback_last_updated_text), formatNew.format(date)));
                     } catch (ParseException e1) {
                         e1.printStackTrace();
                     }

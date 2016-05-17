@@ -3,10 +3,8 @@ package net.hockeyapp.android;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.InstrumentationTestCase;
-
 import net.hockeyapp.android.objects.CrashDetails;
 import net.hockeyapp.android.util.StacktraceFilenameFilter;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,6 +17,40 @@ public class CrashManagerTest extends InstrumentationTestCase {
     private static final String DUMMY_APP_IDENTIFIER = "12345678901234567890123456789012";
 
     private static final StacktraceFilenameFilter STACK_TRACE_FILTER = new StacktraceFilenameFilter();
+
+    private static void cleanupReportsDir() {
+        assertNotNull(Constants.FILES_PATH);
+        File reportsDir = new File(Constants.FILES_PATH);
+        for (File f : reportsDir.listFiles(STACK_TRACE_FILTER)) {
+            f.delete();
+        }
+    }
+
+    private static void fakeCrashReport() {
+        Throwable tr = new RuntimeException("Just a test exception");
+        ExceptionHandler.saveException(tr, Thread.currentThread(), null);
+    }
+
+    private static void fakeXamarinCrashReport() {
+        Throwable tr = new RuntimeException("That's the Java exception");
+        Throwable xamaTr = new RuntimeException("Outer Exception", new RuntimeException("Inner Exception"));
+        ExceptionHandler.saveNativeException(tr, xamaTr.toString(), Thread.currentThread(), null);
+    }
+
+    private static File lastCrashReportFile() {
+        assertNotNull(Constants.FILES_PATH);
+        File reportsDir = new File(Constants.FILES_PATH);
+
+        long modifiedReference = 0;
+        File lastReportsFile = null;
+        for (File f : reportsDir.listFiles(STACK_TRACE_FILTER)) {
+            if (f.lastModified() > modifiedReference) {
+                modifiedReference = f.lastModified();
+                lastReportsFile = f;
+            }
+        }
+        return lastReportsFile;
+    }
 
     @Before
     public void setUp() throws Exception {
@@ -84,33 +116,21 @@ public class CrashManagerTest extends InstrumentationTestCase {
         assertEquals(lastStackTrace.getName().substring(0, lastStackTrace.getName().indexOf(".stacktrace")), crashDetails.getCrashIdentifier());
     }
 
-    private static void cleanupReportsDir() {
-        assertNotNull(Constants.FILES_PATH);
-        File reportsDir = new File(Constants.FILES_PATH);
-        for (File f : reportsDir.listFiles(STACK_TRACE_FILTER)) {
-            f.delete();
-        }
+    @Test
+    public void xamarinCrashCorrect() {
+        cleanupReportsDir();
+
+        fakeXamarinCrashReport();
+
+        CrashManager.register(getInstrumentation().getTargetContext(), DUMMY_APP_IDENTIFIER);
+
+        fakeXamarinCrashReport();
+
+        CrashDetails crashDetails = CrashManager.getLastCrashDetails();
+        assertNotNull(crashDetails);
+        assertEquals(crashDetails.getFormat(), "Xamarin");
+        String throwableStackTrace = crashDetails.getThrowableStackTrace();
+        Boolean containsCausedByXamarin = throwableStackTrace.contains("Xamarin caused by:");
+        assertTrue(containsCausedByXamarin);
     }
-
-    private static void fakeCrashReport() {
-        Throwable tr = new RuntimeException("Just a test exception");
-        ExceptionHandler.saveException(tr, Thread.currentThread(), null);
-    }
-
-    private static File lastCrashReportFile() {
-        assertNotNull(Constants.FILES_PATH);
-        File reportsDir = new File(Constants.FILES_PATH);
-
-        long modifiedReference = 0;
-        File lastReportsFile = null;
-        for (File f : reportsDir.listFiles(STACK_TRACE_FILTER)) {
-            if (f.lastModified() > modifiedReference) {
-                modifiedReference = f.lastModified();
-                lastReportsFile = f;
-            }
-        }
-        return lastReportsFile;
-    }
-
-
 }
