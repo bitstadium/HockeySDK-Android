@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
 import android.text.TextUtils;
+
 import net.hockeyapp.android.utils.HockeyLog;
 
 import java.io.File;
@@ -35,6 +36,11 @@ public class Constants {
     public static final String SDK_NAME = "HockeySDK";
 
     public static final String FILES_DIRECTORY_NAME = "HockeyApp";
+
+    /**
+     * The user agent string the SDK will send with every HockeyApp API request.
+     */
+    public static final String SDK_USER_AGENT = "HockeySDK/Android " + BuildConfig.VERSION_NAME;
 
     /**
      * Permissions request for the update task.
