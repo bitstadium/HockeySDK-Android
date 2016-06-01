@@ -257,7 +257,7 @@ public class AttachmentDownloader {
 
         private URLConnection createConnection(URL url) throws IOException {
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.addRequestProperty("User-Agent", "HockeySDK/Android");
+            connection.addRequestProperty("User-Agent", Constants.SDK_USER_AGENT);
             connection.setInstanceFollowRedirects(true);
       /* connection bug workaround for SDK<=2.x */
             if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.GINGERBREAD) {

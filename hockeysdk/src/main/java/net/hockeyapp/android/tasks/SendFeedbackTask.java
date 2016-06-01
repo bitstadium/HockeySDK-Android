@@ -218,6 +218,7 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
             parameters.put("os_version", Constants.ANDROID_VERSION);
             parameters.put("oem", Constants.PHONE_MANUFACTURER);
             parameters.put("model", Constants.PHONE_MODEL);
+            parameters.put("sdk_version", Constants.SDK_VERSION);
 
             if (mToken != null) {
                 mUrlString += mToken + "/";
@@ -265,6 +266,7 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
             parameters.put("os_version", Constants.ANDROID_VERSION);
             parameters.put("oem", Constants.PHONE_MANUFACTURER);
             parameters.put("model", Constants.PHONE_MODEL);
+            parameters.put("sdk_version", Constants.SDK_VERSION);
 
             if (mToken != null) {
                 mUrlString += mToken + "/";

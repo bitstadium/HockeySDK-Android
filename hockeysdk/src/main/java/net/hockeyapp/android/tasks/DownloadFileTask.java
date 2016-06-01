@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
 
+import net.hockeyapp.android.Constants;
 import net.hockeyapp.android.R;
 import net.hockeyapp.android.listeners.DownloadFileListener;
 
@@ -119,7 +120,7 @@ public class DownloadFileTask extends AsyncTask<Void, Integer, Long> {
     }
 
     protected void setConnectionProperties(HttpURLConnection connection) {
-        connection.addRequestProperty("User-Agent", "HockeySDK/Android");
+        connection.addRequestProperty("User-Agent", Constants.SDK_USER_AGENT);
         connection.setInstanceFollowRedirects(true);
 
         // connection bug workaround for SDK<=2.x

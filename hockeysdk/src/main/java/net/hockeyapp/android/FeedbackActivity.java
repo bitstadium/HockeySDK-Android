@@ -231,7 +231,9 @@ public class FeedbackActivity extends Activity implements OnClickListener {
             ViewGroup attachmentList = (ViewGroup) findViewById(R.id.wrapper_attachments);
             ArrayList<Uri> attachmentsUris = savedInstanceState.getParcelableArrayList("attachments");
             for (Uri attachmentUri : attachmentsUris) {
-                attachmentList.addView(new AttachmentView(this, attachmentList, attachmentUri, true));
+                if (!mInitialAttachments.contains(attachmentUri)) {
+                    attachmentList.addView(new AttachmentView(this, attachmentList, attachmentUri, true));
+                }
             }
 
             mFeedbackViewInitialized = savedInstanceState.getBoolean("feedbackViewInitialized");
@@ -649,7 +651,7 @@ public class FeedbackActivity extends Activity implements OnClickListener {
                     /** Set the lastUpdatedTextView text as the date of the latest feedback message */
                     try {
                         date = format.parse(mFeedbackMessages.get(0).getCreatedAt());
-                        mLastUpdatedTextView.setText(getString(R.string.hockeyapp_feedback_last_updated_text, formatNew.format(date)));
+                        mLastUpdatedTextView.setText(String.format(getString(R.string.hockeyapp_feedback_last_updated_text), formatNew.format(date)));
                     } catch (ParseException e1) {
                         e1.printStackTrace();
                     }

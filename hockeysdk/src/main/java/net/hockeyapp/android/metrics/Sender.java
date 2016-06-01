@@ -296,7 +296,7 @@ public class Sender {
         builder.append("\n");
 
         // log the unexpected response
-        HockeyLog.debug(TAG, message);
+        HockeyLog.error(TAG, message);
 
         // attempt to read the response stream
         this.readResponse(connection, builder);
@@ -316,6 +316,7 @@ public class Sender {
             if ((connection != null) && (payload != null)) {
                 HockeyLog.debug(TAG, "Sending payload:\n" + payload);
                 HockeyLog.debug(TAG, "Using URL:" + connection.getURL().toString());
+                //the following 3 lines actually appends the payload to the connection
                 writer = getWriter(connection);
                 writer.write(payload);
                 writer.flush();
