@@ -34,6 +34,10 @@ public class Constants {
      * Name of this SDK.
      */
     public static final String SDK_NAME = "HockeySDK";
+    /**
+     * Version of the SDK - retrieved from the build configuration.
+     */
+    public static final String SDK_VERSION = BuildConfig.VERSION_NAME;
 
     public static final String FILES_DIRECTORY_NAME = "HockeyApp";
 
