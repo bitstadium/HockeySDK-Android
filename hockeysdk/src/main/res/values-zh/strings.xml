@@ -38,7 +38,7 @@
     <string name="hockeyapp_feedback_response_button_text">添加响应</string>
     <string name="hockeyapp_feedback_refresh_button_text">刷新</string>
     <string name="hockeyapp_feedback_title">反馈</string>
-    <string name="hockeyapp_feedback_send_generic_error">无法发送消息，请检查您的输入内容和网络连接后重试。</string>
+    <string name="hockeyapp_feedback_send_generic_error">无法发送反馈，请检查您的输入内容和网络连接后重试。</string>
     <string name="hockeyapp_feedback_send_network_error">服务器无响应，请检查您的网络连接后重试</string>
     <string name="hockeyapp_feedback_validate_subject_error">请输入主题</string>
     <string name="hockeyapp_feedback_validate_email_error">请检查电子邮件地址格式</string>
@@ -51,7 +51,7 @@
     <string name="hockeyapp_feedback_select_file">选择文件</string>
     <string name="hockeyapp_feedback_select_picture">选择图片</string>
     <string name="hockeyapp_feedback_max_attachments_allowed">最多只允许添加 %s 个附件。</string>
-    <string name="hockeyapp_feedback_attachment_loading">加载中…</string>
+    <string name="hockeyapp_feedback_attachment_loading">加载中...</string>
     <string name="hockeyapp_feedback_attachment_error">错误</string>
 
     <!-- Send Feedback Task -->
