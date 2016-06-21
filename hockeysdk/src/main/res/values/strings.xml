@@ -42,10 +42,10 @@
     <string name="hockeyapp_feedback_send_generic_error">Message couldn\'t be posted. Please check your input values and your connection, then try again.</string>
     <string name="hockeyapp_feedback_send_network_error">No response from server. Please check your connection, then try again.</string>
     <string name="hockeyapp_feedback_validate_subject_error">Please enter a subject</string>
-    <string name="hockeyapp_feedback_validate_email_error">Please enter a name</string>
+    <string name="hockeyapp_feedback_validate_email_error">Please enter a valid email address</string>
     <string name="hockeyapp_feedback_validate_email_empty">Please enter an email address</string>
-    <string name="hockeyapp_feedback_validate_name_error">Please enter a feedback text</string>
-    <string name="hockeyapp_feedback_validate_text_error">Message couldn\'t be posted. Please check the format of your email address.</string>
+    <string name="hockeyapp_feedback_validate_name_error">Please enter your name</string>
+    <string name="hockeyapp_feedback_validate_text_error">Message couldn\'t be posted. Please enter a feedback text</string>
     <string name="hockeyapp_feedback_generic_error">An error has occurred</string>
     <string name="hockeyapp_feedback_attach_file">Attach File</string>
     <string name="hockeyapp_feedback_attach_picture">Attach Picture</string>
