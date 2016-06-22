@@ -17,9 +17,7 @@ The following features are currently supported:
 
 4. **Feedback:** Besides crash reports, collecting feedback from your users from within your app is a great option to help with improving your app. You act on and answer feedback directly from the HockeyApp backend.
 
-5. **Feedback:** Besides crash reports, collecting feedback from your users from within your app is a great option to help with improving your app. You act and answer feedback directly from the HockeyApp backend.
-
-6. **Authenticate:** To help you stay in control of closed tester groups you can identify and authenticate users against your registered testers with the HockeyApp backend. The authentication feature supports several ways of authentication.
+5. **Authenticate:** To help you stay in control of closed tester groups you can identify and authenticate users against your registered testers with the HockeyApp backend. The authentication feature supports several ways of authentication.
 
 This document contains the following sections:
 
@@ -39,7 +37,7 @@ This document contains the following sections:
   2. [Crash Reporting](#crashreporting-advanced)
   3. [Update distribution](#updatedistribution-advanced)
   4. [In-App feedback](#feedback-advanced)
-  5. [Authentication] (#authentication-advanced)
+  5. [Authentication](#authentication-advanced)
   6. [Strings & localization](#strings-advanced)
   7. [Permissions](#permissions-advanced)
   8. [Control output to LogCat](#logcat-output)
