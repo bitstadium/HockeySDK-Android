@@ -58,7 +58,7 @@ public class MetricsManagerTests extends InstrumentationTestCase {
         Application mockApplication = mock(Application.class);
         when(mockApplication.getApplicationContext()).thenReturn(getInstrumentation().getContext());
 
-        MetricsManager.register(getInstrumentation().getContext(), mockApplication, "12345678901234567890123456789032",
+        MetricsManager.register(mockApplication, "12345678901234567890123456789032",
                 mockSender, mockPersistence, mockChannel);
         assertNotNull(MetricsManager.getSender());
         assertNotNull(MetricsManager.getChannel());
