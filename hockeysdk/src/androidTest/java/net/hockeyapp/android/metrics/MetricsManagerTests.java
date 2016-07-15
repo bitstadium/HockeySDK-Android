@@ -12,6 +12,7 @@ import org.junit.runner.RunWith;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(AndroidJUnit4.class)
 public class MetricsManagerTests extends InstrumentationTestCase {
@@ -49,6 +50,7 @@ public class MetricsManagerTests extends InstrumentationTestCase {
         Channel mockChannel = mock(PublicChannel.class);
         Sender mockSender = mock(PublicSender.class);
         Application mockApplication = mock(Application.class);
+        when(mockApplication.getApplicationContext()).thenReturn(getInstrumentation().getContext());
 
         MetricsManager.register(getInstrumentation().getContext(), mockApplication, "12345678901234567890123456789032",
                 mockSender, mockPersistence, mockChannel);
