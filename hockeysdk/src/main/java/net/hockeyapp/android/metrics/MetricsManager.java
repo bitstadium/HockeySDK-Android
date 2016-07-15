@@ -183,15 +183,15 @@ public class MetricsManager {
      * @param persistence   Persistence for dependency injection.
      * @param channel       Channel for dependency injection.
      */
-    protected static void register(Context context, Application application, String appIdentifier,
+    protected static void register(@SuppressWarnings("UnusedParameters") Context context, Application application, String appIdentifier,
                                    Sender sender, Persistence persistence, Channel channel) {
         MetricsManager result = instance;
         if (result == null) {
             synchronized (LOCK) {
                 result = instance;        // thread may have instantiated the object
                 if (result == null) {
-                    Constants.loadFromContext(context);
-                    result = new MetricsManager(context, new TelemetryContext(context, appIdentifier),
+                    Constants.loadFromContext(application.getApplicationContext());
+                    result = new MetricsManager(application.getApplicationContext(), new TelemetryContext(application.getApplicationContext(), appIdentifier),
                             sender, persistence, channel);
                     sWeakApplication = new WeakReference<>(application);
                 }

@@ -41,10 +41,10 @@
     <string name="hockeyapp_feedback_send_generic_error">Die Nachricht konnte nicht übermittelt werden. Bitte überprüfen Sie Ihre Eingaben und Internetverbindung und versuchen Sie es erneut.</string>
     <string name="hockeyapp_feedback_send_network_error">Keine Antwort vom Server. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.</string>
     <string name="hockeyapp_feedback_validate_subject_error">Bitte geben Sie einen Titel an</string>
-    <string name="hockeyapp_feedback_validate_email_error">Bitte geben Sie einen Namen an</string>
-    <string name="hockeyapp_feedback_validate_email_empty">Bitte geben Sie eine gültige E-Mail-Adresse an</string>
-    <string name="hockeyapp_feedback_validate_name_error">Bitte geben Sie Ihr Feedback ein</string>
-    <string name="hockeyapp_feedback_validate_text_error">Die Nachricht konnte nicht Übertragen werden. Überprüfen Sie bitte Ihre E-Mail-Adresse.</string>
+    <string name="hockeyapp_feedback_validate_email_error">Bitte geben Sie eine E-Mail-Adresse an</string>
+    <string name="hockeyapp_feedback_validate_email_empty">Bitte geben Sie eine E-Mail-Adresse an</string>
+    <string name="hockeyapp_feedback_validate_name_error">Bitte geben Sie Ihren Namen an</string>
+    <string name="hockeyapp_feedback_validate_text_error">Die Nachricht konnte nicht übertragen werden. Überprüfen Sie bitte Ihre E-Mail-Adresse.</string>
     <string name="hockeyapp_feedback_generic_error">Es ist ein Fehler aufgetreten</string>
     <string name="hockeyapp_feedback_attach_file">Datei anhängen</string>
     <string name="hockeyapp_feedback_attach_picture">Bild anhängen</string>
