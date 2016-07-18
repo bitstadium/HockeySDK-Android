@@ -24,6 +24,7 @@ import net.hockeyapp.android.utils.Util;
 
 import java.lang.ref.WeakReference;
 import java.util.Date;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -455,6 +456,10 @@ public class MetricsManager {
     }
 
     public static void trackEvent(final String eventName) {
+        trackEvent(eventName, null);
+    }
+
+    public static void trackEvent(final String eventName, final Map<String, String> properties) {
         if (TextUtils.isEmpty(eventName)) {
             return;
         }
@@ -472,6 +477,9 @@ public class MetricsManager {
                 protected Void doInBackground(Void... params) {
                     EventData eventItem = new EventData();
                     eventItem.setName(eventName);
+                    if (properties != null) {
+                        eventItem.setProperties(properties);
+                    }
                     Data<Domain> data = createData(eventItem);
                     sChannel.enqueueData(data);
                     return null;
