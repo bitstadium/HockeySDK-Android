@@ -460,6 +460,10 @@ public class MetricsManager {
     }
 
     public static void trackEvent(final String eventName, final Map<String, String> properties) {
+        trackEvent(eventName, properties, null);
+    }
+
+    public static void trackEvent(final String eventName, final Map<String, String> properties, final Map<String, Double> measurements) {
         if (TextUtils.isEmpty(eventName)) {
             return;
         }
@@ -479,6 +483,9 @@ public class MetricsManager {
                     eventItem.setName(eventName);
                     if (properties != null) {
                         eventItem.setProperties(properties);
+                    }
+                    if (measurements != null) {
+                        eventItem.setMeasurements(measurements);
                     }
                     Data<Domain> data = createData(eventItem);
                     sChannel.enqueueData(data);
