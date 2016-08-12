@@ -9,7 +9,7 @@
 
     <!-- Download Failed -->
     <string name="hockeyapp_download_failed_dialog_title">Download fallito</string>
-    <string name="hockeyapp_download_failed_dialog_message">Impossibile scaricare l'aggiornamento. Vuoi riprovare?</string>
+    <string name="hockeyapp_download_failed_dialog_message">Impossibile scaricare l\'aggiornamento. Vuoi riprovare?</string>
     <string name="hockeyapp_download_failed_dialog_negative_button">Annulla</string>
     <string name="hockeyapp_download_failed_dialog_positive_button">Riprova</string>
 
@@ -48,10 +48,10 @@
     <string name="hockeyapp_feedback_validate_text_error">Impossibile pubblicare il messaggio. Inserisci un testo per il feedback</string>
     <string name="hockeyapp_feedback_generic_error">Si è verificato un errore</string>
     <string name="hockeyapp_feedback_attach_file">Allega un file</string>
-    <string name="hockeyapp_feedback_attach_picture">Allega un'immagine</string>
+    <string name="hockeyapp_feedback_attach_picture">Allega un\'immagine</string>
     <string name="hockeyapp_feedback_select_file">Seleziona il file</string>
-    <string name="hockeyapp_feedback_select_picture">Seleziona l'immagine</string>
-    <string name="hockeyapp_feedback_max_attachments_allowed">E' consentito un massimo di %s allegati.</string>
+    <string name="hockeyapp_feedback_select_picture">Seleziona l\'immagine</string>
+    <string name="hockeyapp_feedback_max_attachments_allowed">E\' consentito un massimo di %s allegati.</string>
     <string name="hockeyapp_feedback_attachment_loading">Caricamento…</string>
     <string name="hockeyapp_feedback_attachment_error">Errore</string>
 
@@ -60,9 +60,9 @@
     <string name="hockeyapp_feedback_fetching_feedback_text">Recupero discussioni…</string>
 
     <!-- Login Activity -->
-    <string name="hockeyapp_login_headline_text">Inserisci l'indirizzo e-mail e la password del tuo account HockeyApp per autorizzare l'accesso a questa app.</string>
-    <string name="hockeyapp_login_headline_text_email_only">Inserisci l'indirizzo e-mail del tuo account HockeyApp per autorizzare l'accesso a questa app.</string>
-    <string name="hockeyapp_login_missing_credentials_toast">Inserisci le credenziali dell'account mancanti.</string>
+    <string name="hockeyapp_login_headline_text">Inserisci l\'indirizzo e-mail e la password del tuo account HockeyApp per autorizzare l\'accesso a questa app.</string>
+    <string name="hockeyapp_login_headline_text_email_only">Inserisci l\'indirizzo e-mail del tuo account HockeyApp per autorizzare l\'accesso a questa app.</string>
+    <string name="hockeyapp_login_missing_credentials_toast">Inserisci le credenziali dell\'account mancanti.</string>
     <string name="hockeyapp_login_email_hint">E-mail</string>
     <string name="hockeyapp_login_password_hint">Password</string>
     <string name="hockeyapp_login_login_button_text">Accedi</string>
@@ -79,7 +79,7 @@
 
     <!-- Permissions -->
     <string name="hockeyapp_permission_update_title">Accesso allo spazio di archiviazione richiesto</string>
-    <string name="hockeyapp_permission_update_message">Per scaricare ed installare gli aggiornamenti dell'app devi consentire l'accesso allo spazio di archiviazione del dispositivo.</string>
+    <string name="hockeyapp_permission_update_message">Per scaricare ed installare gli aggiornamenti dell\'app devi consentire l\'accesso allo spazio di archiviazione del dispositivo.</string>
     <string name="hockeyapp_permission_dialog_negative_button">Annulla</string>
     <string name="hockeyapp_permission_dialog_positive_button">Riprova</string>
 
