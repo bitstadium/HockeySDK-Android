@@ -198,7 +198,7 @@ public class DownloadFileTask extends AsyncTask<Void, Integer, Long> {
 
             StrictMode.VmPolicy oldVmPolicy = null;
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 oldVmPolicy = StrictMode.getVmPolicy();
 
                 StrictMode.VmPolicy policy = new StrictMode.VmPolicy.Builder()
