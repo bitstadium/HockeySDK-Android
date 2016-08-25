@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
+import android.os.StrictMode;
 
 import net.hockeyapp.android.R;
 import net.hockeyapp.android.listeners.DownloadFileListener;
@@ -194,7 +195,25 @@ public class DownloadFileTask extends AsyncTask<Void, Integer, Long> {
             intent.setDataAndType(Uri.fromFile(new File(this.mFilePath, this.mFilename)),
                     "application/vnd.android.package-archive");
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+            StrictMode.VmPolicy oldVmPolicy = null;
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                oldVmPolicy = StrictMode.getVmPolicy();
+
+                StrictMode.VmPolicy policy = new StrictMode.VmPolicy.Builder()
+                        .penaltyLog()
+                        .build();
+
+                StrictMode.setVmPolicy(policy);
+            }
+
             mContext.startActivity(intent);
+
+            if (oldVmPolicy != null) {
+                StrictMode.setVmPolicy(oldVmPolicy);
+            }
+
         } else {
             try {
                 AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
