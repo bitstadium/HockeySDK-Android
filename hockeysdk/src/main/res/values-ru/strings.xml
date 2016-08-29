@@ -20,7 +20,6 @@
     <string name="hockeyapp_update_dialog_message">Показывать информацию о доступных обновлениях?</string>
     <string name="hockeyapp_update_dialog_negative_button">Игнорировать</string>
     <string name="hockeyapp_update_dialog_positive_button">Показать</string>
-    <string name="hockeyapp_update_version_details_label" translatable="false">%1$s\n%2$s - %3$s</string>
 
     <!-- Expiry Info -->
     <string name="hockeyapp_expiry_info_title">Сборка истекла</string>
@@ -33,25 +32,25 @@
     <string name="hockeyapp_feedback_email_hint">Email</string>
     <string name="hockeyapp_feedback_subject_hint">Тема</string>
     <string name="hockeyapp_feedback_message_hint">Сообщение</string>
-    <string name="hockeyapp_feedback_last_updated_text">Последнее обновление: </string>
+    <string name="hockeyapp_feedback_last_updated_text">Последнее обновление: %s</string>
     <string name="hockeyapp_feedback_attachment_button_text">Прикрепить файл</string>
     <string name="hockeyapp_feedback_send_button_text">Отправить отзыв</string>
     <string name="hockeyapp_feedback_response_button_text">Добавить ответ</string>
     <string name="hockeyapp_feedback_refresh_button_text">Обновить</string>
     <string name="hockeyapp_feedback_title">Отзыв</string>
-    <string name="hockeyapp_feedback_send_generic_error">Сообщение не было отправлено. Пожалуйста, проверьте введённые вами значения и ваше интернет соеденение и попробуйте снова.</string>
-    <string name="hockeyapp_feedback_send_network_error">Сервер не отвечает. Пожалуйста, проверьте доступ в интернет и затем попробуйте снова.</string>
+    <string name="hockeyapp_feedback_send_generic_error">Ошибка при отправлении сообщения. Пожалуйста, проверьте введённые вами значения, ваше интернет соединение и попробуйте снова.</string>
+    <string name="hockeyapp_feedback_send_network_error">Сервер не доступен. Пожалуйста, проверьте ваше интернет соединение и затем попробуйте снова.</string>
     <string name="hockeyapp_feedback_validate_subject_error">Введите, пожалуйста, Тему</string>
-    <string name="hockeyapp_feedback_validate_email_error">Введите, пожалуйста Имя</string>
+    <string name="hockeyapp_feedback_validate_email_error">Введите, пожалуйста действующий Email адрес</string>
     <string name="hockeyapp_feedback_validate_email_empty">Введите, пожалуйста, Email</string>
-    <string name="hockeyapp_feedback_validate_name_error">Введите, пожалуйста, текст отзыва</string>
-    <string name="hockeyapp_feedback_validate_text_error">Сообщение не может быть отправлено. Проверьте, пожалуйста, формать вашего Email адресса.</string>
+    <string name="hockeyapp_feedback_validate_name_error">Введите, пожалуйста Имя</string>
+    <string name="hockeyapp_feedback_validate_text_error">Сообщение не может быть отправлено. Пожалуйста, введите текст отзыва.</string>
     <string name="hockeyapp_feedback_generic_error">Произошла ошибка</string>
     <string name="hockeyapp_feedback_attach_file">Прикрепить файл</string>
     <string name="hockeyapp_feedback_attach_picture">Прикрепить изображение</string>
     <string name="hockeyapp_feedback_select_file">Выбрать файл</string>
     <string name="hockeyapp_feedback_select_picture">Выбрать изображение</string>
-    <string name="hockeyapp_feedback_max_attachments_allowed">Доступны только %s вложения.</string>
+    <string name="hockeyapp_feedback_max_attachments_allowed">Количество вложений не может быть более чем %s</string>
     <string name="hockeyapp_feedback_attachment_loading">Загрузка…</string>
     <string name="hockeyapp_feedback_attachment_error">Ошибка</string>
 
@@ -84,12 +83,12 @@
     <string name="hockeyapp_permission_dialog_positive_button">Повторить</string>
 
     <!-- Dialogs -->
-    <string name="hockeyapp_dialog_positive_button">Добро</string>
+    <string name="hockeyapp_dialog_positive_button">OK</string>
     <string name="hockeyapp_dialog_negative_button">Закрыть</string>
     <string name="hockeyapp_dialog_error_title">Ошибка</string>
     <string name="hockeyapp_dialog_error_message">Произошла ошибка</string>
 
     <!-- Misc -->
-    <string name="hockeyapp_error_no_network_message">Ваше устройство не имеет доступа в интернет. Пожалуйста, решите проблему с подключением и попробуйте снова.</string>
+    <string name="hockeyapp_error_no_network_message">Ваше устройство не имеет доступа в интернет. Пожалуйста, восстановите подключение и попробуйте снова.</string>
 
 </resources>
