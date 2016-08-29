@@ -51,12 +51,12 @@
     <string name="hockeyapp_feedback_select_file">选择文件</string>
     <string name="hockeyapp_feedback_select_picture">选择图片</string>
     <string name="hockeyapp_feedback_max_attachments_allowed">最多只允许添加 %s 个附件。</string>
-    <string name="hockeyapp_feedback_attachment_loading">加载中...</string>
+    <string name="hockeyapp_feedback_attachment_loading">加载中…</string>
     <string name="hockeyapp_feedback_attachment_error">错误</string>
 
     <!-- Send Feedback Task -->
-    <string name="hockeyapp_feedback_sending_feedback_text">发送反馈中...</string>
-    <string name="hockeyapp_feedback_fetching_feedback_text">获取相关讨论内容中...</string>
+    <string name="hockeyapp_feedback_sending_feedback_text">发送反馈中…</string>
+    <string name="hockeyapp_feedback_fetching_feedback_text">获取相关讨论内容中…</string>
 
     <!-- Login Activity -->
     <string name="hockeyapp_login_headline_text">请输入您的 HockeyApp 帐户邮件地址和密码来授权对此应用程序的访问。</string>
