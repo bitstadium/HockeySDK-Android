@@ -1,0 +1,94 @@
+<resources>
+    <!-- Crash Dialog -->
+    <string name="hockeyapp_crash_dialog_app_name_fallback">此应用</string>
+    <string name="hockeyapp_crash_dialog_title">%s 意外终止</string>
+    <string name="hockeyapp_crash_dialog_message">您是否愿意发送一份匿名报告以便我们修复问题？</string>
+    <string name="hockeyapp_crash_dialog_negative_button">不发送</string>
+    <string name="hockeyapp_crash_dialog_neutral_button">总是发送</string>
+    <string name="hockeyapp_crash_dialog_positive_button">发送报告</string>
+
+    <!-- Download Failed -->
+    <string name="hockeyapp_download_failed_dialog_title">下载失败</string>
+    <string name="hockeyapp_download_failed_dialog_message">无法下载更新，是否重试？</string>
+    <string name="hockeyapp_download_failed_dialog_negative_button">取消</string>
+    <string name="hockeyapp_download_failed_dialog_positive_button">重试</string>
+
+    <!-- Update -->
+    <string name="hockeyapp_update_mandatory_toast">%s 有更新可用并且为强制更新! </string>
+    <string name="hockeyapp_update_dialog_title">有更新</string>
+    <string name="hockeyapp_update_button">更新</string>
+    <string name="hockeyapp_update_dialog_message">显示更新信息？</string>
+    <string name="hockeyapp_update_dialog_negative_button">忽略</string>
+    <string name="hockeyapp_update_dialog_positive_button">显示</string>
+
+    <!-- Expiry Info -->
+    <string name="hockeyapp_expiry_info_title">版本过期</string>
+    <string name="hockeyapp_expiry_info_text">%s 已经过期。请在 HockeyApp 中查看是否存在更新版本。</string>
+
+    <!-- Feedback Activity -->
+    <string name="hockeyapp_feedback_failed_title">挂起</string>
+    <string name="hockeyapp_feedback_failed_text">您是否想再次发送您的反馈？</string>
+    <string name="hockeyapp_feedback_name_hint">姓名</string>
+    <string name="hockeyapp_feedback_email_hint">电子邮件</string>
+    <string name="hockeyapp_feedback_subject_hint">主题</string>
+    <string name="hockeyapp_feedback_message_hint">内容</string>
+    <string name="hockeyapp_feedback_last_updated_text">最后更新时间: %s</string>
+    <string name="hockeyapp_feedback_attachment_button_text">添加附件</string>
+    <string name="hockeyapp_feedback_send_button_text">发送反馈</string>
+    <string name="hockeyapp_feedback_response_button_text">回复</string>
+    <string name="hockeyapp_feedback_refresh_button_text">刷新</string>
+    <string name="hockeyapp_feedback_title">反馈</string>
+    <string name="hockeyapp_feedback_send_generic_error">无法发送反馈。请检查您的输入内容和网络连接后重试。</string>
+    <string name="hockeyapp_feedback_send_network_error">服务器无响应。请检查您的网络连接后重试</string>
+    <string name="hockeyapp_feedback_validate_subject_error">请输入主题</string>
+    <string name="hockeyapp_feedback_validate_email_error">请检查电子邮件地址格式</string>
+    <string name="hockeyapp_feedback_validate_email_empty">请输入电子邮件</string>
+    <string name="hockeyapp_feedback_validate_name_error">请输入姓名</string>
+    <string name="hockeyapp_feedback_validate_text_error">请输入反馈内容</string>
+    <string name="hockeyapp_feedback_generic_error">发生错误</string>
+    <string name="hockeyapp_feedback_attach_file">添加附件</string>
+    <string name="hockeyapp_feedback_attach_picture">添加图片</string>
+    <string name="hockeyapp_feedback_select_file">选择文件</string>
+    <string name="hockeyapp_feedback_select_picture">选择图片</string>
+    <string name="hockeyapp_feedback_max_attachments_allowed">最多只允许添加 %s 个附件。</string>
+    <string name="hockeyapp_feedback_attachment_loading">加载中...</string>
+    <string name="hockeyapp_feedback_attachment_error">错误</string>
+
+    <!-- Send Feedback Task -->
+    <string name="hockeyapp_feedback_sending_feedback_text">发送反馈中...</string>
+    <string name="hockeyapp_feedback_fetching_feedback_text">获取相关讨论内容中...</string>
+
+    <!-- Login Activity -->
+    <string name="hockeyapp_login_headline_text">请输入您的 HockeyApp 帐户邮件地址和密码来授权对此应用程序的访问。</string>
+    <string name="hockeyapp_login_headline_text_email_only">请输入您的 HockeyApp 帐户邮件地址来授权对此应用程序的访问。</string>
+    <string name="hockeyapp_login_missing_credentials_toast">请输入帐户密码。</string>
+    <string name="hockeyapp_login_email_hint">电子邮件</string>
+    <string name="hockeyapp_login_password_hint">密码</string>
+    <string name="hockeyapp_login_login_button_text">登录</string>
+
+    <!-- Paint Activity -->
+    <string name="hockeyapp_paint_indicator_toast">来画点东西吧！</string>
+    <string name="hockeyapp_paint_menu_save">保存</string>
+    <string name="hockeyapp_paint_menu_undo">撤消</string>
+    <string name="hockeyapp_paint_menu_clear">清除</string>
+    <string name="hockeyapp_paint_dialog_message">是否保存所画内容？</string>
+    <string name="hockeyapp_paint_dialog_negative_button">放弃</string>
+    <string name="hockeyapp_paint_dialog_positive_button">保存</string>
+    <string name="hockeyapp_paint_dialog_neutral_button">取消</string>
+
+    <!-- Permissions -->
+    <string name="hockeyapp_permission_update_title">需要访问存储权限</string>
+    <string name="hockeyapp_permission_update_message">要想下载和安装应用程序，您需要允许应用程序访问设备存储。</string>
+    <string name="hockeyapp_permission_dialog_negative_button">取消</string>
+    <string name="hockeyapp_permission_dialog_positive_button">重试</string>
+
+    <!-- Dialogs -->
+    <string name="hockeyapp_dialog_positive_button">确定</string>
+    <string name="hockeyapp_dialog_negative_button">取消</string>
+    <string name="hockeyapp_dialog_error_title">错误</string>
+    <string name="hockeyapp_dialog_error_message">发生错误</string>
+
+    <!-- Misc -->
+    <string name="hockeyapp_error_no_network_message">您的设备无法访问 网络。请在解决网络连接问题后重试。</string>
+
+</resources>
