@@ -1,0 +1,95 @@
+<resources>
+    <!-- Crash Dialog -->
+    <string name="hockeyapp_crash_dialog_app_name_fallback">Это приложение</string>
+    <string name="hockeyapp_crash_dialog_title">%s неожиданно завершилось</string>
+    <string name="hockeyapp_crash_dialog_message">Хотели бы вы отправить анонимный отчёт об ошибке, чтобы мы могли исправить проблему?</string>
+    <string name="hockeyapp_crash_dialog_negative_button">Не отправлять</string>
+    <string name="hockeyapp_crash_dialog_neutral_button">Всегда отправлять</string>
+    <string name="hockeyapp_crash_dialog_positive_button">Отправить отчёт</string>
+
+    <!-- Download Failed -->
+    <string name="hockeyapp_download_failed_dialog_title">Загрузка не удалась</string>
+    <string name="hockeyapp_download_failed_dialog_message">Обновление не может быть загружено. Попробуем снова?</string>
+    <string name="hockeyapp_download_failed_dialog_negative_button">Закрыть</string>
+    <string name="hockeyapp_download_failed_dialog_positive_button">Повтор</string>
+
+    <!-- Update -->
+    <string name="hockeyapp_update_mandatory_toast">%s доступен и является обязательным для обновления!</string>
+    <string name="hockeyapp_update_dialog_title">Доступно обновление</string>
+    <string name="hockeyapp_update_button">Обновить</string>
+    <string name="hockeyapp_update_dialog_message">Показывать информацию о доступных обновлениях?</string>
+    <string name="hockeyapp_update_dialog_negative_button">Игнорировать</string>
+    <string name="hockeyapp_update_dialog_positive_button">Показать</string>
+    <string name="hockeyapp_update_version_details_label" translatable="false">%1$s\n%2$s - %3$s</string>
+
+    <!-- Expiry Info -->
+    <string name="hockeyapp_expiry_info_title">Сборка истекла</string>
+    <string name="hockeyapp_expiry_info_text">%s истек. Пожалуйста, проверьте обновления HockeyApp.</string>
+
+    <!-- Feedback Activity -->
+    <string name="hockeyapp_feedback_failed_title">Ожидаем</string>
+    <string name="hockeyapp_feedback_failed_text">Вы хотите отправить отзыв снова?</string>
+    <string name="hockeyapp_feedback_name_hint">Имя</string>
+    <string name="hockeyapp_feedback_email_hint">Email</string>
+    <string name="hockeyapp_feedback_subject_hint">Тема</string>
+    <string name="hockeyapp_feedback_message_hint">Сообщение</string>
+    <string name="hockeyapp_feedback_last_updated_text">Последнее обновление: </string>
+    <string name="hockeyapp_feedback_attachment_button_text">Прикрепить файл</string>
+    <string name="hockeyapp_feedback_send_button_text">Отправить отзыв</string>
+    <string name="hockeyapp_feedback_response_button_text">Добавить ответ</string>
+    <string name="hockeyapp_feedback_refresh_button_text">Обновить</string>
+    <string name="hockeyapp_feedback_title">Отзыв</string>
+    <string name="hockeyapp_feedback_send_generic_error">Сообщение не было отправлено. Пожалуйста, проверьте введённые вами значения и ваше интернет соеденение и попробуйте снова.</string>
+    <string name="hockeyapp_feedback_send_network_error">Сервер не отвечает. Пожалуйста, проверьте доступ в интернет и затем попробуйте снова.</string>
+    <string name="hockeyapp_feedback_validate_subject_error">Введите, пожалуйста, Тему</string>
+    <string name="hockeyapp_feedback_validate_email_error">Введите, пожалуйста Имя</string>
+    <string name="hockeyapp_feedback_validate_email_empty">Введите, пожалуйста, Email</string>
+    <string name="hockeyapp_feedback_validate_name_error">Введите, пожалуйста, текст отзыва</string>
+    <string name="hockeyapp_feedback_validate_text_error">Сообщение не может быть отправлено. Проверьте, пожалуйста, формать вашего Email адресса.</string>
+    <string name="hockeyapp_feedback_generic_error">Произошла ошибка</string>
+    <string name="hockeyapp_feedback_attach_file">Прикрепить файл</string>
+    <string name="hockeyapp_feedback_attach_picture">Прикрепить изображение</string>
+    <string name="hockeyapp_feedback_select_file">Выбрать файл</string>
+    <string name="hockeyapp_feedback_select_picture">Выбрать изображение</string>
+    <string name="hockeyapp_feedback_max_attachments_allowed">Доступны только %s вложения.</string>
+    <string name="hockeyapp_feedback_attachment_loading">Загрузка…</string>
+    <string name="hockeyapp_feedback_attachment_error">Ошибка</string>
+
+    <!-- Send Feedback Task -->
+    <string name="hockeyapp_feedback_sending_feedback_text">Отправка отзыва…</string>
+    <string name="hockeyapp_feedback_fetching_feedback_text">Получение отзывов…</string>
+
+    <!-- Login Activity -->
+    <string name="hockeyapp_login_headline_text">Пожалуйста, введите ваш HockeyApp email адресс и пароль для получения доступа в это приложение.</string>
+    <string name="hockeyapp_login_headline_text_email_only">Пожалуйста, введите ваш HockeyApp email адресс для получения доступа в это приложение.</string>
+    <string name="hockeyapp_login_missing_credentials_toast">Пожалуйста, заполните недостающие учётные данные.</string>
+    <string name="hockeyapp_login_email_hint">Email</string>
+    <string name="hockeyapp_login_password_hint">Пароль</string>
+    <string name="hockeyapp_login_login_button_text">Логин</string>
+
+    <!-- Paint Activity -->
+    <string name="hockeyapp_paint_indicator_toast">Нарисуйте что нибудь!</string>
+    <string name="hockeyapp_paint_menu_save">Сохранить</string>
+    <string name="hockeyapp_paint_menu_undo">Отмена</string>
+    <string name="hockeyapp_paint_menu_clear">Стереть</string>
+    <string name="hockeyapp_paint_dialog_message">Вы хотите сохранить ваш рисунок?</string>
+    <string name="hockeyapp_paint_dialog_negative_button">Выбросить</string>
+    <string name="hockeyapp_paint_dialog_positive_button">Сохранить</string>
+    <string name="hockeyapp_paint_dialog_neutral_button">Закрыть</string>
+
+    <!-- Permissions -->
+    <string name="hockeyapp_permission_update_title">Нужен доступ к хранилищу данных</string>
+    <string name="hockeyapp_permission_update_message">Во время загрузки и установки приложения вы должны предоставить доступ к хранилищу данных.</string>
+    <string name="hockeyapp_permission_dialog_negative_button">Закрыть</string>
+    <string name="hockeyapp_permission_dialog_positive_button">Повторить</string>
+
+    <!-- Dialogs -->
+    <string name="hockeyapp_dialog_positive_button">Добро</string>
+    <string name="hockeyapp_dialog_negative_button">Закрыть</string>
+    <string name="hockeyapp_dialog_error_title">Ошибка</string>
+    <string name="hockeyapp_dialog_error_message">Произошла ошибка</string>
+
+    <!-- Misc -->
+    <string name="hockeyapp_error_no_network_message">Ваше устройство не имеет доступа в интернет. Пожалуйста, решите проблему с подключением и попробуйте снова.</string>
+
+</resources>
