@@ -92,7 +92,7 @@ public class UpdateManagerTest {
     public void testInstalledViaPackageManagerNougat() {
         when(mockPackageManager.getInstallerPackageName(any(String.class))).thenReturn("com.google.android.packageinstaller");
         assertTrue(UpdateManager.installedFromMarket(contextWeakReference));
-        Whitebox.setInternalState(Build.VERSION.class, "SDK_INT", 24);
+        Whitebox.setInternalState(Build.VERSION.class, "SDK_INT", Build.VERSION_CODES.N);
         assertFalse(UpdateManager.installedFromMarket(contextWeakReference));
     }
 
