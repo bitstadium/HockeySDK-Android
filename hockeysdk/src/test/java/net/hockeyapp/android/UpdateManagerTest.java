@@ -35,6 +35,9 @@ public class UpdateManagerTest {
 
     @Before
     public void setUp() throws NoSuchFieldException, IllegalAccessException {
+        // Reset Build version code
+        Whitebox.setInternalState(Build.VERSION.class, "SDK_INT", Build.VERSION_CODES.BASE);
+
         mockContext = mock(Context.class);
         mockPackageManager = mock(PackageManager.class);
 
@@ -56,42 +59,57 @@ public class UpdateManagerTest {
             }
         });
 
-
         when(mockContext.getPackageManager()).thenReturn(mockPackageManager);
 
         contextWeakReference = new WeakReference<>(mockContext);
     }
 
-
     @Test
     public void testInstalledViaADBDefault() {
         when(mockPackageManager.getInstallerPackageName(any(String.class))).thenReturn(null);
 
+        // Typically, the installer string for ADB is null
         assertFalse(UpdateManager.installedFromMarket(contextWeakReference));
 
+        // or an empty string
         when(mockPackageManager.getInstallerPackageName(any(String.class))).thenReturn("");
+        assertFalse(UpdateManager.installedFromMarket(contextWeakReference));
 
+        // Verify this also works on Android Nougat
+        Whitebox.setInternalState(Build.VERSION.class, "SDK_INT", Build.VERSION_CODES.N);
         assertFalse(UpdateManager.installedFromMarket(contextWeakReference));
     }
 
     @Test
     public void testInstalledViaGooglePlay() {
+        // Set typical identifier for Google Play and check
         when(mockPackageManager.getInstallerPackageName(any(String.class))).thenReturn("com.google.play");
 
+        assertTrue(UpdateManager.installedFromMarket(contextWeakReference));
+
+        Whitebox.setInternalState(Build.VERSION.class, "SDK_INT", Build.VERSION_CODES.N);
         assertTrue(UpdateManager.installedFromMarket(contextWeakReference));
     }
 
     @Test
     public void testInstalledViaADBXiaomi() {
+        // On some devices, e.g. Xiaomi devices, launching via USB will return "adb" for the installer
         when(mockPackageManager.getInstallerPackageName(any(String.class))).thenReturn("adb");
 
+        assertFalse(UpdateManager.installedFromMarket(contextWeakReference));
+
+        Whitebox.setInternalState(Build.VERSION.class, "SDK_INT", Build.VERSION_CODES.N);
         assertFalse(UpdateManager.installedFromMarket(contextWeakReference));
     }
 
     @Test
     public void testInstalledViaPackageManagerNougat() {
+        // On Android Nougat, installing packages using HockeyApp (using the package manager) will list the following installer identifier
         when(mockPackageManager.getInstallerPackageName(any(String.class))).thenReturn("com.google.android.packageinstaller");
+        // When not on Android Nougat this is considered "store"
         assertTrue(UpdateManager.installedFromMarket(contextWeakReference));
+
+        // Test desired behavior on Android Nougat
         Whitebox.setInternalState(Build.VERSION.class, "SDK_INT", Build.VERSION_CODES.N);
         assertFalse(UpdateManager.installedFromMarket(contextWeakReference));
     }
