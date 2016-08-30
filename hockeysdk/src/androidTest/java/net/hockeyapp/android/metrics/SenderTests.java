@@ -63,7 +63,7 @@ public class SenderTests extends InstrumentationTestCase {
         sut.triggerSendingForTesting(connection1, mockFile1, "test1");
         Assert.assertEquals(1, sut.requestCount());
 
-        sut.send();
+        sut.sendAvailableFiles();
         verify(persistenceMock).nextAvailableFileInDirectory();
     }
 

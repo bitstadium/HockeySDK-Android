@@ -6,6 +6,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask.Status;
+import android.os.Build;
 import android.text.TextUtils;
 
 import net.hockeyapp.android.tasks.CheckUpdateTask;
@@ -24,6 +25,8 @@ import java.util.Date;
  **/
 public class UpdateManager {
     public static final String INSTALLER_ADB = "adb";
+    public static final String INSTALLER_PACKAGE_INSTALLER_NOUGAT = "com.google.android.packageinstaller";
+
     /**
      * Singleton for update task.
      */
@@ -209,14 +212,25 @@ public class UpdateManager {
     /**
      * Returns true if the build was installed through a market.
      */
-    private static boolean installedFromMarket(WeakReference<? extends Context> weakContext) {
+    public static boolean installedFromMarket(WeakReference<? extends Context> weakContext) {
         boolean result = false;
 
         Context context = weakContext.get();
         if (context != null) {
             try {
                 String installer = context.getPackageManager().getInstallerPackageName(context.getPackageName());
-                result = !TextUtils.isEmpty(installer) || (installer != null && !TextUtils.equals(installer, INSTALLER_ADB));
+
+                // if installer string is null or empty, it's installed via ADB
+                if (!TextUtils.isEmpty(installer)) {
+                    // on some devices (Xiaomi) the installer identifier will be "adb", which is not to be considered as a market installation
+                    result = !TextUtils.equals(installer, INSTALLER_ADB);
+                    // on Android Nougat and up when installing an app through the package installer (which HockeyApp uses itself), the installer will be
+                    // "com.google.android.packageinstaller" which is also not to be considered as a market installation
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        result = !TextUtils.equals(installer, INSTALLER_PACKAGE_INSTALLER_NOUGAT);
+                    }
+                }
+
             } catch (Throwable e) {
             }
         }

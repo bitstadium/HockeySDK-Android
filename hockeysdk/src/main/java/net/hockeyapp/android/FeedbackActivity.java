@@ -467,6 +467,7 @@ public class FeedbackActivity extends Activity implements OnClickListener {
             mFeedbackScrollview.setVisibility(View.GONE);
 
             mLastUpdatedTextView = (TextView) findViewById(R.id.label_last_updated);
+            mLastUpdatedTextView.setVisibility(View.INVISIBLE);
 
             mAddResponseButton = (Button) findViewById(R.id.button_add_response);
             mAddResponseButton.setOnClickListener(this);
@@ -651,7 +652,8 @@ public class FeedbackActivity extends Activity implements OnClickListener {
                     /** Set the lastUpdatedTextView text as the date of the latest feedback message */
                     try {
                         date = format.parse(mFeedbackMessages.get(0).getCreatedAt());
-                        mLastUpdatedTextView.setText(getString(R.string.hockeyapp_feedback_last_updated_text, formatNew.format(date)));
+                        mLastUpdatedTextView.setText(String.format(getString(R.string.hockeyapp_feedback_last_updated_text), formatNew.format(date)));
+                        mLastUpdatedTextView.setVisibility(View.VISIBLE);
                     } catch (ParseException e1) {
                         e1.printStackTrace();
                     }

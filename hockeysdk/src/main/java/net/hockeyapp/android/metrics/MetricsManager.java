@@ -7,10 +7,14 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 
 import net.hockeyapp.android.Constants;
+import net.hockeyapp.android.PrivateEventManager;
 import net.hockeyapp.android.metrics.model.Data;
 import net.hockeyapp.android.metrics.model.Domain;
+import net.hockeyapp.android.metrics.model.EventData;
 import net.hockeyapp.android.metrics.model.SessionState;
 import net.hockeyapp.android.metrics.model.SessionStateData;
 import net.hockeyapp.android.metrics.model.TelemetryData;
@@ -21,59 +25,70 @@ import net.hockeyapp.android.utils.Util;
 import java.lang.ref.WeakReference;
 import java.util.Date;
 import java.util.UUID;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * <h3>Description</h3>
- * <p>
- * The MetricsManager provides functionality to gather metrics about your users and session.
+ * <p/>
+ * Provides functionality to gather User Metrics, both active users, sessions,
+ * and custom events.
+ *
  **/
 public class MetricsManager {
 
+    private static final String TAG = "HA-MetricsManager";
+
     /**
-     * The activity counter
+     * Whether User Metrics should be globally enabled or not.
+     * Includes both user/session telemetry as well as custom events.
+     * Default is true.
+     */
+    private static boolean sUserMetricsEnabled = true;
+
+    /**
+     * The activity counter.
      */
     protected static final AtomicInteger ACTIVITY_COUNT = new AtomicInteger(0);
 
     /**
-     * The timestamp of the last activity
+     * The timestamp of the last activity background event.
      */
     protected static final AtomicLong LAST_BACKGROUND = new AtomicLong(getTime());
 
-    private static final String TAG = "HA-MetricsManager";
     /**
-     * Background time of the app after which a session gets renewed (in milliseconds).
+     * Background time interval for the app after which a session gets renewed (in milliseconds).
      */
     private static final Integer SESSION_RENEWAL_INTERVAL = 20 * 1000;
 
     /**
-     * Synchronization LOCK for setting static context
+     * Synchronization lock for setting static context.
      */
     private static final Object LOCK = new Object();
 
     /**
-     * The only MetricsManager instance.
+     * The MetricsManager singleton instance.
      */
     private static volatile MetricsManager instance;
 
     /**
-     * The application needed for auto collecting session data
+     * Weak reference to the application necessary for capturing session events.
      */
     private static WeakReference<Application> sWeakApplication;
 
     /**
-     * A sender who's responsible to send telemetry to the server
-     * MetricsManager holds a reference to it because we want the user to easily set the server
-     * url.
+     * Sender instance to send data to the endpoint. Serves the goal of easy customization by the user
+     * in the registration process.
      */
     private static Sender sSender;
     /**
-     * A channel for collecting new events before storing and sending them.
+     * Channel for collecting new events before storing and sending them.
      */
     private static Channel sChannel;
     /**
-     * A telemetry context which is used to add meta info to events, before they're sent out.
+     * A telemetry context which is used to automatically add environment and meta information
+     * to events.
      */
     private static TelemetryContext sTelemetryContext;
     /**
@@ -85,22 +100,21 @@ public class MetricsManager {
     private TelemetryLifecycleCallbacks mTelemetryLifecycleCallbacks;
 
     /**
-     * Restrict access to the default constructor
-     * Create a new INSTANCE of the MetricsManager class
-     * Contains params for unit testing/mocking
+     * Creates and initializes a new instance of the MetricsManager class.
+     * Not publicly accessible, only accessible for internal use and testing/mocking.
      *
-     * @param context          the context that will be used for the SDK
-     * @param telemetryContext telemetry context, contains meta-information necessary for metrics
-     *                         feature of the SDK
-     * @param sender           usually null, included for unit testing/dependency injection
-     * @param persistence      included for unit testing/dependency injection
-     * @param channel          included for unit testing/dependency injection
+     * @param context          Context that will be used.
+     * @param telemetryContext Telemetry context, contains meta-information necessary for metrics
+     *                         feature.
+     * @param sender           Usually null, to be set for unit testing/dependency injection.
+     * @param persistence      Included for unit testing/dependency injection.
+     * @param channel          Included for unit testing/dependency injection.
      */
     protected MetricsManager(Context context, TelemetryContext telemetryContext, Sender sender,
                              Persistence persistence, Channel channel) {
         sTelemetryContext = telemetryContext;
 
-        //Important: create sender and persistence first, wire them up and then create the channel!
+        // Important: create sender and persistence first, wire them up and then create the channel!
         if (sender == null) {
             sender = new Sender();
         }
@@ -112,25 +126,59 @@ public class MetricsManager {
             persistence.setSender(sender);
         }
 
-        //Link sender
-        this.sSender.setPersistence(persistence);
+        // Link sender
+        sSender.setPersistence(persistence);
 
-        //create the channel and wire the persistence to it.
+        // Create the channel and wire the persistence to it.
         if (channel == null) {
             sChannel = new Channel(sTelemetryContext, persistence);
         } else {
             sChannel = channel;
         }
+
+        // Check if any previous events are in persistence and send them
+        if (persistence.hasFilesAvailable()) {
+            persistence.getSender().triggerSending();
+        }
     }
 
     /**
      * Register a new MetricsManager and collect metrics about user and session.
-     * HockeyApp App Identifier is read from configuration values in AndroidManifest.xml
+     * HockeyApp app identifier is read from configuration values in AndroidManifest.xml.
      *
-     * @param context     The context to use. Usually your Activity object.
-     * @param application the Application object which is required to get application lifecycle
-     *                    callbacks
+     * @param application The application which is required to get application lifecycle
+     *                    callbacks.
      */
+    public static void register(Application application) {
+        String appIdentifier = Util.getAppIdentifier(application.getApplicationContext());
+        if (appIdentifier == null || appIdentifier.length() == 0) {
+            throw new IllegalArgumentException("HockeyApp app identifier was not configured correctly in manifest or build configuration.");
+        }
+        register(application, appIdentifier);
+    }
+
+    /**
+     * Register a new MetricsManager and collect metrics about user and session, while
+     * explicitly providing your HockeyApp app identifier.
+     *
+     * @param application   The application which is required to get application lifecycle
+     *                      callbacks.
+     * @param appIdentifier Your HockeyApp App Identifier.
+     */
+    public static void register(Application application, String appIdentifier) {
+        register(application, appIdentifier, null, null, null);
+    }
+
+    /**
+     * Register a new MetricsManager and collect metrics about user and session.
+     * HockeyApp app identifier is read from configuration values in AndroidManifest.xml.
+     *
+     * @param context     The context to use. Usually your activity.
+     * @param application The application which is required to get application lifecycle
+     *                    callbacks.
+     * @deprecated Use {@link #register(Application)} instead.
+     */
+    @Deprecated
     public static void register(Context context, Application application) {
         String appIdentifier = Util.getAppIdentifier(context);
         if (appIdentifier == null || appIdentifier.length() == 0) {
@@ -140,30 +188,32 @@ public class MetricsManager {
     }
 
     /**
-     * Register a new MetricsManager and collect metrics about user and session.
+     * Register a new MetricsManager and collect metrics about user and session, while
+     * explicitly providing your HockeyApp app identifier.
      *
-     * @param application   the Application object which is required to get application lifecycle
-     *                      callbacks
-     * @param context       The context to use. Usually your Activity object.
-     * @param appIdentifier your HockeyApp App Identifier.
+     * @param application   The application which is required to get application lifecycle
+     *                      callbacks.
+     * @param context       The context to use. Usually your activity.
+     * @param appIdentifier Your HockeyApp App Identifier.
+     * @deprecated Use {@link #register(Application, String)} instead.
      */
+    @Deprecated
     public static void register(Context context, Application application, String appIdentifier) {
-        register(context, application, appIdentifier, null, null, null);
+        register(application, appIdentifier, null, null, null);
     }
 
     /**
-     * Register a new MetricsManager and collect metrics information about user and session
-     * Intended to be used for unit testing only, shouldn't be visible outside the SDK   *
+     * Register a new MetricsManager and collect metrics information about user and session.
+     * Intended to be used for unit testing only.
      *
-     * @param context       The context to use. Usually your Activity object.
-     * @param application   the Application object which is required to get application lifecycle
-     *                      callbacks
-     * @param appIdentifier your HockeyApp App Identifier.
-     * @param sender        sender for dependency injection
-     * @param persistence   persistence for dependency injection
-     * @param channel       channel for dependency injection
+     * @param application   The application which is required to get application lifecycle
+     *                      callbacks.
+     * @param appIdentifier Your HockeyApp app identifier.
+     * @param sender        Sender for dependency injection.
+     * @param persistence   Persistence for dependency injection.
+     * @param channel       Channel for dependency injection.
      */
-    protected static void register(@SuppressWarnings("UnusedParameters") Context context, Application application, String appIdentifier,
+    protected static void register(Application application, String appIdentifier,
                                    Sender sender, Persistence persistence, Channel channel) {
         MetricsManager result = instance;
         if (result == null) {
@@ -182,6 +232,44 @@ public class MetricsManager {
                 }
 
             }
+
+            PrivateEventManager.addEventListener(new PrivateEventManager.HockeyEventListener() {
+                @Override
+                public void onHockeyEvent(PrivateEventManager.Event event) {
+                    if (event.getType() == PrivateEventManager.EVENT_TYPE_UNCAUGHT_EXCEPTION) {
+                        sChannel.synchronize();
+                    }
+                }
+            });
+        }
+    }
+
+    /**
+     * Disables User Metrics collection and transmission. Use this if your user opts out of
+     * telemetry collection.
+     */
+    public static void disableUserMetrics() {
+        setUserMetricsEnabled(false);
+    }
+
+    /**
+     * Re-enables User Metrics collection and transmission. Use this if your user granted you
+     * telemetry collection. User Metrics collection is enabled by default.
+     */
+    public static void enableUserMetrics() {
+        setUserMetricsEnabled(true);
+    }
+
+    public static boolean isUserMetricsEnabled() {
+        return sUserMetricsEnabled;
+    }
+
+    private static void setUserMetricsEnabled(boolean enabled) {
+        sUserMetricsEnabled = enabled;
+        if (sUserMetricsEnabled) {
+            instance.registerTelemetryLifecycleCallbacks();
+        } else {
+            instance.unregisterTelemetryLifecycleCallbacks();
         }
     }
 
@@ -191,7 +279,7 @@ public class MetricsManager {
      * @return YES if session tracking is enabled
      */
     public static boolean sessionTrackingEnabled() {
-        return !instance.mSessionTrackingDisabled;
+        return isUserMetricsEnabled() && !instance.mSessionTrackingDisabled;
     }
 
     /**
@@ -200,8 +288,8 @@ public class MetricsManager {
      * @param disabled flag to indicate
      */
     public static void setSessionTrackingDisabled(Boolean disabled) {
-        if (instance == null) {
-            HockeyLog.warn(TAG, "MetricsManager hasn't been registered. No Metrics will be collected!");
+        if (instance == null || !isUserMetricsEnabled()) {
+            HockeyLog.warn(TAG, "MetricsManager hasn't been registered or User Metrics has been disabled. No User Metrics will be collected!");
         } else {
             synchronized (LOCK) {
                 if (Util.sessionTrackingSupported()) {
@@ -217,6 +305,23 @@ public class MetricsManager {
                 }
             }
         }
+    }
+
+    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+    private void registerTelemetryLifecycleCallbacks() {
+        if (mTelemetryLifecycleCallbacks == null) {
+            mTelemetryLifecycleCallbacks = new TelemetryLifecycleCallbacks();
+        }
+        getApplication().registerActivityLifecycleCallbacks(mTelemetryLifecycleCallbacks);
+    }
+
+    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+    private void unregisterTelemetryLifecycleCallbacks() {
+        if (mTelemetryLifecycleCallbacks == null) {
+            return;
+        }
+        getApplication().unregisterActivityLifecycleCallbacks(mTelemetryLifecycleCallbacks);
+        mTelemetryLifecycleCallbacks = null;
     }
 
     /**
@@ -275,20 +380,6 @@ public class MetricsManager {
         return instance;
     }
 
-    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-    private void registerTelemetryLifecycleCallbacks() {
-        if (mTelemetryLifecycleCallbacks == null) {
-            mTelemetryLifecycleCallbacks = new TelemetryLifecycleCallbacks();
-        }
-        getApplication().registerActivityLifecycleCallbacks(mTelemetryLifecycleCallbacks);
-    }
-
-    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-    private void unregisterTelemetryLifecycleCallbacks() {
-        getApplication().unregisterActivityLifecycleCallbacks(mTelemetryLifecycleCallbacks);
-        mTelemetryLifecycleCallbacks = null;
-    }
-
     /**
      * Updates the session. If session tracking is enabled, a new session will be started for the
      * first activity.
@@ -331,16 +422,21 @@ public class MetricsManager {
      * @param sessionState value that determines whether the session started or ended
      */
     private void trackSessionState(final SessionState sessionState) {
-        AsyncTaskUtils.execute(new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
-                SessionStateData sessionItem = new SessionStateData();
-                sessionItem.setState(sessionState);
-                Data<Domain> data = createData(sessionItem);
-                sChannel.enqueueData(data);
-                return null;
-            }
-        });
+        try {
+            AsyncTaskUtils.execute(new AsyncTask<Void, Void, Void>() {
+                @Override
+                protected Void doInBackground(Void... params) {
+                    SessionStateData sessionItem = new SessionStateData();
+                    sessionItem.setState(sessionState);
+                    Data<Domain> data = createData(sessionItem);
+                    sChannel.enqueueData(data);
+                    return null;
+                }
+            });
+        } catch (RejectedExecutionException e) {
+            HockeyLog.error("Could not track session state. Executor rejected async task.", e);
+        }
+
     }
 
     /**
@@ -349,13 +445,42 @@ public class MetricsManager {
      * @param telemetryData The telemetry event to be persisted and sent
      * @return a base data object containing the telemetry data
      */
-    protected Data<Domain> createData(TelemetryData telemetryData) {
+    protected static Data<Domain> createData(TelemetryData telemetryData) {
         Data<Domain> data = new Data<>();
         data.setBaseData(telemetryData);
         data.setBaseType(telemetryData.getBaseType());
         data.QualifiedName = telemetryData.getEnvelopeName();
 
         return data;
+    }
+
+    public static void trackEvent(final String eventName) {
+        if (TextUtils.isEmpty(eventName)) {
+            return;
+        }
+        if (instance == null) {
+            Log.w(TAG, "MetricsManager hasn't been registered or User Metrics has been disabled. No User Metrics will be collected!");
+            return;
+        }
+        if (!isUserMetricsEnabled()) {
+            HockeyLog.warn("User Metrics is disabled. Will not track event.");
+            return;
+        }
+        try {
+            AsyncTaskUtils.execute(new AsyncTask<Void, Void, Void>() {
+                @Override
+                protected Void doInBackground(Void... params) {
+                    EventData eventItem = new EventData();
+                    eventItem.setName(eventName);
+                    Data<Domain> data = createData(eventItem);
+                    sChannel.enqueueData(data);
+                    return null;
+                }
+            });
+        } catch (RejectedExecutionException e) {
+            HockeyLog.error("Could not track custom event. Executor rejected async task.", e);
+        }
+
     }
 
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)

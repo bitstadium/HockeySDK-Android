@@ -5,6 +5,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.text.TextUtils;
 
+import net.hockeyapp.android.Constants;
+
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -43,6 +45,7 @@ public class HttpURLConnectionBuilder {
     public HttpURLConnectionBuilder(String urlString) {
         mUrlString = urlString;
         mHeaders = new HashMap<String, String>();
+        mHeaders.put("User-Agent", Constants.SDK_USER_AGENT);
     }
 
     public HttpURLConnectionBuilder setRequestMethod(String requestMethod) {
