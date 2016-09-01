@@ -30,6 +30,11 @@ public class EventData extends TelemetryData {
     private Map<String, String> properties;
 
     /**
+     * Backing field for property Measurements.
+     */
+    private Map<String, Double> measurements;
+
+    /**
      * Initializes a new instance of the EventData class.
      */
     public EventData() {
@@ -97,6 +102,23 @@ public class EventData extends TelemetryData {
     }
 
     /**
+     * Gets the Measurements property.
+     */
+    public Map<String, Double> getMeasurements() {
+        if (this.measurements == null) {
+            this.measurements = new LinkedHashMap<String, Double>();
+        }
+        return this.measurements;
+    }
+
+    /**
+     * Sets the Measurements property.
+     */
+    public void setMeasurements(Map<String, Double> value) {
+        this.measurements = value;
+    }
+
+    /**
      * Serializes the beginning of this object to the passed in writer.
      *
      * @param writer The writer to serialize this object to.
@@ -114,6 +136,12 @@ public class EventData extends TelemetryData {
         if (!(this.properties == null)) {
             writer.write(prefix + "\"properties\":");
             JsonHelper.writeDictionary(writer, this.properties);
+            prefix = ",";
+        }
+
+        if (!(this.measurements == null)) {
+            writer.write(prefix + "\"measurements\":");
+            JsonHelper.writeDictionary(writer, this.measurements);
             prefix = ",";
         }
 
