@@ -22,7 +22,7 @@ android:
     - platform-tools
 
     # Use the desired build tools
-    - build-tools-24.0.1
+    - build-tools-24.0.2
 
     # Project target SDK
     - android-24
