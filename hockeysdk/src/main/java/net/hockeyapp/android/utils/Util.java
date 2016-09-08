@@ -1,5 +1,6 @@
 package net.hockeyapp.android.utils;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -264,6 +265,14 @@ public class Util {
     }
 
     public static boolean isConnectedToNetwork(Context context) {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (context.checkSelfPermission(Manifest.permission.ACCESS_NETWORK_STATE) != PackageManager.PERMISSION_GRANTED) {
+                HockeyLog.warn("No permission to access network state, returning false for isConnectedToNetwork()");
+                return false;
+            }
+        }
+
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connectivityManager != null) {
             NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
