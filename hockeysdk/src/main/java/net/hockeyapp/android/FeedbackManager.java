@@ -81,12 +81,12 @@ public class FeedbackManager {
     /**
      * Whether the user's name is required.
      */
-    private static FeedbackUserDataElement requireUserName;
+    private static FeedbackUserDataElement requireUserName = FeedbackUserDataElement.REQUIRED;
 
     /**
      * Whether the user's email is required.
      */
-    private static FeedbackUserDataElement requireUserEmail;
+    private static FeedbackUserDataElement requireUserEmail = FeedbackUserDataElement.REQUIRED;
 
     private static String userName;
 

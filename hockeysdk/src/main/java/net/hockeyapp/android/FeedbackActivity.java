@@ -518,6 +518,9 @@ public class FeedbackActivity extends Activity implements OnClickListener {
                 mFeedbackViewInitialized = true;
             }
 
+            mNameInput.setVisibility(FeedbackManager.getRequireUserName() == FeedbackUserDataElement.DONT_SHOW ? View.GONE : View.VISIBLE);
+            mEmailInput.setVisibility(FeedbackManager.getRequireUserEmail() == FeedbackUserDataElement.DONT_SHOW ? View.GONE : View.VISIBLE);
+
             /** Reset the remaining fields if previously populated */
             mTextInput.setText("");
 
