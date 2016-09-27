@@ -137,7 +137,8 @@ HockeyApp automatically provides you with nice, intelligible, and informative me
 
 * **Sessions:** A new session is tracked by the SDK whenever the containing app is restarted (this refers to a 'cold start', i.e. when the app has not already been in memory prior to being launched) or whenever it becomes active again after having been in the background for 20 seconds or more.
 * **Users:** The SDK anonymously tracks the users of your app by creating a random UUID that is then securely stored. The UUID is securely stored in the preferences of the client app.
-* **Custom Events:** If you are part of [Preseason](hockeyapp.net/preseason), you can now track Custom Events in your app, understand user actions and see the aggregates on the HockeyApp portal.
+- **Custom Events**: With HockeySDK 4.1.0 you can now track Custom Events in your app, understand user actions and see the aggregates on the HockeyApp portal.
+- **Batching & offline behavior**: The SDK batches up to 50 events or waits for 15s and then persist and send the events, whichever comes first. So for sessions, this might actually mean we send 1 single event per batch. If you are sending Custom Events, it can be 1 session event plus X of your Custom Events (up to 50 events per batch total). In case the device is offline, up to 300 events are stored until the SDK starts to drop new events.
 
 To integrate User Metrics with your app, perform the following steps:
 
@@ -153,6 +154,15 @@ MetricsManager.register(this, getApplication());
 //add this wherever you want to track a custom event
 MetricsManager.trackEvent("YOUR_EVENT_NAME");
 
+//add this wherever you want to tracka custom event and attach properties or measurements to it.
+
+HashMap<String, String> properties = new HashMap<>();
+properties.put("Property1", "Value1");
+HashMap<String, Double> measurements = new HashMap<>();
+measurements.put("Measurement1", 1.0);
+
+MetricsManager.trackEvent("YOUR_EVENT_NAME", properties, measurements);
+
 ```
 
 Make sure to replace `"YOUR_EVENT_NAME"` with a name for your custom event, e.g. `"Login Button Pressed"`. 
@@ -162,6 +172,7 @@ Make sure to replace `"YOUR_EVENT_NAME"` with a name for your custom event, e.g.
 * Accepted characters for tracking events are: [a-zA-Z0-9_. -]. If you use other than the accepted characters, your events will not show up in the HockeyApp web portal.
 * There is currently a limit of 300 unique event names per app per week.
 * There is NO limit on the number of times an event can happen.
+* It's possible to attach properties and/or measurements to a custom event. There is one limitation to attaching properties and measurements. They currently don't show up in the HockeyApp dashboard but you have to link your app to Application Insights to be able to query them. Please have a look at [our blogpost](https://www.hockeyapp.net/blog/2016/08/30/custom-events-public-preview.html) to find out how to do that. 
 
 <a id="updatedistribution"></a>
 ### 2.6 Add update distribution
