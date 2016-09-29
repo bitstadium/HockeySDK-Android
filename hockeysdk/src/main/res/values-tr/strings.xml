@@ -32,7 +32,7 @@
     <string name="hockeyapp_feedback_email_hint">Eposta</string>
     <string name="hockeyapp_feedback_subject_hint">Konu</string>
     <string name="hockeyapp_feedback_message_hint">Mesaj</string>
-    <string name="hockeyapp_feedback_last_updated_text">Son Güncelleme: </string>
+    <string name="hockeyapp_feedback_last_updated_text">Son Güncelleme: %s</string>
     <string name="hockeyapp_feedback_attachment_button_text">Eklenti Ekle</string>
     <string name="hockeyapp_feedback_send_button_text">Geri Bildirim Gönder</string>
     <string name="hockeyapp_feedback_response_button_text">Yanıt Ekleyin</string>
