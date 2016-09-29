@@ -26,9 +26,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-/**
- * @author Patrick Eschenbach
- */
 public class PaintActivity extends Activity {
 
     /**
@@ -49,6 +46,11 @@ public class PaintActivity extends Activity {
 
         /* Get image path. */
         Bundle extras = getIntent().getExtras();
+        if (extras == null || extras.getParcelable(EXTRA_IMAGE_URI) == null) {
+            HockeyLog.error("Can't set up PaintActivity as image extra was not provided!");
+            return;
+        }
+
         Uri imageUri = extras.getParcelable(EXTRA_IMAGE_URI);
 
         mImageName = determineFilename(imageUri, imageUri.getLastPathSegment());

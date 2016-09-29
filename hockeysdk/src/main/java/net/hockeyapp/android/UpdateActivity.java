@@ -28,40 +28,14 @@ import net.hockeyapp.android.utils.HockeyLog;
 import net.hockeyapp.android.utils.Util;
 import net.hockeyapp.android.utils.VersionHelper;
 
+import java.util.Locale;
+
 /**
  * <h3>Description</h3>
  *
  * Activity to show update information and start the download
  * process if the user taps the corresponding button.
  *
- * <h3>License</h3>
- *
- * <pre>
- * Copyright (c) 2011-2014 Bit Stadium GmbH
- *
- * Permission is hereby granted, free of charge, to any person
- * obtaining a copy of this software and associated documentation
- * files (the "Software"), to deal in the Software without
- * restriction, including without limitation the rights to use,
- * copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the
- * Software is furnished to do so, subject to the following
- * conditions:
- *
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
- * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
- * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
- * OTHER DEALINGS IN THE SOFTWARE.
- * </pre>
- *
- * @author Thomas Dohmke
  **/
 public class UpdateActivity extends Activity implements UpdateActivityInterface, UpdateInfoListener, OnClickListener {
     /**
@@ -257,14 +231,14 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
         String appSizeString = "Unknown size";
         long appSize = mVersionHelper.getFileSizeBytes();
         if (appSize >= 0L) {
-            appSizeString = String.format("%.2f", appSize / (1024.0f * 1024.0f)) + " MB";
+            appSizeString = String.format(Locale.US, "%.2f", appSize / (1024.0f * 1024.0f)) + " MB";
         } else {
             GetFileSizeTask task = new GetFileSizeTask(this, getIntent().getStringExtra(EXTRA_URL), new DownloadFileListener() {
                 @Override
                 public void downloadSuccessful(DownloadFileTask task) {
                     if (task instanceof GetFileSizeTask) {
                         long appSize = ((GetFileSizeTask) task).getSize();
-                        String appSizeString = String.format("%.2f", appSize / (1024.0f * 1024.0f)) + " MB";
+                        String appSizeString = String.format(Locale.US, "%.2f", appSize / (1024.0f * 1024.0f)) + " MB";
                         versionLabel.setText(getString(R.string.hockeyapp_update_version_details_label, versionString, fileDate, appSizeString));
                     }
                 }

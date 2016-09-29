@@ -36,35 +36,6 @@ import java.util.Locale;
  *
  * Internal helper class. Checks if a new update is available by
  * fetching version data from Hockeyapp.
- *
- * <h3>License</h3>
- *
- * <pre>
- * Copyright (c) 2011-2014 Bit Stadium GmbH
- *
- * Permission is hereby granted, free of charge, to any person
- * obtaining a copy of this software and associated documentation
- * files (the "Software"), to deal in the Software without
- * restriction, including without limitation the rights to use,
- * copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the
- * Software is furnished to do so, subject to the following
- * conditions:
- *
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
- * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
- * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
- * OTHER DEALINGS IN THE SOFTWARE.
- * </pre>
- *
- * @author Thomas Dohmke
  **/
 public class CheckUpdateTask extends AsyncTask<Void, String, JSONArray> {
     private static final int MAX_NUMBER_OF_VERSIONS = 25;
@@ -158,7 +129,7 @@ public class CheckUpdateTask extends AsyncTask<Void, String, JSONArray> {
 
     protected URLConnection createConnection(URL url) throws IOException {
         URLConnection connection = url.openConnection();
-        connection.addRequestProperty("User-Agent", "HockeySDK/Android");
+        connection.addRequestProperty("User-Agent", Constants.SDK_USER_AGENT);
         // connection bug workaround for SDK<=2.x
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.GINGERBREAD) {
             connection.setRequestProperty("connection", "close");

@@ -6,6 +6,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask.Status;
+import android.os.Build;
 import android.text.TextUtils;
 
 import net.hockeyapp.android.tasks.CheckUpdateTask;
@@ -21,38 +22,11 @@ import java.util.Date;
  *
  * The update manager sends version information to HockeyApp and
  * shows an alert dialog if a new version was found.
- *
- * <h3>License</h3>
- *
- * <pre>
- * Copyright (c) 2011-2014 Bit Stadium GmbH
- *
- * Permission is hereby granted, free of charge, to any person
- * obtaining a copy of this software and associated documentation
- * files (the "Software"), to deal in the Software without
- * restriction, including without limitation the rights to use,
- * copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the
- * Software is furnished to do so, subject to the following
- * conditions:
- *
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
- * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
- * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
- * OTHER DEALINGS IN THE SOFTWARE.
- * </pre>
- *
- * @author Thomas Dohmke
  **/
 public class UpdateManager {
     public static final String INSTALLER_ADB = "adb";
+    public static final String INSTALLER_PACKAGE_INSTALLER_NOUGAT = "com.google.android.packageinstaller";
+
     /**
      * Singleton for update task.
      */
@@ -238,14 +212,29 @@ public class UpdateManager {
     /**
      * Returns true if the build was installed through a market.
      */
-    private static boolean installedFromMarket(WeakReference<? extends Context> weakContext) {
+    protected static boolean installedFromMarket(WeakReference<? extends Context> weakContext) {
         boolean result = false;
 
         Context context = weakContext.get();
         if (context != null) {
             try {
                 String installer = context.getPackageManager().getInstallerPackageName(context.getPackageName());
-                result = !TextUtils.isEmpty(installer) || (installer != null && !TextUtils.equals(installer, INSTALLER_ADB));
+                // if installer string is not null it might be installed by market
+                if (!TextUtils.isEmpty(installer)) {
+                    result = true;
+
+                    // on Android Nougat and up when installing an app through the package installer (which HockeyApp uses itself), the installer will be
+                    // "com.google.android.packageinstaller" which is also not to be considered as a market installation
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && TextUtils.equals(installer, INSTALLER_PACKAGE_INSTALLER_NOUGAT)) {
+                        result = false;
+                    }
+
+                    // on some devices (Xiaomi) the installer identifier will be "adb", which is not to be considered as a market installation
+                    if (TextUtils.equals(installer, INSTALLER_ADB)) {
+                        result = false;
+                    }
+                }
+
             } catch (Throwable e) {
             }
         }

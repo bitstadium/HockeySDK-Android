@@ -59,36 +59,6 @@ import java.util.List;
  *
  * Activity to show the feedback form.
  *
- * <h3>License</h3>
- *
- * <pre>
- * Copyright (c) 2011-2014 Bit Stadium GmbH
- *
- * Permission is hereby granted, free of charge, to any person
- * obtaining a copy of this software and associated documentation
- * files (the "Software"), to deal in the Software without
- * restriction, including without limitation the rights to use,
- * copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the
- * Software is furnished to do so, subject to the following
- * conditions:
- *
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
- * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
- * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
- * OTHER DEALINGS IN THE SOFTWARE.
- * </pre>
- *
- * @author Bogdan Nistor
- * @author Patrick Eschenbach
- * @author Thomas Dohmke
  **/
 public class FeedbackActivity extends Activity implements OnClickListener {
 
@@ -261,7 +231,9 @@ public class FeedbackActivity extends Activity implements OnClickListener {
             ViewGroup attachmentList = (ViewGroup) findViewById(R.id.wrapper_attachments);
             ArrayList<Uri> attachmentsUris = savedInstanceState.getParcelableArrayList("attachments");
             for (Uri attachmentUri : attachmentsUris) {
-                attachmentList.addView(new AttachmentView(this, attachmentList, attachmentUri, true));
+                if (!mInitialAttachments.contains(attachmentUri)) {
+                    attachmentList.addView(new AttachmentView(this, attachmentList, attachmentUri, true));
+                }
             }
 
             mFeedbackViewInitialized = savedInstanceState.getBoolean("feedbackViewInitialized");
@@ -495,6 +467,7 @@ public class FeedbackActivity extends Activity implements OnClickListener {
             mFeedbackScrollview.setVisibility(View.GONE);
 
             mLastUpdatedTextView = (TextView) findViewById(R.id.label_last_updated);
+            mLastUpdatedTextView.setVisibility(View.INVISIBLE);
 
             mAddResponseButton = (Button) findViewById(R.id.button_add_response);
             mAddResponseButton.setOnClickListener(this);
@@ -544,6 +517,9 @@ public class FeedbackActivity extends Activity implements OnClickListener {
 
                 mFeedbackViewInitialized = true;
             }
+
+            mNameInput.setVisibility(FeedbackManager.getRequireUserName() == FeedbackUserDataElement.DONT_SHOW ? View.GONE : View.VISIBLE);
+            mEmailInput.setVisibility(FeedbackManager.getRequireUserEmail() == FeedbackUserDataElement.DONT_SHOW ? View.GONE : View.VISIBLE);
 
             /** Reset the remaining fields if previously populated */
             mTextInput.setText("");
@@ -679,7 +655,8 @@ public class FeedbackActivity extends Activity implements OnClickListener {
                     /** Set the lastUpdatedTextView text as the date of the latest feedback message */
                     try {
                         date = format.parse(mFeedbackMessages.get(0).getCreatedAt());
-                        mLastUpdatedTextView.setText(String.format(getString(R.string.hockeyapp_feedback_last_updated_text) + " %s", formatNew.format(date)));
+                        mLastUpdatedTextView.setText(String.format(getString(R.string.hockeyapp_feedback_last_updated_text), formatNew.format(date)));
+                        mLastUpdatedTextView.setVisibility(View.VISIBLE);
                     } catch (ParseException e1) {
                         e1.printStackTrace();
                     }

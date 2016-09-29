@@ -9,7 +9,9 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
+import android.os.StrictMode;
 
+import net.hockeyapp.android.Constants;
 import net.hockeyapp.android.R;
 import net.hockeyapp.android.listeners.DownloadFileListener;
 
@@ -26,39 +28,10 @@ import java.util.UUID;
 
 /**
  * <h3>Description</h3>
- * <p>
+ *
  * Internal helper class. Downloads an .apk from HockeyApp and stores
  * it on external storage. If the download was successful, the file
  * is then opened to trigger the installation.
- * </p>
- * <h3>License</h3>
- *
- * <pre>
- * Copyright (c) 2011-2014 Bit Stadium GmbH
- *
- * Permission is hereby granted, free of charge, to any person
- * obtaining a copy of this software and associated documentation
- * files (the "Software"), to deal in the Software without
- * restriction, including without limitation the rights to use,
- * copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the
- * Software is furnished to do so, subject to the following
- * conditions:
- *
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
- * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
- * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
- * OTHER DEALINGS IN THE SOFTWARE.
- * </pre>
- *
- * @author Thomas Dohmke
  **/
 public class DownloadFileTask extends AsyncTask<Void, Integer, Long> {
     protected static final int MAX_REDIRECTS = 6;
@@ -148,7 +121,7 @@ public class DownloadFileTask extends AsyncTask<Void, Integer, Long> {
     }
 
     protected void setConnectionProperties(HttpURLConnection connection) {
-        connection.addRequestProperty("User-Agent", "HockeySDK/Android");
+        connection.addRequestProperty("User-Agent", Constants.SDK_USER_AGENT);
         connection.setInstanceFollowRedirects(true);
 
         // connection bug workaround for SDK<=2.x
@@ -223,7 +196,25 @@ public class DownloadFileTask extends AsyncTask<Void, Integer, Long> {
             intent.setDataAndType(Uri.fromFile(new File(this.mFilePath, this.mFilename)),
                     "application/vnd.android.package-archive");
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+            StrictMode.VmPolicy oldVmPolicy = null;
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                oldVmPolicy = StrictMode.getVmPolicy();
+
+                StrictMode.VmPolicy policy = new StrictMode.VmPolicy.Builder()
+                        .penaltyLog()
+                        .build();
+
+                StrictMode.setVmPolicy(policy);
+            }
+
             mContext.startActivity(intent);
+
+            if (oldVmPolicy != null) {
+                StrictMode.setVmPolicy(oldVmPolicy);
+            }
+
         } else {
             try {
                 AlertDialog.Builder builder = new AlertDialog.Builder(mContext);

@@ -32,7 +32,7 @@
     <string name="hockeyapp_feedback_email_hint">Email</string>
     <string name="hockeyapp_feedback_subject_hint">Asunto</string>
     <string name="hockeyapp_feedback_message_hint">Mensaje</string>
-    <string name="hockeyapp_feedback_last_updated_text">Última actualización: </string>
+    <string name="hockeyapp_feedback_last_updated_text">Última actualización: %s</string>
     <string name="hockeyapp_feedback_attachment_button_text">Adjuntar archivo</string>
     <string name="hockeyapp_feedback_send_button_text">Enviar comentarios</string>
     <string name="hockeyapp_feedback_response_button_text">Responder</string>
@@ -41,9 +41,9 @@
     <string name="hockeyapp_feedback_send_generic_error">No se pudo enviar el mensaje. Por favor comprueba todos los campos y tu conexión a internet, y vuelve a intentarlo.</string>
     <string name="hockeyapp_feedback_send_network_error">No ha habido respuesta desde el servidor. Por favor, comprueba tu conexión a internet y vuelve a intentarlo.</string>
     <string name="hockeyapp_feedback_validate_subject_error">Por favor, introduce un asunto</string>
-    <string name="hockeyapp_feedback_validate_email_error">Por favor, introduce un nombre</string>
+    <string name="hockeyapp_feedback_validate_email_error">Por favor, introduce una dirección de email</string>
     <string name="hockeyapp_feedback_validate_email_empty">Por favor, introduce una dirección de email</string>
-    <string name="hockeyapp_feedback_validate_name_error">Por favor, introduce tus comentarios</string>
+    <string name="hockeyapp_feedback_validate_name_error">Por favor, introduce un nombre</string>
     <string name="hockeyapp_feedback_validate_text_error">No se pudo enviar el mensaje. Por favor, comprueba el formato de tu dirección de email.</string>
     <string name="hockeyapp_feedback_generic_error">Ha ocurrido un error</string>
     <string name="hockeyapp_feedback_attach_file">Adjuntar fichero</string>

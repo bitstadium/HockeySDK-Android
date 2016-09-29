@@ -11,17 +11,21 @@ env:
   matrix:
     - ANDROID_TARGET=android-19 ANDROID_ABI=armeabi-v7a
 
+jdk:
+  - oraclejdk8
+
 android:
   components:
     # Use the latest platform tools
-    - platform-tools
     - tools
+    - tools
+    - platform-tools
 
     # Use the desired build tools
-    - build-tools-23.0.2
+    - build-tools-24.0.2
 
     # Project target SDK
-    - android-23
+    - android-24
 
     # Project extra configuration
     - extra-google-m2repository
@@ -34,4 +38,4 @@ before_script:
   - adb shell input keyevent 82 &
 
 script:
-  - ./gradlew assemble lint test connectedAndroidTest
+  - ./gradlew clean build connectedAndroidTest

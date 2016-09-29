@@ -11,50 +11,18 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
 import android.text.TextUtils;
+
 import net.hockeyapp.android.utils.HockeyLog;
 
 import java.io.File;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.UUID;
 
 /**
  * <h3>Description</h3>
  *
  * Various constants and meta information loaded from the context.
- *
- * <h3>License</h3>
- *
- * <pre>
- * Copyright (c) 2009 nullwire aps
- * Copyright (c) 2011-2016 Bit Stadium GmbH
- *
- * Permission is hereby granted, free of charge, to any person
- * obtaining a copy of this software and associated documentation
- * files (the "Software"), to deal in the Software without
- * restriction, including without limitation the rights to use,
- * copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the
- * Software is furnished to do so, subject to the following
- * conditions:
- *
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
- * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
- * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
- * OTHER DEALINGS IN THE SOFTWARE.
- * </pre>
- *
- * @author Mads Kristiansen
- * @author Glen Humphrey
- * @author Evan Charlton
- * @author Peter Hewitt
- * @author Thomas Dohmke
  **/
 public class Constants {
 
@@ -66,8 +34,17 @@ public class Constants {
      * Name of this SDK.
      */
     public static final String SDK_NAME = "HockeySDK";
+    /**
+     * Version of the SDK - retrieved from the build configuration.
+     */
+    public static final String SDK_VERSION = BuildConfig.VERSION_NAME;
 
     public static final String FILES_DIRECTORY_NAME = "HockeyApp";
+
+    /**
+     * The user agent string the SDK will send with every HockeyApp API request.
+     */
+    public static final String SDK_USER_AGENT = "HockeySDK/Android " + BuildConfig.VERSION_NAME;
 
     /**
      * Permissions request for the update task.
@@ -238,7 +215,7 @@ public class Constants {
                 Constants.CRASH_IDENTIFIER = bytesToHex(bytes);
             } catch (Throwable e) {
                 HockeyLog.error("Couldn't create CrashIdentifier with Exception:" + e.toString());
-                //TODO handle the exeption
+                //TODO handle the exception
             }
         }
     }
@@ -253,7 +230,9 @@ public class Constants {
         ContentResolver resolver = context.getContentResolver();
         String deviceIdentifier = Settings.Secure.getString(resolver, Settings.Secure.ANDROID_ID);
         if (deviceIdentifier != null) {
-            Constants.DEVICE_IDENTIFIER = tryHashStringSha256(context, deviceIdentifier);
+            String deviceIdentifierAnonymized = tryHashStringSha256(context, deviceIdentifier);
+            // if anonymized device identifier is null we should use a random UUID
+            Constants.DEVICE_IDENTIFIER = deviceIdentifierAnonymized != null ? deviceIdentifierAnonymized : UUID.randomUUID().toString();
         }
     }
 
@@ -262,7 +241,7 @@ public class Constants {
      * unavailable, return empty string.
      *
      * @param input the string to hash.
-     * @return a SHA-256 hash of the input or the input if SHA-256 is not available (should not happen).
+     * @return a SHA-256 hash of the input or null if SHA-256 is not available (should never happen).
      */
     private static String tryHashStringSha256(Context context, String input) {
         String salt = createSalt(context);
@@ -276,8 +255,8 @@ public class Constants {
 
             return bytesToHex(hashedBytes);
         } catch (NoSuchAlgorithmException e) {
-            // All android devices should support SHA256, but if unavailable return input
-            return input;
+            // All android devices should support SHA256, but if unavailable return null
+            return null;
         }
     }
 

@@ -20,41 +20,7 @@ import java.util.UUID;
  * Helper class to catch exceptions. Saves the stack trace
  * as a file and executes callback methods to ask the app for
  * additional information and meta data (see CrashManagerListener).
-
- * <h3>License</h3>
- * <pre>
- * Copyright (c) 2009 nullwire aps
- * Copyright (c) 2011-2014 Bit Stadium GmbH
  *
- * Permission is hereby granted, free of charge, to any person
- * obtaining a copy of this software and associated documentation
- * files (the "Software"), to deal in the Software without
- * restriction, including without limitation the rights to use,
- * copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the
- * Software is furnished to do so, subject to the following
- * conditions:
- *
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
- * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
- * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
- * OTHER DEALINGS IN THE SOFTWARE.
- * </pre>
- *
- * @author Mads Kristiansen
- * @author Glen Humphrey
- * @author Evan Charlton
- * @author Peter Hewitt
- * @author Thomas Dohmke
- * @author Matthias Wenz
- * @author Benjamin Reimold
  **/
 public class ExceptionHandler implements UncaughtExceptionHandler {
     private boolean mIgnoreDefaultHandler = false;
@@ -103,6 +69,90 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
         String filename = UUID.randomUUID().toString();
 
         CrashDetails crashDetails = new CrashDetails(filename, exception);
+        crashDetails.setAppPackage(Constants.APP_PACKAGE);
+        crashDetails.setAppVersionCode(Constants.APP_VERSION);
+        crashDetails.setAppVersionName(Constants.APP_VERSION_NAME);
+        crashDetails.setAppStartDate(startDate);
+        crashDetails.setAppCrashDate(now);
+
+        if ((listener == null) || (listener.includeDeviceData())) {
+            crashDetails.setOsVersion(Constants.ANDROID_VERSION);
+            crashDetails.setOsBuild(Constants.ANDROID_BUILD);
+            crashDetails.setDeviceManufacturer(Constants.PHONE_MANUFACTURER);
+            crashDetails.setDeviceModel(Constants.PHONE_MODEL);
+        }
+
+        if (thread != null && ((listener == null) || (listener.includeThreadDetails()))) {
+            crashDetails.setThreadName(thread.getName() + "-" + thread.getId());
+        }
+
+        if (Constants.CRASH_IDENTIFIER != null && (listener == null || listener.includeDeviceIdentifier())) {
+            crashDetails.setReporterKey(Constants.CRASH_IDENTIFIER);
+        }
+
+        crashDetails.writeCrashReport();
+
+        if (listener != null) {
+            try {
+                writeValueToFile(limitedString(listener.getUserID()), filename + ".user");
+                writeValueToFile(limitedString(listener.getContact()), filename + ".contact");
+                writeValueToFile(listener.getDescription(), filename + ".description");
+            } catch (IOException e) {
+                HockeyLog.error("Error saving crash meta data!", e);
+            }
+
+        }
+    }
+
+    /**
+     * Save java exception(s) caught by HockeySDK-Xamarin to disk.
+     *
+     * @param exception              The native java exception to save.
+     * @param managedExceptionString String representation of the full exception including the managed exception.
+     * @param thread                 Thread that crashed.
+     * @param listener               Custom CrashManager listener instance.
+     */
+    @SuppressWarnings("unused")
+    public static void saveNativeException(Throwable exception, String managedExceptionString, Thread thread, CrashManagerListener listener) {
+        // the throwable will a "native" Java exception. In this case managedExceptionString contains the full, "unconverted" exception
+        // which contains information about the managed exception, too. We don't want to loose that part. Sadly, passing a managed
+        // exception as an additional throwable strips that info, so we pass in the full managed exception as a string
+        // and extract the first part that contains the info about the managed code that was calling the java code.
+        // In case there is no managedExceptionString, we just forward the java exception
+        if (!TextUtils.isEmpty(managedExceptionString)) {
+            String[] splits = managedExceptionString.split("--- End of managed exception stack trace ---", 2);
+            if (splits != null && splits.length > 0) {
+                managedExceptionString = splits[0];
+            }
+        }
+
+        saveXamarinException(exception, thread, managedExceptionString, false, listener);
+    }
+
+    /**
+     * Save managed exception(s) caught by HockeySDK-Xamarin to disk.
+     *
+     * @param exception              The managed exception to save.
+     * @param thread                 Thread that crashed.
+     * @param listener               Custom CrashManager listener instance.
+     */
+    @SuppressWarnings("unused")
+    public static void saveManagedException(Throwable exception, Thread thread, CrashManagerListener listener) {
+        saveXamarinException(exception, thread, null, true, listener);
+    }
+
+    private static void saveXamarinException(Throwable exception, Thread thread, String additionalManagedException, Boolean isManagedException, CrashManagerListener listener) {
+        final Date startDate = new Date(CrashManager.getInitializeTimestamp());
+        String filename = UUID.randomUUID().toString();
+        final Date now = new Date();
+
+        final Writer result = new StringWriter();
+        final PrintWriter printWriter = new PrintWriter(result);
+        if (exception != null) {
+            exception.printStackTrace(printWriter);
+        }
+
+        CrashDetails crashDetails = new CrashDetails(filename, exception, additionalManagedException, isManagedException);
         crashDetails.setAppPackage(Constants.APP_PACKAGE);
         crashDetails.setAppVersionCode(Constants.APP_VERSION);
         crashDetails.setAppVersionName(Constants.APP_VERSION_NAME);
