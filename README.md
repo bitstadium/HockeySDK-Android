@@ -148,14 +148,13 @@ To integrate User Metrics with your app, perform the following steps:
 //add this import
 #import net.hockeyapp.android.metrics.MetricsManager;
 
-//add this to your main activity's onCreate()-callback
+// add this to your main activity's onCreate()-callback
 MetricsManager.register(this, getApplication());
 
-//add this wherever you want to track a custom event
+// add this wherever you want to track a custom event
 MetricsManager.trackEvent("YOUR_EVENT_NAME");
 
-//add this wherever you want to tracka custom event and attach properties or measurements to it.
-
+// add this wherever you want to track a custom event and attach properties or measurements to it
 HashMap<String, String> properties = new HashMap<>();
 properties.put("Property1", "Value1");
 HashMap<String, Double> measurements = new HashMap<>();
@@ -165,14 +164,14 @@ MetricsManager.trackEvent("YOUR_EVENT_NAME", properties, measurements);
 
 ```
 
-Make sure to replace `"YOUR_EVENT_NAME"` with a name for your custom event, e.g. `"Login Button Pressed"`. 
+Make sure to replace `"YOUR_EVENT_NAME"` with a name for your custom event, e.g. `"Login Button Pressed"`.
 
 **Limits**
 
 * Accepted characters for tracking events are: [a-zA-Z0-9_. -]. If you use other than the accepted characters, your events will not show up in the HockeyApp web portal.
 * There is currently a limit of 300 unique event names per app per week.
 * There is NO limit on the number of times an event can happen.
-* It's possible to attach properties and/or measurements to a custom event. There is one limitation to attaching properties and measurements. They currently don't show up in the HockeyApp dashboard but you have to link your app to Application Insights to be able to query them. Please have a look at [our blogpost](https://www.hockeyapp.net/blog/2016/08/30/custom-events-public-preview.html) to find out how to do that. 
+* Properties and measurements added to Custom Events are available in Application Insights Analytics as a preview. Please have a look at the [public announcement](https://www.hockeyapp.net/blog/2016/08/30/custom-events-public-preview.html) to find out more.
 
 <a id="updatedistribution"></a>
 ### 2.6 Add update distribution
