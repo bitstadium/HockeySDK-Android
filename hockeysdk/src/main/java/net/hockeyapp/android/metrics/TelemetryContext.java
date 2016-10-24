@@ -235,9 +235,16 @@ class TelemetryContext {
                     Context.WINDOW_SERVICE);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                 Point size = new Point();
-                wm.getDefaultDisplay().getRealSize(size);
-                width = size.x;
-                height = size.y;
+                Display d = wm.getDefaultDisplay();
+                if (d != null) {
+                    d.getRealSize(size);
+                    width = size.x;
+                    height = size.y;
+                } else {
+                    width = 0;
+                    height = 0;
+                }
+
             } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
                 try {
                     //We have to use undocumented API here. Android 4.0 introduced soft buttons for
@@ -250,9 +257,15 @@ class TelemetryContext {
                     height = (Integer) mGetRawH.invoke(display);
                 } catch (Exception ex) {
                     Point size = new Point();
-                    wm.getDefaultDisplay().getSize(size);
-                    width = size.x;
-                    height = size.y;
+                    Display d = wm.getDefaultDisplay();
+                    if (d != null) {
+                        d.getRealSize(size);
+                        width = size.x;
+                        height = size.y;
+                    } else {
+                        width = 0;
+                        height = 0;
+                    }
                     HockeyLog.debug(TAG, "Couldn't determine screen resolution: " + ex.toString());
                 }
 
