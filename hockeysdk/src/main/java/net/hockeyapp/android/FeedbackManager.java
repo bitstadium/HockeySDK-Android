@@ -79,6 +79,12 @@ public class FeedbackManager {
     private static String urlString = null;
 
     /**
+     * Indicates if a new thread should be created for each new feedback message as opposed to
+     * the default resume thread behaviour.
+     */
+    private static boolean forceNewThread;
+
+    /**
      * Whether the user's name is required.
      */
     private static FeedbackUserDataElement requireUserName = FeedbackUserDataElement.REQUIRED;
@@ -191,6 +197,7 @@ public class FeedbackManager {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.setClass(context, activityClass);
             intent.putExtra(FeedbackActivity.EXTRA_URL, getURLString(context));
+            intent.putExtra(FeedbackActivity.EXTRA_FORCE_NEW_THREAD, forceNewThread);
             intent.putExtra(FeedbackActivity.EXTRA_INITIAL_USER_NAME, userName);
             intent.putExtra(FeedbackActivity.EXTRA_INITIAL_USER_EMAIL, userEmail);
             intent.putExtra(FeedbackActivity.EXTRA_INITIAL_ATTACHMENTS, attachments);
@@ -248,6 +255,19 @@ public class FeedbackManager {
      */
     private static String getURLString(Context context) {
         return urlString + "api/2/apps/" + identifier + "/feedback/";
+    }
+
+    /**
+     * Indicates if a new thread should be created for each new feedback message
+     +
+     + Setting this to {@code true} will force a new thread whenever a new message is sent as
+     + opposed to the default resume thread behaviour.
+     *
+     * @param forceNewThread {@code true} if you want to force new threads for each message,
+     *                       otherwise {@code false} (default).
+     */
+    public static void setForceNewThread(final boolean forceNewThread) {
+        FeedbackManager.forceNewThread = forceNewThread;
     }
 
     /**
