@@ -223,6 +223,18 @@ public class LoginManager {
         }
     }
 
+    /**
+     * Retrieves the email address that was used for logging in. Returns null if there has not been
+     * a successful login.
+     *
+     * @param context The context to use. Usually your Activity object.
+     * @return Email address or null.
+     */
+    public static String getLoginEmail(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences("net.hockeyapp.android.login", 0);
+        return prefs.getString("email", null);
+    }
+
     private static void startLoginActivity(Context context) {
         Intent intent = new Intent();
         //In case of LOGIN_MODE_VALIDATE, we have to authenticate with username and password first.
