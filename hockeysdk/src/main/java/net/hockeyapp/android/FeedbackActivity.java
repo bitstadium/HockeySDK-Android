@@ -794,10 +794,10 @@ public class FeedbackActivity extends Activity implements OnClickListener {
                 String responseString = bundle.getString(SendFeedbackTask.BUNDLE_FEEDBACK_RESPONSE);
                 String statusCode = bundle.getString(SendFeedbackTask.BUNDLE_FEEDBACK_STATUS);
                 String requestType = bundle.getString(SendFeedbackTask.BUNDLE_REQUEST_TYPE);
-                if ((requestType.equals("send") && ((responseString == null) || (Integer.parseInt(statusCode) != 201)))) {
+                if ("send".equals(requestType) && (responseString == null || Integer.parseInt(statusCode) != 201)) {
                     // Send feedback went wrong if response is empty or status code != 201
                     error.setMessage(feedbackActivity.getString(R.string.hockeyapp_feedback_send_generic_error));
-                } else if ((requestType.equals("fetch") && (statusCode != null) && ((Integer.parseInt(statusCode) == 404) || (Integer.parseInt(statusCode) == 422)))) {
+                } else if ("fetch".equals(requestType) && statusCode != null && (Integer.parseInt(statusCode) == 404 || Integer.parseInt(statusCode) == 422)) {
                     // Fetch feedback went wrong if status code is 404 or 422
                     feedbackActivity.resetFeedbackView();
                     success = true;
