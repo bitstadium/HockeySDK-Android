@@ -231,7 +231,7 @@ This will add the ability for your users to provide feedback from right inside y
 ```java
 import net.hockeyapp.android.FeedbackManager;
 
-public class YourActivity extends Activitiy {
+public class YourActivity extends Activity {
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
