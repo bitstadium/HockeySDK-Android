@@ -14,7 +14,7 @@
     <string name="hockeyapp_download_failed_dialog_positive_button">Riprova</string>
 
     <!-- Update -->
-    <string name="hockeyapp_update_mandatory_toast">%s è dispobinile ed è un aggiornamento obbligatorio!</string>
+    <string name="hockeyapp_update_mandatory_toast">%s è disponibile ed è un aggiornamento obbligatorio!</string>
     <string name="hockeyapp_update_dialog_title">Aggiornamento disponibile</string>
     <string name="hockeyapp_update_button">Aggiorna</string>
     <string name="hockeyapp_update_dialog_message">Mostrare informazioni sul nuovo aggiornamento?</string>
