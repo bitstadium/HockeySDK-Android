@@ -53,15 +53,16 @@
 
         <Button
             android:id="@+id/button_update"
-            android:layout_width="120dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_below="@id/label_version"
             android:layout_margin="20dp"
             android:background="@drawable/hockeyapp_btn_background"
+            android:minWidth="120dp"
             android:text="@string/hockeyapp_update_button"
             android:textColor="@color/hockeyapp_text_white"
-            android:textSize="16sp" />
+            android:textSize="16sp"/>
 
 
     </RelativeLayout>
