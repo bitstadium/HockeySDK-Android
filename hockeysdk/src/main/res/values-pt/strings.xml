@@ -39,7 +39,7 @@
     <string name="hockeyapp_feedback_response_button_text">Adicionar Resposta</string>
     <string name="hockeyapp_feedback_refresh_button_text">Atualizar</string>
     <string name="hockeyapp_feedback_title">Feedback</string>
-    <string name="hockeyapp_feedback_send_generic_error">A mensagem não pôde ser enviada. Por favor verifique os campos, sua conexão com a internet e tente novamente..</string>
+    <string name="hockeyapp_feedback_send_generic_error">A mensagem não pôde ser enviada. Por favor verifique os campos, sua conexão com a internet e tente novamente…</string>
     <string name="hockeyapp_feedback_send_network_error">Sem resposta do servidor. Por favor, verifique sua conexão e tente novamente.</string>
     <string name="hockeyapp_feedback_validate_subject_error">Por favor preencha um assunto</string>
     <string name="hockeyapp_feedback_validate_email_error">Por favor preencha seu nome</string>
