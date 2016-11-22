@@ -598,7 +598,7 @@ public class FeedbackActivity extends Activity implements OnClickListener {
 
     private void configureAppropriateView() {
         /** Try to retrieve the Feedback Token from {@link SharedPreferences} */
-        if(!mForceNewThread || mInSendFeedback) {
+        if (!mForceNewThread || mInSendFeedback) {
             mToken = PrefsUtil.getInstance().getFeedbackTokenFromPrefs(this);
         }
 
