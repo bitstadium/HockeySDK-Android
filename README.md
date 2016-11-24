@@ -9,7 +9,7 @@ HockeySDK-Android implements support for using HockeyApp in your Android applica
 
 The following features are currently supported:
 
-1. **Crash Reports:** If your app crashes, a crash log is written to the device's storage. If the user starts the app again, they will be asked asked to submit the crash report to HockeyApp. This works for both beta and live apps, i.e. those submitted to Google Play or other app stores. Crash logs contain viable information for you to help resolve the issue. Furthermore, you as a developer can add additional information to the report as well.
+1. **Crash Reports:** If your app crashes, a crash log is written to the device's storage. If the user starts the app again, they will be asked to submit the crash report to HockeyApp. This works for both beta and live apps, i.e. those submitted to Google Play or other app stores. Crash logs contain viable information for you to help resolve the issue. Furthermore, you as a developer can add additional information to the report as well.
 
 2. **User Metrics:** Understand user behavior to improve your app. Track usage through daily and monthly active users, monitor crash impacted users, as well as customer engagement through session count. User Metrics requires a minimum API level of 14 (Android 4.x Ice Cream Sandwich).
 
