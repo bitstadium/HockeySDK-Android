@@ -26,4 +26,12 @@ public abstract class FeedbackManagerListener {
      * and false if not and a notification should be fired.
      */
     public abstract boolean feedbackAnswered(FeedbackMessage latestMessage);
+
+    /**
+     * Called when posting a new feedback message.
+     * @return Whether a new feedback thread should be created or not. Defaults to false.
+     */
+    public boolean shouldCreateNewFeedbackThread() {
+        return false;
+    }
 }

@@ -269,12 +269,13 @@ class Persistence {
         // TODO Check for available disk space as well.
         synchronized (LOCK) {
             Context context = getContext();
-            if ((context.getFilesDir()) != null) {
+            if (context.getFilesDir() != null) {
                 File filesDir = context.getFilesDir();
                 String path = filesDir.getAbsolutePath() + BIT_TELEMETRY_DIRECTORY;
                 if (!TextUtils.isEmpty(path)) {
                     File dir = new File(path);
-                    return (dir.listFiles().length < MAX_FILE_COUNT);
+                    File[] files = dir.listFiles();
+                    return files != null && files.length < MAX_FILE_COUNT;
                 }
             }
             return false;

@@ -1,0 +1,94 @@
+<resources>
+    <!-- Crash Dialog -->
+    <string name="hockeyapp_crash_dialog_app_name_fallback">Questa app</string>
+    <string name="hockeyapp_crash_dialog_title">%s chiusa inaspettatamente</string>
+    <string name="hockeyapp_crash_dialog_message">Vuoi inviare un report in modo anonimo così possiamo risolvere il problema?</string>
+    <string name="hockeyapp_crash_dialog_negative_button">Non inviare</string>
+    <string name="hockeyapp_crash_dialog_neutral_button">Invia sempre</string>
+    <string name="hockeyapp_crash_dialog_positive_button">Invia report</string>
+
+    <!-- Download Failed -->
+    <string name="hockeyapp_download_failed_dialog_title">Download fallito</string>
+    <string name="hockeyapp_download_failed_dialog_message">Impossibile scaricare l\'aggiornamento. Vuoi riprovare?</string>
+    <string name="hockeyapp_download_failed_dialog_negative_button">Annulla</string>
+    <string name="hockeyapp_download_failed_dialog_positive_button">Riprova</string>
+
+    <!-- Update -->
+    <string name="hockeyapp_update_mandatory_toast">%s è disponibile ed è un aggiornamento obbligatorio!</string>
+    <string name="hockeyapp_update_dialog_title">Aggiornamento disponibile</string>
+    <string name="hockeyapp_update_button">Aggiorna</string>
+    <string name="hockeyapp_update_dialog_message">Mostrare informazioni sul nuovo aggiornamento?</string>
+    <string name="hockeyapp_update_dialog_negative_button">Ignora</string>
+    <string name="hockeyapp_update_dialog_positive_button">Mostra</string>
+
+    <!-- Expiry Info -->
+    <string name="hockeyapp_expiry_info_title">Build scaduta</string>
+    <string name="hockeyapp_expiry_info_text">%s è scaduta. Controlla HockeyApp per aggiornamenti.</string>
+
+    <!-- Feedback Activity -->
+    <string name="hockeyapp_feedback_failed_title">In attesa</string>
+    <string name="hockeyapp_feedback_failed_text">Vuoi mandare il tuo feedback nuovamente?</string>
+    <string name="hockeyapp_feedback_name_hint">Nome</string>
+    <string name="hockeyapp_feedback_email_hint">E-mail</string>
+    <string name="hockeyapp_feedback_subject_hint">Soggetto</string>
+    <string name="hockeyapp_feedback_message_hint">Messaggio</string>
+    <string name="hockeyapp_feedback_last_updated_text">Ultimo aggiornamento: %s</string>
+    <string name="hockeyapp_feedback_attachment_button_text">Aggiungi allegato</string>
+    <string name="hockeyapp_feedback_send_button_text">Invia feedback</string>
+    <string name="hockeyapp_feedback_response_button_text">Aggiungi una risposta</string>
+    <string name="hockeyapp_feedback_refresh_button_text">Aggiorna</string>
+    <string name="hockeyapp_feedback_title">Feedback</string>
+    <string name="hockeyapp_feedback_send_generic_error">Impossibile pubblicare il messaggio. Controlla i valori inseriti e la tua connessione, quindi prova di nuovo.</string>
+    <string name="hockeyapp_feedback_send_network_error">Nessuna risposta dal server. Controlla la tua connessione, quindi prova di nuovo.</string>
+    <string name="hockeyapp_feedback_validate_subject_error">Inserisci un soggetto</string>
+    <string name="hockeyapp_feedback_validate_email_error">Inserisci un indirizzo e-mail valido</string>
+    <string name="hockeyapp_feedback_validate_email_empty">Inserisci un indirizzo e-mail</string>
+    <string name="hockeyapp_feedback_validate_name_error">Inserisci il tuo nome</string>
+    <string name="hockeyapp_feedback_validate_text_error">Impossibile pubblicare il messaggio. Inserisci un testo per il feedback</string>
+    <string name="hockeyapp_feedback_generic_error">Si è verificato un errore</string>
+    <string name="hockeyapp_feedback_attach_file">Allega un file</string>
+    <string name="hockeyapp_feedback_attach_picture">Allega un\'immagine</string>
+    <string name="hockeyapp_feedback_select_file">Seleziona il file</string>
+    <string name="hockeyapp_feedback_select_picture">Seleziona l\'immagine</string>
+    <string name="hockeyapp_feedback_max_attachments_allowed">E\' consentito un massimo di %s allegati.</string>
+    <string name="hockeyapp_feedback_attachment_loading">Caricamento…</string>
+    <string name="hockeyapp_feedback_attachment_error">Errore</string>
+
+    <!-- Send Feedback Task -->
+    <string name="hockeyapp_feedback_sending_feedback_text">Invio feedback…</string>
+    <string name="hockeyapp_feedback_fetching_feedback_text">Recupero discussioni…</string>
+
+    <!-- Login Activity -->
+    <string name="hockeyapp_login_headline_text">Inserisci l\'indirizzo e-mail e la password del tuo account HockeyApp per autorizzare l\'accesso a questa app.</string>
+    <string name="hockeyapp_login_headline_text_email_only">Inserisci l\'indirizzo e-mail del tuo account HockeyApp per autorizzare l\'accesso a questa app.</string>
+    <string name="hockeyapp_login_missing_credentials_toast">Inserisci le credenziali dell\'account mancanti.</string>
+    <string name="hockeyapp_login_email_hint">E-mail</string>
+    <string name="hockeyapp_login_password_hint">Password</string>
+    <string name="hockeyapp_login_login_button_text">Accedi</string>
+
+    <!-- Paint Activity -->
+    <string name="hockeyapp_paint_indicator_toast">Disegna qualcosa!</string>
+    <string name="hockeyapp_paint_menu_save">Salva</string>
+    <string name="hockeyapp_paint_menu_undo">Annulla</string>
+    <string name="hockeyapp_paint_menu_clear">Cancella</string>
+    <string name="hockeyapp_paint_dialog_message">Vuoi salvare i tuoi disegni?</string>
+    <string name="hockeyapp_paint_dialog_negative_button">Scarta</string>
+    <string name="hockeyapp_paint_dialog_positive_button">Salva</string>
+    <string name="hockeyapp_paint_dialog_neutral_button">Annulla</string>
+
+    <!-- Permissions -->
+    <string name="hockeyapp_permission_update_title">Accesso allo spazio di archiviazione richiesto</string>
+    <string name="hockeyapp_permission_update_message">Per scaricare ed installare gli aggiornamenti dell\'app devi consentire l\'accesso allo spazio di archiviazione del dispositivo.</string>
+    <string name="hockeyapp_permission_dialog_negative_button">Annulla</string>
+    <string name="hockeyapp_permission_dialog_positive_button">Riprova</string>
+
+    <!-- Dialogs -->
+    <string name="hockeyapp_dialog_positive_button">OK</string>
+    <string name="hockeyapp_dialog_negative_button">Annulla</string>
+    <string name="hockeyapp_dialog_error_title">Errore</string>
+    <string name="hockeyapp_dialog_error_message">Si è verificato un errore</string>
+
+    <!-- Misc -->
+    <string name="hockeyapp_error_no_network_message">Il tuo dispositivo non è connesso ad internet. Risolvi i problemi di connessione e riprova.</string>
+
+</resources>

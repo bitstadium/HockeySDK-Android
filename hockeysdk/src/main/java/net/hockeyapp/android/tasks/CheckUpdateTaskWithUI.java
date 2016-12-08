@@ -96,6 +96,16 @@ public class CheckUpdateTaskWithUI extends CheckUpdateTask {
                 }
             });
 
+            builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialog) {
+                    cleanUp();
+                    if (null != listener) {
+                        listener.onCancel();
+                    }
+                }
+            });
+
             builder.setPositiveButton(R.string.hockeyapp_update_dialog_positive_button, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
                     if (getCachingEnabled()) {

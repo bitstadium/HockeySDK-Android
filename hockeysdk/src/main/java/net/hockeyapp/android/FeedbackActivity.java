@@ -68,6 +68,11 @@ public class FeedbackActivity extends Activity implements OnClickListener {
     public static final String EXTRA_URL = "url";
 
     /**
+     * Optional extra that can be passed as {@code true} to force a new feedback message thread.
+     */
+    public static final String EXTRA_FORCE_NEW_THREAD = "forceNewThread";
+
+    /**
      * Extra for initial username to set for the feedback message.
      */
     public static final String EXTRA_INITIAL_USER_NAME = "initialUserName";
@@ -166,6 +171,12 @@ public class FeedbackActivity extends Activity implements OnClickListener {
     private boolean mInSendFeedback;
 
     /**
+     * Indicates if a new thread should be created for each new feedback message as opposed to
+     * the default resume thread behaviour.
+     */
+    private boolean mForceNewThread;
+
+    /**
      * True when the view was initialized
      **/
     private boolean mFeedbackViewInitialized;
@@ -193,6 +204,7 @@ public class FeedbackActivity extends Activity implements OnClickListener {
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             mUrl = extras.getString(EXTRA_URL);
+            mForceNewThread = extras.getBoolean(EXTRA_FORCE_NEW_THREAD);
             initialUserName = extras.getString(EXTRA_INITIAL_USER_NAME);
             initialUserEmail = extras.getString(EXTRA_INITIAL_USER_EMAIL);
 
@@ -316,8 +328,8 @@ public class FeedbackActivity extends Activity implements OnClickListener {
                 openContextMenu(v);
             }
         } else if (viewId == R.id.button_add_response) {
-            configureFeedbackView(false);
             mInSendFeedback = true;
+            configureFeedbackView(false);
         } else if (viewId == R.id.button_refresh) {
             sendFetchFeedback(mUrl, null, null, null, null, null, PrefsUtil.getInstance().getFeedbackTokenFromPrefs(mContext), mFeedbackHandler, true);
         }
@@ -494,7 +506,7 @@ public class FeedbackActivity extends Activity implements OnClickListener {
                         mNameInput.setText(nameEmailSubjectArray[0]);
                         mEmailInput.setText(nameEmailSubjectArray[1]);
 
-                        if (nameEmailSubjectArray.length >= 3) {
+                        if (!mForceNewThread && nameEmailSubjectArray.length >= 3) {
                             mSubjectInput.setText(nameEmailSubjectArray[2]);
                             mTextInput.requestFocus();
                         } else {
@@ -518,11 +530,14 @@ public class FeedbackActivity extends Activity implements OnClickListener {
                 mFeedbackViewInitialized = true;
             }
 
+            mNameInput.setVisibility(FeedbackManager.getRequireUserName() == FeedbackUserDataElement.DONT_SHOW ? View.GONE : View.VISIBLE);
+            mEmailInput.setVisibility(FeedbackManager.getRequireUserEmail() == FeedbackUserDataElement.DONT_SHOW ? View.GONE : View.VISIBLE);
+
             /** Reset the remaining fields if previously populated */
             mTextInput.setText("");
 
-            /** Check to see if the Feedback Token is availabe */
-            if (PrefsUtil.getInstance().getFeedbackTokenFromPrefs(mContext) != null) {
+            /** Check to see if the Feedback Token is available */
+            if ((!mForceNewThread || mInSendFeedback) && PrefsUtil.getInstance().getFeedbackTokenFromPrefs(mContext) != null) {
                 /** If Feedback Token is available, hide the Subject Input field */
                 mSubjectInput.setVisibility(View.GONE);
             } else {
@@ -583,8 +598,11 @@ public class FeedbackActivity extends Activity implements OnClickListener {
 
     private void configureAppropriateView() {
         /** Try to retrieve the Feedback Token from {@link SharedPreferences} */
-        mToken = PrefsUtil.getInstance().getFeedbackTokenFromPrefs(this);
-        if ((mToken == null) || (mInSendFeedback)) {
+        if (!mForceNewThread || mInSendFeedback) {
+            mToken = PrefsUtil.getInstance().getFeedbackTokenFromPrefs(this);
+        }
+
+        if (mToken == null || mInSendFeedback) {
             /** If Feedback Token is NULL, show the usual feedback view */
             configureFeedbackView(false);
         } else {
@@ -705,7 +723,7 @@ public class FeedbackActivity extends Activity implements OnClickListener {
         enableDisableSendFeedbackButton(false);
         hideKeyboard();
 
-        String token = PrefsUtil.getInstance().getFeedbackTokenFromPrefs(mContext);
+        String token = mForceNewThread && !mInSendFeedback ? null : PrefsUtil.getInstance().getFeedbackTokenFromPrefs(mContext);
 
         String name = mNameInput.getText().toString().trim();
         String email = mEmailInput.getText().toString().trim();
@@ -791,10 +809,10 @@ public class FeedbackActivity extends Activity implements OnClickListener {
                 String responseString = bundle.getString(SendFeedbackTask.BUNDLE_FEEDBACK_RESPONSE);
                 String statusCode = bundle.getString(SendFeedbackTask.BUNDLE_FEEDBACK_STATUS);
                 String requestType = bundle.getString(SendFeedbackTask.BUNDLE_REQUEST_TYPE);
-                if ((requestType.equals("send") && ((responseString == null) || (Integer.parseInt(statusCode) != 201)))) {
+                if ("send".equals(requestType) && (responseString == null || Integer.parseInt(statusCode) != 201)) {
                     // Send feedback went wrong if response is empty or status code != 201
                     error.setMessage(feedbackActivity.getString(R.string.hockeyapp_feedback_send_generic_error));
-                } else if ((requestType.equals("fetch") && (statusCode != null) && ((Integer.parseInt(statusCode) == 404) || (Integer.parseInt(statusCode) == 422)))) {
+                } else if ("fetch".equals(requestType) && statusCode != null && (Integer.parseInt(statusCode) == 404 || Integer.parseInt(statusCode) == 422)) {
                     // Fetch feedback went wrong if status code is 404 or 422
                     feedbackActivity.resetFeedbackView();
                     success = true;

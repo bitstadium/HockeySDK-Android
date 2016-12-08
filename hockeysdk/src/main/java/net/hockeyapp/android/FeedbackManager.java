@@ -81,12 +81,12 @@ public class FeedbackManager {
     /**
      * Whether the user's name is required.
      */
-    private static FeedbackUserDataElement requireUserName;
+    private static FeedbackUserDataElement requireUserName = FeedbackUserDataElement.REQUIRED;
 
     /**
      * Whether the user's email is required.
      */
-    private static FeedbackUserDataElement requireUserEmail;
+    private static FeedbackUserDataElement requireUserEmail = FeedbackUserDataElement.REQUIRED;
 
     private static String userName;
 
@@ -183,6 +183,7 @@ public class FeedbackManager {
             if (activityClass == null) {
                 activityClass = FeedbackActivity.class;
             }
+            boolean forceNewThread = lastListener != null && lastListener.shouldCreateNewFeedbackThread();
 
             Intent intent = new Intent();
             if (extras != null && !extras.isEmpty()) {
@@ -191,6 +192,7 @@ public class FeedbackManager {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.setClass(context, activityClass);
             intent.putExtra(FeedbackActivity.EXTRA_URL, getURLString(context));
+            intent.putExtra(FeedbackActivity.EXTRA_FORCE_NEW_THREAD, forceNewThread);
             intent.putExtra(FeedbackActivity.EXTRA_INITIAL_USER_NAME, userName);
             intent.putExtra(FeedbackActivity.EXTRA_INITIAL_USER_EMAIL, userEmail);
             intent.putExtra(FeedbackActivity.EXTRA_INITIAL_ATTACHMENTS, attachments);
