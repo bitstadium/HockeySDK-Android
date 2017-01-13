@@ -184,6 +184,10 @@ public class CrashDetails {
 
     public void writeCrashReport() {
         String path = Constants.FILES_PATH + "/" + crashIdentifier + ".stacktrace";
+        writeCrashReport(path);
+    }
+
+    public void writeCrashReport(final String path) {
         HockeyLog.debug("Writing unhandled exception to: " + path);
 
         BufferedWriter writer = null;
