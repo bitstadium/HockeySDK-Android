@@ -56,6 +56,8 @@ public class CrashDetails {
 
     public CrashDetails(String crashIdentifier) {
         this.crashIdentifier = crashIdentifier;
+        isXamarinException = false;
+        throwableStackTrace = "";
     }
 
     public CrashDetails(String crashIdentifier, Throwable throwable) {
