@@ -38,7 +38,7 @@
       <string name="hockeyapp_feedback_response_button_text">افزودن پاسخ</string>
       <string name="hockeyapp_feedback_refresh_button_text">تازه کردن</string>
       <string name="hockeyapp_feedback_title">بازخورد</string>
-      <string name="hockeyapp_feedback_send_generic_error">پیام نمی تواند ارسال شود. لطفا مقادیر ورودی و اتصال خود به اینترنت را چک کرده و دوباره امتحان کنید.</string>
+      <string name="hockeyapp_feedback_send_generic_error">پیام نمی تواند ارسال شود. لطفا اطلاعات ورودی و اتصال خود به اینترنت را چک کرده و دوباره امتحان کنید.</string>
       <string name="hockeyapp_feedback_send_network_error">پاسخی از سرور دریافت نشد. لطفا اتصال خود به اینترنت را چک کرده و دوباره امتحان کنید.</string>
       <string name="hockeyapp_feedback_validate_subject_error">لطفا موضوع را انتخاب کنید</string>
       <string name="hockeyapp_feedback_validate_email_error">لطفا یک ایمیل معتبر وارد کنید</string>
@@ -51,11 +51,11 @@
       <string name="hockeyapp_feedback_select_file">انتخاب فایل</string>
       <string name="hockeyapp_feedback_select_picture">انتخاب عکس</string>
       <string name="hockeyapp_feedback_max_attachments_allowed">تنها %s ضمیمه مجاز است.</string>
-      <string name="hockeyapp_feedback_attachment_loading">در حال بارگذاری…</string>
+      <string name="hockeyapp_feedback_attachment_loading">...در حال بارگذاری</string>
       <string name="hockeyapp_feedback_attachment_error">خطا</string>
 
       <!-- Send Feedback Task -->
-      <string name="hockeyapp_feedback_sending_feedback_text">در حال ارسال بازخورد…</string>
+      <string name="hockeyapp_feedback_sending_feedback_text">...در حال ارسال بازخورد</string>
       <string name="hockeyapp_feedback_fetching_feedback_text">بازیابی بحث …</string>
 
       <!-- Login Activity -->
@@ -67,7 +67,7 @@
       <string name="hockeyapp_login_login_button_text">ورود</string>
 
       <!-- Paint Activity -->
-      <string name="hockeyapp_paint_indicator_toast">چیزی را رسم کنید!</string>
+      <string name="hockeyapp_paint_indicator_toast">!چیزی را رسم کنید</string>
       <string name="hockeyapp_paint_menu_save">ذخیره</string>
       <string name="hockeyapp_paint_menu_undo">بازگشت به قبل</string>
       <string name="hockeyapp_paint_menu_clear">پاک کردن</string>
