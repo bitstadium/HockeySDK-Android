@@ -191,29 +191,8 @@ public class DownloadFileTask extends AsyncTask<Void, Integer, Long> {
 
         if (result > 0L) {
             mNotifier.downloadSuccessful(this);
-
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setDataAndType(Uri.fromFile(new File(this.mFilePath, this.mFilename)),
-                    "application/vnd.android.package-archive");
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-            StrictMode.VmPolicy oldVmPolicy = null;
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                oldVmPolicy = StrictMode.getVmPolicy();
-
-                StrictMode.VmPolicy policy = new StrictMode.VmPolicy.Builder()
-                        .penaltyLog()
-                        .build();
-
-                StrictMode.setVmPolicy(policy);
-            }
-
-            mContext.startActivity(intent);
-
-            if (oldVmPolicy != null) {
-                StrictMode.setVmPolicy(oldVmPolicy);
-            }
+            Uri fileUri = Uri.fromFile(new File(this.mFilePath, this.mFilename));
+            mContext.startActivity(getInstallIntent(fileUri));
 
         } else {
             try {
@@ -251,5 +230,21 @@ public class DownloadFileTask extends AsyncTask<Void, Integer, Long> {
 
     protected String getURLString() {
         return mUrlString + "&type=apk";
+    }
+
+    private static Intent getInstallIntent(Uri fileUri) {
+        Intent intent;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            intent = new Intent(Intent.ACTION_INSTALL_PACKAGE);
+            intent.setData(fileUri);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        } else {
+            intent = new Intent(Intent.ACTION_VIEW);
+            intent.setDataAndType(fileUri,  "application/vnd.android.package-archive");
+        }
+
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        return intent;
     }
 }
