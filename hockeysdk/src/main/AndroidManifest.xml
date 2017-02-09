@@ -10,7 +10,7 @@
     <application>
 
         <activity android:name=".UpdateActivity" />
-        <activity android:name=".FeedbackActivity" />
+        <activity android:name=".FeedbackActivity" android:windowSoftInputMode="adjustResize|stateVisible" />
         <activity android:name=".PaintActivity" />
         <activity android:name=".LoginActivity" />
         <activity android:name=".ExpiryInfoActivity" />
