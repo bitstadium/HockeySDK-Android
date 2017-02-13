@@ -241,7 +241,7 @@ public class LoginManager {
         //So we override the mode variable with LOGIN_MODE_EMAIL_PASSWORD
         Boolean isLoginModeValidate = (mode == LOGIN_MODE_VALIDATE) ? true : false;
         int tempMode = (isLoginModeValidate) ? LOGIN_MODE_EMAIL_PASSWORD : mode;
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.setClass(context, LoginActivity.class);
         intent.putExtra(LoginActivity.EXTRA_URL, getURLString(tempMode));
         intent.putExtra(LoginActivity.EXTRA_MODE, tempMode);
