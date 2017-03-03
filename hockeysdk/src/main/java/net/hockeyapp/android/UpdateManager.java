@@ -19,13 +19,14 @@ import java.util.Date;
 
 /**
  * <h3>Description</h3>
- *
+ * <p>
  * The update manager sends version information to HockeyApp and
  * shows an alert dialog if a new version was found.
  **/
 public class UpdateManager {
     public static final String INSTALLER_ADB = "adb";
     public static final String INSTALLER_PACKAGE_INSTALLER_NOUGAT = "com.google.android.packageinstaller";
+    public static final String INSTALLER_PACKAGE_INSTALLER_NOUGAT2 = "com.android.packageinstaller";
 
     /**
      * Singleton for update task.
@@ -224,8 +225,8 @@ public class UpdateManager {
                     result = true;
 
                     // on Android Nougat and up when installing an app through the package installer (which HockeyApp uses itself), the installer will be
-                    // "com.google.android.packageinstaller" which is also not to be considered as a market installation
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && TextUtils.equals(installer, INSTALLER_PACKAGE_INSTALLER_NOUGAT)) {
+                    // "com.google.android.packageinstaller" or "com.android.packageinstaller" which is also not to be considered as a market installation
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && (TextUtils.equals(installer, INSTALLER_PACKAGE_INSTALLER_NOUGAT) || TextUtils.equals(installer, INSTALLER_PACKAGE_INSTALLER_NOUGAT2))) {
                         result = false;
                     }
 
