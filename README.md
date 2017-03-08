@@ -149,7 +149,7 @@ To integrate User Metrics with your app, perform the following steps:
 #import net.hockeyapp.android.metrics.MetricsManager;
 
 // add this to your main activity's onCreate()-callback
-MetricsManager.register(this, getApplication());
+MetricsManager.register(getApplication());
 
 // add this wherever you want to track a custom event
 MetricsManager.trackEvent("YOUR_EVENT_NAME");
