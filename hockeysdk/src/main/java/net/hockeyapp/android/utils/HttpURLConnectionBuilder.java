@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * <h3>Description</h3>
@@ -32,6 +33,7 @@ public class HttpURLConnectionBuilder {
 
     private static final int DEFAULT_TIMEOUT = 2 * 60 * 1000;
     public static final String DEFAULT_CHARSET = "UTF-8";
+    public static final long FORM_FIELD_LIMIT = 4 * 1024 * 1024;
 
     private final String mUrlString;
 
@@ -59,6 +61,14 @@ public class HttpURLConnectionBuilder {
     }
 
     public HttpURLConnectionBuilder writeFormFields(Map<String, String> fields) {
+
+        for (String key: fields.keySet()) {
+            String value = fields.get(key);
+            if (value.length() > FORM_FIELD_LIMIT) {
+                throw new IllegalArgumentException("Form field " + key + " size too large: " + value.length() + " - max allowed: " + FORM_FIELD_LIMIT);
+            }
+        }
+
         try {
             String formString = getFormString(fields, DEFAULT_CHARSET);
             setHeader("Content-Type", "application/x-www-form-urlencoded");

@@ -114,4 +114,15 @@ public class UpdateManagerTest {
         assertFalse(UpdateManager.installedFromMarket(contextWeakReference));
     }
 
+    @Test
+    public void testInstalledViaPackageManagerNougat2() {
+        // On Android Nougat, installing packages using HockeyApp (using the package manager) will list the following installer identifier
+        when(mockPackageManager.getInstallerPackageName(any(String.class))).thenReturn("com.android.packageinstaller");
+        // When not on Android Nougat this is considered "store"
+        assertTrue(UpdateManager.installedFromMarket(contextWeakReference));
+
+        // Test desired behavior on Android Nougat
+        Whitebox.setInternalState(Build.VERSION.class, "SDK_INT", Build.VERSION_CODES.N);
+        assertFalse(UpdateManager.installedFromMarket(contextWeakReference));
+    }
 }

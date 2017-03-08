@@ -22,10 +22,10 @@ android:
     - platform-tools
 
     # Use the desired build tools
-    - build-tools-24.0.2
+    - build-tools-25.0.2
 
     # Project target SDK
-    - android-24
+    - android-25
 
     # Project extra configuration
     - extra-google-m2repository

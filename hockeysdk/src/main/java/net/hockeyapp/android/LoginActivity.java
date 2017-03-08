@@ -121,10 +121,12 @@ public class LoginActivity extends Activity {
             if (LoginManager.listener != null) {
                 LoginManager.listener.onBack();
             } else {
-                Intent intent = new Intent(this, LoginManager.mainActivity);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.putExtra(LoginManager.LOGIN_EXIT_KEY, true);
-                startActivity(intent);
+                if (LoginManager.mainActivity != null) {
+                    Intent intent = new Intent(this, LoginManager.mainActivity);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intent.putExtra(LoginManager.LOGIN_EXIT_KEY, true);
+                    startActivity(intent);
+                }
                 return true;
             }
         }

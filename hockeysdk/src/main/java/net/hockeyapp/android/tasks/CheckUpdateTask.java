@@ -12,6 +12,7 @@ import net.hockeyapp.android.Constants;
 import net.hockeyapp.android.Tracking;
 import net.hockeyapp.android.UpdateManagerListener;
 import net.hockeyapp.android.utils.HockeyLog;
+import net.hockeyapp.android.utils.Util;
 import net.hockeyapp.android.utils.VersionCache;
 import net.hockeyapp.android.utils.VersionHelper;
 
@@ -121,7 +122,10 @@ public class CheckUpdateTask extends AsyncTask<Void, String, JSONArray> {
                 return json;
             }
         } catch (IOException | JSONException e) {
-            e.printStackTrace();
+            if(this.context != null && Util.isConnectedToNetwork(this.context)) {
+                HockeyLog.error("HockeyUpdate", "Could not fetch updates although connected to internet");
+                e.printStackTrace();
+            }
         }
 
         return null;

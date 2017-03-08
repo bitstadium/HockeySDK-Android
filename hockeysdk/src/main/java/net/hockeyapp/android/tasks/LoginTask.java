@@ -179,6 +179,7 @@ public class LoginTask extends ConnectionTask<Void, Void, Boolean> {
 
                         prefs.edit()
                                 .putString("iuid", iuid)
+                                .putString("email", mParams.get("email"))
                                 .apply();
                         return true;
                     }
@@ -190,6 +191,7 @@ public class LoginTask extends ConnectionTask<Void, Void, Boolean> {
                     if (!TextUtils.isEmpty(auid)) {
                         prefs.edit()
                                 .putString("auid", auid)
+                                .putString("email", mParams.get("email"))
                                 .apply();
                         return true;
                     }
@@ -201,6 +203,7 @@ public class LoginTask extends ConnectionTask<Void, Void, Boolean> {
                     prefs.edit()
                             .remove("iuid")
                             .remove("auid")
+                            .remove("email")
                             .apply();
                 }
             } else {
