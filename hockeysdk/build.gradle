@@ -1,7 +1,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.novoda.bintray-release' // must be applied after your artifact generating plugin (eg. java / com.android.library)
 
-def supportLibVersion = "24.1.1"
+def supportLibVersion = "25.2.0"
 
 android {
     compileSdkVersion COMPILE_SDK
@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         minSdkVersion 9
-        targetSdkVersion 24
+        targetSdkVersion 25
         versionCode VERSION_CODE
         versionName VERSION_NAME
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -68,6 +68,6 @@ dependencies {
     testCompile 'junit:junit:4.12'
 
     androidTestCompile "com.android.support:support-annotations:$supportLibVersion"
-    androidTestCompile 'com.android.support.test:runner:0.4.1'
-    androidTestCompile 'com.android.support.test:rules:0.4.1'
+    androidTestCompile 'com.android.support.test:runner:0.5'
+    androidTestCompile 'com.android.support.test:rules:0.5'
 }
