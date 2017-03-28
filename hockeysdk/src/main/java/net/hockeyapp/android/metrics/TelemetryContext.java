@@ -173,7 +173,7 @@ class TelemetryContext {
 
             String appBuild = Integer.toString(info.versionCode);
             version = String.format("%s (%S)", info.versionName, appBuild);
-        } catch (PackageManager.NameNotFoundException e) {
+        } catch (Exception e) {
             HockeyLog.debug(TAG, "Could not get application context");
         } finally {
             setAppVersion(version);
