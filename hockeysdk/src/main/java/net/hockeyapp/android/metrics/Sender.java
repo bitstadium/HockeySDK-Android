@@ -148,12 +148,20 @@ public class Sender {
                 int responseCode = connection.getResponseCode();
                 // process the response
                 onResponse(connection, responseCode, persistedData, file);
-            } catch (IOException | SecurityException e) {
-                //Probably offline
-                HockeyLog.debug(TAG, "Couldn't send data with IOException or SecurityException: " + e.toString());
+            } catch (IOException e) {
+                // Probably offline
+                HockeyLog.debug(TAG, "Couldn't send data with " + e.toString());
                 mRequestCount.getAndDecrement();
                 if (this.getPersistence() != null) {
-                    HockeyLog.debug(TAG, "Persisting because of IOException or SecurityException: We're probably offline.");
+                    HockeyLog.debug(TAG, "Persisting because of IOException: We're probably offline.");
+                    this.getPersistence().makeAvailable(file); //send again later
+                }
+            } catch (SecurityException e) {
+                // Permission denied
+                HockeyLog.debug(TAG, "Couldn't send data with " + e.toString());
+                mRequestCount.getAndDecrement();
+                if (this.getPersistence() != null) {
+                    HockeyLog.debug(TAG, "Persisting because of SecurityException: Missing INTERNET permission or the user might have removed the internet permission.");
                     this.getPersistence().makeAvailable(file); //send again later
                 }
             }
