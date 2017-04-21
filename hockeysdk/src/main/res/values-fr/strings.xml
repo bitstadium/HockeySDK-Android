@@ -53,6 +53,10 @@
     <string name="hockeyapp_feedback_max_attachments_allowed">Il ya un maximum de %s pièces jointes.</string>
     <string name="hockeyapp_feedback_attachment_loading">Chargement…</string>
     <string name="hockeyapp_feedback_attachment_error">Erreur</string>
+    <string name="hockeyapp_feedback_name_hint_required">Name. Required field</string>
+    <string name="hockeyapp_feedback_email_hint_required">Email. Required field</string>
+    <string name="hockeyapp_feedback_subject_hint_required">Subject. Required field</string>
+    <string name="hockeyapp_feedback_message_hint_required">Message. Required field</string>
 
     <!-- Send Feedback Task -->
     <string name="hockeyapp_feedback_sending_feedback_text">Envoi…</string>
@@ -65,6 +69,8 @@
     <string name="hockeyapp_login_email_hint">Email</string>
     <string name="hockeyapp_login_password_hint">Mot de passe</string>
     <string name="hockeyapp_login_login_button_text">Connectez-vous</string>
+    <string name="hockeyapp_login_email_hint_required">Email. Required field</string>
+    <string name="hockeyapp_login_password_hint_required">Password. Required field</string>
 
     <!-- Paint Activity -->
     <string name="hockeyapp_paint_indicator_toast">Dessinez quelque chose!</string>

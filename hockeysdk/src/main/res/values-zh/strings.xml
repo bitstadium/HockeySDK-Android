@@ -53,6 +53,10 @@
     <string name="hockeyapp_feedback_max_attachments_allowed">最多只允许添加 %s 个附件。</string>
     <string name="hockeyapp_feedback_attachment_loading">加载中…</string>
     <string name="hockeyapp_feedback_attachment_error">错误</string>
+    <string name="hockeyapp_feedback_name_hint_required">Name. Required field</string>
+    <string name="hockeyapp_feedback_email_hint_required">Email. Required field</string>
+    <string name="hockeyapp_feedback_subject_hint_required">Subject. Required field</string>
+    <string name="hockeyapp_feedback_message_hint_required">Message. Required field</string>
 
     <!-- Send Feedback Task -->
     <string name="hockeyapp_feedback_sending_feedback_text">发送反馈中…</string>
@@ -65,6 +69,8 @@
     <string name="hockeyapp_login_email_hint">电子邮件</string>
     <string name="hockeyapp_login_password_hint">密码</string>
     <string name="hockeyapp_login_login_button_text">登录</string>
+    <string name="hockeyapp_login_email_hint_required">Email. Required field</string>
+    <string name="hockeyapp_login_password_hint_required">Password. Required field</string>
 
     <!-- Paint Activity -->
     <string name="hockeyapp_paint_indicator_toast">来画点东西吧！</string>
