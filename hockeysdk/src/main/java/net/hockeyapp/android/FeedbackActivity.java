@@ -56,9 +56,8 @@ import java.util.List;
 
 /**
  * <h3>Description</h3>
- *
+ * <p>
  * Activity to show the feedback form.
- *
  **/
 public class FeedbackActivity extends Activity implements OnClickListener {
 
@@ -671,6 +670,7 @@ public class FeedbackActivity extends Activity implements OnClickListener {
                     try {
                         date = format.parse(mFeedbackMessages.get(0).getCreatedAt());
                         mLastUpdatedTextView.setText(String.format(getString(R.string.hockeyapp_feedback_last_updated_text), formatNew.format(date)));
+                        mLastUpdatedTextView.setContentDescription(mLastUpdatedTextView.getText());
                         mLastUpdatedTextView.setVisibility(View.VISIBLE);
                     } catch (ParseException e1) {
                         e1.printStackTrace();

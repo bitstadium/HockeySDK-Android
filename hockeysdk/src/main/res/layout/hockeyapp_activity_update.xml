@@ -68,6 +68,7 @@
             android:paddingRight="20dp"
             android:paddingTop="10dp"
             android:text="@string/hockeyapp_update_button"
+            android:contentDescription="@string/hockeyapp_update_button"
             android:textColor="@color/hockeyapp_text_white"
             android:textSize="16sp"/>
 

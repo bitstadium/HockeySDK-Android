@@ -65,7 +65,8 @@
                 style="@style/HockeyApp.ButtonStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/hockeyapp_feedback_attachment_button_text" />
+                android:text="@string/hockeyapp_feedback_attachment_button_text"
+                android:contentDescription="@string/hockeyapp_feedback_attachment_button_text"/>
 
             <Button
                 android:id="@+id/button_send"
@@ -73,6 +74,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/hockeyapp_feedback_send_button_text"
+                android:contentDescription="@string/hockeyapp_feedback_send_button_text"
                 android:layout_marginTop="10dp" />
 
         </LinearLayout>
@@ -126,7 +128,8 @@
                 android:gravity="center"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
-                android:text="@string/hockeyapp_feedback_response_button_text" />
+                android:text="@string/hockeyapp_feedback_response_button_text"
+                android:contentDescription="@string/hockeyapp_feedback_response_button_text"/>
 
             <Button
                 android:id="@+id/button_refresh"
@@ -138,7 +141,8 @@
                 android:layout_marginLeft="5dp"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="@string/hockeyapp_feedback_refresh_button_text" />
+                android:text="@string/hockeyapp_feedback_refresh_button_text"
+                android:contentDescription="@string/hockeyapp_feedback_refresh_button_text"/>
 
 
         </LinearLayout>
