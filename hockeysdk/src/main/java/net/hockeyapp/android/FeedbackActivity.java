@@ -495,6 +495,8 @@ public class FeedbackActivity extends Activity implements OnClickListener {
             mSubjectInput = (EditText) findViewById(R.id.input_subject);
             mTextInput = (EditText) findViewById(R.id.input_message);
 
+            configureHints();
+
             /** Check to see if the Name and Email are saved in {@link SharedPreferences} */
             if (!mFeedbackViewInitialized) {
                 String nameEmailSubject = PrefsUtil.getInstance().getNameEmailFromPrefs(mContext);
@@ -593,6 +595,17 @@ public class FeedbackActivity extends Activity implements OnClickListener {
             return true;
 
         } else return false;
+    }
+
+    private void configureHints() {
+        if (FeedbackManager.getRequireUserName() == FeedbackUserDataElement.REQUIRED) {
+            mNameInput.setHint(getString(R.string.hockeyapp_feedback_name_hint_required));
+        }
+        if (FeedbackManager.getRequireUserEmail() == FeedbackUserDataElement.REQUIRED) {
+            mEmailInput.setHint(getString(R.string.hockeyapp_feedback_email_hint_required));
+        }
+        mSubjectInput.setHint(getString(R.string.hockeyapp_feedback_subject_hint_required));
+        mTextInput.setHint(getString(R.string.hockeyapp_feedback_message_hint_required));
     }
 
     private void configureAppropriateView() {
