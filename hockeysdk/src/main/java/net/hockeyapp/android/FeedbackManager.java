@@ -105,10 +105,19 @@ public class FeedbackManager {
      */
     public static void register(Context context) {
         String appIdentifier = Util.getAppIdentifier(context);
-        if (appIdentifier == null || appIdentifier.length() == 0) {
-            throw new IllegalArgumentException("HockeyApp app identifier was not configured correctly in manifest or build configuration.");
-        }
         register(context, appIdentifier);
+    }
+
+    /**
+     * Registers new Feedback manager.
+     * HockeyApp App Identifier is read from configuration values in AndroidManifest.xml
+     *
+     * @param context   The context to use. Usually your Activity object.
+     * @param listener  Implement for callback functions.
+     */
+    public static void register(Context context, FeedbackManagerListener listener) {
+        String appIdentifier = Util.getAppIdentifier(context);
+        register(context, appIdentifier, listener);
     }
 
     /**

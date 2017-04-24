@@ -95,20 +95,32 @@ public class LoginManager {
      */
     public static void register(final Context context, String appSecret, int mode) {
         String appIdentifier = Util.getAppIdentifier(context);
-        if (TextUtils.isEmpty(appIdentifier)) {
-            throw new IllegalArgumentException("HockeyApp app identifier was not configured correctly in manifest or build configuration.");
-        }
         register(context, appIdentifier, appSecret, mode, (Class<?>) null);
+    }
+
+    /**
+     * Registers new login manager.
+     * HockeyApp App Identifier is read from configuration values in AndroidManifest.xml.
+     *
+     * @param context   The context to use. Usually your Activity object. Has to be
+     *                  of class Activity or subclass for interactive login.
+     * @param appSecret The App Secret of your app on HockeyApp.
+     * @param mode      The login mode to use.
+     * @param listener  Instance of LoginListener
+     */
+    public static void register(final Context context, String appSecret, int mode, LoginManagerListener listener) {
+        String appIdentifier = Util.getAppIdentifier(context);
+        register(context, appIdentifier, appSecret, mode, listener);
     }
 
     /**
      * Registers new LoginManager.
      *
-     * @param context       the context to use. Usually your Activity object.
-     * @param appIdentifier the App ID of your app on HockeyApp.
-     * @param appSecret     the App Secret of your app on HockeyApp.
-     * @param mode          the login mode.
-     * @param listener      instance of LoginListener
+     * @param context       The context to use. Usually your Activity object.
+     * @param appIdentifier The App ID of your app on HockeyApp.
+     * @param appSecret     The App Secret of your app on HockeyApp.
+     * @param mode          The login mode.
+     * @param listener      Instance of LoginListener
      */
     public static void register(final Context context, String appIdentifier, String appSecret, int mode, LoginManagerListener listener) {
         LoginManager.listener = listener;

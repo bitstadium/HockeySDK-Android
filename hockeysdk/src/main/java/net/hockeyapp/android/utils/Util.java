@@ -236,7 +236,11 @@ public class Util {
      * @return the HockeyApp AppIdentifier
      */
     public static String getAppIdentifier(Context context) {
-        return getManifestString(context, APP_IDENTIFIER_KEY);
+        String appIdentifier = getManifestString(context, APP_IDENTIFIER_KEY);
+        if (TextUtils.isEmpty(appIdentifier)) {
+            throw new IllegalArgumentException("HockeyApp app identifier was not configured correctly in manifest or build configuration.");
+        }
+        return appIdentifier;
     }
 
     /**

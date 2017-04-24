@@ -79,10 +79,21 @@ public class CrashManager {
      */
     public static void register(Context context) {
         String appIdentifier = Util.getAppIdentifier(context);
-        if (TextUtils.isEmpty(appIdentifier)) {
-            throw new IllegalArgumentException("HockeyApp app identifier was not configured correctly in manifest or build configuration.");
-        }
         register(context, appIdentifier);
+    }
+
+    /**
+     * Registers new crash manager and handles existing crash logs.
+     * HockeyApp App Identifier is read from configuration values in AndroidManifest.xml
+     *
+     * @param context   The context to use. Usually your Activity object. If
+     *                  context is not an instance of Activity (or a subclass of it),
+     *                  crashes will be sent automatically.
+     * @param listener  Implement for callback functions.
+     */
+    public static void register(Context context, CrashManagerListener listener) {
+        String appIdentifier = Util.getAppIdentifier(context);
+        register(context, appIdentifier, listener);
     }
 
     /**
