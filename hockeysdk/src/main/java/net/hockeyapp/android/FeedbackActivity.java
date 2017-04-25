@@ -56,7 +56,7 @@ import java.util.List;
 
 /**
  * <h3>Description</h3>
- * <p>
+ *
  * Activity to show the feedback form.
  **/
 public class FeedbackActivity extends Activity implements OnClickListener {
