@@ -79,6 +79,7 @@ public class AttachmentView extends FrameLayout {
         initializeView(context, removable);
 
         mTextView.setText(mFilename);
+        mTextView.setContentDescription(mFilename);
         new AsyncTask<Void, Void, Bitmap>() {
             @Override
             protected Bitmap doInBackground(Void... args) {
@@ -112,6 +113,7 @@ public class AttachmentView extends FrameLayout {
 
         mOrientation = ImageUtils.ORIENTATION_PORTRAIT;
         mTextView.setText(R.string.hockeyapp_feedback_attachment_loading);
+        mTextView.setContentDescription(mTextView.getText());
         configureViewForPlaceholder(false);
     }
 

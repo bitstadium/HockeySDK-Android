@@ -58,7 +58,6 @@ import java.util.List;
  * <h3>Description</h3>
  *
  * Activity to show the feedback form.
- *
  **/
 public class FeedbackActivity extends Activity implements OnClickListener {
 
@@ -496,6 +495,8 @@ public class FeedbackActivity extends Activity implements OnClickListener {
             mSubjectInput = (EditText) findViewById(R.id.input_subject);
             mTextInput = (EditText) findViewById(R.id.input_message);
 
+            configureHints();
+
             /** Check to see if the Name and Email are saved in {@link SharedPreferences} */
             if (!mFeedbackViewInitialized) {
                 String nameEmailSubject = PrefsUtil.getInstance().getNameEmailFromPrefs(mContext);
@@ -596,6 +597,17 @@ public class FeedbackActivity extends Activity implements OnClickListener {
         } else return false;
     }
 
+    private void configureHints() {
+        if (FeedbackManager.getRequireUserName() == FeedbackUserDataElement.REQUIRED) {
+            mNameInput.setHint(getString(R.string.hockeyapp_feedback_name_hint_required));
+        }
+        if (FeedbackManager.getRequireUserEmail() == FeedbackUserDataElement.REQUIRED) {
+            mEmailInput.setHint(getString(R.string.hockeyapp_feedback_email_hint_required));
+        }
+        mSubjectInput.setHint(getString(R.string.hockeyapp_feedback_subject_hint_required));
+        mTextInput.setHint(getString(R.string.hockeyapp_feedback_message_hint_required));
+    }
+
     private void configureAppropriateView() {
         /** Try to retrieve the Feedback Token from {@link SharedPreferences} */
         if (!mForceNewThread || mInSendFeedback) {
@@ -671,6 +683,7 @@ public class FeedbackActivity extends Activity implements OnClickListener {
                     try {
                         date = format.parse(mFeedbackMessages.get(0).getCreatedAt());
                         mLastUpdatedTextView.setText(String.format(getString(R.string.hockeyapp_feedback_last_updated_text), formatNew.format(date)));
+                        mLastUpdatedTextView.setContentDescription(mLastUpdatedTextView.getText());
                         mLastUpdatedTextView.setVisibility(View.VISIBLE);
                     } catch (ParseException e1) {
                         e1.printStackTrace();

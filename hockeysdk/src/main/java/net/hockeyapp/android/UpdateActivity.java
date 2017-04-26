@@ -223,6 +223,7 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
     protected void configureView() {
         TextView nameLabel = (TextView) findViewById(R.id.label_title);
         nameLabel.setText(getAppName());
+        nameLabel.setContentDescription(getAppName());
 
         final TextView versionLabel = (TextView) findViewById(R.id.label_version);
         final String versionString = "Version " + mVersionHelper.getVersionString();
@@ -240,6 +241,7 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
                         long appSize = ((GetFileSizeTask) task).getSize();
                         String appSizeString = String.format(Locale.US, "%.2f", appSize / (1024.0f * 1024.0f)) + " MB";
                         versionLabel.setText(getString(R.string.hockeyapp_update_version_details_label, versionString, fileDate, appSizeString));
+                        versionLabel.setContentDescription(versionLabel.getText());
                     }
                 }
             });

@@ -61,12 +61,15 @@ public class FeedbackMessageView extends LinearLayout {
         try {
             Date date = DATE_FORMAT_IN.parse(mFeedbackMessage.getCreatedAt());
             mDateTextView.setText(DATE_FORMAT_OUT.format(date));
+            mDateTextView.setContentDescription(DATE_FORMAT_OUT.format(date));
         } catch (ParseException e) {
             e.printStackTrace();
         }
 
         mAuthorTextView.setText(mFeedbackMessage.getName());
+        mAuthorTextView.setContentDescription(mFeedbackMessage.getName());
         mMessageTextView.setText(mFeedbackMessage.getText());
+        mMessageTextView.setContentDescription(mFeedbackMessage.getText());
 
         mAttachmentListView.removeAllViews();
         for (FeedbackAttachment feedbackAttachment : mFeedbackMessage.getFeedbackAttachments()) {

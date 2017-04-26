@@ -61,6 +61,7 @@
             android:background="@drawable/hockeyapp_btn_background"
             android:minWidth="120dp"
             android:text="@string/hockeyapp_update_button"
+            android:contentDescription="@string/hockeyapp_update_button"
             android:textColor="@color/hockeyapp_text_white"
             android:textSize="16sp"/>
 
