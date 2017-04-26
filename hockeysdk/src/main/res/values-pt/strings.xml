@@ -54,10 +54,10 @@
     <string name="hockeyapp_feedback_max_attachments_allowed">Máximo %s anexos permitidos.</string>
     <string name="hockeyapp_feedback_attachment_loading">Carregando…</string>
     <string name="hockeyapp_feedback_attachment_error">Erro</string>
-    <string name="hockeyapp_feedback_name_hint_required">Name. Required field</string>
-    <string name="hockeyapp_feedback_email_hint_required">Email. Required field</string>
-    <string name="hockeyapp_feedback_subject_hint_required">Subject. Required field</string>
-    <string name="hockeyapp_feedback_message_hint_required">Message. Required field</string>
+    <string name="hockeyapp_feedback_name_hint_required">Nome (Necessário)</string>
+    <string name="hockeyapp_feedback_email_hint_required">Email (Necessário)</string>
+    <string name="hockeyapp_feedback_subject_hint_required">Assunto (Necessário)</string>
+    <string name="hockeyapp_feedback_message_hint_required">Mensagem (Necessário)</string>
 
     <!-- Send Feedback Task -->
     <string name="hockeyapp_feedback_sending_feedback_text">Enviando Feedback…</string>
@@ -70,8 +70,8 @@
     <string name="hockeyapp_login_email_hint">Email</string>
     <string name="hockeyapp_login_password_hint">Senha</string>
     <string name="hockeyapp_login_login_button_text">Login</string>
-    <string name="hockeyapp_login_email_hint_required">Email. Required field</string>
-    <string name="hockeyapp_login_password_hint_required">Password. Required field</string>
+    <string name="hockeyapp_login_email_hint_required">Email (Necessário)</string>
+    <string name="hockeyapp_login_password_hint_required">Senha (Necessário)</string>
 
     <!-- Paint Activity -->
     <string name="hockeyapp_paint_indicator_toast">Desenhe algo!</string>

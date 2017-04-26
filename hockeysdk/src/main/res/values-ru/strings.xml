@@ -53,10 +53,10 @@
     <string name="hockeyapp_feedback_max_attachments_allowed">Количество вложений не может быть более чем %s</string>
     <string name="hockeyapp_feedback_attachment_loading">Загрузка…</string>
     <string name="hockeyapp_feedback_attachment_error">Ошибка</string>
-    <string name="hockeyapp_feedback_name_hint_required">Name. Required field</string>
-    <string name="hockeyapp_feedback_email_hint_required">Email. Required field</string>
-    <string name="hockeyapp_feedback_subject_hint_required">Subject. Required field</string>
-    <string name="hockeyapp_feedback_message_hint_required">Message. Required field</string>
+    <string name="hockeyapp_feedback_name_hint_required">Имя (Обязательное поле)</string>
+    <string name="hockeyapp_feedback_email_hint_required">Email (Обязательное поле)</string>
+    <string name="hockeyapp_feedback_subject_hint_required">Тема (Обязательное поле)</string>
+    <string name="hockeyapp_feedback_message_hint_required">Сообщение (Обязательное поле)</string>
 
     <!-- Send Feedback Task -->
     <string name="hockeyapp_feedback_sending_feedback_text">Отправка отзыва…</string>
@@ -69,8 +69,8 @@
     <string name="hockeyapp_login_email_hint">Email</string>
     <string name="hockeyapp_login_password_hint">Пароль</string>
     <string name="hockeyapp_login_login_button_text">Логин</string>
-    <string name="hockeyapp_login_email_hint_required">Email. Required field</string>
-    <string name="hockeyapp_login_password_hint_required">Password. Required field</string>
+    <string name="hockeyapp_login_email_hint_required">Email (Обязательное поле)</string>
+    <string name="hockeyapp_login_password_hint_required">Пароль (Обязательное поле)</string>
 
     <!-- Paint Activity -->
     <string name="hockeyapp_paint_indicator_toast">Нарисуйте что нибудь!</string>

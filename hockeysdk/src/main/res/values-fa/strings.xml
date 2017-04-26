@@ -53,10 +53,10 @@
     <string name="hockeyapp_feedback_max_attachments_allowed">تنها %s ضمیمه مجاز است.</string>
     <string name="hockeyapp_feedback_attachment_loading">...در حال بارگذاری</string>
     <string name="hockeyapp_feedback_attachment_error">خطا</string>
-    <string name="hockeyapp_feedback_name_hint_required">Name. Required field</string>
-    <string name="hockeyapp_feedback_email_hint_required">Email. Required field</string>
-    <string name="hockeyapp_feedback_subject_hint_required">Subject. Required field</string>
-    <string name="hockeyapp_feedback_message_hint_required">Message. Required field</string>
+    <string name="hockeyapp_feedback_name_hint_required">نام (مورد نیاز)</string>
+    <string name="hockeyapp_feedback_email_hint_required">ایمیل (مورد نیاز)</string>
+    <string name="hockeyapp_feedback_subject_hint_required">موضوع (مورد نیاز)</string>
+    <string name="hockeyapp_feedback_message_hint_required">متن پیام (مورد نیاز)</string>
 
     <!-- Send Feedback Task -->
     <string name="hockeyapp_feedback_sending_feedback_text">...در حال ارسال بازخورد</string>
@@ -69,8 +69,8 @@
     <string name="hockeyapp_login_email_hint">ایمیل</string>
     <string name="hockeyapp_login_password_hint">کلمه عبور</string>
     <string name="hockeyapp_login_login_button_text">ورود</string>
-    <string name="hockeyapp_login_email_hint_required">Email. Required field</string>
-    <string name="hockeyapp_login_password_hint_required">Password. Required field</string>
+    <string name="hockeyapp_login_email_hint_required">ایمیل (مورد نیاز)</string>
+    <string name="hockeyapp_login_password_hint_required">کلمه عبور (مورد نیاز)</string>
 
     <!-- Paint Activity -->
     <string name="hockeyapp_paint_indicator_toast">!چیزی را رسم کنید</string>
