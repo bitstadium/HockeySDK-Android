@@ -1,5 +1,7 @@
 package net.hockeyapp.android.metrics;
 
+import android.os.Debug;
+
 import net.hockeyapp.android.metrics.model.Base;
 import net.hockeyapp.android.metrics.model.Data;
 import net.hockeyapp.android.metrics.model.Domain;
@@ -41,6 +43,14 @@ class Channel {
      */
     protected static int mMaxBatchInterval = 15 * 1000;
     /**
+     * Number of queue items which will trigger synchronization in debug mode.
+     */
+    protected static int mMaxBatchCountDebug = 5;
+    /**
+     * Maximum time interval in milliseconds after which a synchronize will be triggered in debug mode.
+     */
+    protected static int mMaxBatchIntervalDebug = 3 * 1000;
+    /**
      * The backing store queue for the channel.
      */
     protected final List<String> mQueue;
@@ -60,6 +70,16 @@ class Channel {
      * Task to be scheduled for synchronizing at a certain max interval.
      */
     private SynchronizeChannelTask mSynchronizeTask;
+
+    /**
+     * Initialize mMaxBatchCount and mMaxBatchInterval with debug values if app is in debug mode.
+     */
+    static {
+       if (Debug.isDebuggerConnected()) {
+           mMaxBatchCount = mMaxBatchCountDebug;
+           mMaxBatchInterval = mMaxBatchIntervalDebug;
+       }
+    }
 
     /**
      * Creates and initializes a new instance.
