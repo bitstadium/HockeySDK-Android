@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/bitstadium/HockeySDK-Android.svg?branch=develop)](https://travis-ci.org/bitstadium/HockeySDK-Android)
 [![Slack Status](https://slack.hockeyapp.net/badge.svg)](https://slack.hockeyapp.net)
 
-## Version 4.1.3
+## Version 4.1.4
 
 ## Introduction
 
@@ -53,7 +53,7 @@ This document contains the following sections:
 ## 1. Requirements
 
 1. We assume that you already have an Android project in Android Studio or another Android IDE.
-2. The SDK runs on devices with Android 2.3 or later, but you need to build your app with Android SDK 3.0 (Level 11) or later for the integration with HockeySDK.
+2. The SDK runs on devices with Android 2.3 or later, but you need to build your app with Android SDK 3.0 (Level 11) or later.
 
 <a id="setup"></a>
 ## 2. Setup
@@ -75,7 +75,7 @@ Please see the "[How to create a new app](http://support.hockeyapp.net/kb/about-
 Add the SDK to your app module's dependencies in Android Studio by adding the following line to your `dependencies { ... }` configuration:
 
 ```groovy
-compile 'net.hockeyapp.android:HockeySDK:4.1.3'
+compile 'net.hockeyapp.android:HockeySDK:4.1.4'
 ```
 
 <a id="integrate-sdk"></a>
@@ -314,7 +314,7 @@ If you don't want to use Gradle or Maven dependency management you can also down
 4. Configure your development tools to use the .aar/.jar file.
 5. In Android Studio, create a new module via `File > New > New Module`
 6. Select **Import .JAR/.AAR Package** and click **Next**.
-7. In the next menu select the .aar/.jar file you just copied to the libs folder. You can rename the module to whatever you want, but we in general recommend leaving it as is. If you don't rename the module, it will match the name of the .aar/.jar file, in this case **HockeySDK-4.1.3**. This way you'll quickly know which version of the SDK you are using in the future.
+7. In the next menu select the .aar/.jar file you just copied to the libs folder. You can rename the module to whatever you want, but we in general recommend leaving it as is. If you don't rename the module, it will match the name of the .aar/.jar file, in this case **HockeySDK-4.1.4**. This way you'll quickly know which version of the SDK you are using in the future.
 8. Make sure Android Studio added the necessary code to integrate the HockeySDK:
 
 Head over to your app's `build.gradle` to verify the dependency was added correctly. It should look like this:
@@ -324,19 +324,19 @@ dependencies {
 	//your other dependencies
 	//...
 	
-    compile project(':HockeySDK-4.1.3')
+    compile project(':HockeySDK-4.1.4')
 }
 ```
 Next, make sure your `settings.gradle` contains the new module:
 
 ```groovy
-include ':app', ':HockeySDK-4.1.3'
+include ':app', ':HockeySDK-4.1.4'
 ```
 
 Finally, check the `build.gradle` of the newly added module:
 ```groovy
 configurations.maybeCreate("default")
-artifacts.add("default", file('HockeySDK-4.1.3.aar'))
+artifacts.add("default", file('HockeySDK-4.1.4.aar'))
 ```
 
 Once you have verified that everything necessary has been added, proceed with [SDK integration](#integrate-sdk).
@@ -527,7 +527,7 @@ However, if you provide a custom user interface fragment for the update distribu
 <a id="documentation"></a>
 ## 5. Documentation
 
-Our documentation can be found on [HockeyApp](http://hockeyapp.net/help/sdk/android/4.1.3/index.html).
+Our documentation can be found on [HockeyApp](http://hockeyapp.net/help/sdk/android/4.1.4/index.html).
 
 <a id="troubleshooting"></a>
 ## 6.Troubleshooting
@@ -536,7 +536,7 @@ Our documentation can be found on [HockeyApp](http://hockeyapp.net/help/sdk/andr
 
 2. Check if the `applicationId` in your `build.gradle` file matches the Bundle Identifier of the app in HockeyApp. HockeyApp accepts crashes only if both the App ID and the bundle identifier match their corresponding values in your app. Please note that the package value in your `AndroidManifest.xml` file might differ from the bundle identifier.
 
-3. If your app crashes and you start it again, does the dialog show up which asks the user to send the crash report? If not, please crash your app again, then connect the debugger and set a break point in `CrashManager.java`'s [register](https://github.com/bitstadium/HockeySDK-Android/blob/master/src/main/java/net/hockeyapp/android/CrashManager.java#L100)-method to see why the dialog is not shown.
+3. If your app crashes and you start it again, does the dialog show up which asks the user to send the crash report? If not, please crash your app again, then connect the debugger and set a break point in `CrashManager.java`'s [register](https://github.com/bitstadium/HockeySDK-Android/blob/master/src/main/java/net/hockeyapp/android/CrashManager.java#L100) method to see why the dialog is not shown.
 
 4. If you continue to encouter issues, please [contact us](http://support.hockeyapp.net/discussion/new).
 

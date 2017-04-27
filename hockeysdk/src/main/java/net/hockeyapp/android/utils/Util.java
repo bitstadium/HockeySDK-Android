@@ -236,7 +236,11 @@ public class Util {
      * @return the HockeyApp AppIdentifier
      */
     public static String getAppIdentifier(Context context) {
-        return getManifestString(context, APP_IDENTIFIER_KEY);
+        String appIdentifier = getManifestString(context, APP_IDENTIFIER_KEY);
+        if (TextUtils.isEmpty(appIdentifier)) {
+            throw new IllegalArgumentException("HockeyApp app identifier was not configured correctly in manifest or build configuration.");
+        }
+        return appIdentifier;
     }
 
     /**
@@ -264,10 +268,15 @@ public class Util {
     }
 
     public static boolean isConnectedToNetwork(Context context) {
-        ConnectivityManager connectivityManager = (ConnectivityManager) context.getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (connectivityManager != null) {
-            NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
-            return activeNetwork != null && activeNetwork.isConnected();
+        try {
+            ConnectivityManager connectivityManager = (ConnectivityManager) context.getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+            if (connectivityManager != null) {
+                NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
+                return activeNetwork != null && activeNetwork.isConnected();
+            }
+        } catch (Exception e) {
+            HockeyLog.error("Exception thrown when check network is connected:");
+            e.printStackTrace();
         }
         return false;
     }

@@ -138,10 +138,10 @@ public class Sender {
     protected void send(HttpURLConnection connection, File file, String persistedData) {
         // TODO Why does this get the file and persistedData reference, even though everything is in the connection?
         // TODO Looks like this will have to be rewritten for its own AsyncTask subclass.
-        logRequest(connection, persistedData);
         if (connection != null && file != null && persistedData != null) {
-            mRequestCount.getAndIncrement();
             try {
+                mRequestCount.getAndIncrement();
+                logRequest(connection, persistedData);
                 // Starts the query
                 connection.connect();
                 // read the response code while we're ready to catch the IO exception
@@ -149,11 +149,19 @@ public class Sender {
                 // process the response
                 onResponse(connection, responseCode, persistedData, file);
             } catch (IOException e) {
-                //Probably offline
-                HockeyLog.debug(TAG, "Couldn't send data with IOException: " + e.toString());
+                // Probably offline
+                HockeyLog.debug(TAG, "Couldn't send data with " + e.toString());
                 mRequestCount.getAndDecrement();
                 if (this.getPersistence() != null) {
                     HockeyLog.debug(TAG, "Persisting because of IOException: We're probably offline.");
+                    this.getPersistence().makeAvailable(file); //send again later
+                }
+            } catch (SecurityException e) {
+                // Permission denied
+                HockeyLog.debug(TAG, "Couldn't send data with " + e.toString());
+                mRequestCount.getAndDecrement();
+                if (this.getPersistence() != null) {
+                    HockeyLog.debug(TAG, "Persisting because of SecurityException: Missing INTERNET permission or the user might have removed the internet permission.");
                     this.getPersistence().makeAvailable(file); //send again later
                 }
             }
@@ -309,11 +317,11 @@ public class Sender {
      * @param connection the connection
      * @param payload    the payload of telemetry data
      */
-    private void logRequest(HttpURLConnection connection, String payload) {
+    private void logRequest(HttpURLConnection connection, String payload) throws IOException, SecurityException {
         // TODO Rename this to reflect the true nature of this method: Sending the payload
         Writer writer = null;
         try {
-            if ((connection != null) && (payload != null)) {
+            if (connection != null && payload != null) {
                 HockeyLog.debug(TAG, "Sending payload:\n" + payload);
                 HockeyLog.debug(TAG, "Using URL:" + connection.getURL().toString());
                 //the following 3 lines actually appends the payload to the connection
@@ -321,8 +329,6 @@ public class Sender {
                 writer.write(payload);
                 writer.flush();
             }
-        } catch (IOException e) {
-            HockeyLog.debug(TAG, "Couldn't log data with: " + e.toString());
         } finally {
             if (writer != null) {
                 try {

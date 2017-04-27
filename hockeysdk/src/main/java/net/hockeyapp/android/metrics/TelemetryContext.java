@@ -161,23 +161,11 @@ class TelemetryContext {
         // App version
         String version = "unknown";
         mPackageName = "";
-
-        try {
-            final PackageManager manager = mContext.getPackageManager();
-            final PackageInfo info = manager
-                    .getPackageInfo(mContext.getPackageName(), 0);
-
-            if (info.packageName != null) {
-                mPackageName = info.packageName;
-            }
-
-            String appBuild = Integer.toString(info.versionCode);
-            version = String.format("%s (%S)", info.versionName, appBuild);
-        } catch (PackageManager.NameNotFoundException e) {
-            HockeyLog.debug(TAG, "Could not get application context");
-        } finally {
-            setAppVersion(version);
+        if (Constants.APP_PACKAGE != null) {
+            mPackageName = Constants.APP_PACKAGE;
         }
+        version = String.format("%s (%S)", Constants.APP_VERSION_NAME, Constants.APP_VERSION);
+        setAppVersion(version);
 
         // Hockey SDK version
         String sdkVersionString = BuildConfig.VERSION_NAME;
