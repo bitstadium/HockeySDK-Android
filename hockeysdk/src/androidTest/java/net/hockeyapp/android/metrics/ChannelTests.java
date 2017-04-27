@@ -1,5 +1,6 @@
 package net.hockeyapp.android.metrics;
 
+import android.os.Debug;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.InstrumentationTestCase;
@@ -98,6 +99,18 @@ public class ChannelTests extends InstrumentationTestCase {
         Assert.assertEquals(0, sut.mQueue.size());
 
         verify(mockPersistence).persist(any(String[].class));
+    }
+
+    @Test
+    public void testMaxBatchCountAndIntervalAreValid() {
+        // We can not mock Debug.isDebuggerConnected in androidTest so we just check it
+        if (Debug.isDebuggerConnected()) {
+            Assert.assertEquals(PublicChannel.mMaxBatchCount, PublicChannel.mMaxBatchCountDebug);
+            Assert.assertEquals(PublicChannel.mMaxBatchInterval, PublicChannel.mMaxBatchIntervalDebug);
+        } else {
+            Assert.assertEquals(PublicChannel.mMaxBatchCount, PublicChannel.mMaxBatchCount);
+            Assert.assertEquals(PublicChannel.mMaxBatchInterval, PublicChannel.mMaxBatchInterval);
+        }
     }
 
     @Test
