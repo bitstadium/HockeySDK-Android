@@ -667,7 +667,7 @@ public class FeedbackActivity extends Activity implements OnClickListener {
             public void run() {
                 configureFeedbackView(true);
 
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssX");
                 SimpleDateFormat formatNew = new SimpleDateFormat("d MMM h:mm a");
 
                 Date date = null;
