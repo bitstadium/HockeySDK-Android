@@ -1,7 +1,5 @@
 package net.hockeyapp.android.metrics;
 
-import android.os.Debug;
-
 import net.hockeyapp.android.metrics.model.Base;
 import net.hockeyapp.android.metrics.model.Data;
 import net.hockeyapp.android.metrics.model.Domain;
@@ -75,7 +73,7 @@ class Channel {
      * Initialize mMaxBatchCount and mMaxBatchInterval with debug values if app is in debug mode.
      */
     static {
-       if (Debug.isDebuggerConnected()) {
+       if (Util.isDebuggerConnected()) {
            mMaxBatchCount = mMaxBatchCountDebug;
            mMaxBatchInterval = mMaxBatchIntervalDebug;
        }

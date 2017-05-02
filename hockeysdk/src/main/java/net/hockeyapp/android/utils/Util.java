@@ -13,6 +13,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Debug;
 import android.text.TextUtils;
 import net.hockeyapp.android.R;
 
@@ -362,5 +363,14 @@ public class Util {
      */
     public static boolean sessionTrackingSupported() {
         return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH);
+    }
+
+    /**
+     * Determines if a debugger is currently attached.
+     *
+     * @return YES if debugger is attached, otherwise NO.
+     */
+    public static boolean isDebuggerConnected(){
+        return Debug.isDebuggerConnected();
     }
 }

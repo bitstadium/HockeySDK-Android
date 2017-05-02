@@ -102,18 +102,6 @@ public class ChannelTests extends InstrumentationTestCase {
     }
 
     @Test
-    public void testMaxBatchCountAndIntervalAreValid() {
-        // We can not mock Debug.isDebuggerConnected in androidTest so we just check it
-        if (Debug.isDebuggerConnected()) {
-            Assert.assertEquals(PublicChannel.mMaxBatchCount, PublicChannel.mMaxBatchCountDebug);
-            Assert.assertEquals(PublicChannel.mMaxBatchInterval, PublicChannel.mMaxBatchIntervalDebug);
-        } else {
-            Assert.assertEquals(PublicChannel.mMaxBatchCount, PublicChannel.mMaxBatchCount);
-            Assert.assertEquals(PublicChannel.mMaxBatchInterval, PublicChannel.mMaxBatchInterval);
-        }
-    }
-
-    @Test
     public void testCreateEnvelopeForTelemetryData() {
         SessionStateData sessionStateData = new SessionStateData();
         sessionStateData.setState(SessionState.START);
