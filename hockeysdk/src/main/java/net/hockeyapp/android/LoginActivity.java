@@ -127,8 +127,8 @@ public class LoginActivity extends Activity {
                     intent.putExtra(LoginManager.LOGIN_EXIT_KEY, true);
                     startActivity(intent);
                 }
-                return true;
             }
+            return true;
         }
 
         return super.onKeyDown(keyCode, event);
