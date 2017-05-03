@@ -230,7 +230,20 @@ public class FeedbackActivity extends Activity implements OnClickListener {
 
         initFeedbackHandler();
         initParseFeedbackHandler();
+        restoreSendFeedbackTask();
         configureAppropriateView();
+    }
+
+    private void restoreSendFeedbackTask() {
+        Object object = getLastNonConfigurationInstance();
+        if (object != null && object instanceof SendFeedbackTask) {
+            mSendFeedbackTask = (SendFeedbackTask) object;
+            /**
+             * We are restoring mSendFeedbackTask object and we need to replace old handler
+             * with newly created, so that task could send messages to right handler.
+             */
+            mSendFeedbackTask.setHandler(mFeedbackHandler);
+        }
     }
 
     /**
@@ -268,9 +281,16 @@ public class FeedbackActivity extends Activity implements OnClickListener {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        if (mSendFeedbackTask != null){
+            mSendFeedbackTask.attach(this);
+        }
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
-
         if (mSendFeedbackTask != null) {
             mSendFeedbackTask.detach();
         }
