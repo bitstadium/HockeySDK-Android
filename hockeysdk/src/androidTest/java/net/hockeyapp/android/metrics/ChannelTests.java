@@ -1,5 +1,6 @@
 package net.hockeyapp.android.metrics;
 
+import android.os.Debug;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.InstrumentationTestCase;
