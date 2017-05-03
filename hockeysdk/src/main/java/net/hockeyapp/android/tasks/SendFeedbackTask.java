@@ -105,22 +105,23 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
 
     public void attach(Context context) {
         this.mContext = context;
+        if (getStatus() == Status.RUNNING && (mProgressDialog == null || !mProgressDialog.isShowing()) && mShowProgressDialog) {
+            mProgressDialog = ProgressDialog.show(mContext, "", getLoadingMessage(), true, false);
+        }
     }
 
     public void detach() {
         mContext = null;
-        mProgressDialog = null;
+        if (mProgressDialog != null) {
+            mProgressDialog.dismiss();
+            mProgressDialog = null;
+        }
     }
 
     @Override
     protected void onPreExecute() {
-        String loadingMessage = mContext.getString(R.string.hockeyapp_feedback_sending_feedback_text);
-        if (mIsFetchMessages) {
-            loadingMessage = mContext.getString(R.string.hockeyapp_feedback_fetching_feedback_text);
-        }
-
         if ((mProgressDialog == null || !mProgressDialog.isShowing()) && mShowProgressDialog) {
-            mProgressDialog = ProgressDialog.show(mContext, "", loadingMessage, true, false);
+            mProgressDialog = ProgressDialog.show(mContext, "", getLoadingMessage(), true, false);
         }
     }
 
@@ -329,5 +330,18 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
         }
 
         return result;
+    }
+
+    /**
+     * Builds loading message depending on request type.
+     *
+     * @return loading message for progress bar.
+     */
+    private String getLoadingMessage() {
+        String loadingMessage = mContext.getString(R.string.hockeyapp_feedback_sending_feedback_text);
+        if (mIsFetchMessages) {
+            loadingMessage = mContext.getString(R.string.hockeyapp_feedback_fetching_feedback_text);
+        }
+        return loadingMessage;
     }
 }
