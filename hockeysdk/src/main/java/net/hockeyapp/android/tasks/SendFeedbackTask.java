@@ -103,6 +103,10 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
         this.mLastMessageId = lastMessageId;
     }
 
+    public void setHandler(Handler handler){
+        mHandler = handler;
+    }
+
     public void attach(Context context) {
         this.mContext = context;
         if (getStatus() == Status.RUNNING && (mProgressDialog == null || !mProgressDialog.isShowing()) && mShowProgressDialog) {
