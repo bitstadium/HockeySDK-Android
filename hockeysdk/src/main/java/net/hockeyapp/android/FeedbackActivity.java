@@ -237,7 +237,7 @@ public class FeedbackActivity extends Activity implements OnClickListener {
     private void restoreSendFeedbackTask() {
         Object object = getLastNonConfigurationInstance();
         if (object != null && object instanceof SendFeedbackTask) {
-            mSendFeedbackTask = (SendFeedbackTask) (object);
+            mSendFeedbackTask = (SendFeedbackTask) object;
             /**
              * We are restoring mSendFeedbackTask object and we need to replace old handler
              * with newly created, so that task could send messages to right handler.
