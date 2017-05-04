@@ -1,6 +1,5 @@
 package net.hockeyapp.android.views;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -12,9 +11,14 @@ import net.hockeyapp.android.objects.FeedbackAttachment;
 import net.hockeyapp.android.objects.FeedbackMessage;
 import net.hockeyapp.android.tasks.AttachmentDownloader;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
+
+import static java.text.DateFormat.SHORT;
 
 /**
  * <h3>Description</h3>
@@ -23,11 +27,6 @@ import java.util.Date;
  *
  **/
 public class FeedbackMessageView extends LinearLayout {
-
-    @SuppressLint("SimpleDateFormat")
-    private final static SimpleDateFormat DATE_FORMAT_IN = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-    @SuppressLint("SimpleDateFormat")
-    private final static SimpleDateFormat DATE_FORMAT_OUT = new SimpleDateFormat("d MMM h:mm a");
 
     private TextView mAuthorTextView;
     private TextView mDateTextView;
@@ -59,9 +58,16 @@ public class FeedbackMessageView extends LinearLayout {
         mFeedbackMessage = feedbackMessage;
 
         try {
-            Date date = DATE_FORMAT_IN.parse(mFeedbackMessage.getCreatedAt());
-            mDateTextView.setText(DATE_FORMAT_OUT.format(date));
-            mDateTextView.setContentDescription(DATE_FORMAT_OUT.format(date));
+            /** An ISO 8601 format */
+            DateFormat dateFormatIn = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
+            dateFormatIn.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+            /** Localized short format */
+            DateFormat dateFormatOut = DateFormat.getDateTimeInstance(SHORT, SHORT);
+
+            Date date = dateFormatIn.parse(mFeedbackMessage.getCreatedAt());
+            mDateTextView.setText(dateFormatOut.format(date));
+            mDateTextView.setContentDescription(dateFormatOut.format(date));
         } catch (ParseException e) {
             e.printStackTrace();
         }
