@@ -47,12 +47,17 @@ import net.hockeyapp.android.views.AttachmentListView;
 import net.hockeyapp.android.views.AttachmentView;
 
 import java.lang.ref.WeakReference;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
+
+import static java.text.DateFormat.SHORT;
 
 /**
  * <h3>Description</h3>
@@ -687,9 +692,6 @@ public class FeedbackActivity extends Activity implements OnClickListener {
             public void run() {
                 configureFeedbackView(true);
 
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-                SimpleDateFormat formatNew = new SimpleDateFormat("d MMM h:mm a");
-
                 Date date = null;
                 if (feedbackResponse != null && feedbackResponse.getFeedback() != null &&
                         feedbackResponse.getFeedback().getMessages() != null && feedbackResponse.
@@ -701,8 +703,15 @@ public class FeedbackActivity extends Activity implements OnClickListener {
 
                     /** Set the lastUpdatedTextView text as the date of the latest feedback message */
                     try {
-                        date = format.parse(mFeedbackMessages.get(0).getCreatedAt());
-                        mLastUpdatedTextView.setText(String.format(getString(R.string.hockeyapp_feedback_last_updated_text), formatNew.format(date)));
+                        /** An ISO 8601 format */
+                        DateFormat dateFormatIn = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
+                        dateFormatIn.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+                        /** Localized short format */
+                        DateFormat dateFormatOut = DateFormat.getDateTimeInstance(SHORT, SHORT);
+
+                        date = dateFormatIn.parse(mFeedbackMessages.get(0).getCreatedAt());
+                        mLastUpdatedTextView.setText(String.format(getString(R.string.hockeyapp_feedback_last_updated_text), dateFormatOut.format(date)));
                         mLastUpdatedTextView.setContentDescription(mLastUpdatedTextView.getText());
                         mLastUpdatedTextView.setVisibility(View.VISIBLE);
                     } catch (ParseException e1) {
