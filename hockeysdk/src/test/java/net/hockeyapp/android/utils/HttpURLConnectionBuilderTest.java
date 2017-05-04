@@ -23,4 +23,18 @@ public class HttpURLConnectionBuilderTest {
         builder.writeFormFields(fields);
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testFormFieldsSizeLimit() {
+
+        Map<String, String> fields = new HashMap<>();
+        for(int i = 0; i < HttpURLConnectionBuilder.FIELDS_LIMIT + 1; ++i) {
+            String keyValue = String.valueOf(i);
+            fields.put(keyValue,keyValue);
+        }
+
+        HttpURLConnectionBuilder builder = new HttpURLConnectionBuilder(TEST_URL);
+        builder.setRequestMethod("POST");
+        builder.writeFormFields(fields);
+    }
+
 }

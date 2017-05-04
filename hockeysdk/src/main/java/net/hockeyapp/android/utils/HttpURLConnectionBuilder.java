@@ -34,6 +34,7 @@ public class HttpURLConnectionBuilder {
     private static final int DEFAULT_TIMEOUT = 2 * 60 * 1000;
     public static final String DEFAULT_CHARSET = "UTF-8";
     public static final long FORM_FIELD_LIMIT = 4 * 1024 * 1024;
+    public static final int FIELDS_LIMIT = 25;
 
     private final String mUrlString;
 
@@ -61,6 +62,11 @@ public class HttpURLConnectionBuilder {
     }
 
     public HttpURLConnectionBuilder writeFormFields(Map<String, String> fields) {
+
+        // We should add limit on fields because a large number of fields can throw the OOM exception
+        if (fields.size() > FIELDS_LIMIT) {
+            throw new IllegalArgumentException("Fields size too large: " + fields.size() + " - max allowed: " + FIELDS_LIMIT);
+        }
 
         for (String key: fields.keySet()) {
             String value = fields.get(key);
