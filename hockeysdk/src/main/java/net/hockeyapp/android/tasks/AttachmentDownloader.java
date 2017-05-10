@@ -217,9 +217,12 @@ public class AttachmentDownloader {
         }
 
         private boolean downloadAttachment(String urlString, String filename) {
+            InputStream input = null;
+            OutputStream output = null;
+            HttpURLConnection connection = null;
             try {
                 URL url = new URL(urlString);
-                URLConnection connection = createConnection(url);
+                connection = (HttpURLConnection) createConnection(url);
                 connection.connect();
 
                 int lengthOfFile = connection.getContentLength();
@@ -232,8 +235,8 @@ public class AttachmentDownloader {
                 }
 
                 File file = new File(dropFolder, filename);
-                InputStream input = new BufferedInputStream(connection.getInputStream());
-                OutputStream output = new FileOutputStream(file);
+                input = new BufferedInputStream(connection.getInputStream());
+                output = new FileOutputStream(file);
 
                 byte data[] = new byte[1024];
                 int count = 0;
@@ -245,13 +248,25 @@ public class AttachmentDownloader {
                 }
 
                 output.flush();
-                output.close();
-                input.close();
                 return (total > 0);
 
             } catch (IOException e) {
                 e.printStackTrace();
                 return false;
+            } finally {
+                try {
+                    if (output != null) {
+                        output.close();
+                    }
+                    if (input != null) {
+                        input.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                if (connection != null) {
+                    connection.disconnect();
+                }
             }
         }
 
