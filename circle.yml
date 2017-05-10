@@ -1,0 +1,9 @@
+# This file defines the continuous integration build process to be run at circleci.com.
+
+dependencies:
+  override:
+    - ./gradlew dependencies
+
+test:
+  override:
+    - ./gradlew test assembleDefault
