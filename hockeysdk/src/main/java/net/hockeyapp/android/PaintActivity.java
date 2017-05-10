@@ -20,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import net.hockeyapp.android.utils.HockeyLog;
+import net.hockeyapp.android.utils.ImageUtils;
 import net.hockeyapp.android.views.PaintView;
 
 import java.io.File;
@@ -60,7 +61,7 @@ public class PaintActivity extends Activity {
         int currentOrientation = displayWidth > displayHeight ? ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE :
                 ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
 
-        int desiredOrientation = PaintView.determineOrientation(getContentResolver(), imageUri);
+        int desiredOrientation = ImageUtils.determineOrientation(this, imageUri);
         //noinspection ResourceType
         setRequestedOrientation(desiredOrientation);
 

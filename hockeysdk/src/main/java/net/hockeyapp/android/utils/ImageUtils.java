@@ -1,12 +1,14 @@
 package net.hockeyapp.android.utils;
 
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -16,8 +18,8 @@ import java.io.InputStream;
  * Various functions related to image loading and bitmap scaling.
  */
 public class ImageUtils {
-    public static final int ORIENTATION_PORTRAIT = 0;
-    public static final int ORIENTATION_LANDSCAPE = 1;
+    public static final int ORIENTATION_PORTRAIT = 1;
+    public static final int ORIENTATION_LANDSCAPE = 0;
 
     /**
      * Determines the orientation of the image based on its ratio.
@@ -46,14 +48,21 @@ public class ImageUtils {
      * @return The image orientation, either ORIENTATION_PORTRAIT or ORIENTATION_LANDSCAPE.
      * @throws IOException if the URI couldn't be processed
      */
-    public static int determineOrientation(Context context, Uri uri) throws IOException {
+    public static int determineOrientation(Context context, Uri uri) {
         InputStream input = null;
         try {
             input = context.getContentResolver().openInputStream(uri);
             return determineOrientation(input);
+        } catch (IOException e) {
+            HockeyLog.error("Unable to determine necessary screen orientation.", e);
+            return ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
         } finally {
-            if (input != null) {
-                input.close();
+            try {
+                if (input != null) {
+                    input.close();
+                }
+            } catch (IOException e){
+                HockeyLog.error("Unable to close input stream.", e);
             }
         }
     }
@@ -121,22 +130,29 @@ public class ImageUtils {
      * @throws IOException if the URI couldn't be processed
      */
     public static Bitmap decodeSampledBitmap(Context context, Uri imageUri, int reqWidth, int reqHeight) throws IOException {
-        // First decode with inJustDecodeBounds=true to check dimensions
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
+        InputStream inputBounds = null, inputBitmap = null;
+        try {
+            // First decode with inJustDecodeBounds=true to check dimensions
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
 
-        InputStream inputBounds = context.getContentResolver().openInputStream(imageUri);
-        BitmapFactory.decodeStream(inputBounds, null, options);
+            inputBounds = context.getContentResolver().openInputStream(imageUri);
+            BitmapFactory.decodeStream(inputBounds, null, options);
 
-        // Calculate inSampleSize
-        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+            // Calculate inSampleSize
+            options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
 
-        // Decode bitmap with inSampleSize set
-        options.inJustDecodeBounds = false;
-        InputStream inputBitmap = context.getContentResolver().openInputStream(imageUri);
-        Bitmap bitmap = BitmapFactory.decodeStream(inputBitmap, null, options);
+            // Decode bitmap with inSampleSize set
+            options.inJustDecodeBounds = false;
+            inputBitmap = context.getContentResolver().openInputStream(imageUri);
+            Bitmap bitmap = BitmapFactory.decodeStream(inputBitmap, null, options);
 
-        return bitmap;
+            return bitmap;
+        } finally {
+            inputBounds.close();
+            inputBitmap.close();
+        }
+
     }
 
     /**
