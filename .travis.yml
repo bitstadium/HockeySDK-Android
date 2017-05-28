@@ -18,7 +18,6 @@ android:
   components:
     # Use the latest platform tools
     - tools
-    - tools
     - platform-tools
 
     # Use the desired build tools
