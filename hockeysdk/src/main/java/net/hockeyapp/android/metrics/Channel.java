@@ -120,15 +120,16 @@ class Channel {
             mSynchronizeTask.cancel();
         }
 
-        String[] data;
-        if (!mQueue.isEmpty()) {
-            data = new String[mQueue.size()];
-            mQueue.toArray(data);
-            mQueue.clear();
-
-            if (mPersistence != null) {
-                mPersistence.persist(data);
+        String[] data = null;
+        synchronized (LOCK) {
+            if (!mQueue.isEmpty()) {
+                data = new String[mQueue.size()];
+                mQueue.toArray(data);
+                mQueue.clear();
             }
+        }
+        if (mPersistence != null && data != null) {
+            mPersistence.persist(data);
         }
     }
 
