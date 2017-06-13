@@ -475,18 +475,18 @@ public class MetricsManager {
             HockeyLog.warn("User Metrics is disabled. Will not track event.");
             return;
         }
+        final EventData eventItem = new EventData();
+        eventItem.setName(eventName);
+        if (properties != null) {
+            eventItem.setProperties(properties);
+        }
+        if (measurements != null) {
+            eventItem.setMeasurements(measurements);
+        }
         try {
             AsyncTaskUtils.execute(new AsyncTask<Void, Void, Void>() {
                 @Override
                 protected Void doInBackground(Void... params) {
-                    EventData eventItem = new EventData();
-                    eventItem.setName(eventName);
-                    if (properties != null) {
-                        eventItem.setProperties(properties);
-                    }
-                    if (measurements != null) {
-                        eventItem.setMeasurements(measurements);
-                    }
                     Data<Domain> data = createData(eventItem);
                     sChannel.enqueueData(data);
                     return null;
