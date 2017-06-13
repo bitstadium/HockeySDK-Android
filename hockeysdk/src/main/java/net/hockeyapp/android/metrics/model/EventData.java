@@ -98,7 +98,7 @@ public class EventData extends TelemetryData {
      * Sets the Properties property.
      */
     public void setProperties(Map<String, String> value) {
-        this.properties = value;
+        this.properties = value != null ? new LinkedHashMap<String, String>(value) : null;
     }
 
     /**
@@ -115,7 +115,7 @@ public class EventData extends TelemetryData {
      * Sets the Measurements property.
      */
     public void setMeasurements(Map<String, Double> value) {
-        this.measurements = value;
+        this.measurements = value != null ? new LinkedHashMap<String, Double>(value) : null;
     }
 
     /**
