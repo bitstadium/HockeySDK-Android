@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.os.Parcelable;
 import android.text.TextUtils;
@@ -64,7 +65,7 @@ import static java.text.DateFormat.SHORT;
  *
  * Activity to show the feedback form.
  **/
-public class FeedbackActivity extends Activity implements OnClickListener {
+public class FeedbackActivity extends Activity implements OnClickListener, View.OnFocusChangeListener {
 
     /**
      * The URL of the feedback endpoint for this app.
@@ -359,6 +360,18 @@ public class FeedbackActivity extends Activity implements OnClickListener {
         }
     }
 
+    @Override
+    public void onFocusChange(View v, boolean hasFocus) {
+        if (hasFocus) {
+                if (v instanceof EditText) {
+                showKeyboard(v);
+            }
+            else if (v instanceof Button) {
+                hideKeyboard();
+            }
+        }
+    }
+
     /**
      * Called when context menu is needed (on add attachment button).
      */
@@ -507,18 +520,24 @@ public class FeedbackActivity extends Activity implements OnClickListener {
 
             mAddResponseButton = (Button) findViewById(R.id.button_add_response);
             mAddResponseButton.setOnClickListener(this);
+            mAddResponseButton.setOnFocusChangeListener(this);
 
             mRefreshButton = (Button) findViewById(R.id.button_refresh);
             mRefreshButton.setOnClickListener(this);
+            mRefreshButton.setOnFocusChangeListener(this);
         } else {
             /** if the token doesn't exist, the feedback details inputs to be sent need to be displayed */
             mWrapperLayoutFeedbackAndMessages.setVisibility(View.GONE);
             mFeedbackScrollview.setVisibility(View.VISIBLE);
 
             mNameInput = (EditText) findViewById(R.id.input_name);
+            mNameInput.setOnFocusChangeListener(this);
             mEmailInput = (EditText) findViewById(R.id.input_email);
+            mEmailInput.setOnFocusChangeListener(this);
             mSubjectInput = (EditText) findViewById(R.id.input_subject);
+            mSubjectInput.setOnFocusChangeListener(this);
             mTextInput = (EditText) findViewById(R.id.input_message);
+            mTextInput.setOnFocusChangeListener(this);
 
             configureHints();
 
@@ -584,10 +603,12 @@ public class FeedbackActivity extends Activity implements OnClickListener {
             /** Use of context menu needs to be enabled explicitly */
             mAddAttachmentButton = (Button) findViewById(R.id.button_attachment);
             mAddAttachmentButton.setOnClickListener(this);
+            mAddAttachmentButton.setOnFocusChangeListener(this);
             registerForContextMenu(mAddAttachmentButton);
 
             mSendFeedbackButton = (Button) findViewById(R.id.button_send);
             mSendFeedbackButton.setOnClickListener(this);
+            mAddAttachmentButton.setOnFocusChangeListener(this);
         }
     }
 
@@ -656,6 +677,11 @@ public class FeedbackActivity extends Activity implements OnClickListener {
      */
     private void createParseFeedbackTask(String feedbackResponseString, String requestType) {
         mParseFeedbackTask = new ParseFeedbackTask(this, feedbackResponseString, mParseFeedbackHandler, requestType);
+    }
+
+    private void showKeyboard(View view) {
+        InputMethodManager manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        manager.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
     }
 
     private void hideKeyboard() {
@@ -763,7 +789,6 @@ public class FeedbackActivity extends Activity implements OnClickListener {
         }
 
         enableDisableSendFeedbackButton(false);
-        hideKeyboard();
 
         String token = mForceNewThread && !mInSendFeedback ? null : PrefsUtil.getInstance().getFeedbackTokenFromPrefs(mContext);
 
@@ -793,11 +818,21 @@ public class FeedbackActivity extends Activity implements OnClickListener {
 
             /** Start the Send Feedback {@link AsyncTask} */
             sendFetchFeedback(mUrl, name, email, subject, text, attachmentUris, token, mFeedbackHandler, false);
+
+            hideKeyboard();
         }
     }
 
-    private void setError(EditText inputField, int feedbackStringId) {
+    private void setError(final EditText inputField, int feedbackStringId) {
         inputField.setError(getString(feedbackStringId));
+
+        // requestFocus and showKeyboard on next frame to read error message via talkback
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                inputField.requestFocus();
+            }
+        });
         enableDisableSendFeedbackButton(true);
     }
 
