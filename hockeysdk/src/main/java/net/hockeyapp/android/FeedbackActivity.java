@@ -362,8 +362,13 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
 
     @Override
     public void onFocusChange(View v, boolean hasFocus) {
-        if (v instanceof Button) {
-            hideKeyboard();
+        if (hasFocus) {
+                if (v instanceof EditText) {
+                showKeyboard(v);
+            }
+            else if (v instanceof Button) {
+                hideKeyboard();
+            }
         }
     }
 
@@ -515,18 +520,24 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
 
             mAddResponseButton = (Button) findViewById(R.id.button_add_response);
             mAddResponseButton.setOnClickListener(this);
+            mAddResponseButton.setOnFocusChangeListener(this);
 
             mRefreshButton = (Button) findViewById(R.id.button_refresh);
             mRefreshButton.setOnClickListener(this);
+            mRefreshButton.setOnFocusChangeListener(this);
         } else {
             /** if the token doesn't exist, the feedback details inputs to be sent need to be displayed */
             mWrapperLayoutFeedbackAndMessages.setVisibility(View.GONE);
             mFeedbackScrollview.setVisibility(View.VISIBLE);
 
             mNameInput = (EditText) findViewById(R.id.input_name);
+            mNameInput.setOnFocusChangeListener(this);
             mEmailInput = (EditText) findViewById(R.id.input_email);
+            mEmailInput.setOnFocusChangeListener(this);
             mSubjectInput = (EditText) findViewById(R.id.input_subject);
+            mSubjectInput.setOnFocusChangeListener(this);
             mTextInput = (EditText) findViewById(R.id.input_message);
+            mTextInput.setOnFocusChangeListener(this);
 
             configureHints();
 
@@ -820,7 +831,6 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
             @Override
             public void run() {
                 inputField.requestFocus();
-                showKeyboard(inputField);
             }
         });
         enableDisableSendFeedbackButton(true);
