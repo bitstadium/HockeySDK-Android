@@ -224,6 +224,7 @@ public class AttachmentView extends FrameLayout {
             imageButton.setAdjustViewBounds(true);
             imageButton.setImageDrawable(getSystemIcon("ic_menu_delete"));
             imageButton.setBackgroundResource(0);
+            imageButton.setContentDescription(getContext().getString(R.string.hockeyapp_feedback_remove_attachment_button_text));
             imageButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -255,6 +256,7 @@ public class AttachmentView extends FrameLayout {
         mImageView.setMaxHeight(height);
         mImageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         mImageView.setImageBitmap(bitmap);
+        mImageView.setContentDescription(mAttachmentUri.getLastPathSegment());
         mImageView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -282,6 +284,7 @@ public class AttachmentView extends FrameLayout {
         mImageView.setMinimumWidth(mWidthPortrait);
         mImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
         mImageView.setImageDrawable(getSystemIcon("ic_menu_attachment"));
+        mImageView.setContentDescription(mAttachmentUri.getLastPathSegment());
         mImageView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
