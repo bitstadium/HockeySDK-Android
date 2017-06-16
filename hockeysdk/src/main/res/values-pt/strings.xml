@@ -35,6 +35,7 @@
     <string name="hockeyapp_feedback_message_hint">Mensagem</string>
     <string name="hockeyapp_feedback_last_updated_text">Ultima atualização: %s</string>
     <string name="hockeyapp_feedback_attachment_button_text">Adicionar anexo</string>
+    <string name="hockeyapp_feedback_remove_attachment_button_text">Remover anexo</string>
     <string name="hockeyapp_feedback_send_button_text">Enviar feedback</string>
     <string name="hockeyapp_feedback_response_button_text">Adicionar Resposta</string>
     <string name="hockeyapp_feedback_refresh_button_text">Atualizar</string>
