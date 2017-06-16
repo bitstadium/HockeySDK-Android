@@ -50,7 +50,7 @@
     <string name="hockeyapp_feedback_attach_picture">Adjuntar imagen</string>
     <string name="hockeyapp_feedback_select_file">Seleccionar archivo</string>
     <string name="hockeyapp_feedback_select_picture">Seleccionar imagen</string>
-    <string name="hockeyapp_feedback_max_attachments_allowed">Sólo se permiten %s ficheros adjuntos.</string>
+    <string name="hockeyapp_feedback_max_attachments_allowed">Sólo se permiten %d ficheros adjuntos.</string>
     <string name="hockeyapp_feedback_attachment_loading">Cargando…</string>
     <string name="hockeyapp_feedback_attachment_error">Error</string>
     <string name="hockeyapp_feedback_name_hint_required">Nombre (obligatorio)</string>

@@ -348,8 +348,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
         } else if (viewId == R.id.button_attachment) {
             ViewGroup attachments = (ViewGroup) findViewById(R.id.wrapper_attachments);
             if (attachments.getChildCount() >= MAX_ATTACHMENTS_PER_MSG) {
-                //TODO should we add some more text here?
-                Toast.makeText(this, String.valueOf(MAX_ATTACHMENTS_PER_MSG), Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, String.format(getString(R.string.hockeyapp_feedback_max_attachments_allowed), MAX_ATTACHMENTS_PER_MSG), Toast.LENGTH_SHORT).show();
             } else {
                 openContextMenu(v);
             }
@@ -898,6 +897,14 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
                     success = true;
                 } else if (responseString != null) {
                     feedbackActivity.startParseFeedbackTask(responseString, requestType);
+                    if ("send".equals(requestType)) {
+                        feedbackActivity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(feedbackActivity, R.string.hockeyapp_feedback_sent_toast, Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    }
                     success = true;
                 } else {
                     error.setMessage(feedbackActivity.getString(R.string.hockeyapp_feedback_send_network_error));

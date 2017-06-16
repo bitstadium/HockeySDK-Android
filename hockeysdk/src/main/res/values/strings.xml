@@ -54,7 +54,7 @@
     <string name="hockeyapp_feedback_attach_picture">Attach Picture</string>
     <string name="hockeyapp_feedback_select_file">Select File</string>
     <string name="hockeyapp_feedback_select_picture">Select Picture</string>
-    <string name="hockeyapp_feedback_max_attachments_allowed">Only %s attachments allowed.</string>
+    <string name="hockeyapp_feedback_max_attachments_allowed">Only %d attachments allowed.</string>
     <string name="hockeyapp_feedback_attachment_loading">Loading…</string>
     <string name="hockeyapp_feedback_attachment_error">Error</string>
     <string name="hockeyapp_feedback_name_hint_required">Name (required)</string>
@@ -65,6 +65,7 @@
     <!-- Send Feedback Task -->
     <string name="hockeyapp_feedback_sending_feedback_text">Sending feedback…</string>
     <string name="hockeyapp_feedback_fetching_feedback_text">Retrieving discussions…</string>
+    <string name="hockeyapp_feedback_sent_toast">Feedback sent</string>
 
     <!-- Login Activity -->
     <string name="hockeyapp_login_headline_text">Please enter your HockeyApp account\'s email address and password to authorize access to this app.</string>
