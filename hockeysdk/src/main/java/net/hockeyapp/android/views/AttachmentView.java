@@ -15,8 +15,6 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.accessibility.AccessibilityEvent;
-import android.view.accessibility.AccessibilityManager;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -56,8 +54,6 @@ public class AttachmentView extends FrameLayout {
     private ImageView mImageView;
 
     private TextView mTextView;
-
-    private ImageButton mRemoveButton;
 
     private int mWidthPortrait;
 
@@ -228,21 +224,29 @@ public class AttachmentView extends FrameLayout {
 
         // Remove Button
         if (removable) {
-            mRemoveButton = new ImageButton(context);
-            mRemoveButton.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams
+            ImageButton imageButton = new ImageButton(context);
+            imageButton.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams
                     .WRAP_CONTENT, Gravity.BOTTOM));
-            mRemoveButton.setAdjustViewBounds(true);
-            mRemoveButton.setImageDrawable(getSystemIcon("ic_menu_delete"));
-            mRemoveButton.setBackgroundResource(0);
-            mRemoveButton.setContentDescription(context.getString(R.string.hockeyapp_feedback_attachment_remove_description));
-            mRemoveButton.setOnClickListener(new OnClickListener() {
+            imageButton.setAdjustViewBounds(true);
+            imageButton.setImageDrawable(getSystemIcon("ic_menu_delete"));
+            imageButton.setBackgroundResource(0);
+            imageButton.setContentDescription(context.getString(R.string.hockeyapp_feedback_attachment_remove_description));
+            imageButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     AttachmentView.this.remove();
                 }
             });
+            imageButton.setOnFocusChangeListener(new OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if (hasFocus) {
+                        Util.announceForAccessibility(mTextView, mTextView.getText());
+                    }
+                }
+            });
 
-            bottomView.addView(mRemoveButton);
+            bottomView.addView(imageButton);
         }
 
         bottomView.addView(mTextView);
