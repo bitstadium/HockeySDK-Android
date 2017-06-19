@@ -270,6 +270,7 @@ public class AttachmentView extends FrameLayout {
         mImageView.setMaxHeight(height);
         mImageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         mImageView.setImageBitmap(bitmap);
+        mImageView.setContentDescription(mTextView.getText());
         mImageView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -297,6 +298,7 @@ public class AttachmentView extends FrameLayout {
         mImageView.setMinimumWidth(mWidthPortrait);
         mImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
         mImageView.setImageDrawable(getSystemIcon("ic_menu_attachment"));
+        mImageView.setContentDescription(mTextView.getText());
         mImageView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {

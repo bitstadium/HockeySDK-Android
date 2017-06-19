@@ -96,5 +96,9 @@
 
     <!-- Misc -->
     <string name="hockeyapp_error_no_network_message">Ihr Gerät ist offline. Bitte stellen Sie eine Internetverbindung her und versuchen Sie es erneut.</string>
+    <string name="hockeyapp_feedback_attachment_added">Anhang wurde hinzugefügt</string>
+    <string name="hockeyapp_feedback_attachment_removed">Anhang wurde entfernt</string>
+    <string name="hockeyapp_feedback_attachment_remove_description">Anhang entfernen</string>
+    <string name="hockeyapp_feedback_sent_toast">Feedback wurde gesendet</string>
 
 </resources>

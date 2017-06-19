@@ -96,5 +96,9 @@
 
     <!-- Misc -->
     <string name="hockeyapp_error_no_network_message">Tu dispositivo no está conectado a internet. Por favor, resuelve el problema y vuelve a intentarlo.</string>
+    <string name="hockeyapp_feedback_attachment_added">Archivo adjunto añadido</string>
+    <string name="hockeyapp_feedback_attachment_removed">Archivo adjunto borrado</string>
+    <string name="hockeyapp_feedback_attachment_remove_description">Borrar archivo adjunto</string>
+    <string name="hockeyapp_feedback_sent_toast">Comentario enviado</string>
 
 </resources>
