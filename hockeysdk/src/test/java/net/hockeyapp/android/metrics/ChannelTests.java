@@ -20,8 +20,8 @@ public class ChannelTests {
         mockStatic(Util.class);
         when(Util.isDebuggerConnected()).thenReturn(true);
 
-        assertEquals(Channel.mMaxBatchCount, Channel.mMaxBatchCountDebug);
-        assertEquals(Channel.mMaxBatchInterval, Channel.mMaxBatchIntervalDebug);
+        assertEquals(Channel.getMaxBatchCount(), Channel.MAX_BATCH_COUNT_DEBUG);
+        assertEquals(Channel.getMaxBatchInterval(), Channel.MAX_BATCH_INTERVAL_DEBUG);
     }
 
     @Test
@@ -29,7 +29,7 @@ public class ChannelTests {
         mockStatic(Util.class);
         when(Util.isDebuggerConnected()).thenReturn(false);
 
-        assertEquals(Channel.mMaxBatchCount, Channel.mMaxBatchCount);
-        assertEquals(Channel.mMaxBatchInterval, Channel.mMaxBatchInterval);
+        assertEquals(Channel.getMaxBatchCount(), Channel.MAX_BATCH_COUNT);
+        assertEquals(Channel.getMaxBatchInterval(), Channel.MAX_BATCH_INTERVAL);
     }
 }
