@@ -50,7 +50,7 @@
     <string name="hockeyapp_feedback_attach_picture">Ajouter une image</string>
     <string name="hockeyapp_feedback_select_file">Choisir un fichier</string>
     <string name="hockeyapp_feedback_select_picture">Choisir une image</string>
-    <string name="hockeyapp_feedback_max_attachments_allowed">Il ya un maximum de %s pièces jointes.</string>
+    <string name="hockeyapp_feedback_max_attachments_allowed">Il ya un maximum de %d pièces jointes.</string>
     <string name="hockeyapp_feedback_attachment_loading">Chargement…</string>
     <string name="hockeyapp_feedback_attachment_error">Erreur</string>
     <string name="hockeyapp_feedback_name_hint_required">Nom (requis)</string>
@@ -96,5 +96,9 @@
 
     <!-- Misc -->
     <string name="hockeyapp_error_no_network_message">Votre Android est déconnecté. Établissez une connexion internet et essayez à nouveau, s\'il vous plaît.</string>
+    <string name="hockeyapp_feedback_attachment_added">Pièce jointe ajoutée</string>
+    <string name="hockeyapp_feedback_attachment_removed">Pièce jointe supprimée</string>
+    <string name="hockeyapp_feedback_attachment_remove_description">Supprimer la pièce jointe</string>
+    <string name="hockeyapp_feedback_sent_toast">Commentaires envoyé</string>
 
 </resources>

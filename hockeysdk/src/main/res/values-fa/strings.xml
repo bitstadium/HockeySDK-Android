@@ -50,7 +50,7 @@
     <string name="hockeyapp_feedback_attach_picture">ضمیمه عکس</string>
     <string name="hockeyapp_feedback_select_file">انتخاب فایل</string>
     <string name="hockeyapp_feedback_select_picture">انتخاب عکس</string>
-    <string name="hockeyapp_feedback_max_attachments_allowed">تنها %s ضمیمه مجاز است.</string>
+    <string name="hockeyapp_feedback_max_attachments_allowed">تنها %d ضمیمه مجاز است.</string>
     <string name="hockeyapp_feedback_attachment_loading">...در حال بارگذاری</string>
     <string name="hockeyapp_feedback_attachment_error">خطا</string>
     <string name="hockeyapp_feedback_name_hint_required">نام (مورد نیاز)</string>
@@ -96,4 +96,8 @@
 
     <!-- Misc -->
     <string name="hockeyapp_error_no_network_message">دستگاه شما به اینترنت متصل نیست. لطفا مشکل اتصال را حل و دوباره امتحان کنید.</string>
+    <string name="hockeyapp_feedback_attachment_added">پیوست اضافه شد</string>
+    <string name="hockeyapp_feedback_attachment_removed">فایل پیوست حذف شد</string>
+    <string name="hockeyapp_feedback_attachment_remove_description">حذف پیوست</string>
+    <string name="hockeyapp_feedback_sent_toast">فیدبک ارسال شد</string>
 </resources>

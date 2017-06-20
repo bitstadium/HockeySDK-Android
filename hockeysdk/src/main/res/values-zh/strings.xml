@@ -50,7 +50,7 @@
     <string name="hockeyapp_feedback_attach_picture">添加图片</string>
     <string name="hockeyapp_feedback_select_file">选择文件</string>
     <string name="hockeyapp_feedback_select_picture">选择图片</string>
-    <string name="hockeyapp_feedback_max_attachments_allowed">最多只允许添加 %s 个附件。</string>
+    <string name="hockeyapp_feedback_max_attachments_allowed">最多只允许添加 %d 个附件。</string>
     <string name="hockeyapp_feedback_attachment_loading">加载中…</string>
     <string name="hockeyapp_feedback_attachment_error">错误</string>
     <string name="hockeyapp_feedback_name_hint_required">姓名 (必填)</string>
@@ -96,5 +96,9 @@
 
     <!-- Misc -->
     <string name="hockeyapp_error_no_network_message">您的设备无法访问 网络。请在解决网络连接问题后重试。</string>
+    <string name="hockeyapp_feedback_attachment_added">附件␈已加</string>
+    <string name="hockeyapp_feedback_attachment_removed">附件已被移除</string>
+    <string name="hockeyapp_feedback_attachment_remove_description">移除附件</string>
+    <string name="hockeyapp_feedback_sent_toast">反馈已发送</string>
 
 </resources>

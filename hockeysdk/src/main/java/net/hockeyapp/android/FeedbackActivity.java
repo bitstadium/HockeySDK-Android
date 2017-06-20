@@ -27,6 +27,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ScrollView;
@@ -347,8 +348,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
         } else if (viewId == R.id.button_attachment) {
             ViewGroup attachments = (ViewGroup) findViewById(R.id.wrapper_attachments);
             if (attachments.getChildCount() >= MAX_ATTACHMENTS_PER_MSG) {
-                //TODO should we add some more text here?
-                Toast.makeText(this, String.valueOf(MAX_ATTACHMENTS_PER_MSG), Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, String.format(getString(R.string.hockeyapp_feedback_max_attachments_allowed), MAX_ATTACHMENTS_PER_MSG), Toast.LENGTH_SHORT).show();
             } else {
                 openContextMenu(v);
             }
@@ -366,7 +366,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
                 if (v instanceof EditText) {
                 showKeyboard(v);
             }
-            else if (v instanceof Button) {
+            else if (v instanceof Button || v instanceof ImageButton) {
                 hideKeyboard();
             }
         }
@@ -453,6 +453,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
             if (uri != null) {
                 final ViewGroup attachments = (ViewGroup) findViewById(R.id.wrapper_attachments);
                 attachments.addView(new AttachmentView(this, attachments, uri, true));
+                Util.announceForAccessibility(attachments, getString(R.string.hockeyapp_feedback_attachment_added));
             }
 
         } else if (requestCode == ATTACH_PICTURE) {
@@ -478,9 +479,10 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
             if (uri != null) {
                 final ViewGroup attachments = (ViewGroup) findViewById(R.id.wrapper_attachments);
                 attachments.addView(new AttachmentView(this, attachments, uri, true));
+                Util.announceForAccessibility(attachments, getString(R.string.hockeyapp_feedback_attachment_added));
             }
 
-        } else return;
+        }
     }
 
     @SuppressLint("InflateParams")
@@ -895,6 +897,14 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
                     success = true;
                 } else if (responseString != null) {
                     feedbackActivity.startParseFeedbackTask(responseString, requestType);
+                    if ("send".equals(requestType)) {
+                        feedbackActivity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(feedbackActivity, R.string.hockeyapp_feedback_sent_toast, Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    }
                     success = true;
                 } else {
                     error.setMessage(feedbackActivity.getString(R.string.hockeyapp_feedback_send_network_error));

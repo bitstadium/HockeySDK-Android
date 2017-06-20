@@ -25,6 +25,7 @@ import net.hockeyapp.android.Constants;
 import net.hockeyapp.android.R;
 import net.hockeyapp.android.objects.FeedbackAttachment;
 import net.hockeyapp.android.utils.ImageUtils;
+import net.hockeyapp.android.utils.Util;
 
 import java.io.File;
 
@@ -79,7 +80,7 @@ public class AttachmentView extends FrameLayout {
         initializeView(context, removable);
 
         mTextView.setText(mFilename);
-        mTextView.setContentDescription(mFilename);
+        mTextView.setContentDescription(mTextView.getText());
         new AsyncTask<Void, Void, Bitmap>() {
             @Override
             protected Bitmap doInBackground(Void... args) {
@@ -150,12 +151,14 @@ public class AttachmentView extends FrameLayout {
     }
 
     public void remove() {
+        Util.announceForAccessibility(mParent, mContext.getString(R.string.hockeyapp_feedback_attachment_removed));
         mParent.removeView(this);
     }
 
     public void setImage(Bitmap bitmap, int orientation) {
-        this.mTextView.setText(mFilename);
-        this.mOrientation = orientation;
+        mTextView.setText(mFilename);
+        mTextView.setContentDescription(mTextView.getText());
+        mOrientation = orientation;
 
         if (bitmap == null) {
             configureViewForPlaceholder(true);
@@ -167,6 +170,7 @@ public class AttachmentView extends FrameLayout {
 
     public void signalImageLoadingError() {
         mTextView.setText(R.string.hockeyapp_feedback_attachment_error);
+        mTextView.setContentDescription(mTextView.getText());
     }
 
     private void calculateDimensions(int marginDip) {
@@ -196,6 +200,8 @@ public class AttachmentView extends FrameLayout {
                 Gravity.BOTTOM));
         setPadding(0, mGap, 0, 0);
 
+        Util.announceForAccessibility(mParent, mContext.getString(R.string.hockeyapp_feedback_attachment_added));
+
         // ImageView
         mImageView = new ImageView(context);
 
@@ -224,10 +230,19 @@ public class AttachmentView extends FrameLayout {
             imageButton.setAdjustViewBounds(true);
             imageButton.setImageDrawable(getSystemIcon("ic_menu_delete"));
             imageButton.setBackgroundResource(0);
+            imageButton.setContentDescription(context.getString(R.string.hockeyapp_feedback_attachment_remove_description));
             imageButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     AttachmentView.this.remove();
+                }
+            });
+            imageButton.setOnFocusChangeListener(new OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if (hasFocus) {
+                        Util.announceForAccessibility(mTextView, mTextView.getText());
+                    }
                 }
             });
 
@@ -255,6 +270,7 @@ public class AttachmentView extends FrameLayout {
         mImageView.setMaxHeight(height);
         mImageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         mImageView.setImageBitmap(bitmap);
+        mImageView.setContentDescription(mTextView.getText());
         mImageView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -282,6 +298,7 @@ public class AttachmentView extends FrameLayout {
         mImageView.setMinimumWidth(mWidthPortrait);
         mImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
         mImageView.setImageDrawable(getSystemIcon("ic_menu_attachment"));
+        mImageView.setContentDescription(mTextView.getText());
         mImageView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {

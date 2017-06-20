@@ -34,6 +34,9 @@
     <string name="hockeyapp_feedback_message_hint">Сообщение</string>
     <string name="hockeyapp_feedback_last_updated_text">Последнее обновление: %s</string>
     <string name="hockeyapp_feedback_attachment_button_text">Прикрепить файл</string>
+    <string name="hockeyapp_feedback_attachment_remove_description">Удалить вложение</string>
+    <string name="hockeyapp_feedback_attachment_added">Вложение добавлено</string>
+    <string name="hockeyapp_feedback_attachment_removed">Вложение удалено</string>
     <string name="hockeyapp_feedback_send_button_text">Отправить отзыв</string>
     <string name="hockeyapp_feedback_response_button_text">Добавить ответ</string>
     <string name="hockeyapp_feedback_refresh_button_text">Обновить</string>
@@ -50,7 +53,7 @@
     <string name="hockeyapp_feedback_attach_picture">Прикрепить изображение</string>
     <string name="hockeyapp_feedback_select_file">Выбрать файл</string>
     <string name="hockeyapp_feedback_select_picture">Выбрать изображение</string>
-    <string name="hockeyapp_feedback_max_attachments_allowed">Количество вложений не может быть более чем %s</string>
+    <string name="hockeyapp_feedback_max_attachments_allowed">Количество вложений не может быть более чем %d</string>
     <string name="hockeyapp_feedback_attachment_loading">Загрузка…</string>
     <string name="hockeyapp_feedback_attachment_error">Ошибка</string>
     <string name="hockeyapp_feedback_name_hint_required">Имя (обязательное поле)</string>
@@ -96,5 +99,6 @@
 
     <!-- Misc -->
     <string name="hockeyapp_error_no_network_message">Ваше устройство не имеет доступа в интернет. Пожалуйста, восстановите подключение и попробуйте снова.</string>
+    <string name="hockeyapp_feedback_sent_toast">Отзыв отправлен</string>
 
 </resources>

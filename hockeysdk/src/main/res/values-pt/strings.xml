@@ -51,7 +51,7 @@
     <string name="hockeyapp_feedback_attach_picture">Anexar imagem</string>
     <string name="hockeyapp_feedback_select_file">Selecionar arquivo</string>
     <string name="hockeyapp_feedback_select_picture">Selecionar imagem</string>
-    <string name="hockeyapp_feedback_max_attachments_allowed">Máximo %s anexos permitidos.</string>
+    <string name="hockeyapp_feedback_max_attachments_allowed">Máximo %d anexos permitidos.</string>
     <string name="hockeyapp_feedback_attachment_loading">Carregando…</string>
     <string name="hockeyapp_feedback_attachment_error">Erro</string>
     <string name="hockeyapp_feedback_name_hint_required">Nome (necessário)</string>
@@ -97,5 +97,9 @@
 
     <!-- Misc -->
     <string name="hockeyapp_error_no_network_message">Seu dispositivo não está conectado à internet. Por favor verifique sua conexão e tente novamente.</string>
+    <string name="hockeyapp_feedback_attachment_added">Anexo adicionado</string>
+    <string name="hockeyapp_feedback_attachment_removed">Anexo removido</string>
+    <string name="hockeyapp_feedback_attachment_remove_description">Remover anexo</string>
+    <string name="hockeyapp_feedback_sent_toast">Feedback enviado</string>
 
 </resources>

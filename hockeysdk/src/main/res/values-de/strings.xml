@@ -50,7 +50,7 @@
     <string name="hockeyapp_feedback_attach_picture">Bild anhängen</string>
     <string name="hockeyapp_feedback_select_file">Datei auswählen</string>
     <string name="hockeyapp_feedback_select_picture">Bild auswählen</string>
-    <string name="hockeyapp_feedback_max_attachments_allowed">Es sind maximal %s Anhänge möglich.</string>
+    <string name="hockeyapp_feedback_max_attachments_allowed">Es sind maximal %d Anhänge möglich.</string>
     <string name="hockeyapp_feedback_attachment_loading">Laden…</string>
     <string name="hockeyapp_feedback_attachment_error">Fehler</string>
     <string name="hockeyapp_feedback_name_hint_required">Name (erforderlich)</string>
@@ -96,5 +96,9 @@
 
     <!-- Misc -->
     <string name="hockeyapp_error_no_network_message">Ihr Gerät ist offline. Bitte stellen Sie eine Internetverbindung her und versuchen Sie es erneut.</string>
+    <string name="hockeyapp_feedback_attachment_added">Anhang wurde hinzugefügt</string>
+    <string name="hockeyapp_feedback_attachment_removed">Anhang wurde entfernt</string>
+    <string name="hockeyapp_feedback_attachment_remove_description">Anhang entfernen</string>
+    <string name="hockeyapp_feedback_sent_toast">Feedback wurde gesendet</string>
 
 </resources>
