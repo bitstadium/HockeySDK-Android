@@ -76,7 +76,6 @@ public class ChannelTests extends InstrumentationTestCase {
     @Test
     public void testLoggingItemAddsToQueue() {
         Data<Domain> data = new Data<Domain>();
-        Channel.mMaxBatchCount = 3;
         Assert.assertEquals(0, sut.mQueue.size());
 
         sut.enqueueData(data);
@@ -85,14 +84,12 @@ public class ChannelTests extends InstrumentationTestCase {
 
     @Test
     public void testQueueFlushesWhenMaxBatchCountReached() {
-        PublicChannel.mMaxBatchCount = 3;
         Assert.assertEquals(0, sut.mQueue.size());
 
-        sut.enqueueData(new Data<Domain>());
-        Assert.assertEquals(1, sut.mQueue.size());
-
-        sut.enqueueData(new Data<Domain>());
-        Assert.assertEquals(2, sut.mQueue.size());
+        for (int i = 1; i < Channel.getMaxBatchCount(); i++) {
+            sut.enqueueData(new Data<Domain>());
+            Assert.assertEquals(i, sut.mQueue.size());
+        }
 
         sut.enqueueData(new Data<Domain>());
         Assert.assertEquals(0, sut.mQueue.size());

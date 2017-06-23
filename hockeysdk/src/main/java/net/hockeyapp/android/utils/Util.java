@@ -13,7 +13,12 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Debug;
 import android.text.TextUtils;
+import android.view.View;
+import android.view.accessibility.AccessibilityEvent;
+import android.view.accessibility.AccessibilityManager;
+
 import net.hockeyapp.android.R;
 
 import java.io.UnsupportedEncodingException;
@@ -229,6 +234,33 @@ public class Util {
         }
     }
 
+    public static void announceForAccessibility(View view, CharSequence text) {
+        final AccessibilityManager manager = (AccessibilityManager) view.getContext().getSystemService(Context.ACCESSIBILITY_SERVICE);
+        if (!manager.isEnabled()) {
+            return;
+        }
+
+        // Prior to SDK 16, announcements could only be made through FOCUSED
+        // events. Jelly Bean (SDK 16) added support for speaking text verbatim
+        // using the ANNOUNCEMENT event type.
+        final int eventType;
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+            eventType = AccessibilityEvent.TYPE_VIEW_FOCUSED;
+        } else {
+            eventType = AccessibilityEvent.TYPE_ANNOUNCEMENT;
+        }
+
+        final AccessibilityEvent event = AccessibilityEvent.obtain(eventType);
+        event.getText().add(text);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            event.setSource(view);
+        }
+        event.setEnabled(view.isEnabled());
+        event.setClassName(view.getClass().getName());
+        event.setPackageName(view.getContext().getPackageName());
+        manager.sendAccessibilityEvent(event);
+    }
+
     /**
      * Retrieve the HockeyApp AppIdentifier from the Manifest
      *
@@ -362,5 +394,14 @@ public class Util {
      */
     public static boolean sessionTrackingSupported() {
         return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH);
+    }
+
+    /**
+     * Determines if a debugger is currently attached.
+     *
+     * @return YES if debugger is attached, otherwise NO.
+     */
+    public static boolean isDebuggerConnected(){
+        return Debug.isDebuggerConnected();
     }
 }

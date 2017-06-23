@@ -25,6 +25,8 @@ import net.hockeyapp.android.utils.Util;
 import java.lang.ref.WeakReference;
 import java.util.Date;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.UUID;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -475,18 +477,18 @@ public class MetricsManager {
             HockeyLog.warn("User Metrics is disabled. Will not track event.");
             return;
         }
+        final EventData eventItem = new EventData();
+        eventItem.setName(eventName);
+        if (properties != null) {
+            eventItem.setProperties(properties);
+        }
+        if (measurements != null) {
+            eventItem.setMeasurements(measurements);
+        }
         try {
             AsyncTaskUtils.execute(new AsyncTask<Void, Void, Void>() {
                 @Override
                 protected Void doInBackground(Void... params) {
-                    EventData eventItem = new EventData();
-                    eventItem.setName(eventName);
-                    if (properties != null) {
-                        eventItem.setProperties(properties);
-                    }
-                    if (measurements != null) {
-                        eventItem.setMeasurements(measurements);
-                    }
                     Data<Domain> data = createData(eventItem);
                     sChannel.enqueueData(data);
                     return null;
@@ -500,6 +502,10 @@ public class MetricsManager {
 
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     private class TelemetryLifecycleCallbacks implements Application.ActivityLifecycleCallbacks {
+
+        private final long MAX_ACTIVITY_TRANSITION_TIME_MS = 2000;
+        private Timer mActivityTransitionTimer;
+        private TimerTask mActivityTransitionTimerTask;
 
         @Override
         public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
@@ -518,6 +524,15 @@ public class MetricsManager {
         @Override
         public void onActivityResumed(Activity activity) {
             updateSession();
+
+            if (this.mActivityTransitionTimerTask != null) {
+                this.mActivityTransitionTimerTask.cancel();
+                this.mActivityTransitionTimerTask = null;
+            }
+            if (this.mActivityTransitionTimer != null) {
+                this.mActivityTransitionTimer.cancel();
+                this.mActivityTransitionTimer = null;
+            }
         }
 
         @Override
@@ -525,6 +540,16 @@ public class MetricsManager {
             //set the timestamp when the app was last send to the background. This will be continuously
             //updated when the user navigates through the app.
             LAST_BACKGROUND.set(getTime());
+
+            // Synchronize a channel when application goes into the background
+            this.mActivityTransitionTimer = new Timer();
+            this.mActivityTransitionTimerTask = new TimerTask() {
+                public void run() {
+                    HockeyLog.debug(TAG, "Application goes into the background. Sending logs.");
+                    sChannel.synchronize();
+                }
+            };
+            this.mActivityTransitionTimer.schedule(mActivityTransitionTimerTask, MAX_ACTIVITY_TRANSITION_TIME_MS);
         }
 
         @Override
@@ -542,5 +567,4 @@ public class MetricsManager {
             // unused but required to implement ActivityLifecycleCallbacks
         }
     }
-
 }

@@ -125,6 +125,9 @@ public class Sender {
             if ((persistedData != null) && (connection != null)) {
                 send(connection, fileToSend, persistedData);
             }
+            if (connection != null) {
+                connection.disconnect();
+            }
         }
     }
 

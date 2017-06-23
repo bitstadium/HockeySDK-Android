@@ -34,26 +34,29 @@
     <string name="hockeyapp_feedback_message_hint">Сообщение</string>
     <string name="hockeyapp_feedback_last_updated_text">Последнее обновление: %s</string>
     <string name="hockeyapp_feedback_attachment_button_text">Прикрепить файл</string>
+    <string name="hockeyapp_feedback_attachment_remove_description">Удалить вложение</string>
+    <string name="hockeyapp_feedback_attachment_added">Вложение добавлено</string>
+    <string name="hockeyapp_feedback_attachment_removed">Вложение удалено</string>
     <string name="hockeyapp_feedback_send_button_text">Отправить отзыв</string>
     <string name="hockeyapp_feedback_response_button_text">Добавить ответ</string>
     <string name="hockeyapp_feedback_refresh_button_text">Обновить</string>
     <string name="hockeyapp_feedback_title">Отзыв</string>
     <string name="hockeyapp_feedback_send_generic_error">Ошибка при отправлении сообщения. Пожалуйста, проверьте введённые вами значения, ваше интернет соединение и попробуйте снова.</string>
     <string name="hockeyapp_feedback_send_network_error">Сервер не доступен. Пожалуйста, проверьте ваше интернет соединение и затем попробуйте снова.</string>
-    <string name="hockeyapp_feedback_validate_subject_error">Введите, пожалуйста, Тему</string>
-    <string name="hockeyapp_feedback_validate_email_error">Введите, пожалуйста действующий Email адрес</string>
-    <string name="hockeyapp_feedback_validate_email_empty">Введите, пожалуйста, Email</string>
-    <string name="hockeyapp_feedback_validate_name_error">Введите, пожалуйста Имя</string>
+    <string name="hockeyapp_feedback_validate_subject_error">Пожалуйста, введите тему</string>
+    <string name="hockeyapp_feedback_validate_email_error">Пожалуйста, введите действующий email адрес</string>
+    <string name="hockeyapp_feedback_validate_email_empty">Пожалуйста, введите email адрес</string>
+    <string name="hockeyapp_feedback_validate_name_error">Пожалуйста, введите имя</string>
     <string name="hockeyapp_feedback_validate_text_error">Сообщение не может быть отправлено. Пожалуйста, введите текст отзыва.</string>
     <string name="hockeyapp_feedback_generic_error">Произошла ошибка</string>
     <string name="hockeyapp_feedback_attach_file">Прикрепить файл</string>
     <string name="hockeyapp_feedback_attach_picture">Прикрепить изображение</string>
     <string name="hockeyapp_feedback_select_file">Выбрать файл</string>
     <string name="hockeyapp_feedback_select_picture">Выбрать изображение</string>
-    <string name="hockeyapp_feedback_max_attachments_allowed">Количество вложений не может быть более чем %s</string>
+    <string name="hockeyapp_feedback_max_attachments_allowed">Количество вложений не может быть более чем %d</string>
     <string name="hockeyapp_feedback_attachment_loading">Загрузка…</string>
     <string name="hockeyapp_feedback_attachment_error">Ошибка</string>
-    <string name="hockeyapp_feedback_name_hint_required">Имя (Обязательное поле)</string>
+    <string name="hockeyapp_feedback_name_hint_required">Имя (обязательное поле)</string>
     <string name="hockeyapp_feedback_email_hint_required">Email (oбязательное поле)</string>
     <string name="hockeyapp_feedback_subject_hint_required">Тема (oбязательное поле)</string>
     <string name="hockeyapp_feedback_message_hint_required">Сообщение (oбязательное поле)</string>
@@ -96,5 +99,6 @@
 
     <!-- Misc -->
     <string name="hockeyapp_error_no_network_message">Ваше устройство не имеет доступа в интернет. Пожалуйста, восстановите подключение и попробуйте снова.</string>
+    <string name="hockeyapp_feedback_sent_toast">Отзыв отправлен</string>
 
 </resources>

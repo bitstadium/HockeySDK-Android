@@ -35,11 +35,19 @@ class Channel {
     /**
      * Number of queue items which will trigger synchronization with the persistence layer.
      */
-    protected static int mMaxBatchCount = 50;
+    protected static final int MAX_BATCH_COUNT = 50;
     /**
      * Maximum time interval in milliseconds after which a synchronize will be triggered, regardless of queue size.
      */
-    protected static int mMaxBatchInterval = 15 * 1000;
+    protected static final int MAX_BATCH_INTERVAL = 15 * 1000;
+    /**
+     * Number of queue items which will trigger synchronization in debug mode.
+     */
+    protected static final int MAX_BATCH_COUNT_DEBUG = 5;
+    /**
+     * Maximum time interval in milliseconds after which a synchronize will be triggered in debug mode.
+     */
+    protected static final int MAX_BATCH_INTERVAL_DEBUG = 3 * 1000;
     /**
      * The backing store queue for the channel.
      */
@@ -60,6 +68,14 @@ class Channel {
      * Task to be scheduled for synchronizing at a certain max interval.
      */
     private SynchronizeChannelTask mSynchronizeTask;
+
+    protected static int getMaxBatchCount() {
+        return Util.isDebuggerConnected() ? MAX_BATCH_COUNT_DEBUG : MAX_BATCH_COUNT;
+    }
+
+    protected static int getMaxBatchInterval() {
+        return Util.isDebuggerConnected() ? MAX_BATCH_INTERVAL_DEBUG : MAX_BATCH_INTERVAL;
+    }
 
     /**
      * Creates and initializes a new instance.
@@ -83,7 +99,7 @@ class Channel {
         }
         synchronized (LOCK) {
             if (mQueue.add(serializedItem)) {
-                if ((mQueue.size() >= mMaxBatchCount)) {
+                if ((mQueue.size() >= getMaxBatchCount())) {
                     synchronize();
                 } else if (mQueue.size() == 1) {
                     scheduleSynchronizeTask();
@@ -102,15 +118,16 @@ class Channel {
             mSynchronizeTask.cancel();
         }
 
-        String[] data;
-        if (!mQueue.isEmpty()) {
-            data = new String[mQueue.size()];
-            mQueue.toArray(data);
-            mQueue.clear();
-
-            if (mPersistence != null) {
-                mPersistence.persist(data);
+        String[] data = null;
+        synchronized (LOCK) {
+            if (!mQueue.isEmpty()) {
+                data = new String[mQueue.size()];
+                mQueue.toArray(data);
+                mQueue.clear();
             }
+        }
+        if (mPersistence != null && data != null) {
+            mPersistence.persist(data);
         }
     }
 
@@ -143,7 +160,7 @@ class Channel {
 
     protected void scheduleSynchronizeTask() {
         mSynchronizeTask = new SynchronizeChannelTask();
-        mTimer.schedule(mSynchronizeTask, mMaxBatchInterval);
+        mTimer.schedule(mSynchronizeTask, getMaxBatchInterval());
     }
 
     /**

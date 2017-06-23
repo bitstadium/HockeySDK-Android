@@ -5,7 +5,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.0'
+        classpath 'com.android.tools.build:gradle:2.3.3'
         classpath 'com.novoda:bintray-release:0.3.4'
     }
 }
@@ -35,14 +35,14 @@ allprojects {
 
 ext {
     ARTIFACT_ID = 'HockeySDK'
-    VERSION_NAME = '4.1.4'
-    VERSION_CODE = 11
+    VERSION_NAME = '4.1.5'
+    VERSION_CODE = 12
     SITE_URL = 'https://github.com/bitstadium/hockeysdk-android'
     GIT_URL = 'https://github.com/bitstadium/HockeySDK-Android.git'
     BINTRAY_USER = HOCKEYAPP_BINTRAY_USER
     GROUP_NAME = 'net.hockeyapp.android'
-    COMPILE_SDK = 25
-    BUILD_TOOLS = '25.0.3'
+    COMPILE_SDK = 26
+    BUILD_TOOLS = '26.0.0'
     IS_UPLOADING = project.getGradle().startParameter.taskNames.any{it.contains('bintrayUpload')}
     DESCRIPTION = 'HockeySDK-Android implements support for using HockeyApp in your Android application. The following features are currently supported:\n' +
             '\n' +

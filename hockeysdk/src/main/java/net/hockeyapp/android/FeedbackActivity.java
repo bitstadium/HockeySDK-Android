@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.os.Parcelable;
 import android.text.TextUtils;
@@ -26,6 +27,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ScrollView;
@@ -47,19 +49,24 @@ import net.hockeyapp.android.views.AttachmentListView;
 import net.hockeyapp.android.views.AttachmentView;
 
 import java.lang.ref.WeakReference;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
+
+import static java.text.DateFormat.SHORT;
 
 /**
  * <h3>Description</h3>
  *
  * Activity to show the feedback form.
  **/
-public class FeedbackActivity extends Activity implements OnClickListener {
+public class FeedbackActivity extends Activity implements OnClickListener, View.OnFocusChangeListener {
 
     /**
      * The URL of the feedback endpoint for this app.
@@ -230,7 +237,20 @@ public class FeedbackActivity extends Activity implements OnClickListener {
 
         initFeedbackHandler();
         initParseFeedbackHandler();
+        restoreSendFeedbackTask();
         configureAppropriateView();
+    }
+
+    private void restoreSendFeedbackTask() {
+        Object object = getLastNonConfigurationInstance();
+        if (object != null && object instanceof SendFeedbackTask) {
+            mSendFeedbackTask = (SendFeedbackTask) object;
+            /**
+             * We are restoring mSendFeedbackTask object and we need to replace old handler
+             * with newly created, so that task could send messages to right handler.
+             */
+            mSendFeedbackTask.setHandler(mFeedbackHandler);
+        }
     }
 
     /**
@@ -268,9 +288,16 @@ public class FeedbackActivity extends Activity implements OnClickListener {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        if (mSendFeedbackTask != null){
+            mSendFeedbackTask.attach(this);
+        }
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
-
         if (mSendFeedbackTask != null) {
             mSendFeedbackTask.detach();
         }
@@ -321,8 +348,7 @@ public class FeedbackActivity extends Activity implements OnClickListener {
         } else if (viewId == R.id.button_attachment) {
             ViewGroup attachments = (ViewGroup) findViewById(R.id.wrapper_attachments);
             if (attachments.getChildCount() >= MAX_ATTACHMENTS_PER_MSG) {
-                //TODO should we add some more text here?
-                Toast.makeText(this, String.valueOf(MAX_ATTACHMENTS_PER_MSG), Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, String.format(getString(R.string.hockeyapp_feedback_max_attachments_allowed), MAX_ATTACHMENTS_PER_MSG), Toast.LENGTH_SHORT).show();
             } else {
                 openContextMenu(v);
             }
@@ -331,6 +357,18 @@ public class FeedbackActivity extends Activity implements OnClickListener {
             configureFeedbackView(false);
         } else if (viewId == R.id.button_refresh) {
             sendFetchFeedback(mUrl, null, null, null, null, null, PrefsUtil.getInstance().getFeedbackTokenFromPrefs(mContext), mFeedbackHandler, true);
+        }
+    }
+
+    @Override
+    public void onFocusChange(View v, boolean hasFocus) {
+        if (hasFocus) {
+                if (v instanceof EditText) {
+                showKeyboard(v);
+            }
+            else if (v instanceof Button || v instanceof ImageButton) {
+                hideKeyboard();
+            }
         }
     }
 
@@ -415,6 +453,7 @@ public class FeedbackActivity extends Activity implements OnClickListener {
             if (uri != null) {
                 final ViewGroup attachments = (ViewGroup) findViewById(R.id.wrapper_attachments);
                 attachments.addView(new AttachmentView(this, attachments, uri, true));
+                Util.announceForAccessibility(attachments, getString(R.string.hockeyapp_feedback_attachment_added));
             }
 
         } else if (requestCode == ATTACH_PICTURE) {
@@ -440,9 +479,10 @@ public class FeedbackActivity extends Activity implements OnClickListener {
             if (uri != null) {
                 final ViewGroup attachments = (ViewGroup) findViewById(R.id.wrapper_attachments);
                 attachments.addView(new AttachmentView(this, attachments, uri, true));
+                Util.announceForAccessibility(attachments, getString(R.string.hockeyapp_feedback_attachment_added));
             }
 
-        } else return;
+        }
     }
 
     @SuppressLint("InflateParams")
@@ -482,18 +522,24 @@ public class FeedbackActivity extends Activity implements OnClickListener {
 
             mAddResponseButton = (Button) findViewById(R.id.button_add_response);
             mAddResponseButton.setOnClickListener(this);
+            mAddResponseButton.setOnFocusChangeListener(this);
 
             mRefreshButton = (Button) findViewById(R.id.button_refresh);
             mRefreshButton.setOnClickListener(this);
+            mRefreshButton.setOnFocusChangeListener(this);
         } else {
             /** if the token doesn't exist, the feedback details inputs to be sent need to be displayed */
             mWrapperLayoutFeedbackAndMessages.setVisibility(View.GONE);
             mFeedbackScrollview.setVisibility(View.VISIBLE);
 
             mNameInput = (EditText) findViewById(R.id.input_name);
+            mNameInput.setOnFocusChangeListener(this);
             mEmailInput = (EditText) findViewById(R.id.input_email);
+            mEmailInput.setOnFocusChangeListener(this);
             mSubjectInput = (EditText) findViewById(R.id.input_subject);
+            mSubjectInput.setOnFocusChangeListener(this);
             mTextInput = (EditText) findViewById(R.id.input_message);
+            mTextInput.setOnFocusChangeListener(this);
 
             configureHints();
 
@@ -559,10 +605,12 @@ public class FeedbackActivity extends Activity implements OnClickListener {
             /** Use of context menu needs to be enabled explicitly */
             mAddAttachmentButton = (Button) findViewById(R.id.button_attachment);
             mAddAttachmentButton.setOnClickListener(this);
+            mAddAttachmentButton.setOnFocusChangeListener(this);
             registerForContextMenu(mAddAttachmentButton);
 
             mSendFeedbackButton = (Button) findViewById(R.id.button_send);
             mSendFeedbackButton.setOnClickListener(this);
+            mAddAttachmentButton.setOnFocusChangeListener(this);
         }
     }
 
@@ -633,6 +681,11 @@ public class FeedbackActivity extends Activity implements OnClickListener {
         mParseFeedbackTask = new ParseFeedbackTask(this, feedbackResponseString, mParseFeedbackHandler, requestType);
     }
 
+    private void showKeyboard(View view) {
+        InputMethodManager manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        manager.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
+    }
+
     private void hideKeyboard() {
         if (mTextInput != null) {
             InputMethodManager manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -667,9 +720,6 @@ public class FeedbackActivity extends Activity implements OnClickListener {
             public void run() {
                 configureFeedbackView(true);
 
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-                SimpleDateFormat formatNew = new SimpleDateFormat("d MMM h:mm a");
-
                 Date date = null;
                 if (feedbackResponse != null && feedbackResponse.getFeedback() != null &&
                         feedbackResponse.getFeedback().getMessages() != null && feedbackResponse.
@@ -681,8 +731,15 @@ public class FeedbackActivity extends Activity implements OnClickListener {
 
                     /** Set the lastUpdatedTextView text as the date of the latest feedback message */
                     try {
-                        date = format.parse(mFeedbackMessages.get(0).getCreatedAt());
-                        mLastUpdatedTextView.setText(String.format(getString(R.string.hockeyapp_feedback_last_updated_text), formatNew.format(date)));
+                        /** An ISO 8601 format */
+                        DateFormat dateFormatIn = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
+                        dateFormatIn.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+                        /** Localized short format */
+                        DateFormat dateFormatOut = DateFormat.getDateTimeInstance(SHORT, SHORT);
+
+                        date = dateFormatIn.parse(mFeedbackMessages.get(0).getCreatedAt());
+                        mLastUpdatedTextView.setText(String.format(getString(R.string.hockeyapp_feedback_last_updated_text), dateFormatOut.format(date)));
                         mLastUpdatedTextView.setContentDescription(mLastUpdatedTextView.getText());
                         mLastUpdatedTextView.setVisibility(View.VISIBLE);
                     } catch (ParseException e1) {
@@ -734,7 +791,6 @@ public class FeedbackActivity extends Activity implements OnClickListener {
         }
 
         enableDisableSendFeedbackButton(false);
-        hideKeyboard();
 
         String token = mForceNewThread && !mInSendFeedback ? null : PrefsUtil.getInstance().getFeedbackTokenFromPrefs(mContext);
 
@@ -764,11 +820,21 @@ public class FeedbackActivity extends Activity implements OnClickListener {
 
             /** Start the Send Feedback {@link AsyncTask} */
             sendFetchFeedback(mUrl, name, email, subject, text, attachmentUris, token, mFeedbackHandler, false);
+
+            hideKeyboard();
         }
     }
 
-    private void setError(EditText inputField, int feedbackStringId) {
+    private void setError(final EditText inputField, int feedbackStringId) {
         inputField.setError(getString(feedbackStringId));
+
+        // requestFocus and showKeyboard on next frame to read error message via talkback
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                inputField.requestFocus();
+            }
+        });
         enableDisableSendFeedbackButton(true);
     }
 
@@ -831,6 +897,14 @@ public class FeedbackActivity extends Activity implements OnClickListener {
                     success = true;
                 } else if (responseString != null) {
                     feedbackActivity.startParseFeedbackTask(responseString, requestType);
+                    if ("send".equals(requestType)) {
+                        feedbackActivity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(feedbackActivity, R.string.hockeyapp_feedback_sent_toast, Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    }
                     success = true;
                 } else {
                     error.setMessage(feedbackActivity.getString(R.string.hockeyapp_feedback_send_network_error));
