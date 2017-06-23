@@ -26,7 +26,7 @@ It is super easy to use HockeyApp in your Android app. Have a look at our [docum
 
 Please visit [our landing page](https://support.hockeyapp.net/kb/client-integration-android) as a starting point for all of our documentation.
 
-Please check out our [getting started documentation](https://support.hockeyapp.net/kb/client-integration-android/hockeyapp-for-android-sdk), [changelog](https://github.com/bitstadium/HockeySDK-Android/releases/tag/4.1.5), [java doc](https://www.hockeyapp.net/help/sdk/android/4.1.5/index.html) as well as our [troubleshooting section](https://www.hockeyapp.net/help/sdk/android/4.1.5/docs/docs/Guide-Installation-Setup.html#troubleshooting).
+Please check out our [getting started documentation](https://support.hockeyapp.net/kb/client-integration-android/hockeyapp-for-android-sdk), [changelog](https://github.com/bitstadium/HockeySDK-Android/releases/tag/4.1.5), [java doc](https://www.hockeyapp.net/help/sdk/android/4.1.5/index.html) as well as our [troubleshooting section](https://support.hockeyapp.net/kb/client-integration-android/hockeyapp-for-android-sdk#troubleshooting).
 
 ## 4. Contributing
 
@@ -34,11 +34,8 @@ We're looking forward to your contributions via pull requests to our [repo on Gi
 
 ### 4.1 Development environment
 
-* A Mac running the latest version of OS X.
-* Get the latest Xcode from the Mac App Store.
-* [AppleDoc](https://github.com/tomaz/appledoc) 
-* [CocoaPods](https://cocoapods.org/)
-* [Carthage](https://github.com/Carthage/Carthage)
+* We are using Macs ourselves, but any OS should work.
+* Android Studio 2.3.3
 
 ### 4.2 Code of Conduct
 
