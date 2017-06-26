@@ -35,7 +35,7 @@ We're looking forward to your contributions via pull requests to our [repo on Gi
 ### 4.1 Development environment
 
 * We are using Macs ourselves, but any OS should work.
-* Android Studio 2.3.3
+* The latest stable release of Android Studio
 
 ### 4.2 Code of Conduct
 
