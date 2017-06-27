@@ -126,7 +126,7 @@ public class AttachmentDownloader {
         }
 
         public boolean consumeRetry() {
-            return --remainingRetries < 0 ? false : true;
+            return --remainingRetries >= 0;
         }
     }
 

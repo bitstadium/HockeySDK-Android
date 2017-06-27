@@ -379,7 +379,7 @@ public class FeedbackManager {
 
             @Override
             protected void onPostExecute(Boolean success) {
-                if (success == false) {
+                if (!success) {
                     Toast.makeText(context, "Screenshot could not be created. Sorry.", Toast.LENGTH_LONG)
                             .show();
                 }

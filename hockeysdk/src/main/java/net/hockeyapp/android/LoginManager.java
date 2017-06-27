@@ -251,7 +251,7 @@ public class LoginManager {
         Intent intent = new Intent();
         //In case of LOGIN_MODE_VALIDATE, we have to authenticate with username and password first.
         //So we override the mode variable with LOGIN_MODE_EMAIL_PASSWORD
-        Boolean isLoginModeValidate = (mode == LOGIN_MODE_VALIDATE) ? true : false;
+        Boolean isLoginModeValidate = mode == LOGIN_MODE_VALIDATE;
         int tempMode = (isLoginModeValidate) ? LOGIN_MODE_EMAIL_PASSWORD : mode;
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.setClass(context, LoginActivity.class);
