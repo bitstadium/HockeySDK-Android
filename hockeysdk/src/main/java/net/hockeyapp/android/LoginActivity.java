@@ -136,14 +136,14 @@ public class LoginActivity extends Activity {
 
     private void configureView() {
         if (mMode == LoginManager.LOGIN_MODE_EMAIL_ONLY) {
-            EditText passwordInput = (EditText) findViewById(R.id.input_password);
+            EditText passwordInput = findViewById(R.id.input_password);
             passwordInput.setVisibility(View.INVISIBLE);
         }
 
-        TextView headlineText = (TextView) findViewById(R.id.text_headline);
+        TextView headlineText = findViewById(R.id.text_headline);
         headlineText.setText(mMode == LoginManager.LOGIN_MODE_EMAIL_ONLY ? R.string.hockeyapp_login_headline_text_email_only : R.string.hockeyapp_login_headline_text);
 
-        mButtonLogin = (Button) findViewById(R.id.button_login);
+        mButtonLogin = findViewById(R.id.button_login);
         mButtonLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

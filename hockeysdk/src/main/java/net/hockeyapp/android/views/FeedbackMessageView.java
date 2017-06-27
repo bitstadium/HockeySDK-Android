@@ -47,10 +47,10 @@ public class FeedbackMessageView extends LinearLayout {
 
         LayoutInflater.from(context).inflate(R.layout.hockeyapp_view_feedback_message, this);
 
-        mAuthorTextView = (TextView) findViewById(R.id.label_author);
-        mDateTextView = (TextView) findViewById(R.id.label_date);
-        mMessageTextView = (TextView) findViewById(R.id.label_text);
-        mAttachmentListView = (AttachmentListView) findViewById(R.id.list_attachments);
+        mAuthorTextView = findViewById(R.id.label_author);
+        mDateTextView = findViewById(R.id.label_date);
+        mMessageTextView = findViewById(R.id.label_text);
+        mAttachmentListView = findViewById(R.id.list_attachments);
 
     }
 
