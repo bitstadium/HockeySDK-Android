@@ -80,7 +80,7 @@ public class Util {
      * @param value a string
      * @return true if value is a valid email
      */
-    public final static boolean isValidEmail(String value) {
+    public static boolean isValidEmail(String value) {
         return !TextUtils.isEmpty(value) && android.util.Patterns.EMAIL_ADDRESS.matcher(value).matches();
     }
 

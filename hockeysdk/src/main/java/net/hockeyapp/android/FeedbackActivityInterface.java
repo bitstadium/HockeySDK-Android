@@ -14,5 +14,5 @@ public interface FeedbackActivityInterface {
      *
      * @return Instance of View
      */
-    public View getLayoutView();
+    View getLayoutView();
 }
