@@ -28,7 +28,11 @@ import net.hockeyapp.android.utils.HockeyLog;
 import net.hockeyapp.android.utils.Util;
 import net.hockeyapp.android.utils.VersionHelper;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * <h3>Description</h3>
@@ -153,7 +157,7 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
 
         if (requestCode == Constants.UPDATE_PERMISSIONS_REQUEST) {
             // Check for the grant result on write permission
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (permissionsAreGranted(grantResults)) {
                 // Permission granted, re-invoke download process
                 prepareDownload();
             } else {
@@ -327,17 +331,43 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
         }
     }
 
-    /**
-     * Checks if WRITE_EXTERNAL_STORAGE permission was added to the {@link Manifest} file
-     *
-     * @param context
-     * @return
-     */
-    private boolean isWriteExternalStorageSet(Context context) {
-        String permission = "android.permission.WRITE_EXTERNAL_STORAGE";
-        int res = context.checkCallingOrSelfPermission(permission);
+    private static String[] requiredPermissions() {
+        ArrayList<String> permissions = new ArrayList<>();
+        permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            permissions.add(Manifest.permission.REQUEST_INSTALL_PACKAGES);
+        }
+        return permissions.toArray(new String[0]);
+    }
 
-        return (res == PackageManager.PERMISSION_GRANTED);
+    private static int[] permissionsState(Context context, String... permissions) {
+        if (permissions == null) {
+            return null;
+        }
+        int[] state = new int[permissions.length];
+        for (int i = 0; i < permissions.length; i++) {
+            state[i] = context.checkCallingOrSelfPermission(permissions[i]);
+        }
+        return state;
+    }
+
+    private static boolean permissionsAreGranted(int[] permissionsState) {
+        for (int permissionState : permissionsState) {
+            if (permissionState != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static String[] deniedPermissions(String[] permissions, int[] permissionsState) {
+        ArrayList<String> result = new ArrayList<>();
+        for (int i = 0; i < permissions.length; i++) {
+            if (permissionsState[i] != PackageManager.PERMISSION_GRANTED) {
+                result.add(permissions[i]);
+            }
+        }
+        return result.toArray(new String[0]);
     }
 
     /**
@@ -373,13 +403,17 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
 
             return;
         }
-        if (!isWriteExternalStorageSet(mContext)) {
+
+        String[] permissions = requiredPermissions();
+        int[] permissionsState = permissionsState(mContext, permissions);
+        if (!permissionsAreGranted(permissionsState)) {
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 // Only if we're running on Android M or later we can request permissions at runtime
-                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, Constants.UPDATE_PERMISSIONS_REQUEST);
+                requestPermissions(deniedPermissions(permissions, permissionsState), Constants.UPDATE_PERMISSIONS_REQUEST);
                 return;
             }
+            // else we don't need REQUEST_INSTALL_PACKAGES permission, so this message still actual
 
             mError = new ErrorObject();
             mError.setMessage("The permission to access the external storage permission is not set. Please contact the developer.");
