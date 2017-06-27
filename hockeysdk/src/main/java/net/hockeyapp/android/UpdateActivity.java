@@ -221,11 +221,11 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
      * and the listener for the download button.
      */
     protected void configureView() {
-        TextView nameLabel = (TextView) findViewById(R.id.label_title);
+        TextView nameLabel = findViewById(R.id.label_title);
         nameLabel.setText(getAppName());
         nameLabel.setContentDescription(getAppName());
 
-        final TextView versionLabel = (TextView) findViewById(R.id.label_version);
+        final TextView versionLabel = findViewById(R.id.label_version);
         final String versionString = "Version " + mVersionHelper.getVersionString();
         final String fileDate = mVersionHelper.getFileDateString();
 
@@ -249,10 +249,10 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
         }
         versionLabel.setText(getString(R.string.hockeyapp_update_version_details_label, versionString, fileDate, appSizeString));
 
-        Button updateButton = (Button) findViewById(R.id.button_update);
+        Button updateButton = findViewById(R.id.button_update);
         updateButton.setOnClickListener(this);
 
-        WebView webView = (WebView) findViewById(R.id.web_update_details);
+        WebView webView = findViewById(R.id.web_update_details);
         webView.clearCache(true);
         webView.destroyDrawingCache();
         webView.loadDataWithBaseURL(Constants.BASE_URL, getReleaseNotes(), "text/html", "utf-8", null);

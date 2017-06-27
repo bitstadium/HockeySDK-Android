@@ -29,7 +29,7 @@ public class ExpiryInfoActivity extends Activity {
 
         String appName = Util.getAppName(this);
         String text = String.format(getString(R.string.hockeyapp_expiry_info_text), appName);
-        TextView messageView = (TextView) findViewById(R.id.label_message);
+        TextView messageView = findViewById(R.id.label_message);
         messageView.setText(text);
     }
 

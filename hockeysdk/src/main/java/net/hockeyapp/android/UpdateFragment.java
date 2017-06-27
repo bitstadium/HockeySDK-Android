@@ -123,10 +123,10 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
 
         mVersionHelper = new VersionHelper(getActivity(), mVersionInfo.toString(), this);
 
-        TextView nameLabel = (TextView) view.findViewById(R.id.label_title);
+        TextView nameLabel = view.findViewById(R.id.label_title);
         nameLabel.setText(getAppName());
 
-        final TextView versionLabel = (TextView) view.findViewById(R.id.label_version);
+        final TextView versionLabel = view.findViewById(R.id.label_version);
         final String versionString = "Version " + mVersionHelper.getVersionString();
         final String fileDate = mVersionHelper.getFileDateString();
 
@@ -149,10 +149,10 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
         }
         versionLabel.setText(getString(R.string.hockeyapp_update_version_details_label, versionString, fileDate, appSizeString));
 
-        Button updateButton = (Button) view.findViewById(R.id.button_update);
+        Button updateButton = view.findViewById(R.id.button_update);
         updateButton.setOnClickListener(this);
 
-        WebView webView = (WebView) view.findViewById(R.id.web_update_details);
+        WebView webView = view.findViewById(R.id.web_update_details);
         webView.clearCache(true);
         webView.destroyDrawingCache();
         webView.loadDataWithBaseURL(Constants.BASE_URL, mVersionHelper.getReleaseNotes(false), "text/html", "utf-8", null);
