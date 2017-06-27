@@ -101,11 +101,11 @@
             android:shadowColor="@color/hockeyapp_background_white"
             android:shadowDy="1"
             android:shadowRadius="1"
-            android:singleLine="true"
             android:text="@string/hockeyapp_feedback_last_updated_text"
             android:textColor="@color/hockeyapp_text_normal"
             android:textSize="15sp"
-            android:typeface="normal" />
+            android:typeface="normal"
+            android:maxLines="1" />
 
         <LinearLayout
             android:id="@+id/wrapper_messages_buttons"
