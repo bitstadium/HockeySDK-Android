@@ -323,6 +323,8 @@ public class VersionHelper {
             return "6.0";
         } else if (version.equalsIgnoreCase("N")) {
             return "7.0";
+        } else if (version.equalsIgnoreCase("O")) {
+            return "8.0";
         } else if (Pattern.matches("^[a-zA-Z]+", version)) {
             return VERSION_MAX;
         } else {
