@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/hockeyapp_background_white">
@@ -37,19 +38,29 @@
             android:textSize="15sp"
             android:typeface="normal" />
 
+        <!--
+            By default, when you set an EditText element to use the "textPassword" input type,
+            the font family is set to monospace, so you should change its font family to "sans-serif"
+            so that both text fields use a matching font style.
+
+            Attribute 'fontFamily' is only used in API level 16 and higher (current min is 9)
+            so, it will just ignore it on versions below.
+        -->
         <EditText
             android:id="@+id/input_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="20dp"
             android:layout_marginBottom="30dp"
+            android:fontFamily="sans-serif"
             android:hint="@string/hockeyapp_login_password_hint_required"
             android:imeOptions="actionNext"
             android:inputType="textPassword"
             android:textColor="@color/hockeyapp_text_normal"
             android:textColorHint="@color/hockeyapp_text_light"
             android:textSize="15sp"
-            android:typeface="normal" />
+            android:typeface="normal"
+            tools:ignore="UnusedAttribute" />
 
         <Button
             android:id="@+id/button_login"
