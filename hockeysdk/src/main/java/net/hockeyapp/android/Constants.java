@@ -203,7 +203,7 @@ public class Constants {
      * @param context the context to use. Usually your Activity object.
      */
     private static void loadCrashIdentifier(Context context) {
-        String deviceIdentifier = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+        @SuppressLint("HardwareIds") String deviceIdentifier = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
         if (!TextUtils.isEmpty(Constants.APP_PACKAGE) && !TextUtils.isEmpty(deviceIdentifier)) {
             String combined = Constants.APP_PACKAGE + ":" + deviceIdentifier + ":" + createSalt(context);
             try {
@@ -228,7 +228,7 @@ public class Constants {
     private static void loadDeviceIdentifier(Context context) {
         // get device ID
         ContentResolver resolver = context.getContentResolver();
-        String deviceIdentifier = Settings.Secure.getString(resolver, Settings.Secure.ANDROID_ID);
+        @SuppressLint("HardwareIds") String deviceIdentifier = Settings.Secure.getString(resolver, Settings.Secure.ANDROID_ID);
         if (deviceIdentifier != null) {
             String deviceIdentifierAnonymized = tryHashStringSha256(context, deviceIdentifier);
             // if anonymized device identifier is null we should use a random UUID
