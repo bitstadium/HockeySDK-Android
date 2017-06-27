@@ -12,7 +12,7 @@ public enum FeedbackUserDataElement {
 
     private final int mValue;
 
-    private FeedbackUserDataElement(int value) {
+    FeedbackUserDataElement(int value) {
         this.mValue = value;
     }
 

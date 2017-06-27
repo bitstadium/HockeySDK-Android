@@ -13,5 +13,5 @@ public interface UpdateInfoListener {
      *
      * @return current version code
      */
-    public int getCurrentVersionCode();
+    int getCurrentVersionCode();
 }
