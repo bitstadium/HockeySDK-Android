@@ -334,9 +334,6 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
     private static String[] requiredPermissions() {
         ArrayList<String> permissions = new ArrayList<>();
         permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            permissions.add(Manifest.permission.REQUEST_INSTALL_PACKAGES);
-        }
         return permissions.toArray(new String[0]);
     }
 
@@ -413,7 +410,6 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
                 requestPermissions(deniedPermissions(permissions, permissionsState), Constants.UPDATE_PERMISSIONS_REQUEST);
                 return;
             }
-            // else we don't need REQUEST_INSTALL_PACKAGES permission, so this message still actual
 
             mError = new ErrorObject();
             mError.setMessage("The permission to access the external storage permission is not set. Please contact the developer.");
