@@ -159,7 +159,7 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
         String status = result.get("status");
         if ((status != null) && (status.startsWith("2")) && (mContext != null)) {
             File folder = new File(mContext.getCacheDir(), FILE_TAG);
-            if (folder.exists()) {
+            if (folder != null && folder.exists()) {
                 for (File file : folder.listFiles()) {
                     if (file != null) {
                         Boolean success = file.delete();

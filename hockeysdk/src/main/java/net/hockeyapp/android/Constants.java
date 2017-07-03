@@ -116,10 +116,8 @@ public class Constants {
      *
      * @return A file representing the screenshot folder.
      */
-    public static File getHockeyAppStorageDir() {
-        File externalStorage = Environment.getExternalStorageDirectory();
-
-        File dir = new File(externalStorage.getAbsolutePath() + "/" + Constants.FILES_DIRECTORY_NAME);
+    public static File getHockeyAppStorageDir(Context context) {
+        File dir = new File(context.getExternalFilesDir(null), Constants.FILES_DIRECTORY_NAME);
         boolean success = dir.exists() || dir.mkdirs();
         if (!success) {
             HockeyLog.warn("Couldn't create HockeyApp Storage dir");

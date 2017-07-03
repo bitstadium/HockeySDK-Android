@@ -106,8 +106,8 @@ public class AttachmentView extends FrameLayout {
         this.mContext = context;
         this.mParent = parent;
         this.mAttachment = attachment;
-        this.mAttachmentUri = Uri.fromFile(new File(Constants.getHockeyAppStorageDir(), attachment
-                .getCacheId()));
+        this.mAttachmentUri = Uri.fromFile(new File(Constants.getHockeyAppStorageDir(context),
+                attachment.getCacheId()));
         this.mFilename = attachment.getFilename();
 
         calculateDimensions(30);

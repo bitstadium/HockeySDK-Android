@@ -1,5 +1,6 @@
 package net.hockeyapp.android.tasks;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Handler;
@@ -15,6 +16,7 @@ import net.hockeyapp.android.views.AttachmentView;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -81,7 +83,7 @@ public class AttachmentDownloader {
                     downloadRunning = false;
                     downloadNext();
                 }
-            });
+            }, Constants.getHockeyAppStorageDir(downloadJob.getAttachmentView().getContext()));
             downloadRunning = true;
             AsyncTaskUtils.execute(downloadTask);
         }
@@ -138,16 +140,16 @@ public class AttachmentDownloader {
 
         private final Handler handler;
 
-        private File dropFolder;
+        private final File dropFolder;
 
         private Bitmap bitmap;
 
         private int bitmapOrientation;
 
-        public DownloadTask(DownloadJob downloadJob, Handler handler) {
+        public DownloadTask(DownloadJob downloadJob, Handler handler, File dropFolder) {
             this.downloadJob = downloadJob;
             this.handler = handler;
-            this.dropFolder = Constants.getHockeyAppStorageDir();
+            this.dropFolder = dropFolder;
             this.bitmap = null;
             this.bitmapOrientation = ImageUtils.ORIENTATION_PORTRAIT; // default
         }
@@ -160,7 +162,7 @@ public class AttachmentDownloader {
         protected Boolean doInBackground(Void... args) {
             FeedbackAttachment attachment = downloadJob.getFeedbackAttachment();
 
-            if (attachment.isAvailableInCache()) {
+            if (isAvailableInCache(attachment)) {
                 HockeyLog.error("Cached...");
                 loadImageThumbnail();
                 return true;
@@ -213,6 +215,24 @@ public class AttachmentDownloader {
                 e.printStackTrace();
                 bitmap = null;
             }
+        }
+
+        /**
+         * Checks if attachment has already been downloaded.
+         *
+         * @return true if available, false if not.
+         */
+        public boolean isAvailableInCache(final FeedbackAttachment attachment) {
+            if (dropFolder.exists() && dropFolder.isDirectory()) {
+                File[] match = dropFolder.listFiles(new FilenameFilter() {
+                    @Override
+                    public boolean accept(File dir, String filename) {
+                        return filename.equals(attachment.getCacheId());
+                    }
+                });
+                return match != null && match.length == 1;
+            }
+            return false;
         }
 
         private boolean downloadAttachment(String urlString, String filename) {

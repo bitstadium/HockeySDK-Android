@@ -40,7 +40,7 @@ public class DownloadFileTask extends AsyncTask<Void, Integer, Long> {
     protected DownloadFileListener mNotifier;
     protected String mUrlString;
     protected String mFilename;
-    protected String mFilePath;
+    protected File mDirectory;
     protected ProgressDialog mProgressDialog;
     private String mDownloadErrorMessage;
 
@@ -48,7 +48,7 @@ public class DownloadFileTask extends AsyncTask<Void, Integer, Long> {
         this.mContext = context;
         this.mUrlString = urlString;
         this.mFilename = UUID.randomUUID() + ".apk";
-        this.mFilePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Download";
+        this.mDirectory = new File(context.getExternalFilesDir(null), "Download");
         this.mNotifier = notifier;
         this.mDownloadErrorMessage = null;
     }
@@ -81,12 +81,11 @@ public class DownloadFileTask extends AsyncTask<Void, Integer, Long> {
                 return 0L;
             }
 
-            File dir = new File(this.mFilePath);
-            boolean result = dir.mkdirs();
-            if (!result && !dir.exists()) {
-                throw new IOException("Could not create the dir(s):" + dir.getAbsolutePath());
+            boolean result = mDirectory.mkdirs();
+            if (!result && !mDirectory.exists()) {
+                throw new IOException("Could not create the dir(s):" + mDirectory.getAbsolutePath());
             }
-            File file = new File(dir, this.mFilename);
+            File file = new File(mDirectory, this.mFilename);
 
             input = new BufferedInputStream(connection.getInputStream());
             output = new FileOutputStream(file);
@@ -187,7 +186,7 @@ public class DownloadFileTask extends AsyncTask<Void, Integer, Long> {
         if (result > 0L) {
             mNotifier.downloadSuccessful(this);
             Intent intent = new Intent(Intent.ACTION_INSTALL_PACKAGE);
-            intent.setDataAndType(Uri.fromFile(new File(this.mFilePath, this.mFilename)),
+            intent.setDataAndType(Uri.fromFile(new File(this.mDirectory, this.mFilename)),
                     "application/vnd.android.package-archive");
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
