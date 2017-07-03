@@ -2,7 +2,6 @@ package net.hockeyapp.android.utils;
 
 import android.content.Context;
 import android.net.Uri;
-import android.os.Build;
 import android.text.TextUtils;
 
 import net.hockeyapp.android.Constants;
@@ -21,7 +20,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * <h3>Description</h3>
@@ -141,10 +139,6 @@ public class HttpURLConnectionBuilder {
 
         connection.setConnectTimeout(mTimeout);
         connection.setReadTimeout(mTimeout);
-
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.GINGERBREAD) {
-            connection.setRequestProperty("Connection", "close");
-        }
 
         if (!TextUtils.isEmpty(mRequestMethod)) {
             connection.setRequestMethod(mRequestMethod);

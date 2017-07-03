@@ -132,7 +132,7 @@ public class UpdateManager {
         lastListener = listener;
 
         WeakReference<Activity> weakActivity = new WeakReference<Activity>(activity);
-        if ((Util.fragmentsSupported()) && (dialogShown(weakActivity))) {
+        if (dialogShown(weakActivity)) {
             return;
         }
 

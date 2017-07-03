@@ -113,7 +113,7 @@ public class CheckUpdateTaskWithUI extends CheckUpdateTask {
                     }
 
                     WeakReference<Activity> weakActivity = new WeakReference<Activity>(mActivity);
-                    if ((Util.fragmentsSupported()) && (Util.runsOnTablet(weakActivity))) {
+                    if (Util.runsOnTablet(weakActivity)) {
                         showUpdateFragment(updateInfo);
                     } else {
                         startUpdateIntent(updateInfo, false);

@@ -1,7 +1,5 @@
 package net.hockeyapp.android.utils;
 
-import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -23,7 +21,6 @@ import net.hockeyapp.android.R;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
-import java.lang.reflect.Method;
 import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -82,20 +79,6 @@ public class Util {
      */
     public static boolean isValidEmail(String value) {
         return !TextUtils.isEmpty(value) && android.util.Patterns.EMAIL_ADDRESS.matcher(value).matches();
-    }
-
-    /**
-     * Returns true if the Fragment API is supported (should be on Android 3.0+).
-     *
-     * @return true if the Fragment API is supported
-     */
-    @SuppressLint("NewApi")
-    public static Boolean fragmentsSupported() {
-        try {
-            return (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) && classExists("android.app.Fragment");
-        } catch (NoClassDefFoundError e) {
-            return false;
-        }
     }
 
     /**
@@ -177,15 +160,6 @@ public class Util {
     }
 
     /**
-     * Checks if the Notification.Builder API is supported.
-     *
-     * @return if builder API is supported
-     */
-    public static boolean isNotificationBuilderSupported() {
-        return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) && classExists("android.app.Notification.Builder");
-    }
-
-    /**
      * Creates a notification on API levels from 9 to 23
      *
      * @param context       the context to use, e.g. your Activity
@@ -195,32 +169,8 @@ public class Util {
      * @param iconId        the icon resource ID for the notification
      * @return the created notification
      */
+    @SuppressWarnings("deprecation")
     public static Notification createNotification(Context context, PendingIntent pendingIntent, String title, String text, int iconId) {
-        Notification notification;
-        if (Util.isNotificationBuilderSupported()) {
-            notification = buildNotificationWithBuilder(context, pendingIntent, title, text, iconId);
-        } else {
-            notification = buildNotificationPreHoneycomb(context, pendingIntent, title, text, iconId);
-        }
-        return notification;
-    }
-
-    @SuppressWarnings("deprecation")
-    private static Notification buildNotificationPreHoneycomb(Context context, PendingIntent pendingIntent, String title, String text, int iconId) {
-        Notification notification = new Notification(iconId, "", System.currentTimeMillis());
-        try {
-            // try to call "setLatestEventInfo" if available
-            Method m = notification.getClass().getMethod("setLatestEventInfo", Context.class, CharSequence.class, CharSequence.class, PendingIntent.class);
-            m.invoke(notification, context, title, text, pendingIntent);
-        } catch (Exception e) {
-            // do nothing
-        }
-        return notification;
-    }
-
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    @SuppressWarnings("deprecation")
-    private static Notification buildNotificationWithBuilder(Context context, PendingIntent pendingIntent, String title, String text, int iconId) {
         android.app.Notification.Builder builder = new android.app.Notification.Builder(context)
                 .setContentTitle(title)
                 .setContentText(text)
@@ -252,9 +202,7 @@ public class Util {
 
         final AccessibilityEvent event = AccessibilityEvent.obtain(eventType);
         event.getText().add(text);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-            event.setSource(view);
-        }
+        event.setSource(view);
         event.setEnabled(view.isEnabled());
         event.setClassName(view.getClass().getName());
         event.setPackageName(view.getContext().getPackageName());
@@ -342,16 +290,9 @@ public class Util {
      * @throws java.lang.IllegalArgumentException if the app identifier can't be converted because
      *                                            of unrecoverable input character errors
      */
-    public static String convertAppIdentifierToGuid(String appIdentifier) throws
-            IllegalArgumentException {
-        String sanitizedAppIdentifier = null;
+    public static String convertAppIdentifierToGuid(String appIdentifier) throws IllegalArgumentException {
+        String sanitizedAppIdentifier= sanitizeAppIdentifier(appIdentifier);
         String guid = null;
-
-        try {
-            sanitizedAppIdentifier = sanitizeAppIdentifier(appIdentifier);
-        } catch (IllegalArgumentException e) {
-            throw e;
-        }
 
         if (sanitizedAppIdentifier != null) {
             StringBuffer idBuf = new StringBuffer(sanitizedAppIdentifier);
@@ -385,15 +326,6 @@ public class Util {
             localDate = new Date();
         }
         return DATE_FORMAT_THREAD_LOCAL.get().format(localDate);
-    }
-
-    /**
-     * Determines if Session is possible for the current user or not.
-     *
-     * @return YES if app runs on at least OS 4.0
-     */
-    public static boolean sessionTrackingSupported() {
-        return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH);
     }
 
     /**

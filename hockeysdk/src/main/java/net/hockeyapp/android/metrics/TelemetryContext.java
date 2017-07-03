@@ -1,15 +1,13 @@
 package net.hockeyapp.android.metrics;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.os.Build;
 import android.telephony.TelephonyManager;
 import android.view.Display;
 import android.view.WindowManager;
+
 import net.hockeyapp.android.BuildConfig;
 import net.hockeyapp.android.Constants;
 import net.hockeyapp.android.metrics.model.*;
@@ -211,8 +209,6 @@ class TelemetryContext {
         }
     }
 
-    @SuppressWarnings("deprecation")
-    @SuppressLint({"NewApi", "Deprecation"})
     protected void updateScreenResolution() {
         String resolutionString;
         int width;
@@ -232,12 +228,11 @@ class TelemetryContext {
                     width = 0;
                     height = 0;
                 }
-
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+            } else {
                 try {
-                    //We have to use undocumented API here. Android 4.0 introduced soft buttons for
-                    //back, home and menu, but there's no API present to get the real display size
-                    //all available methods only return the size of the contentView.
+                    // We have to use undocumented API here. Android 4.0 introduced soft buttons for
+                    // back, home and menu, but there's no API present to get the real display size
+                    // all available methods only return the size of the contentView.
                     Method mGetRawW = Display.class.getMethod("getRawWidth");
                     Method mGetRawH = Display.class.getMethod("getRawHeight");
                     Display display = wm.getDefaultDisplay();
@@ -247,7 +242,7 @@ class TelemetryContext {
                     Point size = new Point();
                     Display d = wm.getDefaultDisplay();
                     if (d != null) {
-                        d.getRealSize(size);
+                        d.getSize(size);
                         width = size.x;
                         height = size.y;
                     } else {
@@ -256,16 +251,8 @@ class TelemetryContext {
                     }
                     HockeyLog.debug(TAG, "Couldn't determine screen resolution: " + ex.toString());
                 }
-
-            } else {
-                //Use old, and now deprecated API to get width and height of the display
-                Display d = wm.getDefaultDisplay();
-                width = d.getWidth();
-                height = d.getHeight();
             }
-
             resolutionString = String.valueOf(height) + "x" + String.valueOf(width);
-
             setScreenResolution(resolutionString);
         }
     }

@@ -228,7 +228,7 @@ public class MetricsManager {
                             sender, persistence, channel);
                     sWeakApplication = new WeakReference<>(application);
                 }
-                result.mSessionTrackingDisabled = !Util.sessionTrackingSupported();
+                result.mSessionTrackingDisabled = false;
                 instance = result;
                 if (!result.mSessionTrackingDisabled) {
                     setSessionTrackingDisabled(false);
@@ -295,16 +295,11 @@ public class MetricsManager {
             HockeyLog.warn(TAG, "MetricsManager hasn't been registered or User Metrics has been disabled. No User Metrics will be collected!");
         } else {
             synchronized (LOCK) {
-                if (Util.sessionTrackingSupported()) {
-                    instance.mSessionTrackingDisabled = disabled;
-                    //TODO persist this setting so the dev doesn't have to take care of this
-                    //between launches?
-                    if (!disabled) {
-                        instance.registerTelemetryLifecycleCallbacks();
-                    }
-                } else {
-                    instance.mSessionTrackingDisabled = true;
-                    instance.unregisterTelemetryLifecycleCallbacks();
+                instance.mSessionTrackingDisabled = disabled;
+                //TODO persist this setting so the dev doesn't have to take care of this
+                //between launches?
+                if (!disabled) {
+                    instance.registerTelemetryLifecycleCallbacks();
                 }
             }
         }
