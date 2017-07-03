@@ -191,7 +191,7 @@ public class Util {
      * @param context       the context to use, e.g. your Activity
      * @param pendingIntent the Intent to call
      * @param title         the title string for the notification
-     * @param text          the text content for the notificationcrash
+     * @param text          the text content for the notification
      * @param iconId        the icon resource ID for the notification
      * @return the created notification
      */

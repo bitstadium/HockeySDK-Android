@@ -112,7 +112,7 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
     }
 
     /**
-     * Creates the root view of the fragement, set title, the version number and
+     * Creates the root view of the fragment, set title, the version number and
      * the listener for the download button.
      *
      * @return The fragment's root view.

@@ -561,7 +561,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
                         }
                     }
                 } else {
-                    /** We dont have Name and Email. Check if initial values were provided */
+                    /** We don't have Name and Email. Check if initial values were provided */
                     mNameInput.setText(initialUserName);
                     mEmailInput.setText(initialUserEmail);
                     mSubjectInput.setText("");

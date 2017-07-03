@@ -91,7 +91,7 @@ public class CrashDetails {
             //print the managed exception
             throwable.printStackTrace(printWriter);
         } else {
-            //If we have managedExceptionString, we hava a MIXED (Java & C#)
+            //If we have managedExceptionString, we have a MIXED (Java & C#)
             //exception, The throwable will be the Java exception.
             if (!TextUtils.isEmpty(managedExceptionString)) {
                 //Print the java exception
