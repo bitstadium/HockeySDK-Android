@@ -324,7 +324,7 @@ public class Device implements IJsonSerializable, Serializable {
 
 
     /**
-     * Adds all members of this class to a hashmap
+     * Adds all members of this class to a map
      *
      * @param map to which the members of this class will be added.
      */

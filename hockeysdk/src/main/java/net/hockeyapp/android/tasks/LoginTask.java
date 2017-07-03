@@ -27,7 +27,7 @@ import java.util.Map;
 public class LoginTask extends ConnectionTask<Void, Void, Boolean> {
 
     /**
-     * Key for login success in the returend bundle
+     * Key for login success in the returned bundle
      */
     public static final String BUNDLE_SUCCESS = "success";
     private final int mMode;

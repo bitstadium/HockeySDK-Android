@@ -16,7 +16,7 @@ public class Base implements IJsonSerializable {
     public LinkedHashMap<String, String> Attributes;
 
     /**
-     * The name for thie type
+     * The name for this type
      */
     public String QualifiedName;
 

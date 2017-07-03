@@ -14,7 +14,7 @@ public class Domain implements IJsonSerializable {
     public LinkedHashMap<String, String> Attributes = new LinkedHashMap<>();
 
     /**
-     * The name for thie type
+     * The name for this type
      */
     public String QualifiedName;
 

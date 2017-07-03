@@ -35,10 +35,6 @@ public class FeedbackMessageView extends LinearLayout {
 
     private final Context mContext;
 
-    @SuppressWarnings("unused")
-    @Deprecated
-    private boolean ownMessage;//TODO why surpress this?! Intended for future use?
-
     public FeedbackMessageView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
