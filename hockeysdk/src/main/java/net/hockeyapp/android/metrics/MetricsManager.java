@@ -386,7 +386,7 @@ public class MetricsManager {
      * This is done by comparing NOW with the last time, onPause has been called.
      */
     private void updateSession() {
-        int count = this.ACTIVITY_COUNT.getAndIncrement();
+        int count = ACTIVITY_COUNT.getAndIncrement();
         if (count == 0) {
             if (sessionTrackingEnabled()) {
                 HockeyLog.debug(TAG, "Starting & tracking session");
@@ -397,8 +397,8 @@ public class MetricsManager {
         } else {
             //we should already have a session now
             //check if the session should be renewed
-            long now = this.getTime();
-            long then = this.LAST_BACKGROUND.getAndSet(getTime());
+            long now = getTime();
+            long then = LAST_BACKGROUND.getAndSet(getTime());
             boolean shouldRenew = ((now - then) >= SESSION_RENEWAL_INTERVAL);
             HockeyLog.debug(TAG, "Checking if we have to renew a session, time difference is: " + (now - then));
 

@@ -1,6 +1,5 @@
 package net.hockeyapp.android.tasks;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Handler;
@@ -39,9 +38,10 @@ public class AttachmentDownloader {
      * or the first access to FeedbackParserHolder.INSTANCE, not before.
      */
     private static class AttachmentDownloaderHolder {
-        public static final AttachmentDownloader INSTANCE = new AttachmentDownloader();
+        static final AttachmentDownloader INSTANCE = new AttachmentDownloader();
     }
 
+    @SuppressWarnings("SameReturnValue")
     public static AttachmentDownloader getInstance() {
         return AttachmentDownloaderHolder.INSTANCE;
     }
@@ -106,27 +106,28 @@ public class AttachmentDownloader {
             this.remainingRetries = 2;
         }
 
-        public FeedbackAttachment getFeedbackAttachment() {
+        FeedbackAttachment getFeedbackAttachment() {
             return feedbackAttachment;
         }
 
-        public AttachmentView getAttachmentView() {
+        AttachmentView getAttachmentView() {
             return attachmentView;
         }
 
-        public boolean isSuccess() {
+        @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+        boolean isSuccess() {
             return success;
         }
 
-        public void setSuccess(boolean success) {
+        void setSuccess(boolean success) {
             this.success = success;
         }
 
-        public boolean hasRetry() {
+        boolean hasRetry() {
             return remainingRetries > 0;
         }
 
-        public boolean consumeRetry() {
+        boolean consumeRetry() {
             return --remainingRetries >= 0;
         }
     }
@@ -258,7 +259,7 @@ public class AttachmentDownloader {
                 output = new FileOutputStream(file);
 
                 byte data[] = new byte[1024];
-                int count = 0;
+                int count;
                 long total = 0;
                 while ((count = input.read(data)) != -1) {
                     total += count;

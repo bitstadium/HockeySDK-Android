@@ -12,6 +12,7 @@ import android.util.Log;
  *
  * @see android.util.Log
  */
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class HockeyLog {
     public static final String HOCKEY_TAG = "HockeyApp";
 

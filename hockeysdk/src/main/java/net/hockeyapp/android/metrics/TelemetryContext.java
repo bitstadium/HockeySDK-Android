@@ -157,7 +157,7 @@ class TelemetryContext {
         HockeyLog.debug(TAG, "Configuring application context");
 
         // App version
-        String version = "unknown";
+        String version;
         mPackageName = "";
         if (Constants.APP_PACKAGE != null) {
             mPackageName = Constants.APP_PACKAGE;

@@ -33,20 +33,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Util {
-
-    public static final String PREFS_FEEDBACK_TOKEN = "net.hockeyapp.android.prefs_feedback_token";
-    public static final String PREFS_KEY_FEEDBACK_TOKEN = "net.hockeyapp.android.prefs_key_feedback_token";
-
-    public static final String PREFS_NAME_EMAIL_SUBJECT = "net.hockeyapp.android.prefs_name_email";
-    public static final String PREFS_KEY_NAME_EMAIL_SUBJECT = "net.hockeyapp.android.prefs_key_name_email";
-    public static final String APP_IDENTIFIER_PATTERN = "[0-9a-f]+";
-    public static final int APP_IDENTIFIER_LENGTH = 32;
-    public static final String APP_IDENTIFIER_KEY = "net.hockeyapp.android.appIdentifier";
-    public static final String LOG_IDENTIFIER = "HockeyApp";
+    private static final String APP_IDENTIFIER_PATTERN = "[0-9a-f]+";
+    private static final int APP_IDENTIFIER_LENGTH = 32;
+    private static final String APP_IDENTIFIER_KEY = "net.hockeyapp.android.appIdentifier";
     private static final String APP_SECRET_KEY = "net.hockeyapp.android.appSecret";
     private static final Pattern appIdentifierPattern = Pattern.compile(APP_IDENTIFIER_PATTERN, Pattern.CASE_INSENSITIVE);
-
-    private static final String SDK_VERSION_KEY = "net.hockeyapp.android.sdkVersion";
 
     private static final ThreadLocal<DateFormat> DATE_FORMAT_THREAD_LOCAL = new ThreadLocal<DateFormat>() {
         @Override

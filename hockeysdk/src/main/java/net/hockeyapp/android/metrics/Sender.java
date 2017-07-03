@@ -24,7 +24,6 @@ import java.util.zip.GZIPOutputStream;
  * Either calls execute or executeOnExecutor on an AsyncTask depending on the
  * API level.
  **/
-
 public class Sender {
 
     /**
@@ -350,7 +349,7 @@ public class Sender {
      * @param builder    a string builder for storing the response
      */
     protected void readResponse(HttpURLConnection connection, StringBuilder builder) {
-        String result = null;
+        String result;
         StringBuilder buffer = new StringBuilder();
         InputStream inputStream = null;
 
@@ -362,7 +361,7 @@ public class Sender {
 
             if(inputStream != null){
                 BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
-                String inputLine = "";
+                String inputLine;
                 while ((inputLine = br.readLine()) != null) {
                     buffer.append(inputLine);
                 }

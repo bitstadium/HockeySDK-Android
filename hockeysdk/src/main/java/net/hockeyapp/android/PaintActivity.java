@@ -90,7 +90,7 @@ public class PaintActivity extends Activity {
         hLayout.addView(mPaintView);
         setContentView(vLayout);
 
-        Toast toast = Toast.makeText(this, getString(R.string.hockeyapp_paint_indicator_toast), Toast.LENGTH_LONG);
+        Toast toast = Toast.makeText(this, R.string.hockeyapp_paint_indicator_toast, Toast.LENGTH_LONG);
         toast.show();
     }
 
@@ -166,8 +166,17 @@ public class PaintActivity extends Activity {
     }
 
     private void makeResult() {
-        File hockeyAppCache = new File(getCacheDir(), "HockeyApp");
-        hockeyAppCache.mkdir();
+        File hockeyAppCache = new File(getCacheDir(), Constants.FILES_DIRECTORY_NAME);
+        boolean created = hockeyAppCache.mkdir();
+        if (!created || !hockeyAppCache.exists()) {
+            if (getParent() == null) {
+                setResult(Activity.RESULT_CANCELED);
+            } else {
+                getParent().setResult(Activity.RESULT_CANCELED);
+            }
+            finish();
+            return;
+        }
 
         String filename = mImageName + ".jpg";
         File result = new File(hockeyAppCache, filename);

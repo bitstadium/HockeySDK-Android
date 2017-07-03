@@ -17,6 +17,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.os.Parcelable;
+import android.support.annotation.StringRes;
 import android.text.TextUtils;
 import android.view.ContextMenu;
 import android.view.KeyEvent;
@@ -132,11 +133,6 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
     private EditText mSubjectInput;
     private EditText mTextInput;
     private Button mSendFeedbackButton;
-    private Button mAddAttachmentButton;
-    private Button mAddResponseButton;
-    private Button mRefreshButton;
-    private ScrollView mFeedbackScrollview;
-    private LinearLayout mWrapperLayoutFeedbackAndMessages;
     private ListView mMessagesListView;
     /**
      * Send feedback {@link AsyncTask}
@@ -204,7 +200,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
 
         setContentView(getLayoutView());
 
-        setTitle(getString(R.string.hockeyapp_feedback_title));
+        setTitle(R.string.hockeyapp_feedback_title);
         mContext = this;
 
         Bundle extras = getIntent().getExtras();
@@ -261,12 +257,13 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
         if (savedInstanceState != null) {
             ViewGroup attachmentList = findViewById(R.id.wrapper_attachments);
             ArrayList<Uri> attachmentsUris = savedInstanceState.getParcelableArrayList("attachments");
-            for (Uri attachmentUri : attachmentsUris) {
-                if (!mInitialAttachments.contains(attachmentUri)) {
-                    attachmentList.addView(new AttachmentView(this, attachmentList, attachmentUri, true));
+            if (attachmentsUris != null) {
+                for (Uri attachmentUri : attachmentsUris) {
+                    if (!mInitialAttachments.contains(attachmentUri)) {
+                        attachmentList.addView(new AttachmentView(this, attachmentList, attachmentUri, true));
+                    }
                 }
             }
-
             mFeedbackViewInitialized = savedInstanceState.getBoolean("feedbackViewInitialized");
         }
 
@@ -348,7 +345,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
         } else if (viewId == R.id.button_attachment) {
             ViewGroup attachments = findViewById(R.id.wrapper_attachments);
             if (attachments.getChildCount() >= MAX_ATTACHMENTS_PER_MSG) {
-                Toast.makeText(this, String.format(getString(R.string.hockeyapp_feedback_max_attachments_allowed), MAX_ATTACHMENTS_PER_MSG), Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.hockeyapp_feedback_max_attachments_allowed, MAX_ATTACHMENTS_PER_MSG), Toast.LENGTH_SHORT).show();
             } else {
                 openContextMenu(v);
             }
@@ -403,11 +400,11 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
         switch (id) {
             case DIALOG_ERROR_ID:
                 return new AlertDialog.Builder(this)
-                        .setMessage(getString(R.string.hockeyapp_dialog_error_message))
+                        .setMessage(R.string.hockeyapp_dialog_error_message)
                         .setCancelable(false)
-                        .setTitle(getString(R.string.hockeyapp_dialog_error_title))
+                        .setTitle(R.string.hockeyapp_dialog_error_title)
                         .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setPositiveButton(getString(R.string.hockeyapp_dialog_positive_button), new DialogInterface.OnClickListener() {
+                        .setPositiveButton(R.string.hockeyapp_dialog_positive_button, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 mError = null;
                                 dialog.cancel();
@@ -467,7 +464,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
                     intent.putExtra(PaintActivity.EXTRA_IMAGE_URI, uri);
                     startActivityForResult(intent, PAINT_IMAGE);
                 } catch (ActivityNotFoundException e) {
-                    HockeyLog.error(Util.LOG_IDENTIFIER, "Paint activity not declared!", e);
+                    HockeyLog.error("Paint activity not declared!", e);
                 }
 
             }
@@ -508,29 +505,29 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
      * @param haveToken the message list is shown if true
      */
     protected void configureFeedbackView(boolean haveToken) {
-        mFeedbackScrollview = findViewById(R.id.wrapper_feedback_scroll);
-        mWrapperLayoutFeedbackAndMessages = findViewById(R.id.wrapper_messages);
+        ScrollView feedbackScrollView = findViewById(R.id.wrapper_feedback_scroll);
+        LinearLayout wrapperLayoutFeedbackAndMessages = findViewById(R.id.wrapper_messages);
         mMessagesListView = findViewById(R.id.list_feedback_messages);
 
         if (haveToken) {
             /** If a token exists, the list of messages should be displayed */
-            mWrapperLayoutFeedbackAndMessages.setVisibility(View.VISIBLE);
-            mFeedbackScrollview.setVisibility(View.GONE);
+            wrapperLayoutFeedbackAndMessages.setVisibility(View.VISIBLE);
+            feedbackScrollView.setVisibility(View.GONE);
 
             mLastUpdatedTextView = findViewById(R.id.label_last_updated);
             mLastUpdatedTextView.setVisibility(View.INVISIBLE);
 
-            mAddResponseButton = findViewById(R.id.button_add_response);
-            mAddResponseButton.setOnClickListener(this);
-            mAddResponseButton.setOnFocusChangeListener(this);
+            Button addResponseButton = findViewById(R.id.button_add_response);
+            addResponseButton.setOnClickListener(this);
+            addResponseButton.setOnFocusChangeListener(this);
 
-            mRefreshButton = findViewById(R.id.button_refresh);
-            mRefreshButton.setOnClickListener(this);
-            mRefreshButton.setOnFocusChangeListener(this);
+            Button refreshButton = findViewById(R.id.button_refresh);
+            refreshButton.setOnClickListener(this);
+            refreshButton.setOnFocusChangeListener(this);
         } else {
             /** if the token doesn't exist, the feedback details inputs to be sent need to be displayed */
-            mWrapperLayoutFeedbackAndMessages.setVisibility(View.GONE);
-            mFeedbackScrollview.setVisibility(View.VISIBLE);
+            wrapperLayoutFeedbackAndMessages.setVisibility(View.GONE);
+            feedbackScrollView.setVisibility(View.VISIBLE);
 
             mNameInput = findViewById(R.id.input_name);
             mNameInput.setOnFocusChangeListener(this);
@@ -603,14 +600,14 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
             }
 
             /** Use of context menu needs to be enabled explicitly */
-            mAddAttachmentButton = findViewById(R.id.button_attachment);
-            mAddAttachmentButton.setOnClickListener(this);
-            mAddAttachmentButton.setOnFocusChangeListener(this);
-            registerForContextMenu(mAddAttachmentButton);
+            Button addAttachmentButton = findViewById(R.id.button_attachment);
+            addAttachmentButton.setOnClickListener(this);
+            addAttachmentButton.setOnFocusChangeListener(this);
+            registerForContextMenu(addAttachmentButton);
 
             mSendFeedbackButton = findViewById(R.id.button_send);
             mSendFeedbackButton.setOnClickListener(this);
-            mAddAttachmentButton.setOnFocusChangeListener(this);
+            addAttachmentButton.setOnFocusChangeListener(this);
         }
     }
 
@@ -720,7 +717,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
             public void run() {
                 configureFeedbackView(true);
 
-                Date date = null;
+                Date date;
                 if (feedbackResponse != null && feedbackResponse.getFeedback() != null &&
                         feedbackResponse.getFeedback().getMessages() != null && feedbackResponse.
                         getFeedback().getMessages().size() > 0) {
@@ -825,7 +822,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
         }
     }
 
-    private void setError(final EditText inputField, int feedbackStringId) {
+    private void setError(final EditText inputField, @StringRes int feedbackStringId) {
         inputField.setError(getString(feedbackStringId));
 
         // requestFocus and showKeyboard on next frame to read error message via talkback

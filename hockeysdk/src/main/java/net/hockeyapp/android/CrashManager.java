@@ -401,7 +401,7 @@ public class CrashManager {
 
             for (int index = 0; index < list.length; index++) {
                 try {
-                    Context context = null;
+                    Context context;
                     if (weakContext != null) {
                         HockeyLog.debug("Delete stacktrace " + list[index] + ".");
                         deleteStackTrace(weakContext, list[index]);
@@ -475,7 +475,7 @@ public class CrashManager {
      * @param weakContext The context to use. Usually your Activity object.
      */
     public static void resetAlwaysSend(final WeakReference<Context> weakContext) {
-        Context context = null;
+        Context context;
         if (weakContext != null) {
             context = weakContext.get();
 
@@ -641,7 +641,7 @@ public class CrashManager {
             return;
         }
 
-        Context context = null;
+        Context context;
         if (weakContext != null) {
             context = weakContext.get();
             if (context != null) {
@@ -665,7 +665,7 @@ public class CrashManager {
      * reached.
      */
     private static void deleteRetryCounter(WeakReference<Context> weakContext, String filename, int maxRetryAttempts) {
-        Context context = null;
+        Context context;
         if (weakContext != null) {
             context = weakContext.get();
             if (context != null) {
@@ -682,7 +682,7 @@ public class CrashManager {
      * different extension).
      */
     private static void deleteStackTrace(WeakReference<Context> weakContext, String filename) {
-        Context context = null;
+        Context context;
         if (weakContext != null) {
             context = weakContext.get();
             if (context != null) {
@@ -704,7 +704,7 @@ public class CrashManager {
      * Returns the content of a file as a string.
      */
     private static String contentsOfFile(WeakReference<Context> weakContext, String filename) {
-        Context context = null;
+        Context context;
         if (weakContext != null) {
             context = weakContext.get();
             if (context != null) {
@@ -712,7 +712,7 @@ public class CrashManager {
                 BufferedReader reader = null;
                 try {
                     reader = new BufferedReader(new InputStreamReader(context.openFileInput(filename)));
-                    String line = null;
+                    String line;
                     while ((line = reader.readLine()) != null) {
                         contents.append(line);
                         contents.append(System.getProperty("line.separator"));
@@ -739,7 +739,7 @@ public class CrashManager {
      * Saves the list of the stack traces' file names in shared preferences.
      */
     private static void saveConfirmedStackTraces(WeakReference<Context> weakContext) {
-        Context context = null;
+        Context context;
         if (weakContext != null) {
             context = weakContext.get();
             if (context != null) {
@@ -781,7 +781,7 @@ public class CrashManager {
             // Try to create the files folder if it doesn't exist
             File dir = new File(Constants.FILES_PATH + "/");
             boolean created = dir.mkdir();
-            if (!created && !dir.exists()) {
+            if (!created || !dir.exists()) {
                 return new String[0];
             }
 

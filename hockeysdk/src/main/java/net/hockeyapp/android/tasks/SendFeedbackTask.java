@@ -72,10 +72,9 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
      *                        If false, the {@link AsyncTask} will perform a POST, sending the
      *                        feedback message
      */
-    public SendFeedbackTask(Context context, String urlString, String name, String email, String
-            subject,
-                            String text, List<Uri> attachmentUris, String token, Handler handler,
-                            boolean isFetchMessages) {
+    public SendFeedbackTask(Context context, String urlString, String name, String email,
+                            String subject,String text, List<Uri> attachmentUris, String token,
+                            Handler handler, boolean isFetchMessages) {
 
         this.mContext = context;
         this.mUrlString = urlString;

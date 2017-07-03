@@ -6,6 +6,7 @@ package net.hockeyapp.android;
  * Abstract class for callbacks to be invoked from the CrashManager.
  *
  **/
+@SuppressWarnings({"WeakerAccess", "SameReturnValue"})
 public abstract class CrashManagerListener {
     /**
      * Return true to ignore the default exception handler, i.e. the user will not

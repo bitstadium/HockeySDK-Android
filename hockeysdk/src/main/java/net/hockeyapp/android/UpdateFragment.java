@@ -183,10 +183,10 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
                 } else {
                     final UpdateFragment updateFragment = this;
                     new AlertDialog.Builder(getActivity())
-                            .setTitle(getString(R.string.hockeyapp_permission_update_title))
-                            .setMessage(getString(R.string.hockeyapp_permission_update_message))
-                            .setNegativeButton(getString(R.string.hockeyapp_permission_dialog_negative_button), null)
-                            .setPositiveButton(getString(R.string.hockeyapp_permission_dialog_positive_button), new DialogInterface.OnClickListener() {
+                            .setTitle(R.string.hockeyapp_permission_update_title)
+                            .setMessage(R.string.hockeyapp_permission_update_message)
+                            .setNegativeButton(R.string.hockeyapp_permission_dialog_negative_button, null)
+                            .setPositiveButton(R.string.hockeyapp_permission_dialog_positive_button, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
                                     updateFragment.prepareDownload();
                                 }
