@@ -48,7 +48,7 @@ public class HttpURLConnectionBuilder {
 
     public HttpURLConnectionBuilder(String urlString) {
         mUrlString = urlString;
-        mHeaders = new HashMap<String, String>();
+        mHeaders = new HashMap<>();
         mHeaders.put("User-Agent", Constants.SDK_USER_AGENT);
     }
 
@@ -176,7 +176,7 @@ public class HttpURLConnectionBuilder {
     }
 
     private static String getFormString(Map<String, String> params, String charset) throws UnsupportedEncodingException {
-        List<String> protoList = new ArrayList<String>();
+        List<String> protoList = new ArrayList<>();
         for (String key : params.keySet()) {
             String value = params.get(key);
             key = URLEncoder.encode(key, charset);

@@ -280,7 +280,7 @@ public class Constants {
         String serial = "";
         try {
             serial = android.os.Build.class.getField("SERIAL").get(null).toString();
-        } catch (Throwable t) {
+        } catch (Throwable ignored) {
         }
 
         return fingerprint + ":" + serial;

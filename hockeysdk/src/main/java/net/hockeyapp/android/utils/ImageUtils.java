@@ -8,7 +8,6 @@ import android.net.Uri;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -46,7 +45,6 @@ public class ImageUtils {
      * @param context the context to use
      * @param uri     the URI of the image
      * @return The image orientation, either ORIENTATION_PORTRAIT or ORIENTATION_LANDSCAPE.
-     * @throws IOException if the URI couldn't be processed
      */
     public static int determineOrientation(Context context, Uri uri) {
         InputStream input = null;
@@ -97,7 +95,7 @@ public class ImageUtils {
      * @param reqWidth  required width
      * @param reqHeight required height
      * @return decoded the decoded bitmap
-     * @throws IOException if the URI couldn't be processed
+     * @throws IOException if the file couldn't be processed
      */
     public static Bitmap decodeSampledBitmap(File file, int reqWidth, int reqHeight) throws IOException {
         // First decode with inJustDecodeBounds=true to check dimensions
@@ -111,9 +109,8 @@ public class ImageUtils {
 
         // Decode bitmap with inSampleSize set
         options.inJustDecodeBounds = false;
-        Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath(), options);
 
-        return bitmap;
+        return BitmapFactory.decodeFile(file.getAbsolutePath(), options);
     }
 
     /**
@@ -145,12 +142,15 @@ public class ImageUtils {
             // Decode bitmap with inSampleSize set
             options.inJustDecodeBounds = false;
             inputBitmap = context.getContentResolver().openInputStream(imageUri);
-            Bitmap bitmap = BitmapFactory.decodeStream(inputBitmap, null, options);
 
-            return bitmap;
+            return BitmapFactory.decodeStream(inputBitmap, null, options);
         } finally {
-            inputBounds.close();
-            inputBitmap.close();
+            if (inputBounds != null) {
+                inputBounds.close();
+            }
+            if (inputBitmap != null) {
+                inputBitmap.close();
+            }
         }
 
     }

@@ -5,7 +5,6 @@ import android.support.test.runner.AndroidJUnit4;
 import android.test.InstrumentationTestCase;
 
 import net.hockeyapp.android.PrivateEventManager;
-import net.hockeyapp.android.suite.InstrumentationTestSuite;
 
 import org.junit.Before;
 import org.junit.Test;

@@ -11,9 +11,7 @@ import android.content.SharedPreferences;
  */
 public class PrefsUtil {
     private SharedPreferences mFeedbackTokenPrefs;
-    private SharedPreferences.Editor mFeedbackTokenPrefsEditor;
     private SharedPreferences mNameEmailSubjectPrefs;
-    private SharedPreferences.Editor mNameEmailSubjectPrefsEditor;
 
     /**
      * Private constructor prevents instantiation from other classes
@@ -48,9 +46,9 @@ public class PrefsUtil {
         if (context != null) {
             mFeedbackTokenPrefs = context.getSharedPreferences(Util.PREFS_FEEDBACK_TOKEN, 0);
             if (mFeedbackTokenPrefs != null) {
-                mFeedbackTokenPrefsEditor = mFeedbackTokenPrefs.edit();
-                mFeedbackTokenPrefsEditor.putString(Util.PREFS_KEY_FEEDBACK_TOKEN, token);
-                mFeedbackTokenPrefsEditor.apply();
+                SharedPreferences.Editor editor = mFeedbackTokenPrefs.edit();
+                editor.putString(Util.PREFS_KEY_FEEDBACK_TOKEN, token);
+                editor.apply();
             }
         }
     }
@@ -86,15 +84,15 @@ public class PrefsUtil {
         if (context != null) {
             mNameEmailSubjectPrefs = context.getSharedPreferences(Util.PREFS_NAME_EMAIL_SUBJECT, 0);
             if (mNameEmailSubjectPrefs != null) {
-                mNameEmailSubjectPrefsEditor = mNameEmailSubjectPrefs.edit();
+                SharedPreferences.Editor editor = mNameEmailSubjectPrefs.edit();
                 if (name == null || email == null || subject == null) {
-                    mNameEmailSubjectPrefsEditor.putString(Util.PREFS_KEY_NAME_EMAIL_SUBJECT, null);
+                    editor.putString(Util.PREFS_KEY_NAME_EMAIL_SUBJECT, null);
                 } else {
-                    mNameEmailSubjectPrefsEditor.putString(Util.PREFS_KEY_NAME_EMAIL_SUBJECT, String.format("%s|%s|%s",
+                    editor.putString(Util.PREFS_KEY_NAME_EMAIL_SUBJECT, String.format("%s|%s|%s",
                             name, email, subject));
                 }
 
-                mNameEmailSubjectPrefsEditor.apply();
+                editor.apply();
             }
         }
     }

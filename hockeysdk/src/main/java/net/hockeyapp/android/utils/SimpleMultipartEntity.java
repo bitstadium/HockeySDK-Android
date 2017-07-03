@@ -41,7 +41,7 @@ public class SimpleMultipartEntity {
         }
 
         /** Create boundary String */
-        final StringBuffer buffer = new StringBuffer();
+        final StringBuilder buffer = new StringBuilder();
         final Random rand = new Random();
 
         for (int i = 0; i < 30; i++) {

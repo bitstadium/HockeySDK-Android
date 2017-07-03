@@ -39,7 +39,7 @@ public class ChannelTests extends InstrumentationTestCase {
     private PublicPersistence mockPersistence;
 
     private static PublicTelemetryContext getMockTelemetryContext() {
-        HashMap<String, String> tags = new HashMap<String, String>();
+        HashMap<String, String> tags = new HashMap<>();
         tags.put(MOCK_TAGS_KEY, MOCK_TAGS_VALUE);
 
         PublicTelemetryContext mockContext = mock(PublicTelemetryContext.class);
@@ -75,7 +75,7 @@ public class ChannelTests extends InstrumentationTestCase {
 
     @Test
     public void testLoggingItemAddsToQueue() {
-        Data<Domain> data = new Data<Domain>();
+        Data<Domain> data = new Data<>();
         Assert.assertEquals(0, sut.mQueue.size());
 
         sut.enqueueData(data);
@@ -87,11 +87,11 @@ public class ChannelTests extends InstrumentationTestCase {
         Assert.assertEquals(0, sut.mQueue.size());
 
         for (int i = 1; i < Channel.getMaxBatchCount(); i++) {
-            sut.enqueueData(new Data<Domain>());
+            sut.enqueueData(new Data<>());
             Assert.assertEquals(i, sut.mQueue.size());
         }
 
-        sut.enqueueData(new Data<Domain>());
+        sut.enqueueData(new Data<>());
         Assert.assertEquals(0, sut.mQueue.size());
 
         verify(mockPersistence).persist(any(String[].class));
@@ -101,7 +101,7 @@ public class ChannelTests extends InstrumentationTestCase {
     public void testCreateEnvelopeForTelemetryData() {
         SessionStateData sessionStateData = new SessionStateData();
         sessionStateData.setState(SessionState.START);
-        Data<Domain> testData = new Data<Domain>();
+        Data<Domain> testData = new Data<>();
         testData.setBaseData(sessionStateData);
         testData.setBaseType(sessionStateData.getBaseType());
         testData.QualifiedName = sessionStateData.getEnvelopeName();

@@ -216,7 +216,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
 
             Parcelable[] initialAttachmentsArray = extras.getParcelableArray(EXTRA_INITIAL_ATTACHMENTS);
             if (initialAttachmentsArray != null) {
-                mInitialAttachments = new ArrayList<Uri>();
+                mInitialAttachments = new ArrayList<>();
                 for (Parcelable parcelable : initialAttachmentsArray) {
                     mInitialAttachments.add((Uri) parcelable);
                 }

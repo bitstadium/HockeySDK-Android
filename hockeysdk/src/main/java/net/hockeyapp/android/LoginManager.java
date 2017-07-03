@@ -7,7 +7,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.text.TextUtils;
+
 import net.hockeyapp.android.tasks.LoginTask;
 import net.hockeyapp.android.utils.AsyncTaskUtils;
 import net.hockeyapp.android.utils.HockeyLog;
@@ -220,7 +220,7 @@ public class LoginManager {
         if (mode == LOGIN_MODE_VALIDATE) {
             HockeyLog.verbose("HockeyAuth", "LOGIN_MODE_VALIDATE, Validate the user's info!");
 
-            Map<String, String> params = new HashMap<String, String>();
+            Map<String, String> params = new HashMap<>();
             if (auid != null) {
                 params.put("type", "auid");
                 params.put("id", auid);

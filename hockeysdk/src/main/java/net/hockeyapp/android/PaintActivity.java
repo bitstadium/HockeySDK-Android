@@ -66,12 +66,12 @@ public class PaintActivity extends Activity {
         setRequestedOrientation(desiredOrientation);
 
         if (currentOrientation != desiredOrientation) {
-      /* Activity will be destroyed again.. skip the following expensive operations. */
+            /* Activity will be destroyed again.. skip the following expensive operations. */
             HockeyLog.debug("Image loading skipped because activity will be destroyed for orientation change.");
             return;
         }
 
-    /* Create view and find out which orientation is needed. */
+        /* Create view and find out which orientation is needed. */
         mPaintView = new PaintView(this, imageUri, displayWidth, displayHeight);
 
         LinearLayout vLayout = new LinearLayout(this);
