@@ -51,7 +51,7 @@ public class VersionHelper {
         try {
             JSONArray versions = new JSONArray(infoJSON);
 
-            int versionCode = mListener.getCurrentVersionCode();
+            int versionCode = this.mCurrentVersionCode;
             for (int index = 0; index < versions.length(); index++) {
                 JSONObject entry = versions.getJSONObject(index);
                 boolean largerVersionCode = (entry.getInt("version") > versionCode);

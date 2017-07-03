@@ -3,11 +3,9 @@ package net.hockeyapp.android;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.NotificationManager;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -36,7 +34,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import net.hockeyapp.android.adapters.MessagesAdapter;
-import net.hockeyapp.android.objects.ErrorObject;
 import net.hockeyapp.android.objects.FeedbackMessage;
 import net.hockeyapp.android.objects.FeedbackResponse;
 import net.hockeyapp.android.objects.FeedbackUserDataElement;
@@ -100,10 +97,6 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
     private static final int MAX_ATTACHMENTS_PER_MSG = 3;
 
     /**
-     * ID of error dialog
-     **/
-    private static final int DIALOG_ERROR_ID = 0;
-    /**
      * Activity request constants for ContextMenu and Chooser Intent
      */
     private static final int ATTACH_PICTURE = 1;
@@ -155,11 +148,6 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
      * URL for HockeyApp API
      **/
     private String mUrl;
-
-    /**
-     * Current error for alert dialog
-     **/
-    private ErrorObject mError;
 
     /**
      * Message data source
@@ -393,45 +381,6 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
             default:
                 return super.onContextItemSelected(item);
         }
-    }
-
-    @Override
-    protected Dialog onCreateDialog(int id) {
-        switch (id) {
-            case DIALOG_ERROR_ID:
-                return new AlertDialog.Builder(this)
-                        .setMessage(R.string.hockeyapp_dialog_error_message)
-                        .setCancelable(false)
-                        .setTitle(R.string.hockeyapp_dialog_error_title)
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setPositiveButton(R.string.hockeyapp_dialog_positive_button, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                mError = null;
-                                dialog.cancel();
-                            }
-                        }).create();
-        }
-
-        return null;
-    }
-
-    @Override
-    protected void onPrepareDialog(int id, Dialog dialog) {
-        switch (id) {
-            case DIALOG_ERROR_ID:
-                AlertDialog messageDialogError = (AlertDialog) dialog;
-                if (mError != null) {
-                    /** If the ErrorObject is not null, display the ErrorObject message */
-                    messageDialogError.setMessage(mError.getMessage());
-                } else {
-                    /** If the ErrorObject is null, display the general error message */
-                    messageDialogError.setMessage(getString(R.string.hockeyapp_feedback_generic_error));
-                }
-                break;
-            default:
-                break;
-        }
-
     }
 
     /**
@@ -690,6 +639,22 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
         }
     }
 
+    private void showError(@StringRes final int message) {
+        runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+                AlertDialog alertDialog = new AlertDialog.Builder(FeedbackActivity.this)
+                        .setTitle(R.string.hockeyapp_dialog_error_title)
+                        .setMessage(message)
+                        .setCancelable(false)
+                        .setPositiveButton(R.string.hockeyapp_dialog_positive_button, null)
+                        .create();
+                alertDialog.show();
+            }
+        });
+    }
+
     /**
      * Initializes the Feedback response {@link Handler}
      */
@@ -866,14 +831,14 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
 
         private final WeakReference<FeedbackActivity> mWeakFeedbackActivity;
 
-        public FeedbackHandler(FeedbackActivity feedbackActivity) {
+        FeedbackHandler(FeedbackActivity feedbackActivity) {
             mWeakFeedbackActivity = new WeakReference<>(feedbackActivity);
         }
 
         @Override
         public void handleMessage(Message msg) {
             boolean success = false;
-            ErrorObject error = new ErrorObject();
+            int errorMessage = 0;
 
             final FeedbackActivity feedbackActivity = mWeakFeedbackActivity.get();
             if (feedbackActivity == null) {
@@ -887,7 +852,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
                 String requestType = bundle.getString(SendFeedbackTask.BUNDLE_REQUEST_TYPE);
                 if ("send".equals(requestType) && (responseString == null || Integer.parseInt(statusCode) != 201)) {
                     // Send feedback went wrong if response is empty or status code != 201
-                    error.setMessage(feedbackActivity.getString(R.string.hockeyapp_feedback_send_generic_error));
+                    errorMessage = R.string.hockeyapp_feedback_send_generic_error;
                 } else if ("fetch".equals(requestType) && statusCode != null && (Integer.parseInt(statusCode) == 404 || Integer.parseInt(statusCode) == 422)) {
                     // Fetch feedback went wrong if status code is 404 or 422
                     feedbackActivity.resetFeedbackView();
@@ -904,24 +869,14 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
                     }
                     success = true;
                 } else {
-                    error.setMessage(feedbackActivity.getString(R.string.hockeyapp_feedback_send_network_error));
+                    errorMessage = R.string.hockeyapp_feedback_send_network_error;
                 }
             } else {
-                error.setMessage(feedbackActivity.getString(R.string.hockeyapp_feedback_send_generic_error));
+                errorMessage = R.string.hockeyapp_feedback_send_generic_error;
             }
 
-            feedbackActivity.mError = error;
-
             if (!success) {
-                feedbackActivity.runOnUiThread(new Runnable() {
-
-                    @SuppressWarnings("deprecation")
-                    @Override
-                    public void run() {
-                        feedbackActivity.enableDisableSendFeedbackButton(true);
-                        feedbackActivity.showDialog(DIALOG_ERROR_ID);
-                    }
-                });
+                feedbackActivity.showError(errorMessage);
             }
 
             feedbackActivity.onSendFeedbackResult(success);
@@ -933,7 +888,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
 
         private final WeakReference<FeedbackActivity> mWeakFeedbackActivity;
 
-        public ParseFeedbackHandler(FeedbackActivity feedbackActivity) {
+        ParseFeedbackHandler(FeedbackActivity feedbackActivity) {
             mWeakFeedbackActivity = new WeakReference<>(feedbackActivity);
         }
 
@@ -945,8 +900,6 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
             if (feedbackActivity == null) {
                 return;
             }
-
-            feedbackActivity.mError = new ErrorObject();
 
             if (msg != null && msg.getData() != null) {
                 Bundle bundle = msg.getData();
@@ -971,14 +924,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
 
             /** Something went wrong, so display an error dialog */
             if (!success) {
-                feedbackActivity.runOnUiThread(new Runnable() {
-
-                    @SuppressWarnings("deprecation")
-                    @Override
-                    public void run() {
-                        feedbackActivity.showDialog(DIALOG_ERROR_ID);
-                    }
-                });
+                feedbackActivity.showError(R.string.hockeyapp_dialog_error_message);
             }
 
             feedbackActivity.enableDisableSendFeedbackButton(true);

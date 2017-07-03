@@ -68,7 +68,6 @@ public class CheckUpdateTaskWithUI extends CheckUpdateTask {
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     private void showDialog(final JSONArray updateInfo) {
 
         //Reason for enabled Caching

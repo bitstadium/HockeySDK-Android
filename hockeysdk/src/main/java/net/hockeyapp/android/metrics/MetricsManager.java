@@ -306,7 +306,6 @@ public class MetricsManager {
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     private void registerTelemetryLifecycleCallbacks() {
         if (mTelemetryLifecycleCallbacks == null) {
             mTelemetryLifecycleCallbacks = new TelemetryLifecycleCallbacks();
@@ -314,7 +313,6 @@ public class MetricsManager {
         getApplication().registerActivityLifecycleCallbacks(mTelemetryLifecycleCallbacks);
     }
 
-    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     private void unregisterTelemetryLifecycleCallbacks() {
         if (mTelemetryLifecycleCallbacks == null) {
             return;
@@ -496,7 +494,6 @@ public class MetricsManager {
 
     }
 
-    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     private class TelemetryLifecycleCallbacks implements Application.ActivityLifecycleCallbacks {
 
         private final long MAX_ACTIVITY_TRANSITION_TIME_MS = 2000;

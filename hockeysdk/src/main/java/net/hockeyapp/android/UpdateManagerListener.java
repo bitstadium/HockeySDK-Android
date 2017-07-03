@@ -10,6 +10,7 @@ import java.util.Date;
  * Abstract class for callbacks to be invoked from the UpdateManager.
  *
  **/
+@SuppressWarnings({"WeakerAccess"})
 public abstract class UpdateManagerListener {
     /**
      * Return your own subclass of UpdateActivity for customization.
