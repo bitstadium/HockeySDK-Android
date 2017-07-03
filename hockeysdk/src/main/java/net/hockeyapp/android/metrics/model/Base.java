@@ -30,7 +30,7 @@ public class Base implements IJsonSerializable {
      */
     public Base() {
         this.InitializeFields();
-        Attributes = new LinkedHashMap<String, String>();
+        Attributes = new LinkedHashMap<>();
     }
 
     /**

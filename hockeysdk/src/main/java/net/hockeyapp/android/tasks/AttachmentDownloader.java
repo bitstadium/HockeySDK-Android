@@ -2,7 +2,6 @@ package net.hockeyapp.android.tasks;
 
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 
@@ -50,7 +49,7 @@ public class AttachmentDownloader {
     private boolean downloadRunning;
 
     private AttachmentDownloader() {
-        this.queue = new LinkedList<DownloadJob>();
+        this.queue = new LinkedList<>();
         this.downloadRunning = false;
     }
 

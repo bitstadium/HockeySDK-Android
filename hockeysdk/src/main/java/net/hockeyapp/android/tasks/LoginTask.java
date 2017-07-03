@@ -15,7 +15,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.util.Map;
 
@@ -101,8 +100,6 @@ public class LoginTask extends ConnectionTask<Void, Void, Boolean> {
                     return handleResponse(responseStr);
                 }
             }
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {

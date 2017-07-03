@@ -13,6 +13,7 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.webkit.WebView;
@@ -29,10 +30,7 @@ import net.hockeyapp.android.utils.Util;
 import net.hockeyapp.android.utils.VersionHelper;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 /**
  * <h3>Description</h3>
@@ -146,7 +144,7 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 
         enableUpdateButton();
 
@@ -195,7 +193,7 @@ public class UpdateActivity extends Activity implements UpdateActivityInterface,
 
         try {
             currentVersionCode = getPackageManager().getPackageInfo(this.getPackageName(), PackageManager.GET_META_DATA).versionCode;
-        } catch (NameNotFoundException e) {
+        } catch (NameNotFoundException ignored) {
         }
 
         return currentVersionCode;

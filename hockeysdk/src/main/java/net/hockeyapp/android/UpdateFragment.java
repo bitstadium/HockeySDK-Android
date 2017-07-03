@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -52,11 +53,6 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
     public static final String FRAGMENT_VERSION_INFO = "versionInfo";
 
     /**
-     * Task to download the .apk file.
-     */
-    private DownloadFileTask mDownloadTask;
-
-    /**
      * JSON array with a JSON object for each version.
      */
     private JSONArray mVersionInfo;
@@ -65,11 +61,6 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
      * HockeyApp URL as a string.
      */
     private String mUrlString;
-
-    /**
-     * Helper for version management.
-     */
-    private VersionHelper mVersionHelper;
 
     /**
      * Creates a new instance of the fragment.
@@ -121,17 +112,18 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = getLayoutView();
 
-        mVersionHelper = new VersionHelper(getActivity(), mVersionInfo.toString(), this);
+        // Helper for version management.
+        VersionHelper versionHelper = new VersionHelper(getActivity(), mVersionInfo.toString(), this);
 
         TextView nameLabel = view.findViewById(R.id.label_title);
         nameLabel.setText(getAppName());
 
         final TextView versionLabel = view.findViewById(R.id.label_version);
-        final String versionString = "Version " + mVersionHelper.getVersionString();
-        final String fileDate = mVersionHelper.getFileDateString();
+        final String versionString = "Version " + versionHelper.getVersionString();
+        final String fileDate = versionHelper.getFileDateString();
 
         String appSizeString = "Unknown size";
-        long appSize = mVersionHelper.getFileSizeBytes();
+        long appSize = versionHelper.getFileSizeBytes();
         if (appSize >= 0L) {
             appSizeString = String.format(Locale.US, "%.2f", appSize / (1024.0f * 1024.0f)) + " MB";
         } else {
@@ -155,7 +147,7 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
         WebView webView = view.findViewById(R.id.web_update_details);
         webView.clearCache(true);
         webView.destroyDrawingCache();
-        webView.loadDataWithBaseURL(Constants.BASE_URL, mVersionHelper.getReleaseNotes(false), "text/html", "utf-8", null);
+        webView.loadDataWithBaseURL(Constants.BASE_URL, versionHelper.getReleaseNotes(false), "text/html", "utf-8", null);
 
         return view;
     }
@@ -170,7 +162,7 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (permissions.length == 0 || grantResults.length == 0) {
             // User cancelled permissions dialog -> don't do anything.
             return;
@@ -213,13 +205,10 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
      */
     public int getCurrentVersionCode() {
         int currentVersionCode = -1;
-
         try {
             currentVersionCode = getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), PackageManager.GET_META_DATA).versionCode;
-        } catch (NameNotFoundException e) {
-        } catch (NullPointerException e) {
+        } catch (NameNotFoundException | NullPointerException ignored) {
         }
-
         return currentVersionCode;
     }
 
@@ -242,7 +231,7 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
      * download, a failed download, and configuration strings.
      */
     private void startDownloadTask(final Activity activity) {
-        mDownloadTask = new DownloadFileTask(activity, mUrlString, new DownloadFileListener() {
+        AsyncTaskUtils.execute(new DownloadFileTask(activity, mUrlString, new DownloadFileListener() {
             public void downloadFailed(DownloadFileTask task, Boolean userWantsRetry) {
                 if (userWantsRetry) {
                     startDownloadTask(activity);
@@ -252,9 +241,7 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
             public void downloadSuccessful(DownloadFileTask task) {
                 // Do nothing as the fragment is already dismissed
             }
-
-        });
-        AsyncTaskUtils.execute(mDownloadTask);
+        }));
     }
 
     /**

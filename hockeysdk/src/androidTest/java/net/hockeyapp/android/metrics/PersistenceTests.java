@@ -99,7 +99,7 @@ public class PersistenceTests extends InstrumentationTestCase {
         when(mockDirectory.listFiles()).thenReturn(mockFiles);
 
         // Mock served list containing 1 file
-        ArrayList<File> servedFiles = new ArrayList<File>();
+        ArrayList<File> servedFiles = new ArrayList<>();
         servedFiles.add(mockFile1);
         sut.mServedFiles = servedFiles;
 

@@ -351,7 +351,7 @@ public class Sender {
      */
     protected void readResponse(HttpURLConnection connection, StringBuilder builder) {
         String result = null;
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         InputStream inputStream = null;
 
         try {

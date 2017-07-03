@@ -182,6 +182,7 @@ public class MetricsManager {
      * @deprecated Use {@link #register(Application)} instead.
      */
     @Deprecated
+    @SuppressWarnings("deprecation")
     public static void register(Context context, Application application) {
         String appIdentifier = Util.getAppIdentifier(context);
         if (appIdentifier == null || appIdentifier.length() == 0) {

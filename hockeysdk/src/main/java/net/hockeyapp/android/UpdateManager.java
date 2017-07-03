@@ -131,7 +131,7 @@ public class UpdateManager {
 
         lastListener = listener;
 
-        WeakReference<Activity> weakActivity = new WeakReference<Activity>(activity);
+        WeakReference<Activity> weakActivity = new WeakReference<>(activity);
         if (dialogShown(weakActivity)) {
             return;
         }
@@ -165,7 +165,7 @@ public class UpdateManager {
 
         lastListener = listener;
 
-        WeakReference<Context> weakContext = new WeakReference<Context>(appContext);
+        WeakReference<Context> weakContext = new WeakReference<>(appContext);
 
         if ((!checkExpiryDateForBackground(listener)) && ((listener != null && listener.canUpdateInMarket()) || !installedFromMarket(weakContext))) {
             startUpdateTaskForBackground(weakContext, urlString, appIdentifier, listener);
@@ -245,7 +245,7 @@ public class UpdateManager {
                     }
                 }
 
-            } catch (Throwable e) {
+            } catch (Throwable ignored) {
             }
         }
 

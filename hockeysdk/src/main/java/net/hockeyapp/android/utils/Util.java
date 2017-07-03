@@ -19,6 +19,10 @@ import android.view.accessibility.AccessibilityManager;
 
 import net.hockeyapp.android.R;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
 import java.net.URLEncoder;
@@ -43,8 +47,6 @@ public class Util {
     private static final Pattern appIdentifierPattern = Pattern.compile(APP_IDENTIFIER_PATTERN, Pattern.CASE_INSENSITIVE);
 
     private static final String SDK_VERSION_KEY = "net.hockeyapp.android.sdkVersion";
-
-    private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
 
     private static final ThreadLocal<DateFormat> DATE_FORMAT_THREAD_LOCAL = new ThreadLocal<DateFormat>() {
         @Override
@@ -135,7 +137,7 @@ public class Util {
      * @throws UnsupportedEncodingException when your system does not know how to handle the UTF-8 charset
      */
     public static String getFormString(Map<String, String> params) throws UnsupportedEncodingException {
-        List<String> protoList = new ArrayList<String>();
+        List<String> protoList = new ArrayList<>();
         for (String key : params.keySet()) {
             String value = params.get(key);
             key = URLEncoder.encode(key, "UTF-8");
@@ -270,15 +272,10 @@ public class Util {
         ApplicationInfo applicationInfo = null;
         try {
             applicationInfo = packageManager.getApplicationInfo(context.getApplicationInfo().packageName, 0);
-        } catch (final PackageManager.NameNotFoundException e) {
+        } catch (final PackageManager.NameNotFoundException ignored) {
         }
-        String appTitle = (applicationInfo != null ? (String) packageManager.getApplicationLabel(applicationInfo)
-                : context.getString(R.string.hockeyapp_crash_dialog_app_name_fallback));
-        return appTitle;
-    }
-
-    public static String getSdkVersionFromManifest(Context context) {
-        return getManifestString(context, SDK_VERSION_KEY);
+        return applicationInfo != null ? (String) packageManager.getApplicationLabel(applicationInfo)
+                : context.getString(R.string.hockeyapp_crash_dialog_app_name_fallback);
     }
 
     /**
@@ -295,7 +292,7 @@ public class Util {
         String guid = null;
 
         if (sanitizedAppIdentifier != null) {
-            StringBuffer idBuf = new StringBuffer(sanitizedAppIdentifier);
+            StringBuilder idBuf = new StringBuilder(sanitizedAppIdentifier);
             idBuf.insert(20, '-');
             idBuf.insert(16, '-');
             idBuf.insert(12, '-');
@@ -335,5 +332,26 @@ public class Util {
      */
     public static boolean isDebuggerConnected(){
         return Debug.isDebuggerConnected();
+    }
+
+    public static String convertStreamToString(InputStream inputStream) {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream), 1024);
+        StringBuilder stringBuilder = new StringBuilder();
+
+        String line;
+        try {
+            while ((line = reader.readLine()) != null) {
+                stringBuilder.append(line).append('\n');
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                inputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return stringBuilder.toString();
     }
 }

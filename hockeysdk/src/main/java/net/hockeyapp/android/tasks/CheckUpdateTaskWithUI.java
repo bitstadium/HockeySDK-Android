@@ -112,7 +112,7 @@ public class CheckUpdateTaskWithUI extends CheckUpdateTask {
                         VersionCache.setVersionInfo(mActivity, "[]");
                     }
 
-                    WeakReference<Activity> weakActivity = new WeakReference<Activity>(mActivity);
+                    WeakReference<Activity> weakActivity = new WeakReference<>(mActivity);
                     if (Util.runsOnTablet(weakActivity)) {
                         showUpdateFragment(updateInfo);
                     } else {
