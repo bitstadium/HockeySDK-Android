@@ -5,11 +5,15 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.StringRes;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -87,6 +91,20 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
         return fragment;
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // To properly support landscape dialog
+        Dialog dialog = getDialog();
+        if (dialog != null && dialog.getWindow() != null)
+        {
+            int width = ViewGroup.LayoutParams.MATCH_PARENT;
+            int height = ViewGroup.LayoutParams.MATCH_PARENT;
+            dialog.getWindow().setLayout(width, height);
+        }
+    }
+
     /**
      * Called when the fragment is starting. Sets the instance arguments
      * and the style of the fragment.
@@ -161,6 +179,7 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
 
     @Override
     public void onDestroyView() {
+        // To properly support orientation change
         Dialog dialog = getDialog();
         if (dialog != null && getRetainInstance()) {
             dialog.setDismissMessage(null);
@@ -216,24 +235,34 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
     }
 
     protected void prepareDownload() {
-        if (!Util.isConnectedToNetwork(getActivity())) {
+        Context context = getActivity();
+        if (!Util.isConnectedToNetwork(context)) {
             showError(R.string.hockeyapp_error_no_network_message);
             return;
         }
 
         String[] permissions = requiredPermissions();
-        int[] permissionsState = PermissionsUtil.permissionsState(getActivity(), permissions);
+        int[] permissionsState = PermissionsUtil.permissionsState(context, permissions);
         if (!PermissionsUtil.permissionsAreGranted(permissionsState)) {
-            //showError(R.string.hockeyapp_error_no_external_storage_permission);
+            showError(R.string.hockeyapp_error_no_external_storage_permission);
             return;
         }
 
-        if (!PermissionsUtil.isUnknownSourcesEnabled(getActivity())) {
-            //showError(R.string.hockeyapp_error_install_form_unknown_sources_disabled);
+        if (!PermissionsUtil.isUnknownSourcesEnabled(context)) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES);
+                intent.setData(Uri.parse("package:" + context.getPackageName()));
+                context.startActivity(intent);
+            } else {
+                showError(R.string.hockeyapp_error_install_form_unknown_sources_disabled);
+            }
             return;
         }
 
         startDownloadTask();
+        if (getShowsDialog()) {
+            dismiss();
+        }
     }
 
     /**

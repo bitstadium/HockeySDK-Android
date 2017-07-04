@@ -101,5 +101,7 @@
 
     <!-- Misc -->
     <string name="hockeyapp_error_no_network_message">Your device is not connected to the internet. Please resolve connectivity issues and try again.</string>
+    <string name="hockeyapp_error_no_external_storage_permission" translatable="false">The permission to access the external storage permission is not set. Please contact the developer.</string>
+    <string name="hockeyapp_error_install_form_unknown_sources_disabled" translatable="false">The installation from unknown sources is not enabled. Please check the device settings.</string>
 
 </resources>
