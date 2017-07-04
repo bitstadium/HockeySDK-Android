@@ -17,8 +17,10 @@ public abstract class UpdateManagerListener {
      *
      * @return subclass of UpdateActivity
      */
+    @Deprecated
+    @SuppressWarnings("unused")
     public Class<? extends UpdateActivity> getUpdateActivityClass() {
-        return UpdateActivity.class;
+        return null;
     }
 
     /**
@@ -96,9 +98,9 @@ public abstract class UpdateManagerListener {
      * Called when the update permissions had not been granted.
      * Implement your custom action to override the default behavior.
      */
+    @Deprecated
+    @SuppressWarnings("unused")
     public void onUpdatePermissionsNotGranted() {
         // Do nothing
     }
-
 }
-  
