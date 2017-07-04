@@ -24,6 +24,10 @@ public class UpdateActivity extends Activity {
         if (savedInstanceState == null)
         {
             Bundle extras = getIntent().getExtras();
+            if (extras == null) {
+                finish();
+                return;
+            }
             String fragmentClass = extras.getString(FRAGMENT_CLASS, UpdateFragment.class.getName());
             Fragment fragment = Fragment.instantiate(this, fragmentClass, extras);
             getFragmentManager()

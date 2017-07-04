@@ -16,10 +16,10 @@ import org.junit.runner.RunWith;
  * This class provides testing for the usage time tracking feature.
  */
 @RunWith(AndroidJUnit4.class)
-public class TrackingTest extends ActivityInstrumentationTestCase2<UpdateActivity> {
+public class TrackingTest extends ActivityInstrumentationTestCase2<FeedbackActivity> {
 
     public TrackingTest() {
-        super(UpdateActivity.class);
+        super(FeedbackActivity.class);
     }
 
     @Before
