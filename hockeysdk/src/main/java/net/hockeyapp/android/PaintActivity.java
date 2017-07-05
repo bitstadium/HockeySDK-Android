@@ -167,8 +167,7 @@ public class PaintActivity extends Activity {
 
     private void makeResult() {
         File hockeyAppCache = new File(getCacheDir(), Constants.FILES_DIRECTORY_NAME);
-        boolean created = hockeyAppCache.mkdir();
-        if (!created || !hockeyAppCache.exists()) {
+        if (!hockeyAppCache.exists() && !hockeyAppCache.mkdir()) {
             if (getParent() == null) {
                 setResult(Activity.RESULT_CANCELED);
             } else {

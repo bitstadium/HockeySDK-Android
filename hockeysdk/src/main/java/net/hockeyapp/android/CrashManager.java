@@ -705,10 +705,13 @@ public class CrashManager {
      * Returns the content of a file as a string.
      */
     private static String contentsOfFile(WeakReference<Context> weakContext, String filename) {
-        Context context;
         if (weakContext != null) {
-            context = weakContext.get();
+            Context context = weakContext.get();
             if (context != null) {
+                File file = context.getFileStreamPath(filename);
+                if(file == null || !file.exists()) {
+                    return "";
+                }
                 StringBuilder contents = new StringBuilder();
                 BufferedReader reader = null;
                 try {
@@ -728,12 +731,10 @@ public class CrashManager {
                         }
                     }
                 }
-
                 return contents.toString();
             }
         }
-
-        return null;
+        return "";
     }
 
     /**
@@ -781,8 +782,7 @@ public class CrashManager {
 
             // Try to create the files folder if it doesn't exist
             File dir = new File(Constants.FILES_PATH + "/");
-            boolean created = dir.mkdir();
-            if (!created || !dir.exists()) {
+            if (!dir.exists() && !dir.mkdir()) {
                 return new String[0];
             }
 

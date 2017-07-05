@@ -68,7 +68,7 @@ public class HttpURLConnectionBuilder {
 
         for (String key: fields.keySet()) {
             String value = fields.get(key);
-            if (value.length() > FORM_FIELD_LIMIT) {
+            if (value != null && value.length() > FORM_FIELD_LIMIT) {
                 throw new IllegalArgumentException("Form field " + key + " size too large: " + value.length() + " - max allowed: " + FORM_FIELD_LIMIT);
             }
         }

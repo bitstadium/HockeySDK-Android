@@ -217,7 +217,7 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
                 writer.flush();
             }
         } catch (IOException e) {
-            // TODO: Handle exception here
+            e.printStackTrace();
         } finally {
             if (writer != null) {
                 writer.close();
