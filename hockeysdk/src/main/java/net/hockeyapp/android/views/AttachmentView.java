@@ -76,7 +76,7 @@ public class AttachmentView extends FrameLayout {
         this.mAttachmentUri = attachmentUri;
         this.mFilename = attachmentUri.getLastPathSegment();
 
-        calculateDimensions(20);
+        calculateDimensions(10);
         initializeView(context, removable);
 
         mTextView.setText(mFilename);
@@ -109,7 +109,7 @@ public class AttachmentView extends FrameLayout {
                 .getCacheId()));
         this.mFilename = attachment.getFilename();
 
-        calculateDimensions(30);
+        calculateDimensions(40);
         initializeView(context, removable);
 
         mOrientation = ImageUtils.ORIENTATION_PORTRAIT;
