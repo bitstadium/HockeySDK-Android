@@ -1,12 +1,5 @@
 language: android
 
-# Run on new travis infrastructure
-sudo: false
-
-# Don't check out submodules for faster builds with less dependencies
-git:
-  submodules: false
-
 env:
   matrix:
     - ANDROID_TARGET=android-19 ANDROID_ABI=armeabi-v7a

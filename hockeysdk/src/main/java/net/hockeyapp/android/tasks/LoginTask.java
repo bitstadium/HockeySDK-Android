@@ -153,7 +153,7 @@ public class LoginTask extends ConnectionTask<Void, Void, Boolean> {
             String type = params.get("type");
             String id = params.get("id");
             String paramUrl = mUrlString + "?" + type + "=" + id;
-            
+
             return new HttpURLConnectionBuilder(paramUrl)
                     .build();
         } else {
