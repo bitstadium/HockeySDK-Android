@@ -20,7 +20,7 @@
     <string name="hockeyapp_update_dialog_message">Mostrar informações sobre a nova atualização?</string>
     <string name="hockeyapp_update_dialog_negative_button">Ignorar</string>
     <string name="hockeyapp_update_dialog_positive_button">Mostrar</string>
-  
+
 
     <!-- Expiry Info -->
     <string name="hockeyapp_expiry_info_title">Build Expirada</string>

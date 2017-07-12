@@ -1,10 +1,12 @@
 package net.hockeyapp.android.utils;
 
-import java.io.ByteArrayOutputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Random;
 
 /**
@@ -23,14 +25,20 @@ public class SimpleMultipartEntity {
 
     private boolean mIsSetFirst;
 
-    private ByteArrayOutputStream mOut;
+    private File mTempFile;
+    private OutputStream mOut;
 
     private String mBoundary;
 
-    public SimpleMultipartEntity() {
+    public SimpleMultipartEntity(File tempFile) {
         this.mIsSetFirst = false;
         this.mIsSetLast = false;
-        this.mOut = new ByteArrayOutputStream();
+        this.mTempFile = tempFile;
+        try {
+            this.mOut = new FileOutputStream(mTempFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         /** Create boundary String */
         final StringBuffer buffer = new StringBuffer();
@@ -59,7 +67,9 @@ public class SimpleMultipartEntity {
         }
         try {
             mOut.write(("\r\n--" + mBoundary + "--\r\n").getBytes());
-
+            mOut.flush();
+            mOut.close();
+            mOut = null;
         } catch (final IOException e) {
             e.printStackTrace();
         }
@@ -119,16 +129,26 @@ public class SimpleMultipartEntity {
 
     public long getContentLength() {
         writeLastBoundaryIfNeeds();
-        return mOut.toByteArray().length;
+        return mTempFile.length();
     }
 
     public String getContentType() {
         return "multipart/form-data; boundary=" + getBoundary();
     }
 
-    public ByteArrayOutputStream getOutputStream() {
+    public void writeTo(OutputStream out) throws IOException {
         writeLastBoundaryIfNeeds();
-        return mOut;
+        FileInputStream fileInputStream = new FileInputStream(mTempFile);
+        BufferedOutputStream outputStream = new BufferedOutputStream(out);
+        final byte[] tmp = new byte[4096];
+        int l;
+        while ((l = fileInputStream.read(tmp)) != -1) {
+            outputStream.write(tmp, 0, l);
+        }
+        fileInputStream.close();
+        outputStream.flush();
+        outputStream.close();
+        mTempFile.delete();
+        mTempFile = null;
     }
-
 }

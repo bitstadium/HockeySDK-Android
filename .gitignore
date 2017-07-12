@@ -1,14 +1,20 @@
-.idea/
-bin/
-gen/
-gen-external-apklibs/
-out/
-target/
-.DS_Store
-*.iml
+# Gradle files
 .gradle/
 build/
-/*/build/
+
+# Local configuration file (sdk path, etc)
 local.properties
+
+# Android Studio generated folders
+.navigation/
+captures/
+.externalNativeBuild
+
+# IntelliJ project files
+*.iml
+.idea/
+
+# Misc
+.DS_Store
 *.log
-infer-out
+infer-out/

@@ -29,7 +29,7 @@ import java.util.ArrayList;
  *
  */
 public class ParseFeedbackTask extends AsyncTask<Void, Void, FeedbackResponse> {
-    
+
     public static final int NEW_ANSWER_NOTIFICATION_ID = 2;
     public static final String PREFERENCES_NAME = "net.hockeyapp.android.feedback";
     public static final String ID_LAST_MESSAGE_SEND = "idLastMessageSend";

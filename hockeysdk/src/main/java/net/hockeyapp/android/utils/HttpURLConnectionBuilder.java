@@ -9,6 +9,7 @@ import net.hockeyapp.android.Constants;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -87,7 +88,8 @@ public class HttpURLConnectionBuilder {
 
     public HttpURLConnectionBuilder writeMultipartData(Map<String, String> fields, Context context, List<Uri> attachmentUris) {
         try {
-            mMultipartEntity = new SimpleMultipartEntity();
+            File tempFile = File.createTempFile("multipart", null, context.getCacheDir());
+            mMultipartEntity = new SimpleMultipartEntity(tempFile);
             mMultipartEntity.writeFirstBoundaryIfNeeds();
 
             for (String key : fields.keySet()) {
@@ -167,10 +169,7 @@ public class HttpURLConnectionBuilder {
 
         if (mMultipartEntity != null) {
             connection.setRequestProperty("Content-Length", String.valueOf(mMultipartEntity.getContentLength()));
-            BufferedOutputStream outputStream = new BufferedOutputStream(connection.getOutputStream());
-            outputStream.write(mMultipartEntity.getOutputStream().toByteArray());
-            outputStream.flush();
-            outputStream.close();
+            mMultipartEntity.writeTo(connection.getOutputStream());
         }
 
         return connection;
