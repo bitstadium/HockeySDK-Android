@@ -44,8 +44,15 @@ public class PermissionsUtil {
      * Checks if Unknown Sources is enabled
      */
     public static boolean isUnknownSourcesEnabled(@NonNull Context context) {
+
+        /*
+         * On Android 8 with applications targeting lower versions,
+         * it's impossible to check unknown sources enabled: using old APIs will always return true
+         * and using the new one will always return false,
+         * so in order to avoid a stuck dialog that can't be bypassed we will assume true.
+         */
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            return context.getPackageManager().canRequestPackageInstalls();
+            return context.getApplicationInfo().targetSdkVersion < Build.VERSION_CODES.O || context.getPackageManager().canRequestPackageInstalls();
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             return "1".equals(Settings.Global.getString(context.getContentResolver(), Settings.Global.INSTALL_NON_MARKET_APPS));
         } else {
