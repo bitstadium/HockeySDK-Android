@@ -176,8 +176,7 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
         if (mProgressDialog != null) {
             try {
                 mProgressDialog.dismiss();
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (Exception ignored) {
             }
         }
 
@@ -238,7 +237,7 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
             result.put("status", String.valueOf(urlConnection.getResponseCode()));
             result.put("response", getStringFromConnection(urlConnection));
         } catch (IOException e) {
-            e.printStackTrace();
+            HockeyLog.error("Failed to send feedback message", e);
         } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();
@@ -287,7 +286,7 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
             result.put("response", getStringFromConnection(urlConnection));
 
         } catch (IOException e) {
-            e.printStackTrace();
+            HockeyLog.error("Failed to send feedback message", e);
         } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();
@@ -325,7 +324,7 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
             result.put("status", String.valueOf(urlConnection.getResponseCode()));
             result.put("response", getStringFromConnection(urlConnection));
         } catch (IOException e) {
-            e.printStackTrace();
+            HockeyLog.error("Failed to fetching feedback messages", e);
         } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();

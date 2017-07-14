@@ -10,6 +10,7 @@ import net.hockeyapp.android.R;
 import net.hockeyapp.android.objects.FeedbackAttachment;
 import net.hockeyapp.android.objects.FeedbackMessage;
 import net.hockeyapp.android.tasks.AttachmentDownloader;
+import net.hockeyapp.android.utils.HockeyLog;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -61,7 +62,7 @@ public class FeedbackMessageView extends LinearLayout {
             mDateTextView.setText(dateFormatOut.format(date));
             mDateTextView.setContentDescription(dateFormatOut.format(date));
         } catch (ParseException e) {
-            e.printStackTrace();
+            HockeyLog.error("Failed to set feedback message", e);
         }
 
         mAuthorTextView.setText(feedbackMessage.getName());

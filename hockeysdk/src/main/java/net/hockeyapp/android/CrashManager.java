@@ -364,7 +364,7 @@ public class CrashManager {
 
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    HockeyLog.error("Failed to transmit crash data", e);
                 } finally {
                     if (urlConnection != null) {
                         urlConnection.disconnect();
@@ -413,7 +413,7 @@ public class CrashManager {
                         }
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    HockeyLog.error("Failed to delete stacktrace", e);
                 }
             }
         }
@@ -722,7 +722,7 @@ public class CrashManager {
                         contents.append(System.getProperty("line.separator"));
                     }
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    HockeyLog.error("Failed to read content of " + filename, e);
                 } finally {
                     if (reader != null) {
                         try {

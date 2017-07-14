@@ -196,7 +196,6 @@ public class PaintActivity extends Activity {
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
                     out.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
                     HockeyLog.error("Could not save image.", e);
                 }
                 return null;

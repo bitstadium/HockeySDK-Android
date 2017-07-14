@@ -299,7 +299,7 @@ public class VersionHelper {
 
             return timestamp > lastModified;
         } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
+            HockeyLog.error("Failed to get application info", e);
             return false;
         }
     }

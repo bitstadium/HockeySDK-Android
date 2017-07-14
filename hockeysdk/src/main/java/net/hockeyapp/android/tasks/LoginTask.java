@@ -10,6 +10,7 @@ import android.os.Message;
 import android.text.TextUtils;
 import net.hockeyapp.android.Constants;
 import net.hockeyapp.android.LoginManager;
+import net.hockeyapp.android.utils.HockeyLog;
 import net.hockeyapp.android.utils.HttpURLConnectionBuilder;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -101,7 +102,7 @@ public class LoginTask extends ConnectionTask<Void, Void, Boolean> {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            HockeyLog.error("Failed to login", e);
         } finally {
             if (connection != null) {
                 connection.disconnect();
@@ -116,8 +117,7 @@ public class LoginTask extends ConnectionTask<Void, Void, Boolean> {
         if (mProgressDialog != null) {
             try {
                 mProgressDialog.dismiss();
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (Exception ignored) {
             }
         }
 
@@ -209,7 +209,7 @@ public class LoginTask extends ConnectionTask<Void, Void, Boolean> {
 
             return false;
         } catch (JSONException e) {
-            e.printStackTrace();
+            HockeyLog.error("Failed to parse login response", e);
             return false;
         }
     }

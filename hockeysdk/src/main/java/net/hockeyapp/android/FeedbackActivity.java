@@ -705,7 +705,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
                         mLastUpdatedTextView.setContentDescription(mLastUpdatedTextView.getText());
                         mLastUpdatedTextView.setVisibility(View.VISIBLE);
                     } catch (ParseException e1) {
-                        e1.printStackTrace();
+                        HockeyLog.error("Failed to parse feedback", e1);
                     }
 
                     if (mMessagesAdapter == null) {

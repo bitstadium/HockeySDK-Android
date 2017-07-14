@@ -150,8 +150,7 @@ public class CheckUpdateTaskWithUI extends CheckUpdateTask {
                 DialogFragment updateFragment = (DialogFragment) method.invoke(null, updateInfo.toString(), getURLString("apk"), true);
                 updateFragment.show(fragmentTransaction, UpdateFragment.FRAGMENT_TAG);
             } catch (Exception e) { // can't catch ReflectiveOperationException here because not targeting API level 19 or later
-                HockeyLog.error("An exception happened while showing the update fragment:");
-                e.printStackTrace();
+                HockeyLog.error("An exception happened while showing the update fragment", e);
             }
         }
     }

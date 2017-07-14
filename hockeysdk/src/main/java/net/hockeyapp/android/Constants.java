@@ -141,8 +141,7 @@ public class Constants {
                     Constants.FILES_PATH = file.getAbsolutePath();
                 }
             } catch (Exception e) {
-                HockeyLog.error("Exception thrown when accessing the files dir:");
-                e.printStackTrace();
+                HockeyLog.error("Exception thrown when accessing the files dir", e);
             }
         }
     }
@@ -167,8 +166,7 @@ public class Constants {
                     Constants.APP_VERSION = "" + buildNumber;
                 }
             } catch (PackageManager.NameNotFoundException e) {
-                HockeyLog.error("Exception thrown when accessing the package info:");
-                e.printStackTrace();
+                HockeyLog.error("Exception thrown when accessing the package info", e);
             }
         }
     }
@@ -187,8 +185,7 @@ public class Constants {
                 return metaData.getInt(BUNDLE_BUILD_NUMBER, 0);
             }
         } catch (PackageManager.NameNotFoundException e) {
-            HockeyLog.error("Exception thrown when accessing the application info:");
-            e.printStackTrace();
+            HockeyLog.error("Exception thrown when accessing the application info", e);
         }
 
         return 0;
