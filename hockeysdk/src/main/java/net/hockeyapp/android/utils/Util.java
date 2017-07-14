@@ -71,7 +71,7 @@ public class Util {
             return URLEncoder.encode(param, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             // UTF-8 should be available, so just in case
-            e.printStackTrace();
+            HockeyLog.error("Failed to encode param " + param, e);
             return "";
         }
     }
@@ -309,8 +309,7 @@ public class Util {
                 return activeNetwork != null && activeNetwork.isConnected();
             }
         } catch (Exception e) {
-            HockeyLog.error("Exception thrown when check network is connected:");
-            e.printStackTrace();
+            HockeyLog.error("Exception thrown when check network is connected", e);
         }
         return false;
     }
@@ -412,12 +411,11 @@ public class Util {
                 stringBuilder.append(line).append('\n');
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            HockeyLog.error("Failed to convert stream to string", e);
         } finally {
             try {
                 inputStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IOException ignored) {
             }
         }
         return stringBuilder.toString();

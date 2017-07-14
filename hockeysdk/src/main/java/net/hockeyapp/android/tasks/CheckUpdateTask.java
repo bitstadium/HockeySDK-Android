@@ -124,8 +124,7 @@ public class CheckUpdateTask extends AsyncTask<Void, String, JSONArray> {
             }
         } catch (IOException | JSONException e) {
             if(this.context != null && Util.isConnectedToNetwork(this.context)) {
-                HockeyLog.error("HockeyUpdate", "Could not fetch updates although connected to internet");
-                e.printStackTrace();
+                HockeyLog.error("HockeyUpdate", "Could not fetch updates although connected to internet", e);
             }
         }
 

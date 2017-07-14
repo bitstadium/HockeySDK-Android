@@ -131,13 +131,12 @@ class Persistence {
             }
             isSuccess = true;
         } catch (Exception e) {
-            HockeyLog.warn(TAG, "Failed to save data with exception: " + e.toString());
+            HockeyLog.warn(TAG, "Failed to save data with exception", e);
         } finally {
             if (outputStream != null) {
                 try {
                     outputStream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                } catch (IOException ignored) {
                 }
             }
         }

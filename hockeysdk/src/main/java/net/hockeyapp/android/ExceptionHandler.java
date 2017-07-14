@@ -218,7 +218,7 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
                 writer.flush();
             }
         } catch (IOException e) {
-            // TODO: Handle exception here
+            HockeyLog.error("Failed to write value to " + filename, e);
         } finally {
             if (writer != null) {
                 writer.close();

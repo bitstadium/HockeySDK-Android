@@ -37,7 +37,7 @@ public class SimpleMultipartEntity {
         try {
             this.mOut = new FileOutputStream(mTempFile);
         } catch (IOException e) {
-            e.printStackTrace();
+            HockeyLog.error("Failed to open temp file", e);
         }
 
         /** Create boundary String */
@@ -71,7 +71,7 @@ public class SimpleMultipartEntity {
             mOut.close();
             mOut = null;
         } catch (final IOException e) {
-            e.printStackTrace();
+            HockeyLog.error("Failed to close temp file", e);
         }
         mIsSetLast = true;
     }
@@ -121,8 +121,7 @@ public class SimpleMultipartEntity {
         } finally {
             try {
                 fin.close();
-            } catch (final IOException e) {
-                e.printStackTrace();
+            } catch (final IOException ignored) {
             }
         }
     }

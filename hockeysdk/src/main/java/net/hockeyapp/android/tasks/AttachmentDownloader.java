@@ -211,7 +211,7 @@ public class AttachmentDownloader {
                 bitmap = ImageUtils.decodeSampledBitmap(new File(dropFolder, filename), width, height);
 
             } catch (IOException e) {
-                e.printStackTrace();
+                HockeyLog.error("Failed to load image thumbnail", e);
                 bitmap = null;
             }
         }
@@ -251,7 +251,7 @@ public class AttachmentDownloader {
                 return (total > 0);
 
             } catch (IOException e) {
-                e.printStackTrace();
+                HockeyLog.error("Failed to download attachment to " + filename, e);
                 return false;
             } finally {
                 try {
@@ -261,8 +261,7 @@ public class AttachmentDownloader {
                     if (input != null) {
                         input.close();
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
+                } catch (IOException ignored) {
                 }
                 if (connection != null) {
                     connection.disconnect();

@@ -124,25 +124,25 @@ public class FeedbackParser {
                 try {
                     feedback.setName(feedbackObject.getString("name"));
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    HockeyLog.error("Failed to parse \"name\" in feedback response", e);
                 }
 
                 try {
                     feedback.setEmail(feedbackObject.getString("email"));
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    HockeyLog.error("Failed to parse \"email\" in feedback response", e);
                 }
 
                 try {
                     feedback.setId(feedbackObject.getInt("id"));
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    HockeyLog.error("Failed to parse \"id\" in feedback response", e);
                 }
 
                 try {
                     feedback.setCreatedAt(feedbackObject.getString("created_at"));
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    HockeyLog.error("Failed to parse \"created_at\" in feedback response", e);
                 }
 
                 feedbackResponse = new FeedbackResponse();
@@ -150,17 +150,17 @@ public class FeedbackParser {
                 try {
                     feedbackResponse.setStatus(jsonObject.getString("status"));
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    HockeyLog.error("Failed to parse \"status\" in feedback response", e);
                 }
 
 
                 try {
                     feedbackResponse.setToken(jsonObject.getString("token"));
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    HockeyLog.error("Failed to parse \"token\" in feedback response", e);
                 }
             } catch (JSONException e) {
-                e.printStackTrace();
+                HockeyLog.error("Failed to parse feedback response", e);
             }
         }
 

@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import net.hockeyapp.android.tasks.LoginTask;
 import net.hockeyapp.android.utils.AsyncTaskUtils;
+import net.hockeyapp.android.utils.HockeyLog;
 import net.hockeyapp.android.utils.Util;
 
 import java.lang.ref.WeakReference;
@@ -205,7 +206,7 @@ public class LoginActivity extends Activity {
             return hexString.toString();
 
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            HockeyLog.error("Failed to create MD5 hash", e);
         }
         return "";
     }

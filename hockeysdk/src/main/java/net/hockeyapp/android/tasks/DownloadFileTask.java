@@ -14,6 +14,7 @@ import android.os.StrictMode;
 import net.hockeyapp.android.Constants;
 import net.hockeyapp.android.R;
 import net.hockeyapp.android.listeners.DownloadFileListener;
+import net.hockeyapp.android.utils.HockeyLog;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -104,7 +105,7 @@ public class DownloadFileTask extends AsyncTask<Void, Integer, Long> {
 
             return total;
         } catch (IOException e) {
-            e.printStackTrace();
+            HockeyLog.error("Failed to download " + mUrlString, e);
             return 0L;
         } finally {
             try {
@@ -114,8 +115,7 @@ public class DownloadFileTask extends AsyncTask<Void, Integer, Long> {
                 if (input != null) {
                     input.close();
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IOException ignored) {
             }
         }
     }
