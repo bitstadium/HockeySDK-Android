@@ -2,8 +2,6 @@ package net.hockeyapp.android;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.app.FragmentManager;
-import android.content.Intent;
 import android.os.Bundle;
 
 /**

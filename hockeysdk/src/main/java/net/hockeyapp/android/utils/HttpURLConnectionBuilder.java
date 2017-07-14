@@ -6,7 +6,6 @@ import android.text.TextUtils;
 
 import net.hockeyapp.android.Constants;
 
-import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
