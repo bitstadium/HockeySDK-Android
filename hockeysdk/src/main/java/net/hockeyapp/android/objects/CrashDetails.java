@@ -1,5 +1,7 @@
 package net.hockeyapp.android.objects;
 
+import android.content.Context;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import net.hockeyapp.android.Constants;
 import net.hockeyapp.android.utils.HockeyLog;
@@ -185,18 +187,18 @@ public class CrashDetails {
         return result;
     }
 
-    public void writeCrashReport() {
-        String path = Constants.FILES_PATH + "/" + crashIdentifier + ".stacktrace";
-        writeCrashReport(path);
+    public void writeCrashReport(@NonNull Context context) {
+        File file = new File(context.getFilesDir(), crashIdentifier + ".stacktrace");
+        writeCrashReport(file);
     }
 
-    public void writeCrashReport(final String path) {
-        HockeyLog.debug("Writing unhandled exception to: " + path);
+    public void writeCrashReport(final File file) {
+        HockeyLog.debug("Writing unhandled exception to: " + file.getAbsolutePath());
 
         BufferedWriter writer = null;
 
         try {
-            writer = new BufferedWriter(new FileWriter(path));
+            writer = new BufferedWriter(new FileWriter(file));
 
             writeHeader(writer, FIELD_APP_PACKAGE, appPackage);
             writeHeader(writer, FIELD_APP_VERSION_CODE, appVersionCode);
