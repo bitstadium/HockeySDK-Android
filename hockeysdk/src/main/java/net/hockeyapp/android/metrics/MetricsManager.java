@@ -5,6 +5,10 @@ import android.app.Application;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.annotation.UiThread;
+import android.support.annotation.VisibleForTesting;
+import android.support.annotation.WorkerThread;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -51,12 +55,12 @@ public class MetricsManager {
     /**
      * The activity counter.
      */
-    protected static final AtomicInteger ACTIVITY_COUNT = new AtomicInteger(0);
+    private static final AtomicInteger ACTIVITY_COUNT = new AtomicInteger(0);
 
     /**
      * The timestamp of the last activity background event.
      */
-    protected static final AtomicLong LAST_BACKGROUND = new AtomicLong(getTime());
+    private static final AtomicLong LAST_BACKGROUND = new AtomicLong(getTime());
 
     /**
      * Background time interval for the app after which a session gets renewed (in milliseconds).
@@ -111,8 +115,9 @@ public class MetricsManager {
      * @param persistence      Included for unit testing/dependency injection.
      * @param channel          Included for unit testing/dependency injection.
      */
-    protected MetricsManager(Context context, TelemetryContext telemetryContext, Sender sender,
-                             Persistence persistence, Channel channel) {
+    @VisibleForTesting
+    MetricsManager(Context context, TelemetryContext telemetryContext, Sender sender,
+                           Persistence persistence, Channel channel) {
         sTelemetryContext = telemetryContext;
 
         // Important: create sender and persistence first, wire them up and then create the channel!
@@ -138,9 +143,15 @@ public class MetricsManager {
         }
 
         // Check if any previous events are in persistence and send them
-        if (persistence.hasFilesAvailable()) {
-            persistence.getSender().triggerSending();
-        }
+        AsyncTaskUtils.execute(new AsyncTask<Void, Object, Object>() {
+            @Override
+            protected Object doInBackground(Void... voids) {
+                if (sSender.getPersistence().hasFilesAvailable()) {
+                    sSender.triggerSending();
+                }
+                return null;
+            }
+        });
     }
 
     /**
@@ -150,6 +161,7 @@ public class MetricsManager {
      * @param application The application which is required to get application lifecycle
      *                    callbacks.
      */
+    @SuppressWarnings({"WeakerAccess", "unused"})
     public static void register(Application application) {
         String appIdentifier = Util.getAppIdentifier(application.getApplicationContext());
         if (appIdentifier == null || appIdentifier.length() == 0) {
@@ -166,6 +178,7 @@ public class MetricsManager {
      *                      callbacks.
      * @param appIdentifier Your HockeyApp App Identifier.
      */
+    @SuppressWarnings("WeakerAccess")
     public static void register(Application application, String appIdentifier) {
         register(application, appIdentifier, null, null, null);
     }
@@ -193,12 +206,13 @@ public class MetricsManager {
      * Register a new MetricsManager and collect metrics about user and session, while
      * explicitly providing your HockeyApp app identifier.
      *
+     * @param context       The context to use. Usually your activity.
      * @param application   The application which is required to get application lifecycle
      *                      callbacks.
-     * @param context       The context to use. Usually your activity.
      * @param appIdentifier Your HockeyApp App Identifier.
      * @deprecated Use {@link #register(Application, String)} instead.
      */
+    @SuppressWarnings({"WeakerAccess", "UnusedParameters"})
     @Deprecated
     public static void register(Context context, Application application, String appIdentifier) {
         register(application, appIdentifier, null, null, null);
@@ -215,8 +229,9 @@ public class MetricsManager {
      * @param persistence   Persistence for dependency injection.
      * @param channel       Channel for dependency injection.
      */
-    protected static void register(Application application, String appIdentifier,
-                                   Sender sender, Persistence persistence, Channel channel) {
+    @VisibleForTesting
+    static void register(Application application, String appIdentifier,
+                                 Sender sender, Persistence persistence, Channel channel) {
         MetricsManager result = instance;
         if (result == null) {
             synchronized (LOCK) {
@@ -308,14 +323,20 @@ public class MetricsManager {
         if (mTelemetryLifecycleCallbacks == null) {
             mTelemetryLifecycleCallbacks = new TelemetryLifecycleCallbacks();
         }
-        getApplication().registerActivityLifecycleCallbacks(mTelemetryLifecycleCallbacks);
+        Application application = getApplication();
+        if (application != null) {
+            application.registerActivityLifecycleCallbacks(mTelemetryLifecycleCallbacks);
+        }
     }
 
     private void unregisterTelemetryLifecycleCallbacks() {
         if (mTelemetryLifecycleCallbacks == null) {
             return;
         }
-        getApplication().unregisterActivityLifecycleCallbacks(mTelemetryLifecycleCallbacks);
+        Application application = getApplication();
+        if (application != null) {
+            application.unregisterActivityLifecycleCallbacks(mTelemetryLifecycleCallbacks);
+        }
         mTelemetryLifecycleCallbacks = null;
     }
 
@@ -337,13 +358,9 @@ public class MetricsManager {
      *
      * @return the reference to the application that was used during initialization of the SDK
      */
+    @Nullable
     private static Application getApplication() {
-        Application application = null;
-        if (sWeakApplication != null) {
-            application = sWeakApplication.get();
-        }
-
-        return application;
+        return sWeakApplication != null ? sWeakApplication.get() : null;
     }
 
     /**
@@ -405,24 +422,17 @@ public class MetricsManager {
         }
     }
 
-    protected void renewSession() {
-        String sessionId = UUID.randomUUID().toString();
-        sTelemetryContext.renewSessionContext(sessionId);
-        trackSessionState(SessionState.START);
-    }
-
-    /**
-     * Creates and enqueues a session event for the given state.
-     *
-     * @param sessionState value that determines whether the session started or ended
-     */
-    private void trackSessionState(final SessionState sessionState) {
+    private void renewSession() {
+        final String sessionId = UUID.randomUUID().toString();
         try {
             AsyncTaskUtils.execute(new AsyncTask<Void, Void, Void>() {
+
                 @Override
                 protected Void doInBackground(Void... params) {
+                    sTelemetryContext.renewSessionContext(sessionId);
+
                     SessionStateData sessionItem = new SessionStateData();
-                    sessionItem.setState(sessionState);
+                    trackSessionState(SessionState.START);
                     Data<Domain> data = createData(sessionItem);
                     sChannel.enqueueData(data);
                     return null;
@@ -431,7 +441,19 @@ public class MetricsManager {
         } catch (RejectedExecutionException e) {
             HockeyLog.error("Could not track session state. Executor rejected async task.", e);
         }
+    }
 
+    /**
+     * Creates and enqueues a session event for the given state.
+     *
+     * @param sessionState value that determines whether the session started or ended
+     */
+    @WorkerThread
+    private void trackSessionState(final SessionState sessionState) {
+        SessionStateData sessionItem = new SessionStateData();
+        sessionItem.setState(sessionState);
+        Data<Domain> data = createData(sessionItem);
+        sChannel.enqueueData(data);
     }
 
     /**
@@ -440,12 +462,11 @@ public class MetricsManager {
      * @param telemetryData The telemetry event to be persisted and sent
      * @return a base data object containing the telemetry data
      */
-    protected static Data<Domain> createData(TelemetryData telemetryData) {
+    private static Data<Domain> createData(TelemetryData telemetryData) {
         Data<Domain> data = new Data<>();
         data.setBaseData(telemetryData);
         data.setBaseType(telemetryData.getBaseType());
         data.QualifiedName = telemetryData.getEnvelopeName();
-
         return data;
     }
 
@@ -489,7 +510,6 @@ public class MetricsManager {
         } catch (RejectedExecutionException e) {
             HockeyLog.error("Could not track custom event. Executor rejected async task.", e);
         }
-
     }
 
     private class TelemetryLifecycleCallbacks implements Application.ActivityLifecycleCallbacks {

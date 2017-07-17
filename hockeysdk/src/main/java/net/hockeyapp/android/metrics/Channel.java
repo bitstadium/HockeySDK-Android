@@ -29,10 +29,6 @@ class Channel {
     private static final String TAG = "HockeyApp-Metrics";
 
     /**
-     * Synchronization lock.
-     */
-    private static final Object LOCK = new Object();
-    /**
      * Number of queue items which will trigger synchronization with the persistence layer.
      */
     protected static final int MAX_BATCH_COUNT = 50;
@@ -69,11 +65,11 @@ class Channel {
      */
     private SynchronizeChannelTask mSynchronizeTask;
 
-    protected static int getMaxBatchCount() {
+    static int getMaxBatchCount() {
         return Util.isDebuggerConnected() ? MAX_BATCH_COUNT_DEBUG : MAX_BATCH_COUNT;
     }
 
-    protected static int getMaxBatchInterval() {
+    static int getMaxBatchInterval() {
         return Util.isDebuggerConnected() ? MAX_BATCH_INTERVAL_DEBUG : MAX_BATCH_INTERVAL;
     }
 
@@ -92,21 +88,18 @@ class Channel {
      *
      * @param serializedItem A serialized telemetry item to enqueue.
      */
-    protected void enqueue(String serializedItem) {
-
+    protected synchronized void enqueue(String serializedItem) {
         if (serializedItem == null) {
             return;
         }
-        synchronized (LOCK) {
-            if (mQueue.add(serializedItem)) {
-                if ((mQueue.size() >= getMaxBatchCount())) {
-                    synchronize();
-                } else if (mQueue.size() == 1) {
-                    scheduleSynchronizeTask();
-                }
-            } else {
-                HockeyLog.verbose(TAG, "Unable to add item to queue");
+        if (mQueue.add(serializedItem)) {
+            if ((mQueue.size() >= getMaxBatchCount())) {
+                synchronize();
+            } else if (mQueue.size() == 1) {
+                scheduleSynchronizeTask();
             }
+        } else {
+            HockeyLog.verbose(TAG, "Unable to add item to queue");
         }
     }
 
@@ -119,7 +112,7 @@ class Channel {
         }
 
         String[] data = null;
-        synchronized (LOCK) {
+        synchronized (this) {
             if (!mQueue.isEmpty()) {
                 data = new String[mQueue.size()];
                 mQueue.toArray(data);
@@ -214,7 +207,7 @@ class Channel {
      */
     private class SynchronizeChannelTask extends TimerTask {
 
-        public SynchronizeChannelTask() {
+        SynchronizeChannelTask() {
         }
 
         @Override

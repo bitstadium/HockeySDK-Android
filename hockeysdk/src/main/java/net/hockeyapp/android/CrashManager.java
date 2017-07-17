@@ -9,6 +9,7 @@ import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
 import android.support.annotation.VisibleForTesting;
 import android.support.annotation.WorkerThread;
@@ -210,7 +211,7 @@ public class CrashManager {
 
             @Override
             protected Integer doInBackground(Void... voids) {
-                Context context = weakContext != null ? weakContext.get() : null;
+                Context context = getContext();
                 if (context != null) {
                     autoSend = !(context instanceof Activity);
                     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -269,7 +270,7 @@ public class CrashManager {
         int result = STACK_TRACES_FOUND_NONE;
         if ((filenames != null) && (filenames.length > 0)) {
             try {
-                Context context = weakContext != null ? weakContext.get() : null;
+                Context context = getContext();
                 if (context != null) {
                     SharedPreferences preferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
                     confirmedFilenames = Arrays.asList(preferences.getString(CONFIRMED_FILENAMES_KEY, "").split("\\|"));
@@ -317,7 +318,7 @@ public class CrashManager {
                     return null;
                 }
 
-                Context context = weakContext != null ? weakContext.get() : null;
+                Context context = getContext();
                 if (context == null) {
                     return null;
                 }
@@ -527,7 +528,7 @@ public class CrashManager {
                 });
                 return true;
             case CrashManagerUserInputAlwaysSend:
-                Context context = weakContext != null ? weakContext.get() : null;
+                Context context = getContext();
                 if (context == null) {
                     return false;
                 }
@@ -552,7 +553,7 @@ public class CrashManager {
      */
     @SuppressWarnings("unused")
     public static void resetAlwaysSend() {
-        Context context = weakContext != null ? weakContext.get() : null;
+        Context context = getContext();
         if (context != null) {
             final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             prefs.edit().remove(ALWAYS_SEND_KEY).apply();
@@ -644,7 +645,7 @@ public class CrashManager {
      */
     private static void sendCrashes(final CrashManagerListener listener, final boolean ignoreDefaultHandler, final CrashMetaData crashMetaData) {
         registerHandler(listener, ignoreDefaultHandler);
-        Context context = weakContext != null ? weakContext.get() : null;
+        Context context = getContext();
         final boolean isConnectedToNetwork = context != null && !Util.isConnectedToNetwork(context);
 
         // Not connected to network, not trying to submit stack traces
@@ -699,6 +700,16 @@ public class CrashManager {
     }
 
     /**
+     * Retrieves the context from the weak reference.
+     *
+     * @return The context object for this instance.
+     */
+    @Nullable
+    private static Context getContext() {
+        return weakContext != null ? weakContext.get() : null;
+    }
+
+    /**
      * Update the retry attempts count for this crash stacktrace.
      */
     @WorkerThread
@@ -707,7 +718,7 @@ public class CrashManager {
             return;
         }
 
-        Context context = weakContext != null ? weakContext.get() : null;
+        Context context = getContext();
         if (context != null) {
             SharedPreferences preferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = preferences.edit();
@@ -729,7 +740,7 @@ public class CrashManager {
      */
     @WorkerThread
     private static void deleteRetryCounter(String filename) {
-        Context context = weakContext != null ? weakContext.get() : null;
+        Context context = getContext();
         if (context != null) {
             SharedPreferences preferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = preferences.edit();
@@ -744,7 +755,7 @@ public class CrashManager {
      */
     @WorkerThread
     private static void deleteStackTrace(String filename) {
-        Context context = weakContext != null ? weakContext.get() : null;
+        Context context = getContext();
         if (context != null) {
             context.deleteFile(filename);
 
@@ -764,7 +775,7 @@ public class CrashManager {
      */
     @WorkerThread
     private static String contentsOfFile(String filename) {
-        Context context = weakContext != null ? weakContext.get() : null;
+        Context context = getContext();
         if (context != null) {
             File file = context.getFileStreamPath(filename);
             if(file == null || !file.exists()) {
@@ -799,7 +810,7 @@ public class CrashManager {
      */
     @WorkerThread
     private static void saveConfirmedStackTraces(String[] stackTraces) {
-        Context context = weakContext != null ? weakContext.get() : null;
+        Context context = getContext();
         if (context != null) {
             try {
                 SharedPreferences preferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
@@ -815,8 +826,9 @@ public class CrashManager {
      * Searches .stacktrace files and returns them as array.
      */
     @WorkerThread
+    @Nullable
     private static String[] searchForStackTraces() {
-        Context context = weakContext != null ? weakContext.get() : null;
+        Context context = getContext();
         if (context != null) {
             File dir = context.getFilesDir();
             if (dir != null) {
