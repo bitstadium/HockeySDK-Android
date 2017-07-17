@@ -23,15 +23,9 @@ public class ExceptionHandlerTest extends InstrumentationTestCase {
 
         injectInstrumentation(InstrumentationRegistry.getInstrumentation());
 
-        if (Constants.FILES_PATH == null) {
-            Constants.loadFromContext(getInstrumentation().getTargetContext());
-        }
-
-        filesDirectory = new File(Constants.FILES_PATH);
-        File[] stacktraceFiles = filesDirectory.listFiles(new StacktraceFilenameFilter());
-        for (File f : stacktraceFiles) {
-            f.delete();
-        }
+        Constants.loadFromContext(getInstrumentation().getTargetContext());
+        CrashManagerHelper.reset(getInstrumentation().getTargetContext());
+        filesDirectory = CrashManagerHelper.cleanFiles(getInstrumentation().getTargetContext());
     }
 
     @SuppressWarnings("ThrowableInstanceNeverThrown")

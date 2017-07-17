@@ -3,8 +3,10 @@ package net.hockeyapp.android;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.InstrumentationTestCase;
+
 import net.hockeyapp.android.objects.CrashDetails;
 import net.hockeyapp.android.util.StacktraceFilenameFilter;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,15 +18,7 @@ public class CrashManagerTest extends InstrumentationTestCase {
 
     private static final String DUMMY_APP_IDENTIFIER = "12345678901234567890123456789012";
 
-    private static final StacktraceFilenameFilter STACK_TRACE_FILTER = new StacktraceFilenameFilter();
-
-    private static void cleanupReportsDir() {
-        assertNotNull(Constants.FILES_PATH);
-        File reportsDir = new File(Constants.FILES_PATH);
-        for (File f : reportsDir.listFiles(STACK_TRACE_FILTER)) {
-            f.delete();
-        }
-    }
+    private File filesDirectory;
 
     private static void fakeCrashReport() {
         Throwable tr = new RuntimeException("Just a test exception");
@@ -37,13 +31,10 @@ public class CrashManagerTest extends InstrumentationTestCase {
         ExceptionHandler.saveNativeException(tr, xamaTr.toString(), Thread.currentThread(), null);
     }
 
-    private static File lastCrashReportFile() {
-        assertNotNull(Constants.FILES_PATH);
-        File reportsDir = new File(Constants.FILES_PATH);
-
+    private File lastCrashReportFile() {
         long modifiedReference = 0;
         File lastReportsFile = null;
-        for (File f : reportsDir.listFiles(STACK_TRACE_FILTER)) {
+        for (File f : filesDirectory.listFiles(new StacktraceFilenameFilter())) {
             if (f.lastModified() > modifiedReference) {
                 modifiedReference = f.lastModified();
                 lastReportsFile = f;
@@ -58,41 +49,37 @@ public class CrashManagerTest extends InstrumentationTestCase {
 
         injectInstrumentation(InstrumentationRegistry.getInstrumentation());
 
-        if (Constants.FILES_PATH == null) {
-            Constants.loadFromContext(getInstrumentation().getTargetContext());
-        }
+        Constants.loadFromContext(getInstrumentation().getTargetContext());
+        CrashManagerHelper.reset(getInstrumentation().getTargetContext());
+        filesDirectory = CrashManagerHelper.cleanFiles(getInstrumentation().getTargetContext());
     }
 
     @Test
-    public void registerCrashManagerWorks() {
+    public void registerCrashManagerWorks() throws Exception {
         // verify that registering the Crash Manager works (e.g. it's not throwing any exception)
         CrashManager.register(getInstrumentation().getTargetContext(), DUMMY_APP_IDENTIFIER);
 
         // verify that there were no crashes in the last session
-        assertFalse(CrashManager.didCrashInLastSession());
+        assertFalse(CrashManager.didCrashInLastSession().get());
     }
 
     @Test
-    public void crashInLastSessionRecognized() {
+    public void crashInLastSessionRecognized() throws Exception {
         fakeCrashReport();
-        assertNotNull(Constants.FILES_PATH);
 
         CrashManager.register(getInstrumentation().getTargetContext(), DUMMY_APP_IDENTIFIER);
 
-        assertTrue(CrashManager.didCrashInLastSession());
+        assertTrue(CrashManager.didCrashInLastSession().get());
         assertNotNull(CrashManager.getLastCrashDetails());
     }
 
     @Test
-    public void crashDetailsInLastSessionCorrect() {
-        assertNotNull(Constants.FILES_PATH);
-
-        cleanupReportsDir();
+    public void crashDetailsInLastSessionCorrect() throws Exception {
         fakeCrashReport();
 
         CrashManager.register(getInstrumentation().getTargetContext(), DUMMY_APP_IDENTIFIER);
 
-        CrashDetails crashDetails = CrashManager.getLastCrashDetails();
+        CrashDetails crashDetails = CrashManager.getLastCrashDetails().get();
 
         assertNotNull(crashDetails);
 
@@ -106,7 +93,7 @@ public class CrashManagerTest extends InstrumentationTestCase {
         fakeCrashReport();
         fakeCrashReport();
 
-        crashDetails = CrashManager.getLastCrashDetails();
+        crashDetails = CrashManager.getLastCrashDetails().get();
 
         assertNotNull(crashDetails);
 
@@ -117,16 +104,14 @@ public class CrashManagerTest extends InstrumentationTestCase {
     }
 
     @Test
-    public void xamarinCrashCorrect() {
-        cleanupReportsDir();
-
+    public void xamarinCrashCorrect() throws Exception {
         fakeXamarinCrashReport();
 
         CrashManager.register(getInstrumentation().getTargetContext(), DUMMY_APP_IDENTIFIER);
 
         fakeXamarinCrashReport();
 
-        CrashDetails crashDetails = CrashManager.getLastCrashDetails();
+        CrashDetails crashDetails = CrashManager.getLastCrashDetails().get();
         assertNotNull(crashDetails);
         assertEquals(crashDetails.getFormat(), "Xamarin");
         String throwableStackTrace = crashDetails.getThrowableStackTrace();

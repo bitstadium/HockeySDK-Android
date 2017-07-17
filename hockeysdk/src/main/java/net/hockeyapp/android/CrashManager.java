@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.UiThread;
+import android.support.annotation.VisibleForTesting;
 import android.support.annotation.WorkerThread;
 import android.text.TextUtils;
 
@@ -56,6 +57,7 @@ public class CrashManager {
     /**
      * Weak reference to the context.
      */
+    @VisibleForTesting
     static WeakReference<Context> weakContext;
 
     /**
@@ -70,7 +72,8 @@ public class CrashManager {
     /**
      * Lock used to wait last session crash info.
      */
-    private static final CountDownLatch latch = new CountDownLatch(1);
+    @VisibleForTesting
+    static CountDownLatch latch = new CountDownLatch(1);
 
     /**
      * Shared preferences key for always send dialog button.
@@ -218,13 +221,13 @@ public class CrashManager {
 
             @Override
             protected void onPostExecute(Integer foundOrSend) {
+                didCrashInLastSession = foundOrSend == STACK_TRACES_FOUND_NEW;
                 latch.countDown();
 
                 boolean autoSend = this.autoSend;
                 boolean ignoreDefaultHandler = (listener != null) && (listener.ignoreDefaultHandler());
 
                 if (foundOrSend == STACK_TRACES_FOUND_NEW) {
-                    didCrashInLastSession = true;
                     if (listener != null) {
                         autoSend |= listener.shouldAutoUploadCrashes();
                         //noinspection deprecation

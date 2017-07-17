@@ -32,7 +32,6 @@ public class ConstantsTest extends InstrumentationTestCase {
         assertEquals("HockeyApp", Constants.FILES_DIRECTORY_NAME);
         assertEquals(1, Constants.UPDATE_PERMISSIONS_REQUEST);
         assertEquals("HockeyApp", Constants.FILES_DIRECTORY_NAME);
-        assertNotNull(Constants.FILES_PATH);
         assertNotNull(Constants.ANDROID_VERSION);
         assertNotNull(Constants.ANDROID_BUILD);
         assertNotNull(Constants.PHONE_MODEL);
