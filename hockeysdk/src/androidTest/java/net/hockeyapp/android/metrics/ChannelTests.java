@@ -1,10 +1,6 @@
 package net.hockeyapp.android.metrics;
 
-import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
-import android.test.InstrumentationTestCase;
-
-import junit.framework.Assert;
 
 import net.hockeyapp.android.metrics.model.Data;
 import net.hockeyapp.android.metrics.model.Domain;
@@ -18,13 +14,11 @@ import org.junit.runner.RunWith;
 
 import java.util.HashMap;
 
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static junit.framework.Assert.*;
+import static org.mockito.Mockito.*;
 
 @RunWith(AndroidJUnit4.class)
-public class ChannelTests extends InstrumentationTestCase {
+public class ChannelTests {
 
     // Helper
     private static final String MOCK_APP_ID = "appId";
@@ -55,10 +49,6 @@ public class ChannelTests extends InstrumentationTestCase {
 
     @Before
     public void setUp() throws Exception {
-        super.setUp();
-
-        injectInstrumentation(InstrumentationRegistry.getInstrumentation());
-
         mockTelemetryContext = getMockTelemetryContext();
         mockPersistence = mock(PublicPersistence.class);
         sut = new PublicChannel(mockTelemetryContext, mockPersistence);
@@ -66,33 +56,33 @@ public class ChannelTests extends InstrumentationTestCase {
 
     @Test
     public void testInstanceInitialisation() {
-        Assert.assertNotNull(sut);
-        Assert.assertNotNull(sut.mTelemetryContext);
-        Assert.assertEquals(mockTelemetryContext, sut.mTelemetryContext);
-        Assert.assertNotNull(sut.mQueue);
-        Assert.assertEquals(0, sut.mQueue.size());
+        assertNotNull(sut);
+        assertNotNull(sut.mTelemetryContext);
+        assertEquals(mockTelemetryContext, sut.mTelemetryContext);
+        assertNotNull(sut.mQueue);
+        assertEquals(0, sut.mQueue.size());
     }
 
     @Test
     public void testLoggingItemAddsToQueue() {
         Data<Domain> data = new Data<>();
-        Assert.assertEquals(0, sut.mQueue.size());
+        assertEquals(0, sut.mQueue.size());
 
         sut.enqueueData(data);
-        Assert.assertEquals(1, sut.mQueue.size());
+        assertEquals(1, sut.mQueue.size());
     }
 
     @Test
     public void testQueueFlushesWhenMaxBatchCountReached() {
-        Assert.assertEquals(0, sut.mQueue.size());
+        assertEquals(0, sut.mQueue.size());
 
         for (int i = 1; i < Channel.getMaxBatchCount(); i++) {
             sut.enqueueData(new Data<>());
-            Assert.assertEquals(i, sut.mQueue.size());
+            assertEquals(i, sut.mQueue.size());
         }
 
         sut.enqueueData(new Data<>());
-        Assert.assertEquals(0, sut.mQueue.size());
+        assertEquals(0, sut.mQueue.size());
 
         verify(mockPersistence).persist(any(String[].class));
     }
@@ -108,17 +98,17 @@ public class ChannelTests extends InstrumentationTestCase {
 
         Envelope result = sut.createEnvelope(testData);
 
-        Assert.assertNotNull(result);
-        Assert.assertNotNull(result.getTime());
-        Assert.assertEquals(MOCK_IKEY, result.getIKey());
-        Assert.assertNotNull(result.getTags());
-        Assert.assertEquals(1, result.getTags().size());
-        Assert.assertTrue(result.getTags().containsKey(MOCK_TAGS_KEY));
-        Assert.assertEquals(MOCK_TAGS_VALUE, result.getTags().get(MOCK_TAGS_KEY));
-        Assert.assertNotNull(result.getData());
+        assertNotNull(result);
+        assertNotNull(result.getTime());
+        assertEquals(MOCK_IKEY, result.getIKey());
+        assertNotNull(result.getTags());
+        assertEquals(1, result.getTags().size());
+        assertTrue(result.getTags().containsKey(MOCK_TAGS_KEY));
+        assertEquals(MOCK_TAGS_VALUE, result.getTags().get(MOCK_TAGS_KEY));
+        assertNotNull(result.getData());
         SessionState actualState = ((SessionStateData) ((Data<Domain>) result.getData()).getBaseData()).getState();
-        Assert.assertEquals(SessionState.START, actualState);
+        assertEquals(SessionState.START, actualState);
         String actualBaseType = result.getData().getBaseType();
-        Assert.assertEquals(new SessionStateData().getBaseType(), actualBaseType);
+        assertEquals(new SessionStateData().getBaseType(), actualBaseType);
     }
 }

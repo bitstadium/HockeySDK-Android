@@ -3,9 +3,6 @@ package net.hockeyapp.android.metrics;
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
-import android.test.InstrumentationTestCase;
-
-import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -14,24 +11,17 @@ import org.junit.runner.RunWith;
 import java.io.File;
 import java.util.ArrayList;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.spy;
+import static junit.framework.Assert.*;
+import static org.mockito.Mockito.*;
 
 @RunWith(AndroidJUnit4.class)
-public class PersistenceTests extends InstrumentationTestCase {
+public class PersistenceTests {
 
     private PublicPersistence sut;
 
     @Before
     public void setUp() throws Exception {
-        super.setUp();
-
-        injectInstrumentation(InstrumentationRegistry.getInstrumentation());
-
-        Context context = getInstrumentation().getContext();
+        Context context = InstrumentationRegistry.getContext();
         Sender mockSender = mock(Sender.class);
         sut = new PublicPersistence(context, mockSender);
         mockSender.setPersistence(sut);
@@ -39,13 +29,13 @@ public class PersistenceTests extends InstrumentationTestCase {
 
     @Test
     public void testInstanceInitialisation() {
-        Assert.assertNotNull(sut);
-        Assert.assertNotNull(sut.mServedFiles);
+        assertNotNull(sut);
+        assertNotNull(sut.mServedFiles);
     }
 
     @Test
     public void testCallingPersistTriggersWriteToDisk() {
-        Context context = getInstrumentation().getContext();
+        Context context = InstrumentationRegistry.getContext();
         Sender mockSender = mock(Sender.class);
         PublicPersistence sut = new PublicPersistence(context, mockSender);
 
@@ -89,7 +79,7 @@ public class PersistenceTests extends InstrumentationTestCase {
         File[] mockFiles = {mockFile1, mockFile2};
         when(mockDirectory.listFiles()).thenReturn(mockFiles);
 
-        sut = spy(new PublicPersistence(getInstrumentation().getContext(), null));
+        sut = spy(new PublicPersistence(InstrumentationRegistry.getContext(), null));
         when(sut.getTelemetryDirectory()).thenReturn(mockDirectory);
 
         // Mock served list containing 1 file
@@ -99,12 +89,12 @@ public class PersistenceTests extends InstrumentationTestCase {
 
         // Test one unreserved file left
         File result = sut.nextAvailableFileInDirectory();
-        Assert.assertEquals(mockFile2, result);
-        Assert.assertTrue(sut.mServedFiles.contains(mockFile2));
+        assertEquals(mockFile2, result);
+        assertTrue(sut.mServedFiles.contains(mockFile2));
 
         // Test all files are already in use
         result = sut.nextAvailableFileInDirectory();
-        Assert.assertNull(result);
+        assertNull(result);
     }
 
     @Test

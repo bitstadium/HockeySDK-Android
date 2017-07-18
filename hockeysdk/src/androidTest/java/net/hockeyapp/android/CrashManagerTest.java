@@ -2,7 +2,6 @@ package net.hockeyapp.android;
 
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
-import android.test.InstrumentationTestCase;
 
 import net.hockeyapp.android.objects.CrashDetails;
 import net.hockeyapp.android.util.StacktraceFilenameFilter;
@@ -13,8 +12,13 @@ import org.junit.runner.RunWith;
 
 import java.io.File;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 @RunWith(AndroidJUnit4.class)
-public class CrashManagerTest extends InstrumentationTestCase {
+public class CrashManagerTest {
 
     private static final String DUMMY_APP_IDENTIFIER = "12345678901234567890123456789012";
 
@@ -45,19 +49,15 @@ public class CrashManagerTest extends InstrumentationTestCase {
 
     @Before
     public void setUp() throws Exception {
-        super.setUp();
-
-        injectInstrumentation(InstrumentationRegistry.getInstrumentation());
-
-        Constants.loadFromContext(getInstrumentation().getTargetContext());
-        CrashManagerHelper.reset(getInstrumentation().getTargetContext());
-        filesDirectory = CrashManagerHelper.cleanFiles(getInstrumentation().getTargetContext());
+        Constants.loadFromContext(InstrumentationRegistry.getTargetContext());
+        CrashManagerHelper.reset(InstrumentationRegistry.getTargetContext());
+        filesDirectory = CrashManagerHelper.cleanFiles(InstrumentationRegistry.getTargetContext());
     }
 
     @Test
     public void registerCrashManagerWorks() throws Exception {
         // verify that registering the Crash Manager works (e.g. it's not throwing any exception)
-        CrashManager.register(getInstrumentation().getTargetContext(), DUMMY_APP_IDENTIFIER);
+        CrashManager.register(InstrumentationRegistry.getTargetContext(), DUMMY_APP_IDENTIFIER);
 
         // verify that there were no crashes in the last session
         assertFalse(CrashManager.didCrashInLastSession().get());
@@ -67,7 +67,7 @@ public class CrashManagerTest extends InstrumentationTestCase {
     public void crashInLastSessionRecognized() throws Exception {
         fakeCrashReport();
 
-        CrashManager.register(getInstrumentation().getTargetContext(), DUMMY_APP_IDENTIFIER);
+        CrashManager.register(InstrumentationRegistry.getTargetContext(), DUMMY_APP_IDENTIFIER);
 
         assertTrue(CrashManager.didCrashInLastSession().get());
         assertNotNull(CrashManager.getLastCrashDetails());
@@ -77,7 +77,7 @@ public class CrashManagerTest extends InstrumentationTestCase {
     public void crashDetailsInLastSessionCorrect() throws Exception {
         fakeCrashReport();
 
-        CrashManager.register(getInstrumentation().getTargetContext(), DUMMY_APP_IDENTIFIER);
+        CrashManager.register(InstrumentationRegistry.getTargetContext(), DUMMY_APP_IDENTIFIER);
 
         CrashDetails crashDetails = CrashManager.getLastCrashDetails().get();
 
@@ -107,7 +107,7 @@ public class CrashManagerTest extends InstrumentationTestCase {
     public void xamarinCrashCorrect() throws Exception {
         fakeXamarinCrashReport();
 
-        CrashManager.register(getInstrumentation().getTargetContext(), DUMMY_APP_IDENTIFIER);
+        CrashManager.register(InstrumentationRegistry.getTargetContext(), DUMMY_APP_IDENTIFIER);
 
         fakeXamarinCrashReport();
 

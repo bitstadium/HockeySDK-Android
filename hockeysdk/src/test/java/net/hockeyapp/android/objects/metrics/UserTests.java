@@ -1,6 +1,5 @@
 package net.hockeyapp.android.objects.metrics;
 
-import junit.framework.Assert;
 import junit.framework.TestCase;
 
 import net.hockeyapp.android.metrics.model.User;
@@ -18,12 +17,12 @@ public class UserTests extends TestCase {
         User item = new User();
         item.setAccountAcquisitionDate(expected);
         String actual = item.getAccountAcquisitionDate();
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
 
         expected = "Other string";
         item.setAccountAcquisitionDate(expected);
         actual = item.getAccountAcquisitionDate();
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
     }
 
     public void testAccountIdProperty() {
@@ -31,12 +30,12 @@ public class UserTests extends TestCase {
         User item = new User();
         item.setAccountId(expected);
         String actual = item.getAccountId();
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
 
         expected = "Other string";
         item.setAccountId(expected);
         actual = item.getAccountId();
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
     }
 
     public void testUserAgentProperty() {
@@ -44,12 +43,12 @@ public class UserTests extends TestCase {
         User item = new User();
         item.setUserAgent(expected);
         String actual = item.getUserAgent();
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
 
         expected = "Other string";
         item.setUserAgent(expected);
         actual = item.getUserAgent();
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
     }
 
     public void testIdProperty() {
@@ -57,12 +56,12 @@ public class UserTests extends TestCase {
         User item = new User();
         item.setId(expected);
         String actual = item.getId();
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
 
         expected = "Other string";
         item.setId(expected);
         actual = item.getId();
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
     }
 
     public void testSerialize() throws IOException {
@@ -74,7 +73,7 @@ public class UserTests extends TestCase {
         StringWriter writer = new StringWriter();
         item.serialize(writer);
         String expected = "{\"ai.user.accountAcquisitionDate\":\"Test string\",\"ai.user.accountId\":\"Test string\",\"ai.user.userAgent\":\"Test string\",\"ai.user.id\":\"Test string\"}";
-        Assert.assertEquals(expected, writer.toString());
+        assertEquals(expected, writer.toString());
     }
 
 }

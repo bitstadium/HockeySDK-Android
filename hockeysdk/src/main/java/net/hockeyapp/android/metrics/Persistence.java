@@ -211,7 +211,6 @@ class Persistence {
     @SuppressWarnings("WeakerAccess")
     @WorkerThread
     @Nullable
-    @VisibleForTesting
     protected synchronized File nextAvailableFileInDirectory() {
         // TODO Separation of concerns. The persistence should provide all files, the sender would pick the right one.
         File dir = getTelemetryDirectory();

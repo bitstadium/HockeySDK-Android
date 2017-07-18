@@ -2,7 +2,6 @@ package net.hockeyapp.android;
 
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
-import android.test.InstrumentationTestCase;
 
 import net.hockeyapp.android.util.StacktraceFilenameFilter;
 
@@ -12,20 +11,18 @@ import org.junit.runner.RunWith;
 
 import java.io.File;
 
+import static org.junit.Assert.*;
+
 @RunWith(AndroidJUnit4.class)
-public class ExceptionHandlerTest extends InstrumentationTestCase {
+public class ExceptionHandlerTest {
 
     private File filesDirectory;
 
     @Before
     public void setUp() throws Exception {
-        super.setUp();
-
-        injectInstrumentation(InstrumentationRegistry.getInstrumentation());
-
-        Constants.loadFromContext(getInstrumentation().getTargetContext());
-        CrashManagerHelper.reset(getInstrumentation().getTargetContext());
-        filesDirectory = CrashManagerHelper.cleanFiles(getInstrumentation().getTargetContext());
+        Constants.loadFromContext(InstrumentationRegistry.getTargetContext());
+        CrashManagerHelper.reset(InstrumentationRegistry.getTargetContext());
+        filesDirectory = CrashManagerHelper.cleanFiles(InstrumentationRegistry.getTargetContext());
     }
 
     @SuppressWarnings("ThrowableInstanceNeverThrown")
@@ -61,5 +58,4 @@ public class ExceptionHandlerTest extends InstrumentationTestCase {
         Throwable tr = new RuntimeException("Just a test exception");
         ExceptionHandler.saveException(tr, Thread.currentThread(), null);
     }
-
 }
