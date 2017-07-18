@@ -16,6 +16,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.Parcelable;
 import android.support.annotation.StringRes;
+import android.support.annotation.UiThread;
 import android.text.TextUtils;
 import android.view.ContextMenu;
 import android.view.KeyEvent;
@@ -64,12 +65,18 @@ import static java.text.DateFormat.SHORT;
  *
  * Activity to show the feedback form.
  **/
+@SuppressWarnings("DanglingJavadoc")
 public class FeedbackActivity extends Activity implements OnClickListener, View.OnFocusChangeListener {
 
     /**
      * The URL of the feedback endpoint for this app.
      */
     public static final String EXTRA_URL = "url";
+
+    /**
+     * Token of the message feed.
+     */
+    public static final String EXTRA_TOKEN = "token";
 
     /**
      * Optional extra that can be passed as {@code true} to force a new feedback message thread.
@@ -85,6 +92,11 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
      * Extra for initial email address to set for the feedback message.
      */
     public static final String EXTRA_INITIAL_USER_EMAIL = "initialUserEmail";
+
+    /**
+     * Extra for initial email address to set for the feedback message.
+     */
+    public static final String EXTRA_INITIAL_USER_SUBJECT = "initialUserSubject";
 
     /**
      * Extra for any initial attachments to add to the feedback message.
@@ -112,6 +124,11 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
      * Initial user's e-mail to pre-fill the feedback form with
      */
     private String initialUserEmail;
+
+    /**
+     * Initial user's subject to pre-fill the feedback form with
+     */
+    private String initialUserSubject;
 
     /**
      * Reference to this
@@ -153,7 +170,6 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
      * Message data source
      **/
     private MessagesAdapter mMessagesAdapter;
-    private ArrayList<FeedbackMessage> mFeedbackMessages;
 
     /**
      * True when a message is posted
@@ -194,9 +210,11 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             mUrl = extras.getString(EXTRA_URL);
+            mToken = extras.getString(EXTRA_TOKEN);
             mForceNewThread = extras.getBoolean(EXTRA_FORCE_NEW_THREAD);
             initialUserName = extras.getString(EXTRA_INITIAL_USER_NAME);
             initialUserEmail = extras.getString(EXTRA_INITIAL_USER_EMAIL);
+            initialUserSubject = extras.getString(EXTRA_INITIAL_USER_SUBJECT);
 
             Parcelable[] initialAttachmentsArray = extras.getParcelableArray(EXTRA_INITIAL_ATTACHMENTS);
             if (initialAttachmentsArray != null) {
@@ -210,6 +228,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
         if (savedInstanceState != null) {
             mFeedbackViewInitialized = savedInstanceState.getBoolean("feedbackViewInitialized");
             mInSendFeedback = savedInstanceState.getBoolean("inSendFeedback");
+            mToken = savedInstanceState.getString("token");
         } else {
             mInSendFeedback = false;
             mFeedbackViewInitialized = false;
@@ -225,6 +244,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
         configureAppropriateView();
     }
 
+    @UiThread
     private void restoreSendFeedbackTask() {
         Object object = getLastNonConfigurationInstance();
         if (object != null && object instanceof SendFeedbackTask) {
@@ -268,6 +288,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
         outState.putParcelableArrayList("attachments", attachmentListView.getAttachments());
         outState.putBoolean("feedbackViewInitialized", mFeedbackViewInitialized);
         outState.putBoolean("inSendFeedback", mInSendFeedback);
+        outState.putString("token", mToken);
 
         super.onSaveInstanceState(outState);
     }
@@ -325,6 +346,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
      * the button to avoid multiple taps.
      */
     @Override
+    @UiThread
     public void onClick(View v) {
         int viewId = v.getId();
 
@@ -341,7 +363,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
             mInSendFeedback = true;
             configureFeedbackView(false);
         } else if (viewId == R.id.button_refresh) {
-            sendFetchFeedback(mUrl, null, null, null, null, null, PrefsUtil.getInstance().getFeedbackTokenFromPrefs(mContext), mFeedbackHandler, true);
+            sendFetchFeedback(mUrl, null, null, null, null, null, mToken, mFeedbackHandler, true);
         }
     }
 
@@ -453,6 +475,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
      *
      * @param haveToken the message list is shown if true
      */
+    @UiThread
     protected void configureFeedbackView(boolean haveToken) {
         ScrollView feedbackScrollView = findViewById(R.id.wrapper_feedback_scroll);
         LinearLayout wrapperLayoutFeedbackAndMessages = findViewById(R.id.wrapper_messages);
@@ -489,37 +512,19 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
 
             configureHints();
 
-            /** Check to see if the Name and Email are saved in {@link SharedPreferences} */
             if (!mFeedbackViewInitialized) {
-                String nameEmailSubject = PrefsUtil.getInstance().getNameEmailFromPrefs(mContext);
-                if (nameEmailSubject != null) {
-                    /** We have Name and Email. Prepopulate the appropriate fields */
-                    String[] nameEmailSubjectArray = nameEmailSubject.split("\\|");
-                    if (nameEmailSubjectArray != null && nameEmailSubjectArray.length >= 2) {
-                        mNameInput.setText(nameEmailSubjectArray[0]);
-                        mEmailInput.setText(nameEmailSubjectArray[1]);
-
-                        if (!mForceNewThread && nameEmailSubjectArray.length >= 3) {
-                            mSubjectInput.setText(nameEmailSubjectArray[2]);
-                            mTextInput.requestFocus();
-                        } else {
-                            mSubjectInput.requestFocus();
-                        }
-                    }
+                mNameInput.setText(initialUserName);
+                mEmailInput.setText(initialUserEmail);
+                mSubjectInput.setText(initialUserSubject);
+                if (TextUtils.isEmpty(initialUserName)) {
+                    mNameInput.requestFocus();
+                } else if (TextUtils.isEmpty(initialUserEmail)) {
+                    mEmailInput.requestFocus();
+                } else if (TextUtils.isEmpty(initialUserSubject)) {
+                    mSubjectInput.requestFocus();
                 } else {
-                    /** We don't have Name and Email. Check if initial values were provided */
-                    mNameInput.setText(initialUserName);
-                    mEmailInput.setText(initialUserEmail);
-                    mSubjectInput.setText("");
-                    if (TextUtils.isEmpty(initialUserName)) {
-                        mNameInput.requestFocus();
-                    } else if (TextUtils.isEmpty(initialUserEmail)) {
-                        mEmailInput.requestFocus();
-                    } else {
-                        mSubjectInput.requestFocus();
-                    }
+                    mTextInput.requestFocus();
                 }
-
                 mFeedbackViewInitialized = true;
             }
 
@@ -530,7 +535,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
             mTextInput.setText("");
 
             /** Check to see if the Feedback Token is available */
-            if ((!mForceNewThread || mInSendFeedback) && PrefsUtil.getInstance().getFeedbackTokenFromPrefs(mContext) != null) {
+            if ((!mForceNewThread || mInSendFeedback) && mToken != null) {
                 /** If Feedback Token is available, hide the Subject Input field */
                 mSubjectInput.setVisibility(View.GONE);
             } else {
@@ -565,6 +570,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
      *
      * @param success is true if the sending of the feedback was successful
      */
+    @SuppressWarnings("UnusedParameters")
     protected void onSendFeedbackResult(final boolean success) {
     }
 
@@ -602,12 +608,8 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
         mTextInput.setHint(getString(R.string.hockeyapp_feedback_message_hint_required));
     }
 
+    @UiThread
     private void configureAppropriateView() {
-        /** Try to retrieve the Feedback Token from {@link SharedPreferences} */
-        if (!mForceNewThread || mInSendFeedback) {
-            mToken = PrefsUtil.getInstance().getFeedbackTokenFromPrefs(this);
-        }
-
         if (mToken == null || mInSendFeedback) {
             /** If Feedback Token is NULL, show the usual feedback view */
             configureFeedbackView(false);
@@ -639,25 +641,21 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
         }
     }
 
+    @UiThread
     private void showError(@StringRes final int message) {
-        runOnUiThread(new Runnable() {
-
-            @Override
-            public void run() {
-                AlertDialog alertDialog = new AlertDialog.Builder(FeedbackActivity.this)
-                        .setTitle(R.string.hockeyapp_dialog_error_title)
-                        .setMessage(message)
-                        .setCancelable(false)
-                        .setPositiveButton(R.string.hockeyapp_dialog_positive_button, null)
-                        .create();
-                alertDialog.show();
-            }
-        });
+        AlertDialog alertDialog = new AlertDialog.Builder(FeedbackActivity.this)
+                .setTitle(R.string.hockeyapp_dialog_error_title)
+                .setMessage(message)
+                .setCancelable(false)
+                .setPositiveButton(R.string.hockeyapp_dialog_positive_button, null)
+                .create();
+        alertDialog.show();
     }
 
     /**
      * Initializes the Feedback response {@link Handler}
      */
+    @UiThread
     private void initFeedbackHandler() {
         mFeedbackHandler = new FeedbackHandler(this);
     }
@@ -665,6 +663,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
     /**
      * Initialize the Feedback response parse result {@link Handler}
      */
+    @UiThread
     private void initParseFeedbackHandler() {
         mParseFeedbackHandler = new ParseFeedbackHandler(this);
     }
@@ -675,76 +674,75 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
      * @param feedbackResponse {@link FeedbackResponse} object
      */
     @SuppressLint("SimpleDateFormat")
+    @UiThread
     private void loadFeedbackMessages(final FeedbackResponse feedbackResponse) {
-        runOnUiThread(new Runnable() {
+        configureFeedbackView(true);
 
-            @Override
-            public void run() {
-                configureFeedbackView(true);
+        Date date;
+        if (feedbackResponse != null && feedbackResponse.getFeedback() != null &&
+                feedbackResponse.getFeedback().getMessages() != null && feedbackResponse.
+                getFeedback().getMessages().size() > 0) {
 
-                Date date;
-                if (feedbackResponse != null && feedbackResponse.getFeedback() != null &&
-                        feedbackResponse.getFeedback().getMessages() != null && feedbackResponse.
-                        getFeedback().getMessages().size() > 0) {
+            ArrayList<FeedbackMessage> feedbackMessages = feedbackResponse.getFeedback().getMessages();
+            /** Reverse the order of the feedback messages list, so we show the latest one first */
+            Collections.reverse(feedbackMessages);
 
-                    mFeedbackMessages = feedbackResponse.getFeedback().getMessages();
-                    /** Reverse the order of the feedback messages list, so we show the latest one first */
-                    Collections.reverse(mFeedbackMessages);
+            /** Set the lastUpdatedTextView text as the date of the latest feedback message */
+            try {
+                /** An ISO 8601 format */
+                DateFormat dateFormatIn = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
+                dateFormatIn.setTimeZone(TimeZone.getTimeZone("UTC"));
 
-                    /** Set the lastUpdatedTextView text as the date of the latest feedback message */
-                    try {
-                        /** An ISO 8601 format */
-                        DateFormat dateFormatIn = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
-                        dateFormatIn.setTimeZone(TimeZone.getTimeZone("UTC"));
+                /** Localized short format */
+                DateFormat dateFormatOut = DateFormat.getDateTimeInstance(SHORT, SHORT);
 
-                        /** Localized short format */
-                        DateFormat dateFormatOut = DateFormat.getDateTimeInstance(SHORT, SHORT);
-
-                        date = dateFormatIn.parse(mFeedbackMessages.get(0).getCreatedAt());
-                        mLastUpdatedTextView.setText(String.format(getString(R.string.hockeyapp_feedback_last_updated_text), dateFormatOut.format(date)));
-                        mLastUpdatedTextView.setContentDescription(mLastUpdatedTextView.getText());
-                        mLastUpdatedTextView.setVisibility(View.VISIBLE);
-                    } catch (ParseException e1) {
-                        HockeyLog.error("Failed to parse feedback", e1);
-                    }
-
-                    if (mMessagesAdapter == null) {
-                        mMessagesAdapter = new MessagesAdapter(mContext, mFeedbackMessages);
-                    } else {
-                        mMessagesAdapter.clear();
-                        for (FeedbackMessage message : mFeedbackMessages) {
-                            mMessagesAdapter.add(message);
-                        }
-
-                        mMessagesAdapter.notifyDataSetChanged();
-                    }
-
-                    mMessagesListView.setAdapter(mMessagesAdapter);
-                }
+                date = dateFormatIn.parse(feedbackMessages.get(0).getCreatedAt());
+                mLastUpdatedTextView.setText(String.format(getString(R.string.hockeyapp_feedback_last_updated_text), dateFormatOut.format(date)));
+                mLastUpdatedTextView.setContentDescription(mLastUpdatedTextView.getText());
+                mLastUpdatedTextView.setVisibility(View.VISIBLE);
+            } catch (ParseException e1) {
+                HockeyLog.error("Failed to parse feedback", e1);
             }
-        });
+
+            if (mMessagesAdapter == null) {
+                mMessagesAdapter = new MessagesAdapter(mContext, feedbackMessages);
+            } else {
+                mMessagesAdapter.clear();
+                for (FeedbackMessage message : feedbackMessages) {
+                    mMessagesAdapter.add(message);
+                }
+
+                mMessagesAdapter.notifyDataSetChanged();
+            }
+
+            mMessagesListView.setAdapter(mMessagesAdapter);
+        }
     }
 
+    @UiThread
     private void resetFeedbackView() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                PrefsUtil.getInstance().saveFeedbackTokenToPrefs(FeedbackActivity.this, null);
+        mToken = null;
+        AsyncTaskUtils.execute(new AsyncTask<Void, Object, Object>() {
 
+            @Override
+            protected Object doInBackground(Void... voids) {
+                PrefsUtil.getInstance().saveFeedbackTokenToPrefs(FeedbackActivity.this, null);
                 getSharedPreferences(ParseFeedbackTask.PREFERENCES_NAME, 0)
                         .edit()
                         .remove(ParseFeedbackTask.ID_LAST_MESSAGE_SEND)
                         .remove(ParseFeedbackTask.ID_LAST_MESSAGE_PROCESSED)
                         .apply();
-
-                configureFeedbackView(false);
+                return null;
             }
         });
+
+        configureFeedbackView(false);
     }
 
     /**
      * Send feedback to HockeyApp.
      */
+    @UiThread
     private void sendFeedback() {
         if (!Util.isConnectedToNetwork(this)) {
             Toast errorToast = Toast.makeText(this, R.string.hockeyapp_error_no_network_message, Toast.LENGTH_LONG);
@@ -754,12 +752,11 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
 
         enableDisableSendFeedbackButton(false);
 
-        String token = mForceNewThread && !mInSendFeedback ? null : PrefsUtil.getInstance().getFeedbackTokenFromPrefs(mContext);
-
-        String name = mNameInput.getText().toString().trim();
-        String email = mEmailInput.getText().toString().trim();
-        String subject = mSubjectInput.getText().toString().trim();
-        String text = mTextInput.getText().toString().trim();
+        final String token = mForceNewThread && !mInSendFeedback ? null : mToken;
+        final String name = mNameInput.getText().toString().trim();
+        final String email = mEmailInput.getText().toString().trim();
+        final String subject = mSubjectInput.getText().toString().trim();
+        final String text = mTextInput.getText().toString().trim();
 
         if (TextUtils.isEmpty(subject)) {
             mSubjectInput.setVisibility(View.VISIBLE);
@@ -774,7 +771,13 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
             setError(mEmailInput, R.string.hockeyapp_feedback_validate_email_error);
         } else {
             /** Save Name and Email to {@link SharedPreferences} */
-            PrefsUtil.getInstance().saveNameEmailSubjectToPrefs(mContext, name, email, subject);
+            AsyncTaskUtils.execute(new AsyncTask<Void, Object, Object>() {
+                @Override
+                protected Object doInBackground(Void... voids) {
+                    PrefsUtil.getInstance().saveNameEmailSubjectToPrefs(mContext, name, email, subject);
+                    return null;
+                }
+            });
 
             /** Make list for attachments file paths */
             AttachmentListView attachmentListView = findViewById(R.id.wrapper_attachments);
@@ -836,6 +839,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
         }
 
         @Override
+        @UiThread
         public void handleMessage(Message msg) {
             boolean success = false;
             int errorMessage = 0;
@@ -860,12 +864,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
                 } else if (responseString != null) {
                     feedbackActivity.startParseFeedbackTask(responseString, requestType);
                     if ("send".equals(requestType)) {
-                        feedbackActivity.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(feedbackActivity, R.string.hockeyapp_feedback_sent_toast, Toast.LENGTH_LONG).show();
-                            }
-                        });
+                        Toast.makeText(feedbackActivity, R.string.hockeyapp_feedback_sent_toast, Toast.LENGTH_LONG).show();
                     }
                     success = true;
                 } else {
@@ -893,6 +892,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
         }
 
         @Override
+        @UiThread
         public void handleMessage(Message msg) {
             boolean success = false;
 
@@ -903,7 +903,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
 
             if (msg != null && msg.getData() != null) {
                 Bundle bundle = msg.getData();
-                FeedbackResponse feedbackResponse = (FeedbackResponse) bundle.getSerializable(ParseFeedbackTask.BUNDLE_PARSE_FEEDBACK_RESPONSE);
+                final FeedbackResponse feedbackResponse = (FeedbackResponse) bundle.getSerializable(ParseFeedbackTask.BUNDLE_PARSE_FEEDBACK_RESPONSE);
                 if (feedbackResponse != null) {
                     if (feedbackResponse.getStatus().equalsIgnoreCase("success")) {
                         /** We have a valid result from JSON parsing */
@@ -911,7 +911,15 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
 
                         if (feedbackResponse.getToken() != null) {
                             /** Save the Token to SharedPreferences */
-                            PrefsUtil.getInstance().saveFeedbackTokenToPrefs(feedbackActivity, feedbackResponse.getToken());
+                            feedbackActivity.mToken = feedbackResponse.getToken();
+                            AsyncTaskUtils.execute(new AsyncTask<Void, Object, Object>() {
+
+                                @Override
+                                protected Object doInBackground(Void... voids) {
+                                    PrefsUtil.getInstance().saveFeedbackTokenToPrefs(feedbackActivity, feedbackResponse.getToken());
+                                    return null;
+                                }
+                            });
                             /** Load the existing feedback messages */
                             feedbackActivity.loadFeedbackMessages(feedbackResponse);
                             feedbackActivity.mInSendFeedback = false;
