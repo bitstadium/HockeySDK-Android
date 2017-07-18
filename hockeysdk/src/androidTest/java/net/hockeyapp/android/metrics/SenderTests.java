@@ -44,12 +44,11 @@ public class SenderTests {
 
     @Test
     public void testSending() {
-        HttpURLConnection connection1 = sut.createConnection();
-        sut.triggerSendingForTesting(connection1, mock(File.class), "test1");
-        assertEquals(1, sut.requestCount());
-
         sut.sendAvailableFiles();
         verify(mockPersistence).nextAvailableFileInDirectory();
+
+        // Should be decremented back in onResponse
+        assertEquals(0, sut.requestCount());
     }
 
     @Test
