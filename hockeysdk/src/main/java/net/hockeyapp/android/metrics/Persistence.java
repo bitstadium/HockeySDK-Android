@@ -1,11 +1,13 @@
 package net.hockeyapp.android.metrics;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.support.annotation.WorkerThread;
 
+import net.hockeyapp.android.utils.AsyncTaskUtils;
 import net.hockeyapp.android.utils.HockeyLog;
 
 import java.io.BufferedReader;
@@ -76,9 +78,9 @@ class Persistence {
      * @param data The data to save to disk.
      * @see Persistence#writeToDisk(String)
      */
+    @SuppressWarnings("WeakerAccess")
     @WorkerThread
-    @VisibleForTesting
-    void persist(String[] data) {
+    protected void persist(String[] data) {
         if (!this.isFreeSpaceAvailable()) {
             HockeyLog.warn(TAG, "Failed to persist file: Too many files on disk.");
         } else {
@@ -99,6 +101,22 @@ class Persistence {
         }
     }
 
+    void sendAvailable() {
+        AsyncTaskUtils.execute(new AsyncTask<Void, Object, Object>() {
+
+            @Override
+            protected Object doInBackground(Void... voids) {
+                if (hasFilesAvailable()) {
+                    Sender sender = getSender();
+                    if (sender != null) {
+                        sender.triggerSending();
+                    }
+                }
+                return null;
+            }
+        });
+    }
+
     /**
      * Saves a string of serialized telemetry data objects to disk.
      * It will create a random UUID file in the storage directory
@@ -107,8 +125,9 @@ class Persistence {
      * @param data The complete data string to save.
      * @return True if the operation was successful, false otherwise.
      */
+    @SuppressWarnings("WeakerAccess")
     @WorkerThread
-    boolean writeToDisk(String data) {
+    protected boolean writeToDisk(String data) {
         File dir = getTelemetryDirectory();
         if (dir == null) {
             return false;
@@ -178,8 +197,9 @@ class Persistence {
      *
      * @return True if files are available, false otherwise.
      */
+    @SuppressWarnings("WeakerAccess")
     @WorkerThread
-    boolean hasFilesAvailable() {
+    protected boolean hasFilesAvailable() {
         return nextAvailableFileInDirectory() != null;
     }
 
@@ -188,9 +208,11 @@ class Persistence {
      *
      * @return Reference to the next available file, null if no file is available.
      */
+    @SuppressWarnings("WeakerAccess")
     @WorkerThread
     @Nullable
-    synchronized File nextAvailableFileInDirectory() {
+    @VisibleForTesting
+    protected synchronized File nextAvailableFileInDirectory() {
         // TODO Separation of concerns. The persistence should provide all files, the sender would pick the right one.
         File dir = getTelemetryDirectory();
         File[] files = dir != null ? dir.listFiles() : null;
@@ -214,8 +236,9 @@ class Persistence {
      *
      * @param file Reference to the file to delete.
      */
+    @SuppressWarnings("WeakerAccess")
     @WorkerThread
-    synchronized void deleteFile(File file) {
+    protected synchronized void deleteFile(File file) {
         if (file != null) {
             boolean deletedFile = file.delete();
             if (!deletedFile) {
@@ -235,7 +258,8 @@ class Persistence {
      *
      * @param file Reference to the file to remove from the list.
      */
-    synchronized void makeAvailable(File file) {
+    @SuppressWarnings("WeakerAccess")
+    protected synchronized void makeAvailable(File file) {
         if (file != null) {
             mServedFiles.remove(file);
         }
@@ -254,9 +278,9 @@ class Persistence {
         return files != null && files.length < MAX_FILE_COUNT;
     }
 
+    @SuppressWarnings("WeakerAccess")
     @Nullable
-    @VisibleForTesting
-    File getTelemetryDirectory() {
+    protected File getTelemetryDirectory() {
         Context context = getContext();
         if (context != null && context.getFilesDir() != null) {
             File dir = new File(context.getFilesDir(), BIT_TELEMETRY_DIRECTORY);

@@ -117,7 +117,7 @@ public class MetricsManager {
      */
     @VisibleForTesting
     MetricsManager(Context context, TelemetryContext telemetryContext, Sender sender,
-                           Persistence persistence, Channel channel) {
+                   Persistence persistence, Channel channel) {
         sTelemetryContext = telemetryContext;
 
         // Important: create sender and persistence first, wire them up and then create the channel!
@@ -143,15 +143,7 @@ public class MetricsManager {
         }
 
         // Check if any previous events are in persistence and send them
-        AsyncTaskUtils.execute(new AsyncTask<Void, Object, Object>() {
-            @Override
-            protected Object doInBackground(Void... voids) {
-                if (sSender.getPersistence().hasFilesAvailable()) {
-                    sSender.triggerSending();
-                }
-                return null;
-            }
-        });
+        persistence.sendAvailable();
     }
 
     /**

@@ -21,6 +21,7 @@ public class TelemetryContextTests extends InstrumentationTestCase {
 
         injectInstrumentation(InstrumentationRegistry.getInstrumentation());
 
+        //noinspection SpellCheckingInspection
         sut = new PublicTelemetryContext(getInstrumentation().getContext(),
                 "a123b4567cde890abcd1e2f3ab456789");//this is a made-up app identifier.
     }
@@ -29,7 +30,6 @@ public class TelemetryContextTests extends InstrumentationTestCase {
     public void testInstanceInitialisation() {
         Assert.assertNotNull(sut);
         Assert.assertNotNull(sut.getInstrumentationKey());
-        Assert.assertNotNull(sut.mContext);
         Assert.assertNotNull(sut.mDevice);
         Assert.assertNotNull(sut.mUser);
         Assert.assertNotNull(sut.mInternal);

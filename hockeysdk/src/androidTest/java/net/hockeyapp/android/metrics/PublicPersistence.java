@@ -14,8 +14,4 @@ public class PublicPersistence extends Persistence {
     public PublicPersistence(Context context, Sender sender) {
         super(context, sender);
     }
-
-    public PublicPersistence(Context context, File directory, Sender sender) {
-        super(context, directory, sender);
-    }
 }

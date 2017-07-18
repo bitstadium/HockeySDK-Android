@@ -13,9 +13,11 @@ import org.junit.runner.RunWith;
 import java.io.File;
 import java.net.HttpURLConnection;
 
+import static org.mockito.Mockito.RETURNS_MOCKS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
 
 @RunWith(AndroidJUnit4.class)
 public class SenderTests extends InstrumentationTestCase {
@@ -28,9 +30,7 @@ public class SenderTests extends InstrumentationTestCase {
 
         injectInstrumentation(InstrumentationRegistry.getInstrumentation());
 
-        Persistence mockPersistence = mock(PublicPersistence.class);
-        when(mockPersistence.nextAvailableFileInDirectory()).thenReturn(mock(File.class));
-        when(mockPersistence.load(mock(File.class))).thenReturn("SomethingToTest");
+        Persistence mockPersistence = mock(PublicPersistence.class, withSettings().defaultAnswer(RETURNS_MOCKS));
         sut = new Sender();
         sut.setPersistence(mockPersistence);
     }
@@ -66,8 +66,6 @@ public class SenderTests extends InstrumentationTestCase {
         sut.sendAvailableFiles();
         verify(persistenceMock).nextAvailableFileInDirectory();
     }
-
-
 
     @Test
     public void testResponseCodeHandling() {
