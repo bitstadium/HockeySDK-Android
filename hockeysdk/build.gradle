@@ -1,8 +1,6 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.novoda.bintray-release' // must be applied after your artifact generating plugin (eg. java / com.android.library)
 
-def supportLibVersion = "25.3.1"
-
 android {
     compileSdkVersion COMPILE_SDK
     buildToolsVersion BUILD_TOOLS
@@ -52,8 +50,6 @@ publish {
 }
 
 dependencies {
-    compile "com.android.support:support-annotations:$supportLibVersion"
-
     //Mocking
     androidTestCompile 'org.mockito:mockito-core:1.10.19'
     androidTestCompile 'com.crittercism.dexmaker:dexmaker:1.4'
