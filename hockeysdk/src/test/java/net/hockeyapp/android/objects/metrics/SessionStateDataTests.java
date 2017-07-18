@@ -1,6 +1,5 @@
 package net.hockeyapp.android.objects.metrics;
 
-import junit.framework.Assert;
 import junit.framework.TestCase;
 
 import net.hockeyapp.android.metrics.model.SessionState;
@@ -19,12 +18,12 @@ public class SessionStateDataTests extends TestCase {
         SessionStateData item = new SessionStateData();
         item.setVer(expected);
         int actual = item.getVer();
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
 
         expected = 13;
         item.setVer(expected);
         actual = item.getVer();
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
     }
 
     public void testStateProperty() {
@@ -32,12 +31,12 @@ public class SessionStateDataTests extends TestCase {
         SessionStateData item = new SessionStateData();
         item.setState(expected);
         SessionState actual = item.getState();
-        Assert.assertEquals(expected.getValue(), actual.getValue());
+        assertEquals(expected.getValue(), actual.getValue());
 
         expected = SessionState.END;
         item.setState(expected);
         actual = item.getState();
-        Assert.assertEquals(expected.getValue(), actual.getValue());
+        assertEquals(expected.getValue(), actual.getValue());
     }
 
     public void testSerialize() throws IOException {
@@ -47,7 +46,7 @@ public class SessionStateDataTests extends TestCase {
         StringWriter writer = new StringWriter();
         item.serialize(writer);
         String expected = "{\"ver\":42,\"state\":0}";
-        Assert.assertEquals(expected, writer.toString());
+        assertEquals(expected, writer.toString());
     }
 
 }
