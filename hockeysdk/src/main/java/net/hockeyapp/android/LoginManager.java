@@ -4,9 +4,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.WorkerThread;
 
 import net.hockeyapp.android.tasks.LoginTask;
 import net.hockeyapp.android.utils.AsyncTaskUtils;
@@ -93,6 +95,7 @@ public class LoginManager {
      * @param appSecret The App Secret of your app on HockeyApp.
      * @param mode      The login mode to use.
      */
+    @SuppressWarnings("unused")
     public static void register(final Context context, String appSecret, int mode) {
         String appIdentifier = Util.getAppIdentifier(context);
         register(context, appIdentifier, appSecret, mode, (Class<?>) null);
@@ -108,6 +111,7 @@ public class LoginManager {
      * @param mode      The login mode to use.
      * @param listener  Instance of LoginListener
      */
+    @SuppressWarnings("unused")
     public static void register(final Context context, String appSecret, int mode, LoginManagerListener listener) {
         String appIdentifier = Util.getAppIdentifier(context);
         register(context, appIdentifier, appSecret, mode, listener);
@@ -136,6 +140,7 @@ public class LoginManager {
      * @param mode          The Login Mode.
      * @param activity      The first activity to be started by your app.
      */
+    @SuppressWarnings("WeakerAccess")
     public static void register(final Context context, String appIdentifier, String appSecret, int mode, Class<?> activity) {
         register(context, appIdentifier, appSecret, Constants.BASE_URL, mode, activity);
     }
@@ -150,6 +155,7 @@ public class LoginManager {
      * @param mode          The Login Mode.
      * @param activity      The first activity to be started by your app.
      */
+    @SuppressWarnings("WeakerAccess")
     public static void register(final Context context, String appIdentifier, String appSecret, String urlString, int mode, Class<?> activity) {
         if (context != null) {
             LoginManager.identifier = Util.sanitizeAppIdentifier(appIdentifier);
@@ -175,7 +181,7 @@ public class LoginManager {
      * @param context The activity from which this method is called.
      * @param intent  The intent that the activity has been created with.
      */
-    public static void verifyLogin(Activity context, Intent intent) {
+    public static void verifyLogin(final Activity context, Intent intent) {
         // Check if application needs to be exited.
         if (intent != null) {
             if (intent.getBooleanExtra(LOGIN_EXIT_KEY, false)) {
@@ -189,50 +195,62 @@ public class LoginManager {
             return;
         }
 
-        //Check if the LOGIN_MODE has changed. Delete IUID and AUID if it has changed.
-        //This requires re-authentication.
-        SharedPreferences prefs = context.getSharedPreferences("net.hockeyapp.android.login", 0);
-        int currentMode = prefs.getInt("mode", -1);
-        if (currentMode != mode) {
-            HockeyLog.verbose("HockeyAuth", "Mode has changed, require re-auth.");
-            prefs.edit()
-                    .remove("auid")
-                    .remove("iuid")
-                    .putInt("mode", mode)
-                    .apply();
-        }
+        AsyncTaskUtils.execute(new AsyncTask<Void, Object, Object>() {
+            private String auid;
+            private String iuid;
 
-        //Get auth ids and check if we're successfully authenticated.
-        String auid = prefs.getString("auid", null);
-        String iuid = prefs.getString("iuid", null);
+            @Override
+            protected Object doInBackground(Void... voids) {
+                //Check if the LOGIN_MODE has changed. Delete IUID and AUID if it has changed.
+                //This requires re-authentication.
+                SharedPreferences prefs = context.getSharedPreferences("net.hockeyapp.android.login", 0);
+                int currentMode = prefs.getInt("mode", -1);
+                if (currentMode != mode) {
+                    HockeyLog.verbose("HockeyAuth", "Mode has changed, require re-auth.");
+                    prefs.edit()
+                            .remove("auid")
+                            .remove("iuid")
+                            .putInt("mode", mode)
+                            .apply();
+                }
 
-        boolean notAuthenticated = (auid == null) && (iuid == null);
-        boolean auidMissing = (auid == null) && ((mode == LOGIN_MODE_EMAIL_PASSWORD) || mode == LOGIN_MODE_VALIDATE);
-        boolean iuidMissing = (iuid == null) && (mode == LOGIN_MODE_EMAIL_ONLY);
-
-        if (notAuthenticated || auidMissing || iuidMissing) {
-            HockeyLog.verbose("HockeyAuth", "Not authenticated or correct ID missing, re-authenticate.");
-            startLoginActivity(context);
-            return;
-        }
-
-        //Validate the user's auth data in case LOGIN_MODE_AUTH is set.
-        if (mode == LOGIN_MODE_VALIDATE) {
-            HockeyLog.verbose("HockeyAuth", "LOGIN_MODE_VALIDATE, Validate the user's info!");
-
-            Map<String, String> params = new HashMap<>();
-            if (auid != null) {
-                params.put("type", "auid");
-                params.put("id", auid);
-            } else if (iuid != null) {
-                params.put("type", "iuid");
-                params.put("id", iuid);
+                //Get auth ids and check if we're successfully authenticated.
+                auid = prefs.getString("auid", null);
+                iuid = prefs.getString("iuid", null);
+                return null;
             }
 
-            LoginTask verifyTask = new LoginTask(context, validateHandler, getURLString(LOGIN_MODE_VALIDATE), LOGIN_MODE_VALIDATE, params);
-            verifyTask.setShowProgressDialog(false);
-            AsyncTaskUtils.execute(verifyTask);
-        }
+            @Override
+            protected void onPostExecute(Object o) {
+                boolean notAuthenticated = (auid == null) && (iuid == null);
+                boolean auidMissing = (auid == null) && ((mode == LOGIN_MODE_EMAIL_PASSWORD) || mode == LOGIN_MODE_VALIDATE);
+                boolean iuidMissing = (iuid == null) && (mode == LOGIN_MODE_EMAIL_ONLY);
+
+                if (notAuthenticated || auidMissing || iuidMissing) {
+                    HockeyLog.verbose("HockeyAuth", "Not authenticated or correct ID missing, re-authenticate.");
+                    startLoginActivity(context);
+                    return;
+                }
+
+                //Validate the user's auth data in case LOGIN_MODE_AUTH is set.
+                if (mode == LOGIN_MODE_VALIDATE) {
+                    HockeyLog.verbose("HockeyAuth", "LOGIN_MODE_VALIDATE, Validate the user's info!");
+
+                    Map<String, String> params = new HashMap<>();
+                    if (auid != null) {
+                        params.put("type", "auid");
+                        params.put("id", auid);
+                    } else if (iuid != null) {
+                        params.put("type", "iuid");
+                        params.put("id", iuid);
+                    }
+
+                    LoginTask verifyTask = new LoginTask(context, validateHandler, getURLString(LOGIN_MODE_VALIDATE), LOGIN_MODE_VALIDATE, params);
+                    verifyTask.setShowProgressDialog(false);
+                    AsyncTaskUtils.execute(verifyTask);
+                }
+            }
+        });
     }
 
     /**
@@ -242,6 +260,8 @@ public class LoginManager {
      * @param context The context to use. Usually your Activity object.
      * @return Email address or null.
      */
+    @SuppressWarnings("unused")
+    @WorkerThread
     public static String getLoginEmail(Context context) {
         SharedPreferences prefs = context.getSharedPreferences("net.hockeyapp.android.login", 0);
         return prefs.getString("email", null);
@@ -278,7 +298,7 @@ public class LoginManager {
 
         private final WeakReference<Context> mWeakContext;
 
-        public LoginHandler(Context context) {
+        LoginHandler(Context context) {
             mWeakContext = new WeakReference<>(context);
         }
 
@@ -293,7 +313,7 @@ public class LoginManager {
             }
 
             if (!success) {
-                    startLoginActivity(context);
+                startLoginActivity(context);
                 //TODO should show a message that user didn't have enough rights?
             }
             else {
