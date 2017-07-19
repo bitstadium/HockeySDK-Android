@@ -1,6 +1,5 @@
 package net.hockeyapp.android.objects.metrics;
 
-import junit.framework.Assert;
 import junit.framework.TestCase;
 
 import net.hockeyapp.android.metrics.model.Domain;
@@ -18,7 +17,7 @@ public class DomainTests extends TestCase {
         StringWriter writer = new StringWriter();
         item.serialize(writer);
         String expected = "{}";
-        Assert.assertEquals(expected, writer.toString());
+        assertEquals(expected, writer.toString());
     }
 
 }

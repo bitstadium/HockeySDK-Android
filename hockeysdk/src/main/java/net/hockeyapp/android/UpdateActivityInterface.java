@@ -14,5 +14,5 @@ public interface UpdateActivityInterface {
      *
      * @return Instance of View
      */
-    public View getLayoutView();
+    View getLayoutView();
 }

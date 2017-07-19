@@ -10,6 +10,7 @@ import net.hockeyapp.android.R;
 import net.hockeyapp.android.objects.FeedbackAttachment;
 import net.hockeyapp.android.objects.FeedbackMessage;
 import net.hockeyapp.android.tasks.AttachmentDownloader;
+import net.hockeyapp.android.utils.HockeyLog;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -33,13 +34,7 @@ public class FeedbackMessageView extends LinearLayout {
     private TextView mMessageTextView;
     private AttachmentListView mAttachmentListView;
 
-    private FeedbackMessage mFeedbackMessage;
-
     private final Context mContext;
-
-    @SuppressWarnings("unused")
-    @Deprecated
-    private boolean ownMessage;//TODO why surpress this?! Intended for future use?
 
     public FeedbackMessageView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -47,16 +42,14 @@ public class FeedbackMessageView extends LinearLayout {
 
         LayoutInflater.from(context).inflate(R.layout.hockeyapp_view_feedback_message, this);
 
-        mAuthorTextView = (TextView) findViewById(R.id.label_author);
-        mDateTextView = (TextView) findViewById(R.id.label_date);
-        mMessageTextView = (TextView) findViewById(R.id.label_text);
-        mAttachmentListView = (AttachmentListView) findViewById(R.id.list_attachments);
+        mAuthorTextView = findViewById(R.id.label_author);
+        mDateTextView = findViewById(R.id.label_date);
+        mMessageTextView = findViewById(R.id.label_text);
+        mAttachmentListView = findViewById(R.id.list_attachments);
 
     }
 
     public void setFeedbackMessage(FeedbackMessage feedbackMessage) {
-        mFeedbackMessage = feedbackMessage;
-
         try {
             /** An ISO 8601 format */
             DateFormat dateFormatIn = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
@@ -65,20 +58,20 @@ public class FeedbackMessageView extends LinearLayout {
             /** Localized short format */
             DateFormat dateFormatOut = DateFormat.getDateTimeInstance(SHORT, SHORT);
 
-            Date date = dateFormatIn.parse(mFeedbackMessage.getCreatedAt());
+            Date date = dateFormatIn.parse(feedbackMessage.getCreatedAt());
             mDateTextView.setText(dateFormatOut.format(date));
             mDateTextView.setContentDescription(dateFormatOut.format(date));
         } catch (ParseException e) {
-            e.printStackTrace();
+            HockeyLog.error("Failed to set feedback message", e);
         }
 
-        mAuthorTextView.setText(mFeedbackMessage.getName());
-        mAuthorTextView.setContentDescription(mFeedbackMessage.getName());
-        mMessageTextView.setText(mFeedbackMessage.getText());
-        mMessageTextView.setContentDescription(mFeedbackMessage.getText());
+        mAuthorTextView.setText(feedbackMessage.getName());
+        mAuthorTextView.setContentDescription(feedbackMessage.getName());
+        mMessageTextView.setText(feedbackMessage.getText());
+        mMessageTextView.setContentDescription(feedbackMessage.getText());
 
         mAttachmentListView.removeAllViews();
-        for (FeedbackAttachment feedbackAttachment : mFeedbackMessage.getFeedbackAttachments()) {
+        for (FeedbackAttachment feedbackAttachment : feedbackMessage.getFeedbackAttachments()) {
             AttachmentView attachmentView = new AttachmentView(mContext, mAttachmentListView, feedbackAttachment, false);
             AttachmentDownloader.getInstance().download(feedbackAttachment, attachmentView);
             mAttachmentListView.addView(attachmentView);

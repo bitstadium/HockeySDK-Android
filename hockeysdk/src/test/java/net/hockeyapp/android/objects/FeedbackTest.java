@@ -1,8 +1,9 @@
 package net.hockeyapp.android.objects;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import static junit.framework.Assert.*;
 
 public class FeedbackTest {
 
@@ -16,6 +17,6 @@ public class FeedbackTest {
     @Test
     public void setNameWorks() {
         this.sut.setName("John Smith");
-        Assert.assertTrue(this.sut.getName().equals("John Smith"));
+        assertTrue(this.sut.getName().equals("John Smith"));
     }
 }

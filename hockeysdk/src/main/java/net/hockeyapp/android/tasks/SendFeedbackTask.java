@@ -159,7 +159,7 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
         String status = result.get("status");
         if ((status != null) && (status.startsWith("2")) && (mContext != null)) {
             File folder = new File(mContext.getCacheDir(), FILE_TAG);
-            if ((folder != null) && folder.exists()) {
+            if (folder.exists()) {
                 for (File file : folder.listFiles()) {
                     if (file != null) {
                         Boolean success = file.delete();
@@ -177,8 +177,7 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
         if (mProgressDialog != null) {
             try {
                 mProgressDialog.dismiss();
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (Exception ignored) {
             }
         }
 
@@ -207,12 +206,12 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
      * @return
      */
     private HashMap<String, String> doPostPut() {
-        HashMap<String, String> result = new HashMap<String, String>();
+        HashMap<String, String> result = new HashMap<>();
         result.put("type", "send");
 
         HttpURLConnection urlConnection = null;
         try {
-            Map<String, String> parameters = new HashMap<String, String>();
+            Map<String, String> parameters = new HashMap<>();
             parameters.put("name", mName);
             parameters.put("email", mEmail);
             parameters.put("subject", mSubject);
@@ -239,7 +238,7 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
             result.put("status", String.valueOf(urlConnection.getResponseCode()));
             result.put("response", getStringFromConnection(urlConnection));
         } catch (IOException e) {
-            e.printStackTrace();
+            HockeyLog.error("Failed to send feedback message", e);
         } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();
@@ -255,12 +254,12 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
      * @return
      */
     private HashMap<String, String> doPostPutWithAttachments() {
-        HashMap<String, String> result = new HashMap<String, String>();
+        HashMap<String, String> result = new HashMap<>();
         result.put("type", "send");
 
         HttpURLConnection urlConnection = null;
         try {
-            Map<String, String> parameters = new HashMap<String, String>();
+            Map<String, String> parameters = new HashMap<>();
             parameters.put("name", mName);
             parameters.put("email", mEmail);
             parameters.put("subject", mSubject);
@@ -288,7 +287,7 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
             result.put("response", getStringFromConnection(urlConnection));
 
         } catch (IOException e) {
-            e.printStackTrace();
+            HockeyLog.error("Failed to send feedback message", e);
         } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();
@@ -305,13 +304,13 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
      */
     private HashMap<String, String> doGet() {
         StringBuilder sb = new StringBuilder();
-        sb.append(mUrlString + Util.encodeParam(mToken));
+        sb.append(mUrlString).append(Util.encodeParam(mToken));
 
         if (mLastMessageId != -1) {
-            sb.append("?last_message_id=" + mLastMessageId);
+            sb.append("?last_message_id=").append(mLastMessageId);
         }
 
-        HashMap<String, String> result = new HashMap<String, String>();
+        HashMap<String, String> result = new HashMap<>();
 
         HttpURLConnection urlConnection = null;
         try {
@@ -326,7 +325,7 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
             result.put("status", String.valueOf(urlConnection.getResponseCode()));
             result.put("response", getStringFromConnection(urlConnection));
         } catch (IOException e) {
-            e.printStackTrace();
+            HockeyLog.error("Failed to fetching feedback messages", e);
         } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();

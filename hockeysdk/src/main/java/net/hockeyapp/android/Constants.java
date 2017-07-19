@@ -144,8 +144,7 @@ public class Constants {
                     Constants.FILES_PATH = file.getAbsolutePath();
                 }
             } catch (Exception e) {
-                HockeyLog.error("Exception thrown when accessing the files dir:");
-                e.printStackTrace();
+                HockeyLog.error("Exception thrown when accessing the files dir", e);
             }
         }
     }
@@ -170,8 +169,7 @@ public class Constants {
                     Constants.APP_VERSION = "" + buildNumber;
                 }
             } catch (PackageManager.NameNotFoundException e) {
-                HockeyLog.error("Exception thrown when accessing the package info:");
-                e.printStackTrace();
+                HockeyLog.error("Exception thrown when accessing the package info", e);
             }
         }
     }
@@ -190,8 +188,7 @@ public class Constants {
                 return metaData.getInt(BUNDLE_BUILD_NUMBER, 0);
             }
         } catch (PackageManager.NameNotFoundException e) {
-            HockeyLog.error("Exception thrown when accessing the application info:");
-            e.printStackTrace();
+            HockeyLog.error("Exception thrown when accessing the application info", e);
         }
 
         return 0;
@@ -203,7 +200,7 @@ public class Constants {
      * @param context the context to use. Usually your Activity object.
      */
     private static void loadCrashIdentifier(Context context) {
-        String deviceIdentifier = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+        @SuppressLint("HardwareIds") String deviceIdentifier = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
         if (!TextUtils.isEmpty(Constants.APP_PACKAGE) && !TextUtils.isEmpty(deviceIdentifier)) {
             String combined = Constants.APP_PACKAGE + ":" + deviceIdentifier + ":" + createSalt(context);
             try {
@@ -228,7 +225,7 @@ public class Constants {
     private static void loadDeviceIdentifier(Context context) {
         // get device ID
         ContentResolver resolver = context.getContentResolver();
-        String deviceIdentifier = Settings.Secure.getString(resolver, Settings.Secure.ANDROID_ID);
+        @SuppressLint("HardwareIds") String deviceIdentifier = Settings.Secure.getString(resolver, Settings.Secure.ANDROID_ID);
         if (deviceIdentifier != null) {
             String deviceIdentifierAnonymized = tryHashStringSha256(context, deviceIdentifier);
             // if anonymized device identifier is null we should use a random UUID
@@ -280,7 +277,7 @@ public class Constants {
         String serial = "";
         try {
             serial = android.os.Build.class.getField("SERIAL").get(null).toString();
-        } catch (Throwable t) {
+        } catch (Throwable ignored) {
         }
 
         return fingerprint + ":" + serial;

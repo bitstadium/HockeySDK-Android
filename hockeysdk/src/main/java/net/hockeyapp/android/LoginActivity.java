@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import net.hockeyapp.android.tasks.LoginTask;
 import net.hockeyapp.android.utils.AsyncTaskUtils;
+import net.hockeyapp.android.utils.HockeyLog;
 import net.hockeyapp.android.utils.Util;
 
 import java.lang.ref.WeakReference;
@@ -136,14 +137,14 @@ public class LoginActivity extends Activity {
 
     private void configureView() {
         if (mMode == LoginManager.LOGIN_MODE_EMAIL_ONLY) {
-            EditText passwordInput = (EditText) findViewById(R.id.input_password);
+            EditText passwordInput = findViewById(R.id.input_password);
             passwordInput.setVisibility(View.INVISIBLE);
         }
 
-        TextView headlineText = (TextView) findViewById(R.id.text_headline);
+        TextView headlineText = findViewById(R.id.text_headline);
         headlineText.setText(mMode == LoginManager.LOGIN_MODE_EMAIL_ONLY ? R.string.hockeyapp_login_headline_text_email_only : R.string.hockeyapp_login_headline_text);
 
-        mButtonLogin = (Button) findViewById(R.id.button_login);
+        mButtonLogin = findViewById(R.id.button_login);
         mButtonLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -205,7 +206,7 @@ public class LoginActivity extends Activity {
             return hexString.toString();
 
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            HockeyLog.error("Failed to create MD5 hash", e);
         }
         return "";
     }

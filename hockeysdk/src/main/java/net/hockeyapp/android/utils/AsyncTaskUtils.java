@@ -1,6 +1,5 @@
 package net.hockeyapp.android.utils;
 
-import android.annotation.SuppressLint;
 import android.os.AsyncTask;
 import android.os.Build;
 
@@ -16,12 +15,11 @@ public class AsyncTaskUtils {
 
     private static Executor sCustomExecutor;
 
-    @SuppressLint("InlinedApi")
     public static void execute(AsyncTask<Void, ?, ?> asyncTask) {
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.HONEYCOMB_MR1) {
-            asyncTask.execute();
-        } else {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             asyncTask.executeOnExecutor(sCustomExecutor != null ? sCustomExecutor : AsyncTask.THREAD_POOL_EXECUTOR);
+        } else {
+            asyncTask.execute();
         }
     }
 

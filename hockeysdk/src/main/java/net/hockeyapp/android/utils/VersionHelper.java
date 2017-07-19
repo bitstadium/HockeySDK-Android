@@ -45,7 +45,7 @@ public class VersionHelper {
 
     private void loadVersions(Context context, String infoJSON) {
         this.mNewest = new JSONObject();
-        this.mSortedVersions = new ArrayList<JSONObject>();
+        this.mSortedVersions = new ArrayList<>();
         this.mCurrentVersionCode = mListener.getCurrentVersionCode();
 
         try {
@@ -63,8 +63,7 @@ public class VersionHelper {
                 }
                 mSortedVersions.add(entry);
             }
-        } catch (JSONException je) {
-        } catch (NullPointerException ne) {
+        } catch (JSONException | NullPointerException ignored) {
         }
     }
 
@@ -75,10 +74,8 @@ public class VersionHelper {
                     if (object1.getInt("version") > object2.getInt("version")) {
                         return 0;
                     }
-                } catch (JSONException je) {
-                } catch (NullPointerException ne) {
+                } catch (JSONException | NullPointerException ignored) {
                 }
-
                 return 0;
             }
         });
@@ -165,7 +162,7 @@ public class VersionHelper {
         String versionID = "";
         try {
             versionID = version.getString("id");
-        } catch (JSONException e) {
+        } catch (JSONException ignored) {
         }
         return versionID;
     }
@@ -196,7 +193,7 @@ public class VersionHelper {
         int versionCode = 0;
         try {
             versionCode = version.getInt("version");
-        } catch (JSONException e) {
+        } catch (JSONException ignored) {
         }
         return versionCode;
     }
@@ -205,7 +202,7 @@ public class VersionHelper {
         String versionName = "";
         try {
             versionName = version.getString("shortversion");
-        } catch (JSONException e) {
+        } catch (JSONException ignored) {
         }
         return versionName;
     }
@@ -302,7 +299,7 @@ public class VersionHelper {
 
             return timestamp > lastModified;
         } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
+            HockeyLog.error("Failed to get application info", e);
             return false;
         }
     }

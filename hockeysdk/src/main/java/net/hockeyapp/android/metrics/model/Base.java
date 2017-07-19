@@ -16,7 +16,7 @@ public class Base implements IJsonSerializable {
     public LinkedHashMap<String, String> Attributes;
 
     /**
-     * The name for thie type
+     * The name for this type
      */
     public String QualifiedName;
 
@@ -30,7 +30,7 @@ public class Base implements IJsonSerializable {
      */
     public Base() {
         this.InitializeFields();
-        Attributes = new LinkedHashMap<String, String>();
+        Attributes = new LinkedHashMap<>();
     }
 
     /**

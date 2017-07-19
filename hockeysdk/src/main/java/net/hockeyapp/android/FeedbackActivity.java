@@ -216,7 +216,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
 
             Parcelable[] initialAttachmentsArray = extras.getParcelableArray(EXTRA_INITIAL_ATTACHMENTS);
             if (initialAttachmentsArray != null) {
-                mInitialAttachments = new ArrayList<Uri>();
+                mInitialAttachments = new ArrayList<>();
                 for (Parcelable parcelable : initialAttachmentsArray) {
                     mInitialAttachments.add((Uri) parcelable);
                 }
@@ -259,7 +259,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
-            ViewGroup attachmentList = (ViewGroup) findViewById(R.id.wrapper_attachments);
+            ViewGroup attachmentList = findViewById(R.id.wrapper_attachments);
             ArrayList<Uri> attachmentsUris = savedInstanceState.getParcelableArrayList("attachments");
             for (Uri attachmentUri : attachmentsUris) {
                 if (!mInitialAttachments.contains(attachmentUri)) {
@@ -278,7 +278,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
      */
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        AttachmentListView attachmentListView = (AttachmentListView) findViewById(R.id.wrapper_attachments);
+        AttachmentListView attachmentListView = findViewById(R.id.wrapper_attachments);
 
         outState.putParcelableArrayList("attachments", attachmentListView.getAttachments());
         outState.putBoolean("feedbackViewInitialized", mFeedbackViewInitialized);
@@ -346,7 +346,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
         if (viewId == R.id.button_send) {
             sendFeedback();
         } else if (viewId == R.id.button_attachment) {
-            ViewGroup attachments = (ViewGroup) findViewById(R.id.wrapper_attachments);
+            ViewGroup attachments = findViewById(R.id.wrapper_attachments);
             if (attachments.getChildCount() >= MAX_ATTACHMENTS_PER_MSG) {
                 Toast.makeText(this, String.format(getString(R.string.hockeyapp_feedback_max_attachments_allowed), MAX_ATTACHMENTS_PER_MSG), Toast.LENGTH_SHORT).show();
             } else {
@@ -451,7 +451,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
             Uri uri = data.getData();
 
             if (uri != null) {
-                final ViewGroup attachments = (ViewGroup) findViewById(R.id.wrapper_attachments);
+                final ViewGroup attachments = findViewById(R.id.wrapper_attachments);
                 attachments.addView(new AttachmentView(this, attachments, uri, true));
                 Util.announceForAccessibility(attachments, getString(R.string.hockeyapp_feedback_attachment_added));
             }
@@ -477,7 +477,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
             Uri uri = data.getParcelableExtra(PaintActivity.EXTRA_IMAGE_URI);
 
             if (uri != null) {
-                final ViewGroup attachments = (ViewGroup) findViewById(R.id.wrapper_attachments);
+                final ViewGroup attachments = findViewById(R.id.wrapper_attachments);
                 attachments.addView(new AttachmentView(this, attachments, uri, true));
                 Util.announceForAccessibility(attachments, getString(R.string.hockeyapp_feedback_attachment_added));
             }
@@ -508,23 +508,23 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
      * @param haveToken the message list is shown if true
      */
     protected void configureFeedbackView(boolean haveToken) {
-        mFeedbackScrollview = (ScrollView) findViewById(R.id.wrapper_feedback_scroll);
-        mWrapperLayoutFeedbackAndMessages = (LinearLayout) findViewById(R.id.wrapper_messages);
-        mMessagesListView = (ListView) findViewById(R.id.list_feedback_messages);
+        mFeedbackScrollview = findViewById(R.id.wrapper_feedback_scroll);
+        mWrapperLayoutFeedbackAndMessages = findViewById(R.id.wrapper_messages);
+        mMessagesListView = findViewById(R.id.list_feedback_messages);
 
         if (haveToken) {
             /** If a token exists, the list of messages should be displayed */
             mWrapperLayoutFeedbackAndMessages.setVisibility(View.VISIBLE);
             mFeedbackScrollview.setVisibility(View.GONE);
 
-            mLastUpdatedTextView = (TextView) findViewById(R.id.label_last_updated);
+            mLastUpdatedTextView = findViewById(R.id.label_last_updated);
             mLastUpdatedTextView.setVisibility(View.INVISIBLE);
 
-            mAddResponseButton = (Button) findViewById(R.id.button_add_response);
+            mAddResponseButton = findViewById(R.id.button_add_response);
             mAddResponseButton.setOnClickListener(this);
             mAddResponseButton.setOnFocusChangeListener(this);
 
-            mRefreshButton = (Button) findViewById(R.id.button_refresh);
+            mRefreshButton = findViewById(R.id.button_refresh);
             mRefreshButton.setOnClickListener(this);
             mRefreshButton.setOnFocusChangeListener(this);
         } else {
@@ -532,13 +532,13 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
             mWrapperLayoutFeedbackAndMessages.setVisibility(View.GONE);
             mFeedbackScrollview.setVisibility(View.VISIBLE);
 
-            mNameInput = (EditText) findViewById(R.id.input_name);
+            mNameInput = findViewById(R.id.input_name);
             mNameInput.setOnFocusChangeListener(this);
-            mEmailInput = (EditText) findViewById(R.id.input_email);
+            mEmailInput = findViewById(R.id.input_email);
             mEmailInput.setOnFocusChangeListener(this);
-            mSubjectInput = (EditText) findViewById(R.id.input_subject);
+            mSubjectInput = findViewById(R.id.input_subject);
             mSubjectInput.setOnFocusChangeListener(this);
-            mTextInput = (EditText) findViewById(R.id.input_message);
+            mTextInput = findViewById(R.id.input_message);
             mTextInput.setOnFocusChangeListener(this);
 
             configureHints();
@@ -561,7 +561,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
                         }
                     }
                 } else {
-                    /** We dont have Name and Email. Check if initial values were provided */
+                    /** We don't have Name and Email. Check if initial values were provided */
                     mNameInput.setText(initialUserName);
                     mEmailInput.setText(initialUserEmail);
                     mSubjectInput.setText("");
@@ -593,7 +593,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
             }
 
             /** Reset the attachment list */
-            ViewGroup attachmentListView = (ViewGroup) findViewById(R.id.wrapper_attachments);
+            ViewGroup attachmentListView = findViewById(R.id.wrapper_attachments);
             attachmentListView.removeAllViews();
 
             if (mInitialAttachments != null) {
@@ -603,12 +603,12 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
             }
 
             /** Use of context menu needs to be enabled explicitly */
-            mAddAttachmentButton = (Button) findViewById(R.id.button_attachment);
+            mAddAttachmentButton = findViewById(R.id.button_attachment);
             mAddAttachmentButton.setOnClickListener(this);
             mAddAttachmentButton.setOnFocusChangeListener(this);
             registerForContextMenu(mAddAttachmentButton);
 
-            mSendFeedbackButton = (Button) findViewById(R.id.button_send);
+            mSendFeedbackButton = findViewById(R.id.button_send);
             mSendFeedbackButton.setOnClickListener(this);
             mAddAttachmentButton.setOnFocusChangeListener(this);
         }
@@ -743,7 +743,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
                         mLastUpdatedTextView.setContentDescription(mLastUpdatedTextView.getText());
                         mLastUpdatedTextView.setVisibility(View.VISIBLE);
                     } catch (ParseException e1) {
-                        e1.printStackTrace();
+                        HockeyLog.error("Failed to parse feedback", e1);
                     }
 
                     if (mMessagesAdapter == null) {
@@ -815,7 +815,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
             PrefsUtil.getInstance().saveNameEmailSubjectToPrefs(mContext, name, email, subject);
 
             /** Make list for attachments file paths */
-            AttachmentListView attachmentListView = (AttachmentListView) findViewById(R.id.wrapper_attachments);
+            AttachmentListView attachmentListView = findViewById(R.id.wrapper_attachments);
             List<Uri> attachmentUris = attachmentListView.getAttachments();
 
             /** Start the Send Feedback {@link AsyncTask} */

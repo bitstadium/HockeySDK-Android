@@ -9,6 +9,7 @@ import java.util.List;
  * Model for feedback messages.
  *
  */
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class FeedbackMessage implements Serializable {
     private static final long serialVersionUID = -8773015828853994624L;
 
@@ -32,7 +33,7 @@ public class FeedbackMessage implements Serializable {
      * @deprecated as of 3.7.0, replaced by {@link #getSubject()}
      */
     @Deprecated
-    @SuppressWarnings("unused")
+    @SuppressWarnings("SpellCheckingInspection")
     public String getSubjec() {
         return mSubject;
     }
@@ -42,7 +43,7 @@ public class FeedbackMessage implements Serializable {
      * @deprecated as of 3.7.0, replaced by {@link #setSubject(String)}
      */
     @Deprecated
-    @SuppressWarnings("unused")
+    @SuppressWarnings("SpellCheckingInspection")
     public void setSubjec(String subjec) {
         this.mSubject = subjec;
     }
@@ -51,10 +52,9 @@ public class FeedbackMessage implements Serializable {
         return mSubject;
     }
 
-    public void setSubject(String subjec) {
-        this.mSubject = subjec;
+    public void setSubject(String subject) {
+        this.mSubject = subject;
     }
-
 
     public String getText() {
         return mText;

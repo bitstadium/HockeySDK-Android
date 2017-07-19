@@ -2,7 +2,7 @@ language: android
 
 env:
   matrix:
-    - ANDROID_TARGET=android-19 ANDROID_ABI=armeabi-v7a
+    - ANDROID_TARGET=android-22 ANDROID_ABI=armeabi-v7a
 
 jdk:
   - oraclejdk8
@@ -22,6 +22,10 @@ android:
     # Project extra configuration
     - extra-google-m2repository
     - extra-android-m2repository
+
+    # Emulator system image for tests
+    - android-22
+    - sys-img-armeabi-v7a-android-22
 
 before_script:
   - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI

@@ -18,7 +18,6 @@ import net.hockeyapp.android.utils.Util;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -176,7 +175,7 @@ public class CrashManager {
     @SuppressWarnings("deprecation")
     public static void execute(Context context, CrashManagerListener listener) {
         Boolean ignoreDefaultHandler = (listener != null) && (listener.ignoreDefaultHandler());
-        WeakReference<Context> weakContext = new WeakReference<Context>(context);
+        WeakReference<Context> weakContext = new WeakReference<>(context);
 
         int foundOrSend = hasStackTraces(weakContext);
         if (foundOrSend == STACK_TRACES_FOUND_NEW) {
@@ -344,7 +343,7 @@ public class CrashManager {
                             }
                         }
 
-                        Map<String, String> parameters = new HashMap<String, String>();
+                        Map<String, String> parameters = new HashMap<>();
 
                         parameters.put("raw", stacktrace);
                         parameters.put("userID", userID);
@@ -364,7 +363,7 @@ public class CrashManager {
 
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    HockeyLog.error("Failed to transmit crash data", e);
                 } finally {
                     if (urlConnection != null) {
                         urlConnection.disconnect();
@@ -413,7 +412,7 @@ public class CrashManager {
                         }
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    HockeyLog.error("Failed to delete stacktrace", e);
                 }
             }
         }
@@ -509,7 +508,7 @@ public class CrashManager {
 
             if (registerHandler) {
                 Boolean ignoreDefaultHandler = (listener != null) && (listener.ignoreDefaultHandler());
-                WeakReference<Context> weakContext = new WeakReference<Context>(context);
+                WeakReference<Context> weakContext = new WeakReference<>(context);
                 registerHandler(weakContext, listener, ignoreDefaultHandler);
             }
         }
@@ -718,9 +717,8 @@ public class CrashManager {
                         contents.append(line);
                         contents.append(System.getProperty("line.separator"));
                     }
-                } catch (FileNotFoundException e) {
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    HockeyLog.error("Failed to read content of " + filename, e);
                 } finally {
                     if (reader != null) {
                         try {
@@ -763,7 +761,7 @@ public class CrashManager {
      * delimiter.
      */
     private static String joinArray(String[] array, String delimiter) {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         for (int index = 0; index < array.length; index++) {
             buffer.append(array[index]);
             if (index < array.length - 1) {

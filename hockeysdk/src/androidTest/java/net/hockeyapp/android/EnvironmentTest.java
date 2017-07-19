@@ -27,5 +27,4 @@ public class EnvironmentTest extends TestCase {
         assertNotNull(storageDir);
         assertTrue(storageDir.exists());
     }
-
 }

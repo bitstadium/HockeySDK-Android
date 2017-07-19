@@ -7,7 +7,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.text.TextUtils;
+
 import net.hockeyapp.android.tasks.LoginTask;
 import net.hockeyapp.android.utils.AsyncTaskUtils;
 import net.hockeyapp.android.utils.HockeyLog;
@@ -220,7 +220,7 @@ public class LoginManager {
         if (mode == LOGIN_MODE_VALIDATE) {
             HockeyLog.verbose("HockeyAuth", "LOGIN_MODE_VALIDATE, Validate the user's info!");
 
-            Map<String, String> params = new HashMap<String, String>();
+            Map<String, String> params = new HashMap<>();
             if (auid != null) {
                 params.put("type", "auid");
                 params.put("id", auid);
@@ -251,7 +251,7 @@ public class LoginManager {
         Intent intent = new Intent();
         //In case of LOGIN_MODE_VALIDATE, we have to authenticate with username and password first.
         //So we override the mode variable with LOGIN_MODE_EMAIL_PASSWORD
-        Boolean isLoginModeValidate = (mode == LOGIN_MODE_VALIDATE) ? true : false;
+        Boolean isLoginModeValidate = mode == LOGIN_MODE_VALIDATE;
         int tempMode = (isLoginModeValidate) ? LOGIN_MODE_EMAIL_PASSWORD : mode;
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.setClass(context, LoginActivity.class);

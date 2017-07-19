@@ -1,5 +1,6 @@
 package net.hockeyapp.android.tasks;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -123,8 +124,7 @@ public class CheckUpdateTask extends AsyncTask<Void, String, JSONArray> {
             }
         } catch (IOException | JSONException e) {
             if(this.context != null && Util.isConnectedToNetwork(this.context)) {
-                HockeyLog.error("HockeyUpdate", "Could not fetch updates although connected to internet");
-                e.printStackTrace();
+                HockeyLog.error("HockeyUpdate", "Could not fetch updates although connected to internet", e);
             }
         }
 
@@ -206,9 +206,9 @@ public class CheckUpdateTask extends AsyncTask<Void, String, JSONArray> {
         builder.append((this.appIdentifier != null ? this.appIdentifier : context.getPackageName()));
         builder.append("?format=" + format);
 
-        String deviceIdentifier = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+        @SuppressLint("HardwareIds") String deviceIdentifier = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
         if (!TextUtils.isEmpty(deviceIdentifier)) {
-            builder.append("&udid=" + encodeParam(Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID)));
+            builder.append("&udid=" + encodeParam(deviceIdentifier));
         }
 
         SharedPreferences prefs = context.getSharedPreferences("net.hockeyapp.android.login", 0);
