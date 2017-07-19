@@ -5,10 +5,6 @@ import android.app.Application;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.annotation.UiThread;
-import android.support.annotation.VisibleForTesting;
-import android.support.annotation.WorkerThread;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -115,7 +111,6 @@ public class MetricsManager {
      * @param persistence      Included for unit testing/dependency injection.
      * @param channel          Included for unit testing/dependency injection.
      */
-    @VisibleForTesting
     MetricsManager(Context context, TelemetryContext telemetryContext, Sender sender,
                    Persistence persistence, Channel channel) {
         sTelemetryContext = telemetryContext;
@@ -221,7 +216,6 @@ public class MetricsManager {
      * @param persistence   Persistence for dependency injection.
      * @param channel       Channel for dependency injection.
      */
-    @VisibleForTesting
     static void register(Application application, String appIdentifier,
                                  Sender sender, Persistence persistence, Channel channel) {
         MetricsManager result = instance;
@@ -350,7 +344,6 @@ public class MetricsManager {
      *
      * @return the reference to the application that was used during initialization of the SDK
      */
-    @Nullable
     private static Application getApplication() {
         return sWeakApplication != null ? sWeakApplication.get() : null;
     }
@@ -440,7 +433,6 @@ public class MetricsManager {
      *
      * @param sessionState value that determines whether the session started or ended
      */
-    @WorkerThread
     private void trackSessionState(final SessionState sessionState) {
         SessionStateData sessionItem = new SessionStateData();
         sessionItem.setState(sessionState);

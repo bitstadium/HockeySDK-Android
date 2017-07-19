@@ -2,7 +2,6 @@ package net.hockeyapp.android.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.support.annotation.WorkerThread;
 
 /**
  * <h3>Description</h3>
@@ -49,7 +48,6 @@ public class PrefsUtil {
      * @param context the context to use
      * @param token   the feedback token
      */
-    @WorkerThread
     public void saveFeedbackTokenToPrefs(Context context, String token) {
         if (context != null) {
             mFeedbackTokenPrefs = context.getSharedPreferences(PREFS_FEEDBACK_TOKEN, 0);
@@ -67,7 +65,6 @@ public class PrefsUtil {
      * @param context the context to use
      * @return the feedback token
      */
-    @WorkerThread
     public String getFeedbackTokenFromPrefs(Context context) {
         if (context == null) {
             return null;
@@ -89,7 +86,6 @@ public class PrefsUtil {
      * @param email   the user's email
      * @param subject the message subject
      */
-    @WorkerThread
     public void saveNameEmailSubjectToPrefs(Context context, String name, String email, String subject) {
         if (context != null) {
             mNameEmailSubjectPrefs = context.getSharedPreferences(PREFS_NAME_EMAIL_SUBJECT, 0);
@@ -113,7 +109,6 @@ public class PrefsUtil {
      * @param context the context to use
      * @return a string with name, email, and subject
      */
-    @WorkerThread
     public String getNameEmailFromPrefs(Context context) {
         if (context == null) {
             return null;

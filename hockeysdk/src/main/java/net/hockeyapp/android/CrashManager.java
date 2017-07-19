@@ -8,11 +8,6 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.UiThread;
-import android.support.annotation.VisibleForTesting;
-import android.support.annotation.WorkerThread;
 import android.text.TextUtils;
 
 import net.hockeyapp.android.objects.CrashDetails;
@@ -58,7 +53,6 @@ public class CrashManager {
     /**
      * Weak reference to the context.
      */
-    @VisibleForTesting
     static WeakReference<Context> weakContext;
 
     /**
@@ -73,7 +67,6 @@ public class CrashManager {
     /**
      * Lock used to wait last session crash info.
      */
-    @VisibleForTesting
     static CountDownLatch latch = new CountDownLatch(1);
 
     /**
@@ -96,7 +89,6 @@ public class CrashManager {
      *                context is not an instance of Activity (or a subclass of it),
      *                crashes will be sent automatically.
      */
-    @UiThread
     public static void register(Context context) {
         String appIdentifier = Util.getAppIdentifier(context);
         register(context, appIdentifier);
@@ -112,7 +104,6 @@ public class CrashManager {
      * @param listener  Implement for callback functions.
      */
     @SuppressWarnings("unused")
-    @UiThread
     public static void register(Context context, CrashManagerListener listener) {
         String appIdentifier = Util.getAppIdentifier(context);
         register(context, appIdentifier, listener);
@@ -127,7 +118,6 @@ public class CrashManager {
      * @param appIdentifier App ID of your app on HockeyApp.
      */
     @SuppressWarnings("WeakerAccess")
-    @UiThread
     public static void register(Context context, String appIdentifier) {
         register(context, Constants.BASE_URL, appIdentifier, null);
     }
@@ -142,7 +132,6 @@ public class CrashManager {
      * @param listener      Implement for callback functions.
      */
     @SuppressWarnings("WeakerAccess")
-    @UiThread
     public static void register(Context context, String appIdentifier, CrashManagerListener listener) {
         register(context, Constants.BASE_URL, appIdentifier, listener);
     }
@@ -158,7 +147,6 @@ public class CrashManager {
      * @param listener      Implement for callback functions.
      */
     @SuppressWarnings("WeakerAccess")
-    @UiThread
     public static void register(Context context, String urlString, String appIdentifier, CrashManagerListener listener) {
         initialize(context, urlString, appIdentifier, listener, false);
         execute(listener);
@@ -175,7 +163,6 @@ public class CrashManager {
      * @param listener      Implement for callback functions.
      */
     @SuppressWarnings("unused")
-    @UiThread
     public static void initialize(Context context, String appIdentifier, CrashManagerListener listener) {
         initialize(context, Constants.BASE_URL, appIdentifier, listener, true);
     }
@@ -192,7 +179,6 @@ public class CrashManager {
      * @param listener      Implement for callback functions.
      */
     @SuppressWarnings("unused")
-    @UiThread
     public static void initialize(Context context, String urlString, String appIdentifier, CrashManagerListener listener) {
         initialize(context, urlString, appIdentifier, listener, true);
     }
@@ -204,7 +190,6 @@ public class CrashManager {
      *
      * @param listener Implement for callback functions.
      */
-    @UiThread
     public static void execute(final CrashManagerListener listener) {
         AsyncTaskUtils.execute(new AsyncTask<Void, Object, Integer>() {
             private boolean autoSend = true;
@@ -263,7 +248,6 @@ public class CrashManager {
      * STACK_TRACES_FOUND_CONFIRMED if there only are confirmed stack traces.
      */
     @SuppressWarnings("WeakerAccess")
-    @WorkerThread
     public static int hasStackTraces() {
         String[] filenames = searchForStackTraces();
         List<String> confirmedFilenames = null;
@@ -363,7 +347,6 @@ public class CrashManager {
      * @param listener Implement for callback functions.
      */
     @SuppressWarnings("unused")
-    @WorkerThread
     public static void submitStackTraces(CrashManagerListener listener) {
         submitStackTraces(listener, null);
     }
@@ -375,7 +358,6 @@ public class CrashManager {
      * @param crashMetaData The crashMetaData, provided by the user.
      */
     @SuppressWarnings("WeakerAccess")
-    @WorkerThread
     public static synchronized void submitStackTraces(CrashManagerListener listener, CrashMetaData crashMetaData) {
         String[] list = searchForStackTraces();
         if (list != null && list.length > 0) {
@@ -386,7 +368,6 @@ public class CrashManager {
         }
     }
 
-    @WorkerThread
     private static void submitStackTrace(String filename, CrashManagerListener listener, CrashMetaData crashMetaData) {
         Boolean successful = false;
         HttpURLConnection urlConnection = null;
@@ -470,7 +451,6 @@ public class CrashManager {
      * Deletes all stack traces and meta files from files dir.
      */
     @SuppressWarnings("WeakerAccess")
-    @WorkerThread
     public static void deleteStackTraces() {
         String[] list = searchForStackTraces();
         if (list != null && list.length > 0) {
@@ -509,7 +489,6 @@ public class CrashManager {
      * @see CrashManagerListener
      */
     @SuppressWarnings("WeakerAccess")
-    @UiThread
     public static boolean handleUserInput(final CrashManagerUserInput userInput, final CrashMetaData userProvidedMetaData,
                                           final CrashManagerListener listener, final boolean ignoreDefaultHandler) {
         switch (userInput) {
@@ -565,7 +544,6 @@ public class CrashManager {
      * additional parameter to decide whether to register the exception handler
      * at the end or not.
      */
-    @UiThread
     private static void initialize(Context context, String urlString, String appIdentifier, CrashManagerListener listener, boolean registerHandler) {
         if (context != null) {
             if (CrashManager.initializeTimestamp == 0) {
@@ -594,7 +572,6 @@ public class CrashManager {
      * Shows a dialog to ask the user whether he wants to send crash reports to
      * HockeyApp or delete them.
      */
-    @UiThread
     private static void showDialog(final CrashManagerListener listener, final boolean ignoreDefaultHandler) {
         Context context = null;
         if (weakContext != null) {
@@ -635,7 +612,7 @@ public class CrashManager {
         builder.create().show();
     }
 
-    private static String getAlertTitle(@NonNull Context context) {
+    private static String getAlertTitle(Context context) {
         return context.getString(R.string.hockeyapp_crash_dialog_title, Util.getAppName(context));
     }
 
@@ -704,7 +681,6 @@ public class CrashManager {
      *
      * @return The context object for this instance.
      */
-    @Nullable
     private static Context getContext() {
         return weakContext != null ? weakContext.get() : null;
     }
@@ -712,7 +688,6 @@ public class CrashManager {
     /**
      * Update the retry attempts count for this crash stacktrace.
      */
-    @WorkerThread
     private static void updateRetryCounter(String filename, int maxRetryAttempts) {
         if (maxRetryAttempts == -1) {
             return;
@@ -738,7 +713,6 @@ public class CrashManager {
      * Delete the retry counter if stacktrace is uploaded or retry limit is
      * reached.
      */
-    @WorkerThread
     private static void deleteRetryCounter(String filename) {
         Context context = getContext();
         if (context != null) {
@@ -753,7 +727,6 @@ public class CrashManager {
      * Deletes the give filename and all corresponding files (same name,
      * different extension).
      */
-    @WorkerThread
     private static void deleteStackTrace(String filename) {
         Context context = getContext();
         if (context != null) {
@@ -773,7 +746,6 @@ public class CrashManager {
     /**
      * Returns the content of a file as a string.
      */
-    @WorkerThread
     private static String contentsOfFile(String filename) {
         Context context = getContext();
         if (context != null) {
@@ -808,7 +780,6 @@ public class CrashManager {
     /**
      * Saves the list of the stack traces' file names in shared preferences.
      */
-    @WorkerThread
     private static void saveConfirmedStackTraces(String[] stackTraces) {
         Context context = getContext();
         if (context != null) {
@@ -825,8 +796,6 @@ public class CrashManager {
     /**
      * Searches .stacktrace files and returns them as array.
      */
-    @WorkerThread
-    @Nullable
     private static String[] searchForStackTraces() {
         Context context = getContext();
         if (context != null) {

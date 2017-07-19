@@ -5,8 +5,6 @@ import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.UiThread;
-import android.support.annotation.WorkerThread;
 
 import net.hockeyapp.android.Constants;
 import net.hockeyapp.android.objects.FeedbackAttachment;
@@ -18,7 +16,6 @@ import net.hockeyapp.android.views.AttachmentView;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -145,7 +142,6 @@ public class AttachmentDownloader {
         private Bitmap bitmap;
         private int bitmapOrientation;
 
-        @UiThread
         DownloadTask(DownloadJob downloadJob, Handler handler) {
             this.downloadJob = downloadJob;
             this.handler = handler;
@@ -216,7 +212,6 @@ public class AttachmentDownloader {
             }
         }
 
-        @WorkerThread
         private boolean downloadAttachment(String url, File file) {
             InputStream input = null;
             OutputStream output = null;

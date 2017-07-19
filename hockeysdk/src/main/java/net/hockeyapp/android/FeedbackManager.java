@@ -15,8 +15,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.UiThread;
-import android.support.annotation.WorkerThread;
 import android.view.View;
 import android.widget.Toast;
 
@@ -376,7 +374,6 @@ public class FeedbackManager {
      *
      * @param context toast messages will be displayed using this context
      */
-    @UiThread
     public static void takeScreenshot(final Context context) {
         final Activity currentActivity = getCurrentActivity();
         if (currentActivity == null) {

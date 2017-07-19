@@ -9,7 +9,6 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.support.annotation.WorkerThread;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
@@ -22,14 +21,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import net.hockeyapp.android.Constants;
 import net.hockeyapp.android.R;
 import net.hockeyapp.android.objects.FeedbackAttachment;
 import net.hockeyapp.android.utils.AsyncTaskUtils;
 import net.hockeyapp.android.utils.ImageUtils;
 import net.hockeyapp.android.utils.Util;
-
-import java.io.File;
 
 /**
  * <h3>Description</h3>
@@ -316,7 +312,6 @@ public class AttachmentView extends FrameLayout {
         });
     }
 
-    @WorkerThread
     private Bitmap loadImageThumbnail() {
         try {
             mOrientation = ImageUtils.determineOrientation(mContext, mAttachmentUri);

@@ -1,9 +1,7 @@
 package net.hockeyapp.android.objects;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.text.TextUtils;
-import net.hockeyapp.android.Constants;
 import net.hockeyapp.android.utils.HockeyLog;
 
 import java.io.*;
@@ -187,7 +185,7 @@ public class CrashDetails {
         return result;
     }
 
-    public void writeCrashReport(@NonNull Context context) {
+    public void writeCrashReport(Context context) {
         File file = new File(context.getFilesDir(), crashIdentifier + ".stacktrace");
         writeCrashReport(file);
     }

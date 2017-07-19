@@ -12,8 +12,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.annotation.UiThread;
-import android.support.annotation.WorkerThread;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -179,7 +177,6 @@ public class PaintActivity extends Activity {
         toast.show();
     }
 
-    @UiThread
     private void makeResult() {
         mPaintView.setDrawingCacheEnabled(true);
         final Bitmap bitmap = mPaintView.getDrawingCache();
@@ -187,7 +184,6 @@ public class PaintActivity extends Activity {
             File result;
 
             @Override
-            @WorkerThread
             protected Boolean doInBackground(Void... args) {
                 File hockeyAppCache = new File(getCacheDir(), Constants.FILES_DIRECTORY_NAME);
                 if (!hockeyAppCache.exists() && !hockeyAppCache.mkdir()) {
@@ -235,7 +231,6 @@ public class PaintActivity extends Activity {
         });
     }
 
-    @WorkerThread
     private String determineFilename(Uri uri, String fallback) {
         String[] projection = {MediaStore.MediaColumns.DATA};
         String path = null;

@@ -15,8 +15,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.os.Parcelable;
-import android.support.annotation.StringRes;
-import android.support.annotation.UiThread;
 import android.text.TextUtils;
 import android.view.ContextMenu;
 import android.view.KeyEvent;
@@ -244,7 +242,6 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
         configureAppropriateView();
     }
 
-    @UiThread
     private void restoreSendFeedbackTask() {
         Object object = getLastNonConfigurationInstance();
         if (object != null && object instanceof SendFeedbackTask) {
@@ -346,7 +343,6 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
      * the button to avoid multiple taps.
      */
     @Override
-    @UiThread
     public void onClick(View v) {
         int viewId = v.getId();
 
@@ -475,7 +471,6 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
      *
      * @param haveToken the message list is shown if true
      */
-    @UiThread
     protected void configureFeedbackView(boolean haveToken) {
         ScrollView feedbackScrollView = findViewById(R.id.wrapper_feedback_scroll);
         LinearLayout wrapperLayoutFeedbackAndMessages = findViewById(R.id.wrapper_messages);
@@ -608,7 +603,6 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
         mTextInput.setHint(getString(R.string.hockeyapp_feedback_message_hint_required));
     }
 
-    @UiThread
     private void configureAppropriateView() {
         if (mToken == null || mInSendFeedback) {
             /** If Feedback Token is NULL, show the usual feedback view */
@@ -641,8 +635,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
         }
     }
 
-    @UiThread
-    private void showError(@StringRes final int message) {
+    private void showError(final int message) {
         AlertDialog alertDialog = new AlertDialog.Builder(FeedbackActivity.this)
                 .setTitle(R.string.hockeyapp_dialog_error_title)
                 .setMessage(message)
@@ -655,7 +648,6 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
     /**
      * Initializes the Feedback response {@link Handler}
      */
-    @UiThread
     private void initFeedbackHandler() {
         mFeedbackHandler = new FeedbackHandler(this);
     }
@@ -663,7 +655,6 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
     /**
      * Initialize the Feedback response parse result {@link Handler}
      */
-    @UiThread
     private void initParseFeedbackHandler() {
         mParseFeedbackHandler = new ParseFeedbackHandler(this);
     }
@@ -674,7 +665,6 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
      * @param feedbackResponse {@link FeedbackResponse} object
      */
     @SuppressLint("SimpleDateFormat")
-    @UiThread
     private void loadFeedbackMessages(final FeedbackResponse feedbackResponse) {
         configureFeedbackView(true);
 
@@ -719,7 +709,6 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
         }
     }
 
-    @UiThread
     private void resetFeedbackView() {
         mToken = null;
         AsyncTaskUtils.execute(new AsyncTask<Void, Object, Object>() {
@@ -742,7 +731,6 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
     /**
      * Send feedback to HockeyApp.
      */
-    @UiThread
     private void sendFeedback() {
         if (!Util.isConnectedToNetwork(this)) {
             Toast errorToast = Toast.makeText(this, R.string.hockeyapp_error_no_network_message, Toast.LENGTH_LONG);
@@ -790,7 +778,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
         }
     }
 
-    private void setError(final EditText inputField, @StringRes int feedbackStringId) {
+    private void setError(final EditText inputField, int feedbackStringId) {
         inputField.setError(getString(feedbackStringId));
 
         // requestFocus and showKeyboard on next frame to read error message via talkback
@@ -839,7 +827,6 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
         }
 
         @Override
-        @UiThread
         public void handleMessage(Message msg) {
             boolean success = false;
             int errorMessage = 0;
@@ -892,7 +879,6 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
         }
 
         @Override
-        @UiThread
         public void handleMessage(Message msg) {
             boolean success = false;
 

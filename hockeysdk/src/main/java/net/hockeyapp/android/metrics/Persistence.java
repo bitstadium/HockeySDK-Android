@@ -2,10 +2,6 @@ package net.hockeyapp.android.metrics;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.VisibleForTesting;
-import android.support.annotation.WorkerThread;
 
 import net.hockeyapp.android.utils.AsyncTaskUtils;
 import net.hockeyapp.android.utils.HockeyLog;
@@ -55,7 +51,6 @@ class Persistence {
      * List with paths of telemetry files which are currently being used by the sender for transmission.
      */
     // TODO This looks like a violation of separation of concerns. Look into moving this to the sender.
-    @VisibleForTesting
     ArrayList<File> mServedFiles;
 
     /**
@@ -64,7 +59,7 @@ class Persistence {
      * @param context               Android Context object.
      * @param sender                Sender instance which will take care of telemetry transmission.
      */
-    Persistence(@NonNull Context context, Sender sender) {
+    Persistence(Context context, Sender sender) {
         mWeakContext = new WeakReference<>(context);
         mServedFiles = new ArrayList<>(MAX_FILE_COUNT + 1);
         mWeakSender = new WeakReference<>(sender);
@@ -79,7 +74,6 @@ class Persistence {
      * @see Persistence#writeToDisk(String)
      */
     @SuppressWarnings("WeakerAccess")
-    @WorkerThread
     protected void persist(String[] data) {
         if (!this.isFreeSpaceAvailable()) {
             HockeyLog.warn(TAG, "Failed to persist file: Too many files on disk.");
@@ -126,7 +120,6 @@ class Persistence {
      * @return True if the operation was successful, false otherwise.
      */
     @SuppressWarnings("WeakerAccess")
-    @WorkerThread
     protected boolean writeToDisk(String data) {
         File dir = getTelemetryDirectory();
         if (dir == null) {
@@ -162,7 +155,6 @@ class Persistence {
      * @param file Reference to a file on disk.
      * @return The next item from disk, or empty string if anything goes wrong.
      */
-    @WorkerThread
     String load(File file) {
         StringBuilder buffer = new StringBuilder();
         if (file != null) {
@@ -198,7 +190,6 @@ class Persistence {
      * @return True if files are available, false otherwise.
      */
     @SuppressWarnings("WeakerAccess")
-    @WorkerThread
     protected boolean hasFilesAvailable() {
         return nextAvailableFileInDirectory() != null;
     }
@@ -209,8 +200,6 @@ class Persistence {
      * @return Reference to the next available file, null if no file is available.
      */
     @SuppressWarnings("WeakerAccess")
-    @WorkerThread
-    @Nullable
     protected synchronized File nextAvailableFileInDirectory() {
         // TODO Separation of concerns. The persistence should provide all files, the sender would pick the right one.
         File dir = getTelemetryDirectory();
@@ -236,7 +225,6 @@ class Persistence {
      * @param file Reference to the file to delete.
      */
     @SuppressWarnings("WeakerAccess")
-    @WorkerThread
     protected synchronized void deleteFile(File file) {
         if (file != null) {
             boolean deletedFile = file.delete();
@@ -269,7 +257,6 @@ class Persistence {
      *
      * @return True if there is still space for another telemetry file.
      */
-    @WorkerThread
     private synchronized boolean isFreeSpaceAvailable() {
         // TODO Check for available disk space as well.
         File dir = getTelemetryDirectory();
@@ -278,7 +265,6 @@ class Persistence {
     }
 
     @SuppressWarnings("WeakerAccess")
-    @Nullable
     protected File getTelemetryDirectory() {
         Context context = getContext();
         if (context != null && context.getFilesDir() != null) {
@@ -296,7 +282,6 @@ class Persistence {
      *
      * @return The context object for this instance.
      */
-    @Nullable
     private Context getContext() {
         return mWeakContext.get();
     }
@@ -306,7 +291,6 @@ class Persistence {
      *
      * @return The sender object for this instance.
      */
-    @Nullable
     protected Sender getSender() {
         return mWeakSender != null ? mWeakSender.get() : null;
     }

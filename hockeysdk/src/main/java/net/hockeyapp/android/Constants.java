@@ -9,7 +9,6 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.support.annotation.WorkerThread;
 import android.text.TextUtils;
 
 import net.hockeyapp.android.utils.HockeyLog;
@@ -112,7 +111,6 @@ public class Constants {
      *
      * @return A file representing the screenshot folder.
      */
-    @WorkerThread
     public static File getHockeyAppStorageDir(Context context) {
         File dir = new File(context.getExternalFilesDir(null), Constants.FILES_DIRECTORY_NAME);
         boolean success = dir.exists() || dir.mkdirs();

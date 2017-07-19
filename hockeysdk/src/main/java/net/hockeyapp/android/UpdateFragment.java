@@ -12,7 +12,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.support.annotation.StringRes;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -207,20 +206,14 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
         return currentVersionCode;
     }
 
-    private void showError(@StringRes final int message) {
-        getActivity().runOnUiThread(new Runnable() {
-
-            @Override
-            public void run() {
-                AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
-                        .setTitle(R.string.hockeyapp_dialog_error_title)
-                        .setMessage(message)
-                        .setCancelable(false)
-                        .setPositiveButton(R.string.hockeyapp_dialog_positive_button, null)
-                        .create();
-                alertDialog.show();
-            }
-        });
+    private void showError(final int message) {
+        AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
+                .setTitle(R.string.hockeyapp_dialog_error_title)
+                .setMessage(message)
+                .setCancelable(false)
+                .setPositiveButton(R.string.hockeyapp_dialog_positive_button, null)
+                .create();
+        alertDialog.show();
     }
 
     private static String[] requiredPermissions() {

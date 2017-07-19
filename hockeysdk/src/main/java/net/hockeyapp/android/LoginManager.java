@@ -8,7 +8,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.WorkerThread;
 
 import net.hockeyapp.android.tasks.LoginTask;
 import net.hockeyapp.android.utils.AsyncTaskUtils;
@@ -261,7 +260,6 @@ public class LoginManager {
      * @return Email address or null.
      */
     @SuppressWarnings("unused")
-    @WorkerThread
     public static String getLoginEmail(Context context) {
         SharedPreferences prefs = context.getSharedPreferences("net.hockeyapp.android.login", 0);
         return prefs.getString("email", null);

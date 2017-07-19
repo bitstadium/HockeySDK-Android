@@ -1,7 +1,6 @@
 package net.hockeyapp.android;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import net.hockeyapp.android.objects.CrashDetails;
@@ -222,7 +221,7 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
         }
     }
 
-    private static void writeValueToFile(@NonNull Context context, String value, String filename) throws IOException {
+    private static void writeValueToFile(Context context, String value, String filename) throws IOException {
         if (TextUtils.isEmpty(value)) {
             return;
         }

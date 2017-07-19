@@ -4,8 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.os.Build;
-import android.support.annotation.Nullable;
-import android.support.annotation.WorkerThread;
 import android.telephony.TelephonyManager;
 import android.view.Display;
 import android.view.WindowManager;
@@ -120,7 +118,6 @@ class TelemetryContext {
      *
      * @param sessionId the current session Id
      */
-    @WorkerThread
     void renewSessionContext(String sessionId) {
         configSessionContext(sessionId);
     }
@@ -130,7 +127,6 @@ class TelemetryContext {
      *
      * @param sessionId the current session Id
      */
-    @WorkerThread
     private void configSessionContext(String sessionId) {
         HockeyLog.debug(TAG, "Configuring session context");
 
@@ -278,7 +274,6 @@ class TelemetryContext {
      *
      * @return The context object for this instance.
      */
-    @Nullable
     private Context getContext() {
         return mWeakContext != null ? mWeakContext.get() : null;
     }

@@ -12,7 +12,6 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Debug;
-import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
@@ -164,7 +163,7 @@ public class Util {
      * @return the created notification
      */
     @SuppressWarnings("deprecation")
-    public static Notification createNotification(@NonNull Context context, PendingIntent pendingIntent, String title, String text, int iconId) {
+    public static Notification createNotification(Context context, PendingIntent pendingIntent, String title, String text, int iconId) {
         android.app.Notification.Builder builder = new android.app.Notification.Builder(context)
                 .setContentTitle(title)
                 .setContentText(text)
@@ -209,7 +208,7 @@ public class Util {
      * @param context usually your Activity
      * @return the HockeyApp AppIdentifier
      */
-    public static String getAppIdentifier(@NonNull Context context) {
+    public static String getAppIdentifier(Context context) {
         String appIdentifier = getManifestString(context, APP_IDENTIFIER_KEY);
         if (TextUtils.isEmpty(appIdentifier)) {
             throw new IllegalArgumentException("HockeyApp app identifier was not configured correctly in manifest or build configuration.");
@@ -223,15 +222,15 @@ public class Util {
      * @param context usually your Activity
      * @return the HockeyApp appSecret
      */
-    public static String getAppSecret(@NonNull Context context) {
+    public static String getAppSecret(Context context) {
         return getManifestString(context, APP_SECRET_KEY);
     }
 
-    public static String getManifestString(@NonNull Context context, String key) {
+    public static String getManifestString(Context context, String key) {
         return getBundle(context).getString(key);
     }
 
-    private static Bundle getBundle(@NonNull Context context) {
+    private static Bundle getBundle(Context context) {
         Bundle bundle;
         try {
             bundle = context.getPackageManager().getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA).metaData;
@@ -241,7 +240,7 @@ public class Util {
         return bundle;
     }
 
-    public static boolean isConnectedToNetwork(@NonNull Context context) {
+    public static boolean isConnectedToNetwork(Context context) {
         try {
             ConnectivityManager connectivityManager = (ConnectivityManager) context.getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
             if (connectivityManager != null) {
@@ -254,7 +253,7 @@ public class Util {
         return false;
     }
 
-    public static String getAppName(@NonNull Context context) {
+    public static String getAppName(Context context) {
         PackageManager packageManager = context.getPackageManager();
         ApplicationInfo applicationInfo = null;
         try {

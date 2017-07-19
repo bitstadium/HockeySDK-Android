@@ -5,7 +5,6 @@ import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.support.annotation.WorkerThread;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,7 +27,6 @@ public class ImageUtils {
      * @return The image orientation, either ORIENTATION_PORTRAIT or ORIENTATION_LANDSCAPE.
      * @throws IOException if the file couldn't be processed
      */
-    @WorkerThread
     public static int determineOrientation(File file) throws IOException {
         InputStream input = null;
         try {
@@ -48,7 +46,6 @@ public class ImageUtils {
      * @param uri     the URI of the image
      * @return The image orientation, either ORIENTATION_PORTRAIT or ORIENTATION_LANDSCAPE.
      */
-    @WorkerThread
     public static int determineOrientation(Context context, Uri uri) {
         InputStream input = null;
         try {
@@ -74,7 +71,6 @@ public class ImageUtils {
      * @param input the input stream of the image
      * @return The image orientation, either ORIENTATION_PORTRAIT or ORIENTATION_LANDSCAPE.
      */
-    @WorkerThread
     public static int determineOrientation(InputStream input) {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
@@ -101,7 +97,6 @@ public class ImageUtils {
      * @return decoded the decoded bitmap
      * @throws IOException if the file couldn't be processed
      */
-    @WorkerThread
     public static Bitmap decodeSampledBitmap(File file, int reqWidth, int reqHeight) throws IOException {
         // First decode with inJustDecodeBounds=true to check dimensions
         BitmapFactory.Options options = new BitmapFactory.Options();
@@ -131,7 +126,6 @@ public class ImageUtils {
      * @return decoded the decoded bitmap
      * @throws IOException if the URI couldn't be processed
      */
-    @WorkerThread
     public static Bitmap decodeSampledBitmap(Context context, Uri imageUri, int reqWidth, int reqHeight) throws IOException {
         InputStream inputBounds = null, inputBitmap = null;
         try {
