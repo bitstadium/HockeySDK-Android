@@ -15,6 +15,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.UiThread;
+import android.support.annotation.WorkerThread;
 import android.view.View;
 import android.widget.Toast;
 
@@ -374,8 +376,9 @@ public class FeedbackManager {
      *
      * @param context toast messages will be displayed using this context
      */
+    @UiThread
     public static void takeScreenshot(final Context context) {
-        Activity currentActivity = getCurrentActivity();
+        final Activity currentActivity = getCurrentActivity();
         if (currentActivity == null) {
             return;
         }
@@ -383,21 +386,22 @@ public class FeedbackManager {
         View view = currentActivity.getWindow().getDecorView();
         view.setDrawingCacheEnabled(true);
         final Bitmap bitmap = view.getDrawingCache();
+        final String filename = currentActivity.getLocalClassName();
 
-        String filename = currentActivity.getLocalClassName();
-        File dir = Constants.getHockeyAppStorageDir(context);
-        File result = new File(dir, filename + ".jpg");
-        int suffix = 1;
-        while (result.exists()) {
-            result = new File(dir, filename + "_" + suffix + ".jpg");
-            suffix++;
-        }
+        AsyncTaskUtils.execute(new AsyncTask<Void, Void, Boolean>() {
+            File result;
 
-        new AsyncTask<File, Void, Boolean>() {
             @Override
-            protected Boolean doInBackground(File... args) {
+            protected Boolean doInBackground(Void... args) {
+                File dir = Constants.getHockeyAppStorageDir(context);
+                result = new File(dir, filename + ".jpg");
+                int suffix = 1;
+                while (result.exists()) {
+                    result = new File(dir, filename + "_" + suffix + ".jpg");
+                    suffix++;
+                }
                 try {
-                    FileOutputStream out = new FileOutputStream(args[0]);
+                    FileOutputStream out = new FileOutputStream(result);
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
                     out.close();
                     return true;
@@ -409,21 +413,22 @@ public class FeedbackManager {
 
             @Override
             protected void onPostExecute(Boolean success) {
-                if (!success) {
+                if (success) {
+
+                    /* Publish to gallery. */
+                    MediaScannerClient client = new MediaScannerClient(result.getAbsolutePath());
+                    MediaScannerConnection connection = new MediaScannerConnection(currentActivity, client);
+                    client.setConnection(connection);
+                    connection.connect();
+
+                    Toast.makeText(context, "Screenshot '" + result.getName() + "' is available in gallery.",
+                            Toast.LENGTH_LONG).show();
+                } else {
                     Toast.makeText(context, "Screenshot could not be created. Sorry.", Toast.LENGTH_LONG)
                             .show();
                 }
             }
-        }.execute(result);
-
-    /* Publish to gallery. */
-        MediaScannerClient client = new MediaScannerClient(result.getAbsolutePath());
-        MediaScannerConnection connection = new MediaScannerConnection(currentActivity, client);
-        client.setConnection(connection);
-        connection.connect();
-
-        Toast.makeText(context, "Screenshot '" + result.getName() + "' is available in gallery.",
-                Toast.LENGTH_LONG).show();
+        });
     }
 
     @SuppressWarnings("deprecation")
