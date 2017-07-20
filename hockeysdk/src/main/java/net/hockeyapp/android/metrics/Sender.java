@@ -95,23 +95,6 @@ public class Sender {
         }
     }
 
-    protected void triggerSendingForTesting(final HttpURLConnection connection, final File file, final String persistedData) {
-        if (requestCount() < MAX_REQUEST_COUNT) {
-            mRequestCount.getAndIncrement();
-
-            AsyncTaskUtils.execute(
-                    new AsyncTask<Void, Void, Void>() {
-                        @Override
-                        protected Void doInBackground(Void... params) {
-                            // Send the persisted data
-                            send(connection, file, persistedData);
-                            return null;
-                        }
-                    }
-            );
-        }
-    }
-
     /**
      * Checks the persistence for available files and sends them.
      */

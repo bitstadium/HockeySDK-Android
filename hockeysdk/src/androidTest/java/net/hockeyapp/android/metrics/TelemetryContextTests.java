@@ -2,38 +2,33 @@ package net.hockeyapp.android.metrics;
 
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
-import android.test.InstrumentationTestCase;
-
-import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import static junit.framework.Assert.*;
+
 @RunWith(AndroidJUnit4.class)
-public class TelemetryContextTests extends InstrumentationTestCase {
+public class TelemetryContextTests {
 
     private PublicTelemetryContext sut;
 
     @Before
     public void setUp() throws Exception {
-        super.setUp();
-
-        injectInstrumentation(InstrumentationRegistry.getInstrumentation());
-
-        sut = new PublicTelemetryContext(getInstrumentation().getContext(),
+        sut = new PublicTelemetryContext(InstrumentationRegistry.getContext(),
                 "a123b4567cde890abcd1e2f3ab456789");//this is a made-up app identifier.
     }
 
     @Test
     public void testInstanceInitialisation() {
-        Assert.assertNotNull(sut);
-        Assert.assertNotNull(sut.getInstrumentationKey());
-        Assert.assertNotNull(sut.mContext);
-        Assert.assertNotNull(sut.mDevice);
-        Assert.assertNotNull(sut.mUser);
-        Assert.assertNotNull(sut.mInternal);
-        Assert.assertNotNull(sut.mApplication);
+        assertNotNull(sut);
+        assertNotNull(sut.getInstrumentationKey());
+        assertNotNull(sut.mContext);
+        assertNotNull(sut.mDevice);
+        assertNotNull(sut.mUser);
+        assertNotNull(sut.mInternal);
+        assertNotNull(sut.mApplication);
     }
 
     @Test
@@ -41,50 +36,49 @@ public class TelemetryContextTests extends InstrumentationTestCase {
 
         // Device context
         sut.setDeviceModel("Model");
-        Assert.assertEquals(sut.mDevice.getModel(), sut.getDeviceModel());
+        assertEquals(sut.mDevice.getModel(), sut.getDeviceModel());
 
         sut.setDeviceType("Type");
-        Assert.assertEquals(sut.mDevice.getType(), sut.getDeviceType());
+        assertEquals(sut.mDevice.getType(), sut.getDeviceType());
 
         sut.setOsVersion("OsVersion");
-        Assert.assertEquals(sut.mDevice.getOsVersion(), sut.getOsVersion());
+        assertEquals(sut.mDevice.getOsVersion(), sut.getOsVersion());
 
         sut.setOsName("Os");
-        Assert.assertEquals(sut.mDevice.getOs(), sut.getOsName());
+        assertEquals(sut.mDevice.getOs(), sut.getOsName());
 
         sut.setDeviceId("DeviceId");
-        Assert.assertEquals(sut.mDevice.getId(), sut.getDeviceId());
+        assertEquals(sut.mDevice.getId(), sut.getDeviceId());
 
         sut.setOsLocale("OsLocale");
-        Assert.assertEquals(sut.mDevice.getLocale(), sut.getOsLocale());
+        assertEquals(sut.mDevice.getLocale(), sut.getOsLocale());
 
         sut.setScreenResolution("ScreenResolution");
-        Assert.assertEquals(sut.mDevice.getScreenResolution(), sut.getScreenResolution());
+        assertEquals(sut.mDevice.getScreenResolution(), sut.getScreenResolution());
 
         sut.setDeviceOemName("OemName");
-        Assert.assertEquals(sut.mDevice.getOemName(), sut.getDeviceOemName());
+        assertEquals(sut.mDevice.getOemName(), sut.getDeviceOemName());
 
         // Internal context
         sut.setSdkVersion("SdkVersion");
-        Assert.assertEquals(sut.mInternal.getSdkVersion(), sut.getSdkVersion());
+        assertEquals(sut.mInternal.getSdkVersion(), sut.getSdkVersion());
 
         // Application context
         sut.setAppVersion("Version");
-        Assert.assertEquals(sut.mApplication.getVer(), sut.getAppVersion());
+        assertEquals(sut.mApplication.getVer(), sut.getAppVersion());
 
         // User context
         sut.setAnonymousUserId("AnonymousUserId");
-        Assert.assertEquals(sut.mUser.getId(), sut.getAnonymousUserId());
+        assertEquals(sut.mUser.getId(), sut.getAnonymousUserId());
 
         // Session context
         sut.setSessionId("SessionId");
-        Assert.assertEquals(sut.mSession.getId(), sut.getSessionId());
+        assertEquals(sut.mSession.getId(), sut.getSessionId());
 
         sut.setIsFirstSession("IsFirstSession");
-        Assert.assertEquals(sut.mSession.getIsFirst(), sut.getIsFirstSession());
+        assertEquals(sut.mSession.getIsFirst(), sut.getIsFirstSession());
 
         sut.setIsNewSession("IsNewSession");
-        Assert.assertEquals(sut.mSession.getIsNew(), sut.getIsNewSession());
+        assertEquals(sut.mSession.getIsNew(), sut.getIsNewSession());
     }
-
 }

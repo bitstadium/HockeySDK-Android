@@ -15,7 +15,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.os.Parcelable;
-import android.support.annotation.StringRes;
 import android.text.TextUtils;
 import android.view.ContextMenu;
 import android.view.KeyEvent;
@@ -639,20 +638,14 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
         }
     }
 
-    private void showError(@StringRes final int message) {
-        runOnUiThread(new Runnable() {
-
-            @Override
-            public void run() {
-                AlertDialog alertDialog = new AlertDialog.Builder(FeedbackActivity.this)
-                        .setTitle(R.string.hockeyapp_dialog_error_title)
-                        .setMessage(message)
-                        .setCancelable(false)
-                        .setPositiveButton(R.string.hockeyapp_dialog_positive_button, null)
-                        .create();
-                alertDialog.show();
-            }
-        });
+    private void showError(final int message) {
+        AlertDialog alertDialog = new AlertDialog.Builder(FeedbackActivity.this)
+                .setTitle(R.string.hockeyapp_dialog_error_title)
+                .setMessage(message)
+                .setCancelable(false)
+                .setPositiveButton(R.string.hockeyapp_dialog_positive_button, null)
+                .create();
+        alertDialog.show();
     }
 
     /**
@@ -787,7 +780,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
         }
     }
 
-    private void setError(final EditText inputField, @StringRes int feedbackStringId) {
+    private void setError(final EditText inputField, int feedbackStringId) {
         inputField.setError(getString(feedbackStringId));
 
         // requestFocus and showKeyboard on next frame to read error message via talkback

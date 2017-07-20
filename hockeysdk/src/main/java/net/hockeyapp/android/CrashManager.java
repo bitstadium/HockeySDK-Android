@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import net.hockeyapp.android.objects.CrashDetails;
@@ -560,7 +559,7 @@ public class CrashManager {
         builder.create().show();
     }
 
-    private static String getAlertTitle(@NonNull Context context) {
+    private static String getAlertTitle(Context context) {
         String appTitle = Util.getAppName(context);
 
         String message = context.getString(R.string.hockeyapp_crash_dialog_title);

@@ -28,5 +28,4 @@ public class EnvironmentTest extends InstrumentationTestCase {
         assertNotNull(storageDir);
         assertTrue(storageDir.exists());
     }
-
 }

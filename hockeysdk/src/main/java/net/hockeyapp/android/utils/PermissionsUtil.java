@@ -4,13 +4,12 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
 
 public class PermissionsUtil {
 
-    public static int[] permissionsState(@NonNull Context context, String... permissions) {
+    public static int[] permissionsState(Context context, String... permissions) {
         if (permissions == null) {
             return null;
         }
@@ -43,7 +42,7 @@ public class PermissionsUtil {
     /**
      * Checks if Unknown Sources is enabled
      */
-    public static boolean isUnknownSourcesEnabled(@NonNull Context context) {
+    public static boolean isUnknownSourcesEnabled(Context context) {
 
         /*
          * On Android 8 with applications targeting lower versions,

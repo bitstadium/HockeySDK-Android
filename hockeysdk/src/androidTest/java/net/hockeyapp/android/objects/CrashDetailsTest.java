@@ -2,7 +2,6 @@ package net.hockeyapp.android.objects;
 
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
-import android.test.InstrumentationTestCase;
 import android.text.TextUtils;
 
 import net.hockeyapp.android.Constants;
@@ -16,19 +15,17 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 
+import static org.junit.Assert.*;
+
 @RunWith(AndroidJUnit4.class)
-public class CrashDetailsTest extends InstrumentationTestCase {
+public class CrashDetailsTest {
 
     private File filesDirectory;
 
     @Before
     public void setUp() throws Exception {
-        super.setUp();
-
-        injectInstrumentation(InstrumentationRegistry.getInstrumentation());
-
         if (Constants.FILES_PATH == null) {
-            Constants.loadFromContext(getInstrumentation().getTargetContext());
+            Constants.loadFromContext(InstrumentationRegistry.getTargetContext());
         }
 
         // Create some fake data
