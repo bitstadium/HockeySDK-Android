@@ -210,7 +210,7 @@ public class LoginActivity extends Activity {
 
         private final WeakReference<Activity> mWeakActivity;
 
-        public LoginHandler(Activity activity) {
+        LoginHandler(Activity activity) {
             mWeakActivity = new WeakReference<>(activity);
         }
 

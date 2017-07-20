@@ -42,6 +42,7 @@ public class PermissionsUtil {
     /**
      * Checks if Unknown Sources is enabled
      */
+    @SuppressWarnings("deprecation")
     public static boolean isUnknownSourcesEnabled(Context context) {
 
         /*
@@ -53,10 +54,8 @@ public class PermissionsUtil {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             return context.getApplicationInfo().targetSdkVersion < Build.VERSION_CODES.O || context.getPackageManager().canRequestPackageInstalls();
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            //noinspection deprecation
             return "1".equals(Settings.Global.getString(context.getContentResolver(), Settings.Global.INSTALL_NON_MARKET_APPS));
         } else {
-            //noinspection deprecation
             return "1".equals(Settings.Secure.getString(context.getContentResolver(), Settings.Secure.INSTALL_NON_MARKET_APPS));
         }
     }

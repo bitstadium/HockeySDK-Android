@@ -18,7 +18,6 @@ public class TelemetryContextTests {
     public void setUp() throws Exception {
         //noinspection SpellCheckingInspection
         sut = new PublicTelemetryContext(InstrumentationRegistry.getContext(),
-
                 "a123b4567cde890abcd1e2f3ab456789");//this is a made-up app identifier.
     }
 

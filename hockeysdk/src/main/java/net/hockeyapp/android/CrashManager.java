@@ -555,8 +555,7 @@ public class CrashManager {
             CrashManager.weakContext = new WeakReference<>(context);
 
             Constants.loadFromContext(context);
-
-
+            
             if (CrashManager.identifier == null) {
                 CrashManager.identifier = Constants.APP_PACKAGE;
             }
