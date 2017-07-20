@@ -12,7 +12,7 @@ public class CrashManagerHelper {
 
     public static void reset(Context context) {
 
-        // Needed to get directory for write fake crashes
+        // Needed to get directory to write fake crashes
         CrashManager.weakContext = new WeakReference<>(context);
         CrashManager.latch = new CountDownLatch(1);
     }
