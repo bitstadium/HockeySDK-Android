@@ -622,10 +622,10 @@ public class CrashManager {
     private static void sendCrashes(final CrashManagerListener listener, final boolean ignoreDefaultHandler, final CrashMetaData crashMetaData) {
         registerHandler(listener, ignoreDefaultHandler);
         Context context = getContext();
-        final boolean isConnectedToNetwork = context != null && !Util.isConnectedToNetwork(context);
+        final boolean isConnectedToNetwork = context != null && Util.isConnectedToNetwork(context);
 
         // Not connected to network, not trying to submit stack traces
-        if (isConnectedToNetwork && listener != null) {
+        if (!isConnectedToNetwork && listener != null) {
             listener.onCrashesNotSent();
         }
 
