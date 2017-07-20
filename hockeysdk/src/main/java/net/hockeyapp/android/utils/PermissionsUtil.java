@@ -42,6 +42,7 @@ public class PermissionsUtil {
     /**
      * Checks if Unknown Sources is enabled
      */
+    @SuppressWarnings("deprecation")
     public static boolean isUnknownSourcesEnabled(Context context) {
 
         /*
