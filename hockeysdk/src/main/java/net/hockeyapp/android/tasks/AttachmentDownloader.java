@@ -1,5 +1,6 @@
 package net.hockeyapp.android.tasks;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Handler;
@@ -15,7 +16,6 @@ import net.hockeyapp.android.views.AttachmentView;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -67,7 +67,8 @@ public class AttachmentDownloader {
 
         DownloadJob downloadJob = queue.peek();
         if (downloadJob != null) {
-            DownloadTask downloadTask = new DownloadTask(downloadJob, new Handler() {
+            downloadRunning = true;
+            AsyncTaskUtils.execute(new DownloadTask(downloadJob, new Handler() {
                 @Override
                 public void handleMessage(Message msg) {
                     final DownloadJob retryCandidate = queue.poll();
@@ -83,9 +84,7 @@ public class AttachmentDownloader {
                     downloadRunning = false;
                     downloadNext();
                 }
-            }, Constants.getHockeyAppStorageDir(downloadJob.getAttachmentView().getContext()));
-            downloadRunning = true;
-            AsyncTaskUtils.execute(downloadTask);
+            }));
         }
     }
 
@@ -138,19 +137,15 @@ public class AttachmentDownloader {
     private static class DownloadTask extends AsyncTask<Void, Integer, Boolean> {
 
         private final DownloadJob downloadJob;
-
         private final Handler handler;
-
-        private final File dropFolder;
-
+        private final Context context;
         private Bitmap bitmap;
-
         private int bitmapOrientation;
 
-        public DownloadTask(DownloadJob downloadJob, Handler handler, File dropFolder) {
+        DownloadTask(DownloadJob downloadJob, Handler handler) {
             this.downloadJob = downloadJob;
             this.handler = handler;
-            this.dropFolder = dropFolder;
+            this.context = downloadJob.getAttachmentView().getContext();
             this.bitmap = null;
             this.bitmapOrientation = ImageUtils.ORIENTATION_PORTRAIT; // default
         }
@@ -162,17 +157,18 @@ public class AttachmentDownloader {
         @Override
         protected Boolean doInBackground(Void... args) {
             FeedbackAttachment attachment = downloadJob.getFeedbackAttachment();
+            File file = new File(Constants.getHockeyAppStorageDir(context), attachment.getCacheId());
 
-            if (isAvailableInCache(attachment)) {
+            if (file.exists()) {
                 HockeyLog.error("Cached...");
-                loadImageThumbnail();
+                loadImageThumbnail(file);
                 return true;
 
             } else {
                 HockeyLog.error("Downloading...");
-                boolean success = downloadAttachment(attachment.getUrl(), attachment.getCacheId());
+                boolean success = downloadAttachment(attachment.getUrl(), file);
                 if (success) {
-                    loadImageThumbnail();
+                    loadImageThumbnail(file);
                 }
                 return success;
             }
@@ -199,18 +195,16 @@ public class AttachmentDownloader {
             handler.sendEmptyMessage(0);
         }
 
-        private void loadImageThumbnail() {
+        private void loadImageThumbnail(File file) {
             try {
-                String filename = downloadJob.getFeedbackAttachment().getCacheId();
                 AttachmentView attachmentView = downloadJob.getAttachmentView();
-
-                bitmapOrientation = ImageUtils.determineOrientation(new File(dropFolder, filename));
+                bitmapOrientation = ImageUtils.determineOrientation(file);
                 int width = bitmapOrientation == ImageUtils.ORIENTATION_LANDSCAPE ?
                         attachmentView.getWidthLandscape() : attachmentView.getWidthPortrait();
                 int height = bitmapOrientation == ImageUtils.ORIENTATION_LANDSCAPE ?
                         attachmentView.getMaxHeightLandscape() : attachmentView.getMaxHeightPortrait();
 
-                bitmap = ImageUtils.decodeSampledBitmap(new File(dropFolder, filename), width, height);
+                bitmap = ImageUtils.decodeSampledBitmap(file, width, height);
 
             } catch (IOException e) {
                 HockeyLog.error("Failed to load image thumbnail", e);
@@ -218,31 +212,12 @@ public class AttachmentDownloader {
             }
         }
 
-        /**
-         * Checks if attachment has already been downloaded.
-         *
-         * @return true if available, false if not.
-         */
-        public boolean isAvailableInCache(final FeedbackAttachment attachment) {
-            if (dropFolder.exists() && dropFolder.isDirectory()) {
-                File[] match = dropFolder.listFiles(new FilenameFilter() {
-                    @Override
-                    public boolean accept(File dir, String filename) {
-                        return filename.equals(attachment.getCacheId());
-                    }
-                });
-                return match != null && match.length == 1;
-            }
-            return false;
-        }
-
-        private boolean downloadAttachment(String urlString, String filename) {
+        private boolean downloadAttachment(String url, File file) {
             InputStream input = null;
             OutputStream output = null;
             HttpURLConnection connection = null;
             try {
-                URL url = new URL(urlString);
-                connection = (HttpURLConnection) createConnection(url);
+                connection = (HttpURLConnection) createConnection(new URL(url));
                 connection.connect();
 
                 int lengthOfFile = connection.getContentLength();
@@ -254,7 +229,6 @@ public class AttachmentDownloader {
                     }
                 }
 
-                File file = new File(dropFolder, filename);
                 input = new BufferedInputStream(connection.getInputStream());
                 output = new FileOutputStream(file);
 
@@ -271,7 +245,7 @@ public class AttachmentDownloader {
                 return (total > 0);
 
             } catch (IOException e) {
-                HockeyLog.error("Failed to download attachment to " + filename, e);
+                HockeyLog.error("Failed to download attachment to " + file, e);
                 return false;
             } finally {
                 try {

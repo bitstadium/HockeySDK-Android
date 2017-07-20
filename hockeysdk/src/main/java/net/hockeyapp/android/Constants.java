@@ -50,10 +50,7 @@ public class Constants {
      */
     public static final int UPDATE_PERMISSIONS_REQUEST = 1;
     private static final String BUNDLE_BUILD_NUMBER = "buildNumber";
-    /**
-     * Path where crash logs and temporary files are stored.
-     */
-    public static String FILES_PATH = null;
+
     /**
      * The app's version code.
      */
@@ -104,7 +101,6 @@ public class Constants {
         Constants.PHONE_MODEL = android.os.Build.MODEL;
         Constants.PHONE_MANUFACTURER = android.os.Build.MANUFACTURER;
 
-        loadFilesPath(context);
         loadPackageData(context);
         loadCrashIdentifier(context);
         loadDeviceIdentifier(context);
@@ -122,28 +118,6 @@ public class Constants {
             HockeyLog.warn("Couldn't create HockeyApp Storage dir");
         }
         return dir;
-    }
-
-    /**
-     * Helper method to set the files path. If an exception occurs, the files
-     * path will be null!
-     *
-     * @param context The context to use. Usually your Activity object.
-     */
-    private static void loadFilesPath(Context context) {
-        if (context != null) {
-            try {
-                File file = context.getFilesDir();
-
-                // The file shouldn't be null, but apparently it still can happen, see
-                // http://code.google.com/p/android/issues/detail?id=8886
-                if (file != null) {
-                    Constants.FILES_PATH = file.getAbsolutePath();
-                }
-            } catch (Exception e) {
-                HockeyLog.error("Exception thrown when accessing the files dir", e);
-            }
-        }
     }
 
     /**

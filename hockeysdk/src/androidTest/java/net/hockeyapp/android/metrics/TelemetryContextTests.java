@@ -16,6 +16,7 @@ public class TelemetryContextTests {
 
     @Before
     public void setUp() throws Exception {
+        //noinspection SpellCheckingInspection
         sut = new PublicTelemetryContext(InstrumentationRegistry.getContext(),
                 "a123b4567cde890abcd1e2f3ab456789");//this is a made-up app identifier.
     }
@@ -24,7 +25,6 @@ public class TelemetryContextTests {
     public void testInstanceInitialisation() {
         assertNotNull(sut);
         assertNotNull(sut.getInstrumentationKey());
-        assertNotNull(sut.mContext);
         assertNotNull(sut.mDevice);
         assertNotNull(sut.mUser);
         assertNotNull(sut.mInternal);

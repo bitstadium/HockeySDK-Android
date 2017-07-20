@@ -20,15 +20,9 @@ public class ExceptionHandlerTest {
 
     @Before
     public void setUp() throws Exception {
-        if (Constants.FILES_PATH == null) {
-            Constants.loadFromContext(InstrumentationRegistry.getTargetContext());
-        }
-
-        filesDirectory = new File(Constants.FILES_PATH);
-        File[] stacktraceFiles = filesDirectory.listFiles(new StacktraceFilenameFilter());
-        for (File f : stacktraceFiles) {
-            f.delete();
-        }
+        Constants.loadFromContext(InstrumentationRegistry.getTargetContext());
+        CrashManagerHelper.reset(InstrumentationRegistry.getTargetContext());
+        filesDirectory = CrashManagerHelper.cleanFiles(InstrumentationRegistry.getTargetContext());
     }
 
     @SuppressWarnings("ThrowableInstanceNeverThrown")

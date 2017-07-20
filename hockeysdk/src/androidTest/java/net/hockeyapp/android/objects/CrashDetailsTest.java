@@ -5,14 +5,15 @@ import android.support.test.runner.AndroidJUnit4;
 import android.text.TextUtils;
 
 import net.hockeyapp.android.Constants;
+import net.hockeyapp.android.CrashManagerHelper;
 import net.hockeyapp.android.ExceptionHandler;
+import net.hockeyapp.android.util.StacktraceFilenameFilter;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 
 import static org.junit.Assert.*;
@@ -24,24 +25,13 @@ public class CrashDetailsTest {
 
     @Before
     public void setUp() throws Exception {
-        if (Constants.FILES_PATH == null) {
-            Constants.loadFromContext(InstrumentationRegistry.getTargetContext());
-        }
+        Constants.loadFromContext(InstrumentationRegistry.getTargetContext());
+        CrashManagerHelper.reset(InstrumentationRegistry.getTargetContext());
+        filesDirectory = CrashManagerHelper.cleanFiles(InstrumentationRegistry.getTargetContext());
 
         // Create some fake data
         Constants.APP_VERSION = "1";
         Constants.APP_VERSION_NAME = "1.0";
-
-        filesDirectory = new File(Constants.FILES_PATH);
-        File[] stacktraceFiles = filesDirectory.listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String filename) {
-                return filename.endsWith(".stacktrace");
-            }
-        });
-        for (File f : stacktraceFiles) {
-            f.delete();
-        }
     }
 
     @Test
@@ -49,13 +39,7 @@ public class CrashDetailsTest {
         Throwable tr = new RuntimeException("Just a test exception");
         ExceptionHandler.saveException(tr, Thread.currentThread(), null);
 
-        File[] stackTraceFiles = filesDirectory.listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String filename) {
-                return filename.endsWith(".stacktrace");
-            }
-        });
-
+        File[] stackTraceFiles = filesDirectory.listFiles(new StacktraceFilenameFilter());
         assertEquals(1, stackTraceFiles.length);
 
         File stackTraceFile = stackTraceFiles[0];

@@ -21,13 +21,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import net.hockeyapp.android.Constants;
 import net.hockeyapp.android.R;
 import net.hockeyapp.android.objects.FeedbackAttachment;
+import net.hockeyapp.android.utils.AsyncTaskUtils;
 import net.hockeyapp.android.utils.ImageUtils;
 import net.hockeyapp.android.utils.Util;
-
-import java.io.File;
 
 /**
  * <h3>Description</h3>
@@ -81,7 +79,8 @@ public class AttachmentView extends FrameLayout {
 
         mTextView.setText(mFilename);
         mTextView.setContentDescription(mTextView.getText());
-        new AsyncTask<Void, Void, Bitmap>() {
+
+        AsyncTaskUtils.execute(new AsyncTask<Void, Void, Bitmap>() {
             @Override
             protected Bitmap doInBackground(Void... args) {
                 return loadImageThumbnail();
@@ -95,7 +94,7 @@ public class AttachmentView extends FrameLayout {
                     configureViewForPlaceholder(false);
                 }
             }
-        }.execute();
+        });
     }
 
     public AttachmentView(Context context, ViewGroup parent, FeedbackAttachment attachment, boolean
@@ -105,8 +104,7 @@ public class AttachmentView extends FrameLayout {
         this.mContext = context;
         this.mParent = parent;
         this.mAttachment = attachment;
-        this.mAttachmentUri = Uri.fromFile(new File(Constants.getHockeyAppStorageDir(context),
-                attachment.getCacheId()));
+        this.mAttachmentUri = null;
         this.mFilename = attachment.getFilename();
 
         calculateDimensions(40);

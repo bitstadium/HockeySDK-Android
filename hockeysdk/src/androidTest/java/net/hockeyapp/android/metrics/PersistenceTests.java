@@ -34,14 +34,6 @@ public class PersistenceTests {
     }
 
     @Test
-    public void testTelemetryDirectoryGetsCreated() {
-        File mock = mock(File.class);
-        sut = new PublicPersistence(InstrumentationRegistry.getContext(), mock, null);
-
-        verify(mock).mkdirs();
-    }
-
-    @Test
     public void testCallingPersistTriggersWriteToDisk() {
         Context context = InstrumentationRegistry.getContext();
         Sender mockSender = mock(Sender.class);
@@ -85,8 +77,10 @@ public class PersistenceTests {
         File mockFile1 = mock(File.class);
         File mockFile2 = mock(File.class);
         File[] mockFiles = {mockFile1, mockFile2};
-        sut = new PublicPersistence(InstrumentationRegistry.getContext(), mockDirectory, null);
         when(mockDirectory.listFiles()).thenReturn(mockFiles);
+
+        sut = spy(new PublicPersistence(InstrumentationRegistry.getContext(), null));
+        when(sut.getTelemetryDirectory()).thenReturn(mockDirectory);
 
         // Mock served list containing 1 file
         ArrayList<File> servedFiles = new ArrayList<>();
