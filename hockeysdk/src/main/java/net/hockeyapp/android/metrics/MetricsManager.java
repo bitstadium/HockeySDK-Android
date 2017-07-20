@@ -1,11 +1,9 @@
 package net.hockeyapp.android.metrics;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -229,7 +227,7 @@ public class MetricsManager {
                             sender, persistence, channel);
                     sWeakApplication = new WeakReference<>(application);
                 }
-                result.mSessionTrackingDisabled = !Util.sessionTrackingSupported();
+                result.mSessionTrackingDisabled = false;
                 instance = result;
                 if (!result.mSessionTrackingDisabled) {
                     setSessionTrackingDisabled(false);
@@ -296,22 +294,16 @@ public class MetricsManager {
             HockeyLog.warn(TAG, "MetricsManager hasn't been registered or User Metrics has been disabled. No User Metrics will be collected!");
         } else {
             synchronized (LOCK) {
-                if (Util.sessionTrackingSupported()) {
-                    instance.mSessionTrackingDisabled = disabled;
-                    //TODO persist this setting so the dev doesn't have to take care of this
-                    //between launches?
-                    if (!disabled) {
-                        instance.registerTelemetryLifecycleCallbacks();
-                    }
-                } else {
-                    instance.mSessionTrackingDisabled = true;
-                    instance.unregisterTelemetryLifecycleCallbacks();
+                instance.mSessionTrackingDisabled = disabled;
+                //TODO persist this setting so the dev doesn't have to take care of this
+                //between launches?
+                if (!disabled) {
+                    instance.registerTelemetryLifecycleCallbacks();
                 }
             }
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     private void registerTelemetryLifecycleCallbacks() {
         if (mTelemetryLifecycleCallbacks == null) {
             mTelemetryLifecycleCallbacks = new TelemetryLifecycleCallbacks();
@@ -319,7 +311,6 @@ public class MetricsManager {
         getApplication().registerActivityLifecycleCallbacks(mTelemetryLifecycleCallbacks);
     }
 
-    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     private void unregisterTelemetryLifecycleCallbacks() {
         if (mTelemetryLifecycleCallbacks == null) {
             return;
@@ -391,7 +382,7 @@ public class MetricsManager {
      * This is done by comparing NOW with the last time, onPause has been called.
      */
     private void updateSession() {
-        int count = this.ACTIVITY_COUNT.getAndIncrement();
+        int count = ACTIVITY_COUNT.getAndIncrement();
         if (count == 0) {
             if (sessionTrackingEnabled()) {
                 HockeyLog.debug(TAG, "Starting & tracking session");
@@ -402,8 +393,8 @@ public class MetricsManager {
         } else {
             //we should already have a session now
             //check if the session should be renewed
-            long now = this.getTime();
-            long then = this.LAST_BACKGROUND.getAndSet(getTime());
+            long now = getTime();
+            long then = LAST_BACKGROUND.getAndSet(getTime());
             boolean shouldRenew = ((now - then) >= SESSION_RENEWAL_INTERVAL);
             HockeyLog.debug(TAG, "Checking if we have to renew a session, time difference is: " + (now - then));
 
@@ -501,7 +492,6 @@ public class MetricsManager {
 
     }
 
-    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     private class TelemetryLifecycleCallbacks implements Application.ActivityLifecycleCallbacks {
 
         private final long MAX_ACTIVITY_TRANSITION_TIME_MS = 2000;

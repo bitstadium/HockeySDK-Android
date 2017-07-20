@@ -63,7 +63,6 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
         final Date startDate = new Date(CrashManager.getInitializeTimestamp());
         final Writer result = new StringWriter();
         final PrintWriter printWriter = new PrintWriter(result);
-        BufferedWriter writer = null;
         exception.printStackTrace(printWriter);
 
         String filename = UUID.randomUUID().toString();

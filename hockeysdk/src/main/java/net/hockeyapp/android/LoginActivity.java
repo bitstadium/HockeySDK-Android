@@ -72,11 +72,6 @@ public class LoginActivity extends Activity {
      */
     private Handler mLoginHandler;
 
-    /**
-     * The Login button.
-     */
-    private Button mButtonLogin;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -144,8 +139,8 @@ public class LoginActivity extends Activity {
         TextView headlineText = findViewById(R.id.text_headline);
         headlineText.setText(mMode == LoginManager.LOGIN_MODE_EMAIL_ONLY ? R.string.hockeyapp_login_headline_text_email_only : R.string.hockeyapp_login_headline_text);
 
-        mButtonLogin = findViewById(R.id.button_login);
-        mButtonLogin.setOnClickListener(new View.OnClickListener() {
+        Button loginButton = findViewById(R.id.button_login);
+        loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 performAuthentication();
@@ -168,7 +163,7 @@ public class LoginActivity extends Activity {
         String password = ((EditText) findViewById(R.id.input_password)).getText().toString();
 
         boolean ready = false;
-        Map<String, String> params = new HashMap<String, String>();
+        Map<String, String> params = new HashMap<>();
 
         if (mMode == LoginManager.LOGIN_MODE_EMAIL_ONLY) {
             ready = !TextUtils.isEmpty(email);
@@ -215,7 +210,7 @@ public class LoginActivity extends Activity {
 
         private final WeakReference<Activity> mWeakActivity;
 
-        public LoginHandler(Activity activity) {
+        LoginHandler(Activity activity) {
             mWeakActivity = new WeakReference<>(activity);
         }
 

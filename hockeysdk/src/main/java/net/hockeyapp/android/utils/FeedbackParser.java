@@ -30,9 +30,10 @@ public class FeedbackParser {
      * or the first access to FeedbackParserHolder.INSTANCE, not before.
      */
     private static class FeedbackParserHolder {
-        public static final FeedbackParser INSTANCE = new FeedbackParser();
+        static final FeedbackParser INSTANCE = new FeedbackParser();
     }
 
+    @SuppressWarnings("SameReturnValue")
     public static FeedbackParser getInstance() {
         return FeedbackParserHolder.INSTANCE;
     }
@@ -45,7 +46,7 @@ public class FeedbackParser {
      */
     public FeedbackResponse parseFeedbackResponse(String feedbackResponseJson) {
         FeedbackResponse feedbackResponse = null;
-        Feedback feedback = null;
+        Feedback feedback;
         if (feedbackResponseJson != null) {
             try {
                 JSONObject jsonObject = new JSONObject(feedbackResponseJson);
@@ -57,7 +58,7 @@ public class FeedbackParser {
                 JSONArray messagesArray = feedbackObject.getJSONArray("messages");
                 ArrayList<FeedbackMessage> messages = null;
 
-                FeedbackMessage feedbackMessage = null;
+                FeedbackMessage feedbackMessage;
                 if (messagesArray.length() > 0) {
                     messages = new ArrayList<>();
 

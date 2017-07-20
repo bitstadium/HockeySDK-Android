@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/hockeyapp_background_white">
@@ -28,11 +29,11 @@
             android:shadowColor="@color/hockeyapp_text_white"
             android:shadowDx="1"
             android:shadowRadius="1"
-            android:singleLine="true"
             android:textColor="@color/hockeyapp_text_black"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:typeface="normal" />
+            android:typeface="normal"
+            android:maxLines="1" />
 
         <TextView
             android:id="@+id/label_version"
@@ -56,12 +57,13 @@
 
         <Button
             android:id="@+id/button_update"
-            android:layout_width="120dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_below="@id/label_version"
             android:layout_margin="20dp"
             android:background="@drawable/hockeyapp_btn_background"
+            android:minWidth="120dp"
             android:paddingBottom="10dp"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
@@ -69,14 +71,15 @@
             android:text="@string/hockeyapp_update_button"
             android:contentDescription="@string/hockeyapp_update_button"
             android:textColor="@color/hockeyapp_text_white"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            tools:ignore="RtlHardcoded" />
 
     </RelativeLayout>
 
     <WebView
         android:id="@+id/web_update_details"
         android:layout_width="match_parent"
-        android:layout_height="400dp"
+        android:layout_height="match_parent"
         android:layout_below="@id/view_header"
         android:background="@color/hockeyapp_background_white" />
 

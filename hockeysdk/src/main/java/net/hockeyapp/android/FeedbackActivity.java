@@ -3,11 +3,9 @@ package net.hockeyapp.android;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.NotificationManager;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -35,7 +33,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import net.hockeyapp.android.adapters.MessagesAdapter;
-import net.hockeyapp.android.objects.ErrorObject;
 import net.hockeyapp.android.objects.FeedbackMessage;
 import net.hockeyapp.android.objects.FeedbackResponse;
 import net.hockeyapp.android.objects.FeedbackUserDataElement;
@@ -99,10 +96,6 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
     private static final int MAX_ATTACHMENTS_PER_MSG = 3;
 
     /**
-     * ID of error dialog
-     **/
-    private static final int DIALOG_ERROR_ID = 0;
-    /**
      * Activity request constants for ContextMenu and Chooser Intent
      */
     private static final int ATTACH_PICTURE = 1;
@@ -132,11 +125,6 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
     private EditText mSubjectInput;
     private EditText mTextInput;
     private Button mSendFeedbackButton;
-    private Button mAddAttachmentButton;
-    private Button mAddResponseButton;
-    private Button mRefreshButton;
-    private ScrollView mFeedbackScrollview;
-    private LinearLayout mWrapperLayoutFeedbackAndMessages;
     private ListView mMessagesListView;
     /**
      * Send feedback {@link AsyncTask}
@@ -159,11 +147,6 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
      * URL for HockeyApp API
      **/
     private String mUrl;
-
-    /**
-     * Current error for alert dialog
-     **/
-    private ErrorObject mError;
 
     /**
      * Message data source
@@ -204,7 +187,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
 
         setContentView(getLayoutView());
 
-        setTitle(getString(R.string.hockeyapp_feedback_title));
+        setTitle(R.string.hockeyapp_feedback_title);
         mContext = this;
 
         Bundle extras = getIntent().getExtras();
@@ -261,12 +244,13 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
         if (savedInstanceState != null) {
             ViewGroup attachmentList = findViewById(R.id.wrapper_attachments);
             ArrayList<Uri> attachmentsUris = savedInstanceState.getParcelableArrayList("attachments");
-            for (Uri attachmentUri : attachmentsUris) {
-                if (!mInitialAttachments.contains(attachmentUri)) {
-                    attachmentList.addView(new AttachmentView(this, attachmentList, attachmentUri, true));
+            if (attachmentsUris != null) {
+                for (Uri attachmentUri : attachmentsUris) {
+                    if (!mInitialAttachments.contains(attachmentUri)) {
+                        attachmentList.addView(new AttachmentView(this, attachmentList, attachmentUri, true));
+                    }
                 }
             }
-
             mFeedbackViewInitialized = savedInstanceState.getBoolean("feedbackViewInitialized");
         }
 
@@ -348,7 +332,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
         } else if (viewId == R.id.button_attachment) {
             ViewGroup attachments = findViewById(R.id.wrapper_attachments);
             if (attachments.getChildCount() >= MAX_ATTACHMENTS_PER_MSG) {
-                Toast.makeText(this, String.format(getString(R.string.hockeyapp_feedback_max_attachments_allowed), MAX_ATTACHMENTS_PER_MSG), Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.hockeyapp_feedback_max_attachments_allowed, MAX_ATTACHMENTS_PER_MSG), Toast.LENGTH_SHORT).show();
             } else {
                 openContextMenu(v);
             }
@@ -398,45 +382,6 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
         }
     }
 
-    @Override
-    protected Dialog onCreateDialog(int id) {
-        switch (id) {
-            case DIALOG_ERROR_ID:
-                return new AlertDialog.Builder(this)
-                        .setMessage(getString(R.string.hockeyapp_dialog_error_message))
-                        .setCancelable(false)
-                        .setTitle(getString(R.string.hockeyapp_dialog_error_title))
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setPositiveButton(getString(R.string.hockeyapp_dialog_positive_button), new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                mError = null;
-                                dialog.cancel();
-                            }
-                        }).create();
-        }
-
-        return null;
-    }
-
-    @Override
-    protected void onPrepareDialog(int id, Dialog dialog) {
-        switch (id) {
-            case DIALOG_ERROR_ID:
-                AlertDialog messageDialogError = (AlertDialog) dialog;
-                if (mError != null) {
-                    /** If the ErrorObject is not null, display the ErrorObject message */
-                    messageDialogError.setMessage(mError.getMessage());
-                } else {
-                    /** If the ErrorObject is null, display the general error message */
-                    messageDialogError.setMessage(getString(R.string.hockeyapp_feedback_generic_error));
-                }
-                break;
-            default:
-                break;
-        }
-
-    }
-
     /**
      * Called when picture or file was chosen.
      */
@@ -467,7 +412,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
                     intent.putExtra(PaintActivity.EXTRA_IMAGE_URI, uri);
                     startActivityForResult(intent, PAINT_IMAGE);
                 } catch (ActivityNotFoundException e) {
-                    HockeyLog.error(Util.LOG_IDENTIFIER, "Paint activity not declared!", e);
+                    HockeyLog.error("Paint activity not declared!", e);
                 }
 
             }
@@ -508,29 +453,29 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
      * @param haveToken the message list is shown if true
      */
     protected void configureFeedbackView(boolean haveToken) {
-        mFeedbackScrollview = findViewById(R.id.wrapper_feedback_scroll);
-        mWrapperLayoutFeedbackAndMessages = findViewById(R.id.wrapper_messages);
+        ScrollView feedbackScrollView = findViewById(R.id.wrapper_feedback_scroll);
+        LinearLayout wrapperLayoutFeedbackAndMessages = findViewById(R.id.wrapper_messages);
         mMessagesListView = findViewById(R.id.list_feedback_messages);
 
         if (haveToken) {
             /** If a token exists, the list of messages should be displayed */
-            mWrapperLayoutFeedbackAndMessages.setVisibility(View.VISIBLE);
-            mFeedbackScrollview.setVisibility(View.GONE);
+            wrapperLayoutFeedbackAndMessages.setVisibility(View.VISIBLE);
+            feedbackScrollView.setVisibility(View.GONE);
 
             mLastUpdatedTextView = findViewById(R.id.label_last_updated);
             mLastUpdatedTextView.setVisibility(View.INVISIBLE);
 
-            mAddResponseButton = findViewById(R.id.button_add_response);
-            mAddResponseButton.setOnClickListener(this);
-            mAddResponseButton.setOnFocusChangeListener(this);
+            Button addResponseButton = findViewById(R.id.button_add_response);
+            addResponseButton.setOnClickListener(this);
+            addResponseButton.setOnFocusChangeListener(this);
 
-            mRefreshButton = findViewById(R.id.button_refresh);
-            mRefreshButton.setOnClickListener(this);
-            mRefreshButton.setOnFocusChangeListener(this);
+            Button refreshButton = findViewById(R.id.button_refresh);
+            refreshButton.setOnClickListener(this);
+            refreshButton.setOnFocusChangeListener(this);
         } else {
             /** if the token doesn't exist, the feedback details inputs to be sent need to be displayed */
-            mWrapperLayoutFeedbackAndMessages.setVisibility(View.GONE);
-            mFeedbackScrollview.setVisibility(View.VISIBLE);
+            wrapperLayoutFeedbackAndMessages.setVisibility(View.GONE);
+            feedbackScrollView.setVisibility(View.VISIBLE);
 
             mNameInput = findViewById(R.id.input_name);
             mNameInput.setOnFocusChangeListener(this);
@@ -603,14 +548,14 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
             }
 
             /** Use of context menu needs to be enabled explicitly */
-            mAddAttachmentButton = findViewById(R.id.button_attachment);
-            mAddAttachmentButton.setOnClickListener(this);
-            mAddAttachmentButton.setOnFocusChangeListener(this);
-            registerForContextMenu(mAddAttachmentButton);
+            Button addAttachmentButton = findViewById(R.id.button_attachment);
+            addAttachmentButton.setOnClickListener(this);
+            addAttachmentButton.setOnFocusChangeListener(this);
+            registerForContextMenu(addAttachmentButton);
 
             mSendFeedbackButton = findViewById(R.id.button_send);
             mSendFeedbackButton.setOnClickListener(this);
-            mAddAttachmentButton.setOnFocusChangeListener(this);
+            addAttachmentButton.setOnFocusChangeListener(this);
         }
     }
 
@@ -693,6 +638,16 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
         }
     }
 
+    private void showError(final int message) {
+        AlertDialog alertDialog = new AlertDialog.Builder(FeedbackActivity.this)
+                .setTitle(R.string.hockeyapp_dialog_error_title)
+                .setMessage(message)
+                .setCancelable(false)
+                .setPositiveButton(R.string.hockeyapp_dialog_positive_button, null)
+                .create();
+        alertDialog.show();
+    }
+
     /**
      * Initializes the Feedback response {@link Handler}
      */
@@ -720,7 +675,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
             public void run() {
                 configureFeedbackView(true);
 
-                Date date = null;
+                Date date;
                 if (feedbackResponse != null && feedbackResponse.getFeedback() != null &&
                         feedbackResponse.getFeedback().getMessages() != null && feedbackResponse.
                         getFeedback().getMessages().size() > 0) {
@@ -869,14 +824,14 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
 
         private final WeakReference<FeedbackActivity> mWeakFeedbackActivity;
 
-        public FeedbackHandler(FeedbackActivity feedbackActivity) {
+        FeedbackHandler(FeedbackActivity feedbackActivity) {
             mWeakFeedbackActivity = new WeakReference<>(feedbackActivity);
         }
 
         @Override
         public void handleMessage(Message msg) {
             boolean success = false;
-            ErrorObject error = new ErrorObject();
+            int errorMessage = 0;
 
             final FeedbackActivity feedbackActivity = mWeakFeedbackActivity.get();
             if (feedbackActivity == null) {
@@ -890,7 +845,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
                 String requestType = bundle.getString(SendFeedbackTask.BUNDLE_REQUEST_TYPE);
                 if ("send".equals(requestType) && (responseString == null || Integer.parseInt(statusCode) != 201)) {
                     // Send feedback went wrong if response is empty or status code != 201
-                    error.setMessage(feedbackActivity.getString(R.string.hockeyapp_feedback_send_generic_error));
+                    errorMessage = R.string.hockeyapp_feedback_send_generic_error;
                 } else if ("fetch".equals(requestType) && statusCode != null && (Integer.parseInt(statusCode) == 404 || Integer.parseInt(statusCode) == 422)) {
                     // Fetch feedback went wrong if status code is 404 or 422
                     feedbackActivity.resetFeedbackView();
@@ -907,24 +862,14 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
                     }
                     success = true;
                 } else {
-                    error.setMessage(feedbackActivity.getString(R.string.hockeyapp_feedback_send_network_error));
+                    errorMessage = R.string.hockeyapp_feedback_send_network_error;
                 }
             } else {
-                error.setMessage(feedbackActivity.getString(R.string.hockeyapp_feedback_send_generic_error));
+                errorMessage = R.string.hockeyapp_feedback_send_generic_error;
             }
 
-            feedbackActivity.mError = error;
-
             if (!success) {
-                feedbackActivity.runOnUiThread(new Runnable() {
-
-                    @SuppressWarnings("deprecation")
-                    @Override
-                    public void run() {
-                        feedbackActivity.enableDisableSendFeedbackButton(true);
-                        feedbackActivity.showDialog(DIALOG_ERROR_ID);
-                    }
-                });
+                feedbackActivity.showError(errorMessage);
             }
 
             feedbackActivity.onSendFeedbackResult(success);
@@ -936,7 +881,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
 
         private final WeakReference<FeedbackActivity> mWeakFeedbackActivity;
 
-        public ParseFeedbackHandler(FeedbackActivity feedbackActivity) {
+        ParseFeedbackHandler(FeedbackActivity feedbackActivity) {
             mWeakFeedbackActivity = new WeakReference<>(feedbackActivity);
         }
 
@@ -948,8 +893,6 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
             if (feedbackActivity == null) {
                 return;
             }
-
-            feedbackActivity.mError = new ErrorObject();
 
             if (msg != null && msg.getData() != null) {
                 Bundle bundle = msg.getData();
@@ -974,14 +917,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
 
             /** Something went wrong, so display an error dialog */
             if (!success) {
-                feedbackActivity.runOnUiThread(new Runnable() {
-
-                    @SuppressWarnings("deprecation")
-                    @Override
-                    public void run() {
-                        feedbackActivity.showDialog(DIALOG_ERROR_ID);
-                    }
-                });
+                feedbackActivity.showError(R.string.hockeyapp_dialog_error_message);
             }
 
             feedbackActivity.enableDisableSendFeedbackButton(true);

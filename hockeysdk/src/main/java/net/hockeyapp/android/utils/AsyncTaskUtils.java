@@ -1,7 +1,6 @@
 package net.hockeyapp.android.utils;
 
 import android.os.AsyncTask;
-import android.os.Build;
 
 import java.util.concurrent.Executor;
 
@@ -16,11 +15,7 @@ public class AsyncTaskUtils {
     private static Executor sCustomExecutor;
 
     public static void execute(AsyncTask<Void, ?, ?> asyncTask) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            asyncTask.executeOnExecutor(sCustomExecutor != null ? sCustomExecutor : AsyncTask.THREAD_POOL_EXECUTOR);
-        } else {
-            asyncTask.execute();
-        }
+        asyncTask.executeOnExecutor(sCustomExecutor != null ? sCustomExecutor : AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     public static Executor getCustomExecutor() {

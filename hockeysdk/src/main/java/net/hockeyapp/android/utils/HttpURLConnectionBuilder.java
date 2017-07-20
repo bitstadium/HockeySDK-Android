@@ -2,12 +2,10 @@ package net.hockeyapp.android.utils;
 
 import android.content.Context;
 import android.net.Uri;
-import android.os.Build;
 import android.text.TextUtils;
 
 import net.hockeyapp.android.Constants;
 
-import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
@@ -22,7 +20,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * <h3>Description</h3>
@@ -71,7 +68,7 @@ public class HttpURLConnectionBuilder {
 
         for (String key: fields.keySet()) {
             String value = fields.get(key);
-            if (value.length() > FORM_FIELD_LIMIT) {
+            if (value != null && value.length() > FORM_FIELD_LIMIT) {
                 throw new IllegalArgumentException("Form field " + key + " size too large: " + value.length() + " - max allowed: " + FORM_FIELD_LIMIT);
             }
         }
@@ -143,10 +140,6 @@ public class HttpURLConnectionBuilder {
 
         connection.setConnectTimeout(mTimeout);
         connection.setReadTimeout(mTimeout);
-
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.GINGERBREAD) {
-            connection.setRequestProperty("Connection", "close");
-        }
 
         if (!TextUtils.isEmpty(mRequestMethod)) {
             connection.setRequestMethod(mRequestMethod);

@@ -51,7 +51,7 @@ public class VersionHelper {
         try {
             JSONArray versions = new JSONArray(infoJSON);
 
-            int versionCode = mListener.getCurrentVersionCode();
+            int versionCode = this.mCurrentVersionCode;
             for (int index = 0; index < versions.length(); index++) {
                 JSONObject entry = versions.getJSONObject(index);
                 boolean largerVersionCode = (entry.getInt("version") > versionCode);
@@ -320,6 +320,8 @@ public class VersionHelper {
             return "6.0";
         } else if (version.equalsIgnoreCase("N")) {
             return "7.0";
+        } else if (version.equalsIgnoreCase("O")) {
+            return "8.0";
         } else if (Pattern.matches("^[a-zA-Z]+", version)) {
             return VERSION_MAX;
         } else {

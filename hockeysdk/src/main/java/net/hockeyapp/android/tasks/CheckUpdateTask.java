@@ -22,10 +22,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
 import java.net.URL;
@@ -114,7 +112,7 @@ public class CheckUpdateTask extends AsyncTask<Void, String, JSONArray> {
             connection.connect();
 
             InputStream inputStream = new BufferedInputStream(connection.getInputStream());
-            String jsonString = convertStreamToString(inputStream);
+            String jsonString = Util.convertStreamToString(inputStream);
             inputStream.close();
 
             json = new JSONArray(jsonString);
@@ -134,10 +132,6 @@ public class CheckUpdateTask extends AsyncTask<Void, String, JSONArray> {
     protected URLConnection createConnection(URL url) throws IOException {
         URLConnection connection = url.openConnection();
         connection.addRequestProperty("User-Agent", Constants.SDK_USER_AGENT);
-        // connection bug workaround for SDK<=2.x
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.GINGERBREAD) {
-            connection.setRequestProperty("connection", "close");
-        }
         return connection;
     }
 
@@ -171,7 +165,7 @@ public class CheckUpdateTask extends AsyncTask<Void, String, JSONArray> {
         for (int index = 0; index < Math.min(json.length(), MAX_NUMBER_OF_VERSIONS); index++) {
             try {
                 result.put(json.get(index));
-            } catch (JSONException e) {
+            } catch (JSONException ignored) {
             }
         }
         return result;
@@ -204,33 +198,33 @@ public class CheckUpdateTask extends AsyncTask<Void, String, JSONArray> {
         builder.append(urlString);
         builder.append("api/2/apps/");
         builder.append((this.appIdentifier != null ? this.appIdentifier : context.getPackageName()));
-        builder.append("?format=" + format);
+        builder.append("?format=").append(format);
 
         @SuppressLint("HardwareIds") String deviceIdentifier = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
         if (!TextUtils.isEmpty(deviceIdentifier)) {
-            builder.append("&udid=" + encodeParam(deviceIdentifier));
+            builder.append("&udid=").append(encodeParam(deviceIdentifier));
         }
 
         SharedPreferences prefs = context.getSharedPreferences("net.hockeyapp.android.login", 0);
         String auid = prefs.getString("auid", null);
         if (!TextUtils.isEmpty(auid)) {
-            builder.append("&auid=" + encodeParam(auid));
+            builder.append("&auid=").append(encodeParam(auid));
         }
 
         String iuid = prefs.getString("iuid", null);
         if(!TextUtils.isEmpty(iuid)) {
-            builder.append("&iuid=" + encodeParam(iuid));
+            builder.append("&iuid=").append(encodeParam(iuid));
         }
 
         builder.append("&os=Android");
-        builder.append("&os_version=" + encodeParam(Constants.ANDROID_VERSION));
-        builder.append("&device=" + encodeParam(Constants.PHONE_MODEL));
-        builder.append("&oem=" + encodeParam(Constants.PHONE_MANUFACTURER));
-        builder.append("&app_version=" + encodeParam(Constants.APP_VERSION));
-        builder.append("&sdk=" + encodeParam(Constants.SDK_NAME));
-        builder.append("&sdk_version=" + encodeParam(BuildConfig.VERSION_NAME));
-        builder.append("&lang=" + encodeParam(Locale.getDefault().getLanguage()));
-        builder.append("&usage_time=" + usageTime);
+        builder.append("&os_version=").append(encodeParam(Constants.ANDROID_VERSION));
+        builder.append("&device=").append(encodeParam(Constants.PHONE_MODEL));
+        builder.append("&oem=").append(encodeParam(Constants.PHONE_MANUFACTURER));
+        builder.append("&app_version=").append(encodeParam(Constants.APP_VERSION));
+        builder.append("&sdk=").append(encodeParam(Constants.SDK_NAME));
+        builder.append("&sdk_version=").append(encodeParam(BuildConfig.VERSION_NAME));
+        builder.append("&lang=").append(encodeParam(Locale.getDefault().getLanguage()));
+        builder.append("&usage_time=").append(usageTime);
 
         return builder.toString();
     }
@@ -247,37 +241,4 @@ public class CheckUpdateTask extends AsyncTask<Void, String, JSONArray> {
     protected boolean getCachingEnabled() {
         return true;
     }
-
-    /*
-    MIT Mobile for Android is open source software, created, maintained, and shared under the MIT license by Information Services & Technology at the Massachusetts Institute of Technology. The project includes components from other open source projects which remain under their existing licenses, detailed in their respective source files. The open source license does not apply to media depicting people and places at MIT which are included in the source. Said media may not be duplicated without MIT's consent.
-
-    Copyright (c) 2010 Massachusetts Institute of Technology
-
-    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-    The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-    */
-    private static String convertStreamToString(InputStream inputStream) {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream), 1024);
-        StringBuilder stringBuilder = new StringBuilder();
-
-        String line = null;
-        try {
-            while ((line = reader.readLine()) != null) {
-                stringBuilder.append(line + "\n");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                inputStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return stringBuilder.toString();
-    }
-
 }
