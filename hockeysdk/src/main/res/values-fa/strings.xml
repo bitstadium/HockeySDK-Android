@@ -26,8 +26,6 @@
     <string name="hockeyapp_expiry_info_text">%s منقضی شده است. لطفا برای دریافت بروز رسانی جدید به HockeyApp مراجعه کنید.</string>
 
     <!-- Feedback Activity -->
-    <string name="hockeyapp_feedback_failed_title">در حال انتظار</string>
-    <string name="hockeyapp_feedback_failed_text">آیا تمایل دارید که دوباره نظر خود را ارسال کنید؟</string>
     <string name="hockeyapp_feedback_name_hint">نام</string>
     <string name="hockeyapp_feedback_email_hint">ایمیل</string>
     <string name="hockeyapp_feedback_subject_hint">موضوع</string>
@@ -66,8 +64,6 @@
     <string name="hockeyapp_login_headline_text">برای دسترسی به این نرم افزار لطفا ایمیل و کلمه عبور حساب کاربری خود در HockeyApp را وارد کنید.</string>
     <string name="hockeyapp_login_headline_text_email_only">لطفا برای دسترسی به این نرم افزار، ایمیل حساب کاربری خود در HockeyApp را وارد کنید.</string>
     <string name="hockeyapp_login_missing_credentials_toast">لطفا گزینه های خالی را وارد کنید</string>
-    <string name="hockeyapp_login_email_hint">ایمیل</string>
-    <string name="hockeyapp_login_password_hint">کلمه عبور</string>
     <string name="hockeyapp_login_login_button_text">ورود</string>
     <string name="hockeyapp_login_email_hint_required">ایمیل (مورد نیاز)</string>
     <string name="hockeyapp_login_password_hint_required">کلمه عبور (مورد نیاز)</string>
@@ -81,12 +77,6 @@
     <string name="hockeyapp_paint_dialog_negative_button">خیر</string>
     <string name="hockeyapp_paint_dialog_positive_button">ذخیره</string>
     <string name="hockeyapp_paint_dialog_neutral_button">لغو</string>
-
-    <!-- Permissions -->
-    <string name="hockeyapp_permission_update_title">نیاز به دسترسی برای ذخیره سازی</string>
-    <string name="hockeyapp_permission_update_message">برای دریافت و نصب بروز رسانی های برنامه، شما باید اجازه دسترسی به حافظه دستگاه خود را بدهید</string>
-    <string name="hockeyapp_permission_dialog_negative_button">لغو</string>
-    <string name="hockeyapp_permission_dialog_positive_button">تلاش مجدد</string>
 
     <!-- Dialogs -->
     <string name="hockeyapp_dialog_positive_button">تایید</string>

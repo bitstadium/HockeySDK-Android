@@ -27,8 +27,6 @@
     <string name="hockeyapp_expiry_info_text">%s expirou. Por favor, verifique no HockeyApp para atualizações.</string>
 
     <!-- Feedback Activity -->
-    <string name="hockeyapp_feedback_failed_title">Pendente</string>
-    <string name="hockeyapp_feedback_failed_text">Gostaria de enviar o feedback novamente?</string>
     <string name="hockeyapp_feedback_name_hint">Nome</string>
     <string name="hockeyapp_feedback_email_hint">Email</string>
     <string name="hockeyapp_feedback_subject_hint">Assunto</string>
@@ -67,8 +65,6 @@
     <string name="hockeyapp_login_headline_text">Por favor preencha seu email e senha do HockeyApp para ter acesso a esse aplicativo.</string>
     <string name="hockeyapp_login_headline_text_email_only">Por favor preencha seu email do HockeyApp para ter acesso a esse aplicativo.</string>
     <string name="hockeyapp_login_missing_credentials_toast">Por favor preencha suas credenciais.</string>
-    <string name="hockeyapp_login_email_hint">Email</string>
-    <string name="hockeyapp_login_password_hint">Senha</string>
     <string name="hockeyapp_login_login_button_text">Login</string>
     <string name="hockeyapp_login_email_hint_required">Email (necessário)</string>
     <string name="hockeyapp_login_password_hint_required">Senha (necessário)</string>
@@ -82,12 +78,6 @@
     <string name="hockeyapp_paint_dialog_negative_button">Descartar</string>
     <string name="hockeyapp_paint_dialog_positive_button">Salvar</string>
     <string name="hockeyapp_paint_dialog_neutral_button">Cancelar</string>
-
-    <!-- Permissions -->
-    <string name="hockeyapp_permission_update_title">Acesso ao armazenamento necessário</string>
-    <string name="hockeyapp_permission_update_message">Para poder fazer download e instalar atualizações, você deve permitir que esse aplicativo acesse o armazenamento do seu dispositivo.</string>
-    <string name="hockeyapp_permission_dialog_negative_button">Cancelar</string>
-    <string name="hockeyapp_permission_dialog_positive_button">Tentar novamente</string>
 
     <!-- Dialogs -->
     <string name="hockeyapp_dialog_positive_button">OK</string>

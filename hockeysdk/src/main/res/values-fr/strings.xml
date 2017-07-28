@@ -26,8 +26,6 @@
     <string name="hockeyapp_expiry_info_text">%s a expiré. Vueillez rechercher les mises à jour d\'HockeyApp.</string>
 
     <!-- Feedback Activity -->
-    <string name="hockeyapp_feedback_failed_title">En attente</string>
-    <string name="hockeyapp_feedback_failed_text">Voulez-vous envoyer vos commentaires à nouveau?</string>
     <string name="hockeyapp_feedback_name_hint">Nom</string>
     <string name="hockeyapp_feedback_email_hint">Adresse</string>
     <string name="hockeyapp_feedback_subject_hint">Sujet</string>
@@ -66,8 +64,6 @@
     <string name="hockeyapp_login_headline_text">Saisissez l\'adresse électronique et le mot de passe de votre compte HockeyApp pour autoriser l\'accès à cette application.</string>
     <string name="hockeyapp_login_headline_text_email_only">Saisissez l\'adresse électronique de votre compte HockeyApp pour autoriser l\'accès à cette application.</string>
     <string name="hockeyapp_login_missing_credentials_toast">Saississez l\'information de votre compte HockeyApp.</string>
-    <string name="hockeyapp_login_email_hint">Email</string>
-    <string name="hockeyapp_login_password_hint">Mot de passe</string>
     <string name="hockeyapp_login_login_button_text">Connectez-vous</string>
     <string name="hockeyapp_login_email_hint_required">Email (requis)</string>
     <string name="hockeyapp_login_password_hint_required">Mot de passe (requis)</string>
@@ -81,12 +77,6 @@
     <string name="hockeyapp_paint_dialog_negative_button">Jeter</string>
     <string name="hockeyapp_paint_dialog_positive_button">Oui</string>
     <string name="hockeyapp_paint_dialog_neutral_button">Annuler</string>
-
-    <!-- Permissions -->
-    <string name="hockeyapp_permission_update_title">Besoin d\'accès à la memoire</string>
-    <string name="hockeyapp_permission_update_message">Pour télécharger et installer les mises à jour, vous devez autoriser à l\'application l\'accés à la mémoire de votre appareil.</string>
-    <string name="hockeyapp_permission_dialog_negative_button">Annuler</string>
-    <string name="hockeyapp_permission_dialog_positive_button">Réessayez</string>
 
     <!-- Dialogs -->
     <string name="hockeyapp_dialog_positive_button">D\'accord</string>

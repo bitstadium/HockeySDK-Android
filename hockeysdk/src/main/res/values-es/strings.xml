@@ -26,8 +26,6 @@
     <string name="hockeyapp_expiry_info_text">%s ha caducado. Por favor consulta HockeyApp para ver posibles actualizaciones.</string>
 
     <!-- Feedback Activity -->
-    <string name="hockeyapp_feedback_failed_title">Pendiente</string>
-    <string name="hockeyapp_feedback_failed_text">¿Quieres volver a enviar tus comentarios?</string>
     <string name="hockeyapp_feedback_name_hint">Nombre</string>
     <string name="hockeyapp_feedback_email_hint">Email</string>
     <string name="hockeyapp_feedback_subject_hint">Asunto</string>
@@ -66,8 +64,6 @@
     <string name="hockeyapp_login_headline_text">Por favor introduce email y contraseña de tu cuenta de HockeyApp para autorizar el acceso a esta aplicación.</string>
     <string name="hockeyapp_login_headline_text_email_only">Por favor introduce email de tu cuenta de HockeyApp para autorizar el acceso a esta aplicación.</string>
     <string name="hockeyapp_login_missing_credentials_toast">Por favor, introduce los campos que faltan.</string>
-    <string name="hockeyapp_login_email_hint">Email</string>
-    <string name="hockeyapp_login_password_hint">Contraseña</string>
     <string name="hockeyapp_login_login_button_text">Entrar</string>
     <string name="hockeyapp_login_email_hint_required">Email (obligatorio)</string>
     <string name="hockeyapp_login_password_hint_required">Contraseña (obligatorio)</string>
@@ -81,12 +77,6 @@
     <string name="hockeyapp_paint_dialog_negative_button">Descartar</string>
     <string name="hockeyapp_paint_dialog_positive_button">Guardar</string>
     <string name="hockeyapp_paint_dialog_neutral_button">Cancelar</string>
-
-    <!-- Permissions -->
-    <string name="hockeyapp_permission_update_title">Necesita acceso al almacenamiento</string>
-    <string name="hockeyapp_permission_update_message">Para descargar e instalar actualizaciones tienes que dar permiso a la aplicación para que acceda al almacenamiento de tu dispositivo.</string>
-    <string name="hockeyapp_permission_dialog_negative_button">Cancelar</string>
-    <string name="hockeyapp_permission_dialog_positive_button">Reintentar</string>
 
     <!-- Dialogs -->
     <string name="hockeyapp_dialog_positive_button">OK</string>

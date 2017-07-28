@@ -26,8 +26,6 @@
     <string name="hockeyapp_expiry_info_text">%s 已经过期。请在 HockeyApp 中查看是否存在更新版本。</string>
 
     <!-- Feedback Activity -->
-    <string name="hockeyapp_feedback_failed_title">挂起</string>
-    <string name="hockeyapp_feedback_failed_text">您是否想再次发送您的反馈？</string>
     <string name="hockeyapp_feedback_name_hint">姓名</string>
     <string name="hockeyapp_feedback_email_hint">电子邮件</string>
     <string name="hockeyapp_feedback_subject_hint">主题</string>
@@ -66,8 +64,6 @@
     <string name="hockeyapp_login_headline_text">请输入您的 HockeyApp 帐户邮件地址和密码来授权对此应用程序的访问。</string>
     <string name="hockeyapp_login_headline_text_email_only">请输入您的 HockeyApp 帐户邮件地址来授权对此应用程序的访问。</string>
     <string name="hockeyapp_login_missing_credentials_toast">请输入帐户密码。</string>
-    <string name="hockeyapp_login_email_hint">电子邮件</string>
-    <string name="hockeyapp_login_password_hint">密码</string>
     <string name="hockeyapp_login_login_button_text">登录</string>
     <string name="hockeyapp_login_email_hint_required">电子邮件 (必填)</string>
     <string name="hockeyapp_login_password_hint_required">密码 (必填)</string>
@@ -81,12 +77,6 @@
     <string name="hockeyapp_paint_dialog_negative_button">放弃</string>
     <string name="hockeyapp_paint_dialog_positive_button">保存</string>
     <string name="hockeyapp_paint_dialog_neutral_button">取消</string>
-
-    <!-- Permissions -->
-    <string name="hockeyapp_permission_update_title">需要访问存储权限</string>
-    <string name="hockeyapp_permission_update_message">要想下载和安装应用程序，您需要允许应用程序访问设备存储。</string>
-    <string name="hockeyapp_permission_dialog_negative_button">取消</string>
-    <string name="hockeyapp_permission_dialog_positive_button">重试</string>
 
     <!-- Dialogs -->
     <string name="hockeyapp_dialog_positive_button">确定</string>
