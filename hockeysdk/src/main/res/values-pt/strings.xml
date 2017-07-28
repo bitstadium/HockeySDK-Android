@@ -9,7 +9,7 @@
 
     <!-- Download Failed -->
     <string name="hockeyapp_download_failed_dialog_title">Falha no download</string>
-    <string name="hockeyapp_download_failed_dialog_message">Não foi possivel baixar a atualização. Gostaria de tentar de novo?</string>
+    <string name="hockeyapp_download_failed_dialog_message">Não foi possível baixar a atualização. Gostaria de tentar de novo?</string>
     <string name="hockeyapp_download_failed_dialog_negative_button">Cancelar</string>
     <string name="hockeyapp_download_failed_dialog_positive_button">Tentar novamente</string>
 
@@ -33,7 +33,7 @@
     <string name="hockeyapp_feedback_email_hint">Email</string>
     <string name="hockeyapp_feedback_subject_hint">Assunto</string>
     <string name="hockeyapp_feedback_message_hint">Mensagem</string>
-    <string name="hockeyapp_feedback_last_updated_text">Ultima atualização: %s</string>
+    <string name="hockeyapp_feedback_last_updated_text">Última atualização: %s</string>
     <string name="hockeyapp_feedback_attachment_button_text">Adicionar anexo</string>
     <string name="hockeyapp_feedback_send_button_text">Enviar feedback</string>
     <string name="hockeyapp_feedback_response_button_text">Adicionar Resposta</string>

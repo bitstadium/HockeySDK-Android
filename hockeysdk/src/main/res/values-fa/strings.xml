@@ -51,7 +51,7 @@
     <string name="hockeyapp_feedback_select_file">انتخاب فایل</string>
     <string name="hockeyapp_feedback_select_picture">انتخاب عکس</string>
     <string name="hockeyapp_feedback_max_attachments_allowed">تنها %d ضمیمه مجاز است.</string>
-    <string name="hockeyapp_feedback_attachment_loading">...در حال بارگذاری</string>
+    <string name="hockeyapp_feedback_attachment_loading">…در حال بارگذاری</string>
     <string name="hockeyapp_feedback_attachment_error">خطا</string>
     <string name="hockeyapp_feedback_name_hint_required">نام (مورد نیاز)</string>
     <string name="hockeyapp_feedback_email_hint_required">ایمیل (مورد نیاز)</string>
@@ -59,7 +59,7 @@
     <string name="hockeyapp_feedback_message_hint_required">متن پیام (مورد نیاز)</string>
 
     <!-- Send Feedback Task -->
-    <string name="hockeyapp_feedback_sending_feedback_text">...در حال ارسال بازخورد</string>
+    <string name="hockeyapp_feedback_sending_feedback_text">…در حال ارسال بازخورد</string>
     <string name="hockeyapp_feedback_fetching_feedback_text">بازیابی بحث …</string>
 
     <!-- Login Activity -->
