@@ -418,10 +418,10 @@ public class FeedbackManager {
                     client.setConnection(connection);
                     connection.connect();
 
-                    Toast.makeText(context, "Screenshot '" + result.getName() + "' is available in gallery.",
+                    Toast.makeText(context, currentActivity.getString(R.string.hockeyapp_feedback_screenshot_publish, result.getName()),
                             Toast.LENGTH_LONG).show();
                 } else {
-                    Toast.makeText(context, "Screenshot could not be created. Sorry.", Toast.LENGTH_LONG)
+                    Toast.makeText(context, R.string.hockeyapp_feedback_screenshot_fail, Toast.LENGTH_LONG)
                             .show();
                 }
             }
@@ -442,7 +442,10 @@ public class FeedbackManager {
         intent.setAction(BROADCAST_ACTION);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(currentActivity, BROADCAST_REQUEST_CODE, intent, PendingIntent.FLAG_ONE_SHOT);
 
-        Notification notification = Util.createNotification(currentActivity, pendingIntent, "HockeyApp Feedback", "Take a screenshot for your feedback.", iconId);
+        Notification notification = Util.createNotification(currentActivity, pendingIntent,
+                currentActivity.getString(R.string.hockeyapp_feedback_screenshot_notification_title),
+                currentActivity.getString(R.string.hockeyapp_feedback_screenshot_notification_message),
+                iconId);
 
         notificationManager.notify(SCREENSHOT_NOTIFICATION_ID, notification);
 

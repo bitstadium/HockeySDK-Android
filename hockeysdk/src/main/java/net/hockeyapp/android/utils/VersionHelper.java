@@ -6,6 +6,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.text.TextUtils;
 
+import net.hockeyapp.android.R;
 import net.hockeyapp.android.UpdateInfoListener;
 
 import org.json.JSONArray;
@@ -33,17 +34,19 @@ public class VersionHelper {
 
     private ArrayList<JSONObject> mSortedVersions;
     private JSONObject mNewest;
+    private Context mContext;
     private UpdateInfoListener mListener;
     private int mCurrentVersionCode;
 
     public VersionHelper(Context context, String infoJSON, UpdateInfoListener listener) {
+        this.mContext = context;
         this.mListener = listener;
 
-        loadVersions(context, infoJSON);
+        loadVersions(infoJSON);
         sortVersions();
     }
 
-    private void loadVersions(Context context, String infoJSON) {
+    private void loadVersions(String infoJSON) {
         this.mNewest = new JSONObject();
         this.mSortedVersions = new ArrayList<>();
         this.mCurrentVersionCode = mListener.getCurrentVersionCode();
@@ -55,7 +58,7 @@ public class VersionHelper {
             for (int index = 0; index < versions.length(); index++) {
                 JSONObject entry = versions.getJSONObject(index);
                 boolean largerVersionCode = (entry.getInt("version") > versionCode);
-                boolean newerApkFile = ((entry.getInt("version") == versionCode) && VersionHelper.isNewerThanLastUpdateTime(context, entry.getLong("timestamp")));
+                boolean newerApkFile = ((entry.getInt("version") == versionCode) && VersionHelper.isNewerThanLastUpdateTime(mContext, entry.getLong("timestamp")));
 
                 if (largerVersionCode || newerApkFile) {
                     mNewest = entry;
@@ -129,11 +132,11 @@ public class VersionHelper {
             if (count > 0) {
                 result.append(getSeparator());
                 if (showRestore) {
-                    result.append(getRestoreButton(count, version));
+                    result.append(getRestoreButton(version));
                 }
             }
             result.append(getVersionLine(count, version));
-            result.append(getVersionNotes(count, version));
+            result.append(getVersionNotes(version));
             count++;
         }
 
@@ -147,12 +150,14 @@ public class VersionHelper {
         return "<hr style='border-top: 1px solid #c8c8c8; border-bottom: 0px; margin: 40px 10px 0px 10px;' />";
     }
 
-    private String getRestoreButton(int count, JSONObject version) {
+    private String getRestoreButton(JSONObject version) {
         StringBuilder result = new StringBuilder();
 
         String versionID = getVersionID(version);
         if (!TextUtils.isEmpty(versionID)) {
-            result.append("<a href='restore:" + versionID + "'  style='background: #c8c8c8; color: #000; display: block; float: right; padding: 7px; margin: 0px 10px 10px; text-decoration: none;'>Restore</a>");
+            String style = "background: #c8c8c8; color: #000; display: block; float: right; padding: 7px; margin: 0px 10px 10px; text-decoration: none;";
+            result.append(String.format("<a href='restore:%s' style='%s'>%s</a>",
+                    versionID, style, mContext.getString(R.string.hockeyapp_update_restore)));
         }
 
         return result.toString();
@@ -176,12 +181,13 @@ public class VersionHelper {
 
         result.append("<div style='padding: 20px 10px 10px;'><strong>");
         if (count == 0) {
-            result.append("Newest version:");
+            result.append(mContext.getString(R.string.hockeyapp_update_newest_version)).append(':');
         } else {
-            result.append("Version " + versionName + " (" + versionCode + "): ");
+            String versionString = String.format(mContext.getString(R.string.hockeyapp_update_version), versionName);
+            result.append(String.format("%s (%s): ", versionString, versionCode));
             if ((versionCode != newestCode) && (versionCode == mCurrentVersionCode)) {
                 mCurrentVersionCode = -1;
-                result.append("[INSTALLED]");
+                result.append(String.format("[%s]", mContext.getString(R.string.hockeyapp_update_already_installed)));
             }
         }
         result.append("</strong></div>");
@@ -207,13 +213,13 @@ public class VersionHelper {
         return versionName;
     }
 
-    private String getVersionNotes(int count, JSONObject version) {
+    private String getVersionNotes(JSONObject version) {
         StringBuilder result = new StringBuilder();
 
         String notes = failSafeGetStringFromJSON(version, "notes", "");
         result.append("<div style='padding: 0px 10px;'>");
         if (notes.trim().length() == 0) {
-            result.append("<em>No information.</em>");
+            result.append(String.format("<em>%s</em>", mContext.getString(R.string.hockeyapp_update_no_info)));
         } else {
             result.append(notes);
         }

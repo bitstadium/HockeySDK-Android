@@ -17,10 +17,18 @@
     <string name="hockeyapp_update_mandatory_toast">%s is available and is a mandatory update!</string>
     <string name="hockeyapp_update_dialog_title">Update Available</string>
     <string name="hockeyapp_update_button">Update</string>
+    <string name="hockeyapp_update_restore" translatable="false">Restore</string>
     <string name="hockeyapp_update_dialog_message">Show information about the new update?</string>
     <string name="hockeyapp_update_dialog_negative_button">Ignore</string>
     <string name="hockeyapp_update_dialog_positive_button">Show</string>
     <string name="hockeyapp_update_version_details_label" translatable="false">%1$s\n%2$s - %3$s</string>
+    <string name="hockeyapp_update_title" translatable="false">App Update</string>
+    <string name="hockeyapp_update_unknown_size" translatable="false">Unknown size</string>
+    <string name="hockeyapp_update_version" translatable="false">Version %s</string>
+    <string name="hockeyapp_update_newest_version" translatable="false">Newest version</string>
+    <string name="hockeyapp_update_already_installed" translatable="false">INSTALLED</string>
+    <string name="hockeyapp_update_loading" translatable="false">Loading…</string>
+    <string name="hockeyapp_update_no_info" translatable="false">No information.</string>
 
     <!-- Expiry Info -->
     <string name="hockeyapp_expiry_info_title">Build Expired</string>
@@ -66,6 +74,12 @@
     <string name="hockeyapp_feedback_sending_feedback_text">Sending feedback…</string>
     <string name="hockeyapp_feedback_fetching_feedback_text">Retrieving discussions…</string>
     <string name="hockeyapp_feedback_sent_toast">Feedback sent</string>
+
+    <!-- Feedback Screenshot -->
+    <string name="hockeyapp_feedback_screenshot_publish" translatable="false">Screenshot \"%s\" is available in gallery.</string>
+    <string name="hockeyapp_feedback_screenshot_fail" translatable="false">Screenshot could not be created. Sorry.</string>
+    <string name="hockeyapp_feedback_screenshot_notification_title" translatable="false">HockeyApp Feedback</string>
+    <string name="hockeyapp_feedback_screenshot_notification_message" translatable="false">Take a screenshot for your feedback.</string>
 
     <!-- Login Activity -->
     <string name="hockeyapp_login_headline_text">Please enter your HockeyApp account\'s email address and password to authorize access to this app.</string>

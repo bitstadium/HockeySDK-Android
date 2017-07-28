@@ -33,5 +33,7 @@ public class UpdateActivity extends Activity {
                     .add(android.R.id.content, fragment, UpdateFragment.FRAGMENT_TAG)
                     .commit();
         }
+
+        setTitle(R.string.hockeyapp_update_title);
     }
 }

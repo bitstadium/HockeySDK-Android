@@ -162,7 +162,7 @@ public class DownloadFileTask extends AsyncTask<Void, Integer, Long> {
             if (mProgressDialog == null) {
                 mProgressDialog = new ProgressDialog(mContext);
                 mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-                mProgressDialog.setMessage("Loading...");
+                mProgressDialog.setMessage(mContext.getString(R.string.hockeyapp_update_loading));
                 mProgressDialog.setCancelable(false);
                 mProgressDialog.show();
             }
