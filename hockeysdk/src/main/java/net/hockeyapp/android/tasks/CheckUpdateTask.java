@@ -14,7 +14,6 @@ import net.hockeyapp.android.Tracking;
 import net.hockeyapp.android.UpdateManagerListener;
 import net.hockeyapp.android.utils.HockeyLog;
 import net.hockeyapp.android.utils.Util;
-import net.hockeyapp.android.utils.VersionCache;
 import net.hockeyapp.android.utils.VersionHelper;
 
 import org.json.JSONArray;
@@ -99,14 +98,6 @@ public class CheckUpdateTask extends AsyncTask<Void, String, JSONArray> {
     protected JSONArray doInBackground(Void... args) {
         try {
             int versionCode = getVersionCode();
-
-            JSONArray json = new JSONArray(VersionCache.getVersionInfo(context));
-
-            if ((getCachingEnabled()) && (findNewVersion(json, versionCode))) {
-                HockeyLog.verbose("HockeyUpdate", "Returning cached JSON");
-                return json;
-            }
-
             URL url = new URL(getURLString("json"));
             URLConnection connection = createConnection(url);
             connection.connect();
@@ -115,7 +106,7 @@ public class CheckUpdateTask extends AsyncTask<Void, String, JSONArray> {
             String jsonString = Util.convertStreamToString(inputStream);
             inputStream.close();
 
-            json = new JSONArray(jsonString);
+            JSONArray json = new JSONArray(jsonString);
             if (findNewVersion(json, versionCode)) {
                 json = limitResponseSize(json);
                 return json;
@@ -236,9 +227,5 @@ public class CheckUpdateTask extends AsyncTask<Void, String, JSONArray> {
             // UTF-8 should be available, so just in case
             return "";
         }
-    }
-
-    protected boolean getCachingEnabled() {
-        return true;
     }
 }

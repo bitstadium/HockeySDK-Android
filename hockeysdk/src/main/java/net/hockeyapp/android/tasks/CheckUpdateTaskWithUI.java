@@ -15,7 +15,6 @@ import net.hockeyapp.android.UpdateFragment;
 import net.hockeyapp.android.UpdateManagerListener;
 import net.hockeyapp.android.utils.HockeyLog;
 import net.hockeyapp.android.utils.Util;
-import net.hockeyapp.android.utils.VersionCache;
 
 import org.json.JSONArray;
 
@@ -67,14 +66,6 @@ public class CheckUpdateTaskWithUI extends CheckUpdateTask {
     }
 
     private void showDialog(final JSONArray updateInfo) {
-
-        //Reason for enabled Caching
-        //we want to prevent users from being able to weasle around mandatory updates by going offline.
-        if (getCachingEnabled()) {
-            HockeyLog.verbose("HockeyUpdate", "Caching is enabled. Setting version to cached one.");
-            VersionCache.setVersionInfo(mActivity, updateInfo.toString());
-        }
-
         if ((mActivity == null) || (mActivity.isFinishing())) {
             return;
         }
@@ -105,10 +96,6 @@ public class CheckUpdateTaskWithUI extends CheckUpdateTask {
 
             builder.setPositiveButton(R.string.hockeyapp_update_dialog_positive_button, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
-                    if (getCachingEnabled()) {
-                        VersionCache.setVersionInfo(mActivity, "[]");
-                    }
-
                     WeakReference<Activity> weakActivity = new WeakReference<>(mActivity);
                     if (Util.runsOnTablet(weakActivity)) {
                         showUpdateFragment(updateInfo);
