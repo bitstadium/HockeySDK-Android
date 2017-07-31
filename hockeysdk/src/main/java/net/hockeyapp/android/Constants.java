@@ -1,14 +1,13 @@
 package net.hockeyapp.android;
 
 import android.annotation.SuppressLint;
-import android.content.ContentResolver;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.text.TextUtils;
 
 import net.hockeyapp.android.utils.HockeyLog;
@@ -102,8 +101,8 @@ public class Constants {
         Constants.PHONE_MANUFACTURER = android.os.Build.MANUFACTURER;
 
         loadPackageData(context);
-        loadCrashIdentifier(context);
         loadDeviceIdentifier(context);
+        loadCrashIdentifier(context);
     }
 
     /**
@@ -171,9 +170,8 @@ public class Constants {
      * @param context the context to use. Usually your Activity object.
      */
     private static void loadCrashIdentifier(Context context) {
-        @SuppressLint("HardwareIds") String deviceIdentifier = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
-        if (!TextUtils.isEmpty(Constants.APP_PACKAGE) && !TextUtils.isEmpty(deviceIdentifier)) {
-            String combined = Constants.APP_PACKAGE + ":" + deviceIdentifier + ":" + createSalt(context);
+        if (!TextUtils.isEmpty(Constants.APP_PACKAGE) && !TextUtils.isEmpty(Constants.DEVICE_IDENTIFIER)) {
+            String combined = Constants.APP_PACKAGE + ":" + Constants.DEVICE_IDENTIFIER + ":" + createSalt(context);
             try {
                 MessageDigest digest = MessageDigest.getInstance("SHA-1");
                 byte[] bytes = combined.getBytes("UTF-8");
@@ -194,14 +192,13 @@ public class Constants {
      * @param context The context to use. Usually your Activity object.
      */
     private static void loadDeviceIdentifier(Context context) {
-        // get device ID
-        ContentResolver resolver = context.getContentResolver();
-        @SuppressLint("HardwareIds") String deviceIdentifier = Settings.Secure.getString(resolver, Settings.Secure.ANDROID_ID);
-        if (deviceIdentifier != null) {
-            String deviceIdentifierAnonymized = tryHashStringSha256(context, deviceIdentifier);
-            // if anonymized device identifier is null we should use a random UUID
-            Constants.DEVICE_IDENTIFIER = deviceIdentifierAnonymized != null ? deviceIdentifierAnonymized : UUID.randomUUID().toString();
+        final SharedPreferences preferences = context.getSharedPreferences("HockeyApp", Context.MODE_PRIVATE);
+        String deviceIdentifier = preferences.getString("deviceIdentifier", null);
+        if (deviceIdentifier == null) {
+            deviceIdentifier = UUID.randomUUID().toString();
+            preferences.edit().putString("deviceIdentifier", deviceIdentifier).apply();
         }
+        Constants.DEVICE_IDENTIFIER = deviceIdentifier;
     }
 
     /**

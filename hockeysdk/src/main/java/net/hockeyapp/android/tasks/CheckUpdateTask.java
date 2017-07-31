@@ -1,13 +1,11 @@
 package net.hockeyapp.android.tasks;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.provider.Settings;
-
 import android.text.TextUtils;
+
 import net.hockeyapp.android.BuildConfig;
 import net.hockeyapp.android.Constants;
 import net.hockeyapp.android.Tracking;
@@ -200,7 +198,7 @@ public class CheckUpdateTask extends AsyncTask<Void, String, JSONArray> {
         builder.append((this.appIdentifier != null ? this.appIdentifier : context.getPackageName()));
         builder.append("?format=").append(format);
 
-        @SuppressLint("HardwareIds") String deviceIdentifier = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+        String deviceIdentifier = Constants.DEVICE_IDENTIFIER;
         if (!TextUtils.isEmpty(deviceIdentifier)) {
             builder.append("&udid=").append(encodeParam(deviceIdentifier));
         }
