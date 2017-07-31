@@ -147,7 +147,7 @@ public class CheckUpdateTaskWithUI extends CheckUpdateTask {
 
             try {
                 Method method = fragmentClass.getMethod("newInstance", String.class, String.class, boolean.class);
-                DialogFragment updateFragment = (DialogFragment) method.invoke(null, updateInfo.toString(), getURLString("apk"), true);
+                DialogFragment updateFragment = (DialogFragment) method.invoke(null, updateInfo.toString(), apkUrlString, true);
                 updateFragment.show(fragmentTransaction, UpdateFragment.FRAGMENT_TAG);
             } catch (Exception e) { // can't catch ReflectiveOperationException here because not targeting API level 19 or later
                 HockeyLog.error("An exception happened while showing the update fragment", e);
@@ -166,7 +166,7 @@ public class CheckUpdateTaskWithUI extends CheckUpdateTask {
             intent.setClass(mActivity, UpdateActivity.class);
             intent.putExtra(UpdateActivity.FRAGMENT_CLASS, fragmentClass.getName());
             intent.putExtra(UpdateFragment.FRAGMENT_VERSION_INFO, updateInfo.toString());
-            intent.putExtra(UpdateFragment.FRAGMENT_URL, getURLString(APK));
+            intent.putExtra(UpdateFragment.FRAGMENT_URL, apkUrlString);
             intent.putExtra(UpdateFragment.FRAGMENT_DIALOG, false);
             mActivity.startActivity(intent);
 

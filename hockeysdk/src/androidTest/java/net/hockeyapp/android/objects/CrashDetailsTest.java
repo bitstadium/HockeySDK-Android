@@ -35,7 +35,7 @@ public class CrashDetailsTest {
     }
 
     @Test
-    public void testCrashDetailParsing() throws IOException {
+    public void testCrashDetailParsing() throws Exception {
         Throwable tr = new RuntimeException("Just a test exception");
         ExceptionHandler.saveException(tr, Thread.currentThread(), null);
 
@@ -51,7 +51,7 @@ public class CrashDetailsTest {
         assertFalse(TextUtils.isEmpty(details.getCrashIdentifier()));
 
         assertEquals(crashIdentifier, details.getCrashIdentifier());
-        assertEquals(Constants.CRASH_IDENTIFIER, details.getReporterKey());
+        assertEquals(Constants.getCrashIdentifier().get(), details.getReporterKey());
         assertEquals(Constants.ANDROID_VERSION, details.getOsVersion());
         assertEquals(Constants.ANDROID_BUILD, details.getOsBuild());
         assertEquals(Constants.PHONE_MANUFACTURER, details.getDeviceManufacturer());
