@@ -1,13 +1,11 @@
 package net.hockeyapp.android.tasks;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.provider.Settings;
-
 import android.text.TextUtils;
+
 import net.hockeyapp.android.BuildConfig;
 import net.hockeyapp.android.Constants;
 import net.hockeyapp.android.Tracking;
@@ -29,6 +27,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 
 /**
  * <h3>Description</h3>
@@ -39,9 +38,8 @@ import java.util.Locale;
 public class CheckUpdateTask extends AsyncTask<Void, String, JSONArray> {
     private static final int MAX_NUMBER_OF_VERSIONS = 25;
 
-    protected static final String APK = "apk";
-
     protected String urlString = null;
+    protected String apkUrlString = null;
     protected String appIdentifier = null;
 
     private Context context = null;
@@ -96,6 +94,10 @@ public class CheckUpdateTask extends AsyncTask<Void, String, JSONArray> {
 
     @Override
     protected JSONArray doInBackground(Void... args) {
+
+        // It must be called in background, since it depends on shared preferences
+        apkUrlString = getURLString("apk");
+
         try {
             int versionCode = getVersionCode();
             URL url = new URL(getURLString("json"));
@@ -168,7 +170,7 @@ public class CheckUpdateTask extends AsyncTask<Void, String, JSONArray> {
             HockeyLog.verbose("HockeyUpdate", "Received Update Info");
 
             if (listener != null) {
-                listener.onUpdateAvailable(updateInfo, getURLString(APK));
+                listener.onUpdateAvailable(updateInfo, apkUrlString);
             }
         } else {
             HockeyLog.verbose("HockeyUpdate", "No Update Info available");
@@ -184,14 +186,19 @@ public class CheckUpdateTask extends AsyncTask<Void, String, JSONArray> {
         appIdentifier = null;
     }
 
-    protected String getURLString(String format) {
+    private String getURLString(String format) {
         StringBuilder builder = new StringBuilder();
         builder.append(urlString);
         builder.append("api/2/apps/");
         builder.append((this.appIdentifier != null ? this.appIdentifier : context.getPackageName()));
         builder.append("?format=").append(format);
 
-        @SuppressLint("HardwareIds") String deviceIdentifier = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+        String deviceIdentifier = null;
+        try {
+            deviceIdentifier = Constants.getDeviceIdentifier().get();
+        } catch (InterruptedException | ExecutionException e) {
+            HockeyLog.debug("Error get device identifier", e);
+        }
         if (!TextUtils.isEmpty(deviceIdentifier)) {
             builder.append("&udid=").append(encodeParam(deviceIdentifier));
         }

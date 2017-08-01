@@ -16,6 +16,7 @@ import java.io.Writer;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.Date;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 /**
  * <h3>Description</h3>
@@ -94,8 +95,13 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
             crashDetails.setThreadName(thread.getName() + "-" + thread.getId());
         }
 
-        if (Constants.CRASH_IDENTIFIER != null && (listener == null || listener.includeDeviceIdentifier())) {
-            crashDetails.setReporterKey(Constants.CRASH_IDENTIFIER);
+        String deviceIdentifier = null;
+        try {
+            deviceIdentifier = Constants.getDeviceIdentifier().get();
+        } catch (Exception ignored) {
+        }
+        if (deviceIdentifier != null && (listener == null || listener.includeDeviceIdentifier())) {
+            crashDetails.setReporterKey(deviceIdentifier);
         }
 
         crashDetails.writeCrashReport(context);
@@ -185,8 +191,13 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
             crashDetails.setThreadName(thread.getName() + "-" + thread.getId());
         }
 
-        if (Constants.CRASH_IDENTIFIER != null && (listener == null || listener.includeDeviceIdentifier())) {
-            crashDetails.setReporterKey(Constants.CRASH_IDENTIFIER);
+        String deviceIdentifier = null;
+        try {
+            deviceIdentifier = Constants.getDeviceIdentifier().get();
+        } catch (Exception ignored) {
+        }
+        if (deviceIdentifier != null && (listener == null || listener.includeDeviceIdentifier())) {
+            crashDetails.setReporterKey(deviceIdentifier);
         }
 
         crashDetails.writeCrashReport(context);
