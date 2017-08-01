@@ -87,7 +87,7 @@ public class CrashManagerTest {
         assertNotNull(lastStackTrace);
 
         assertEquals(lastStackTrace.getName().substring(0, lastStackTrace.getName().indexOf(".stacktrace")), crashDetails.getCrashIdentifier());
-        assertEquals(Constants.getCrashIdentifier().get(), crashDetails.getReporterKey());
+        assertEquals(Constants.getDeviceIdentifier().get(), crashDetails.getReporterKey());
 
         fakeCrashReport();
         fakeCrashReport();

@@ -111,9 +111,23 @@ class TelemetryContext {
         mInstrumentationKey = Util.convertAppIdentifierToGuid(appIdentifier);
 
         configDeviceContext();
-        configUserId();
         configInternalContext();
         configApplicationContext();
+
+        // Set device identifier.
+        AsyncTaskUtils.execute(new AsyncTask<Void, Object, Object>() {
+            @Override
+            protected Object doInBackground(Void... voids) {
+                try {
+                    String deviceId = Constants.getDeviceIdentifier().get();
+                    setDeviceId(deviceId);
+                    setAnonymousUserId(deviceId);
+                } catch (InterruptedException | ExecutionException e) {
+                    HockeyLog.debug("Error config device identifier", e);
+                }
+                return null;
+            }
+        });
     }
 
     /**
@@ -176,24 +190,6 @@ class TelemetryContext {
     }
 
     /**
-     * Load the user context associated with telemetry data.
-     */
-    private void configUserId() {
-        AsyncTaskUtils.execute(new AsyncTask<Void, Object, Object>() {
-            @Override
-            protected Object doInBackground(Void... voids) {
-                HockeyLog.debug(TAG, "Configuring user context");
-                try {;
-                    setAnonymousUserId(Constants.getCrashIdentifier().get());
-                } catch (InterruptedException | ExecutionException e) {
-                    HockeyLog.debug("Error config crash identifier", e);
-                }
-                return null;
-            }
-        });
-    }
-
-    /**
      * Sets the device telemetryContext tags.
      */
     private void configDeviceContext() {
@@ -205,17 +201,6 @@ class TelemetryContext {
         setOsLocale(Locale.getDefault().toString());
         setOsLanguage(Locale.getDefault().getLanguage());
         updateScreenResolution();
-        AsyncTaskUtils.execute(new AsyncTask<Void, Object, Object>() {
-            @Override
-            protected Object doInBackground(Void... voids) {
-                try {
-                    setDeviceId(Constants.getDeviceIdentifier().get());
-                } catch (InterruptedException | ExecutionException e) {
-                    HockeyLog.debug("Error config device identifier", e);
-                }
-                return null;
-            }
-        });
 
         // check device type
         Context context = getContext();

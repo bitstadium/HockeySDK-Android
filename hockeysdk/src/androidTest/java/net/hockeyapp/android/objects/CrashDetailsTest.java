@@ -51,7 +51,7 @@ public class CrashDetailsTest {
         assertFalse(TextUtils.isEmpty(details.getCrashIdentifier()));
 
         assertEquals(crashIdentifier, details.getCrashIdentifier());
-        assertEquals(Constants.getCrashIdentifier().get(), details.getReporterKey());
+        assertEquals(Constants.getDeviceIdentifier().get(), details.getReporterKey());
         assertEquals(Constants.ANDROID_VERSION, details.getOsVersion());
         assertEquals(Constants.ANDROID_BUILD, details.getOsBuild());
         assertEquals(Constants.PHONE_MANUFACTURER, details.getDeviceManufacturer());

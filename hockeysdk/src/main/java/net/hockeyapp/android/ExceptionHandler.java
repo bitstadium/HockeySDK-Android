@@ -95,13 +95,13 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
             crashDetails.setThreadName(thread.getName() + "-" + thread.getId());
         }
 
-        String crashIdentifier = null;
+        String deviceIdentifier = null;
         try {
-            crashIdentifier = Constants.getCrashIdentifier().get();
+            deviceIdentifier = Constants.getDeviceIdentifier().get();
         } catch (Exception ignored) {
         }
-        if (crashIdentifier != null && (listener == null || listener.includeDeviceIdentifier())) {
-            crashDetails.setReporterKey(crashIdentifier);
+        if (deviceIdentifier != null && (listener == null || listener.includeDeviceIdentifier())) {
+            crashDetails.setReporterKey(deviceIdentifier);
         }
 
         crashDetails.writeCrashReport(context);
@@ -191,13 +191,13 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
             crashDetails.setThreadName(thread.getName() + "-" + thread.getId());
         }
 
-        String crashIdentifier = null;
+        String deviceIdentifier = null;
         try {
-            crashIdentifier = Constants.getCrashIdentifier().get();
+            deviceIdentifier = Constants.getDeviceIdentifier().get();
         } catch (Exception ignored) {
         }
-        if (crashIdentifier != null && (listener == null || listener.includeDeviceIdentifier())) {
-            crashDetails.setReporterKey(crashIdentifier);
+        if (deviceIdentifier != null && (listener == null || listener.includeDeviceIdentifier())) {
+            crashDetails.setReporterKey(deviceIdentifier);
         }
 
         crashDetails.writeCrashReport(context);

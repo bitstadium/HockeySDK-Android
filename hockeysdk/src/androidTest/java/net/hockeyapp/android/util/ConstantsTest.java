@@ -31,7 +31,6 @@ public class ConstantsTest {
         assertNotNull(Constants.ANDROID_BUILD);
         assertNotNull(Constants.PHONE_MODEL);
         assertNotNull(Constants.PHONE_MANUFACTURER);
-        assertNotNull(Constants.getCrashIdentifier().get());
         assertNotNull(Constants.getDeviceIdentifier().get());
 
         //TODO add tests for other constants, too.

@@ -1,24 +1,18 @@
 package net.hockeyapp.android;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
-import android.text.TextUtils;
 
 import net.hockeyapp.android.utils.AsyncTaskUtils;
 import net.hockeyapp.android.utils.CompletedFuture;
 import net.hockeyapp.android.utils.HockeyLog;
-import net.hockeyapp.android.utils.Util;
 
 import java.io.File;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
@@ -88,10 +82,6 @@ public class Constants {
     public static String PHONE_MANUFACTURER = null;
 
     /**
-     * Unique identifier for crash reports. This is package and device specific.
-     */
-    private static String CRASH_IDENTIFIER = null;
-    /**
      * Unique identifier for device, not dependent on package or device.
      */
     private static String DEVICE_IDENTIFIER = null;
@@ -101,19 +91,6 @@ public class Constants {
      */
     private static CountDownLatch latch = new CountDownLatch(1);
 
-    public static Future<String> getCrashIdentifier() {
-        if (latch.getCount() == 0) {
-            return new CompletedFuture<>(CRASH_IDENTIFIER);
-        }
-        return AsyncTaskUtils.execute(new Callable<String>() {
-
-            @Override
-            public String call() throws Exception {
-                latch.await();
-                return CRASH_IDENTIFIER;
-            }
-        });
-    }
     public static Future<String> getDeviceIdentifier() {
         if (latch.getCount() == 0) {
             return new CompletedFuture<>(DEVICE_IDENTIFIER);
@@ -227,43 +204,8 @@ public class Constants {
             @Override
             protected void onPostExecute(String deviceIdentifier) {
                 Constants.DEVICE_IDENTIFIER = deviceIdentifier;
-
-                if (!TextUtils.isEmpty(Constants.APP_PACKAGE) && !TextUtils.isEmpty(Constants.DEVICE_IDENTIFIER)) {
-                    String combined = Constants.APP_PACKAGE + ":" + Constants.DEVICE_IDENTIFIER + ":" + createSalt(context);
-                    try {
-                        Constants.CRASH_IDENTIFIER = Util.bytesToHex(Util.hash(combined.getBytes("UTF-8"), "SHA-1"));
-                    } catch (Throwable e) {
-                        HockeyLog.error("Couldn't create crash identifier", e);
-                    }
-                }
                 latch.countDown();
             }
         });
-    }
-
-    /**
-     * Helper method to create a salt for the crash identifier.
-     *
-     * @param context the context to use. Usually your Activity object.
-     */
-    @SuppressLint("InlinedApi")
-    @SuppressWarnings("deprecation")
-    private static String createSalt(Context context) {
-        String abiString;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            abiString = Build.SUPPORTED_ABIS[0];
-        } else {
-            abiString = Build.CPU_ABI;
-        }
-
-        String fingerprint = "HA" + (Build.BOARD.length() % 10) + (Build.BRAND.length() % 10) +
-                (abiString.length() % 10) + (Build.PRODUCT.length() % 10);
-        String serial = "";
-        try {
-            serial = android.os.Build.class.getField("SERIAL").get(null).toString();
-        } catch (Throwable ignored) {
-        }
-
-        return fingerprint + ":" + serial;
     }
 }
