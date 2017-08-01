@@ -17,9 +17,17 @@
     <string name="hockeyapp_update_mandatory_toast">%s 有更新可用并且为强制更新! </string>
     <string name="hockeyapp_update_dialog_title">有更新</string>
     <string name="hockeyapp_update_button">更新</string>
+    <string name="hockeyapp_update_restore">恢复</string>
     <string name="hockeyapp_update_dialog_message">显示更新信息？</string>
     <string name="hockeyapp_update_dialog_negative_button">忽略</string>
     <string name="hockeyapp_update_dialog_positive_button">显示</string>
+    <string name="hockeyapp_update_title">应用更新</string>
+    <string name="hockeyapp_update_unknown_size">文件大小未知</string>
+    <string name="hockeyapp_update_version">版本 %s</string>
+    <string name="hockeyapp_update_newest_version">最新版本</string>
+    <string name="hockeyapp_update_already_installed">已安装</string>
+    <string name="hockeyapp_update_loading">正在加载…</string>
+    <string name="hockeyapp_update_no_info">未知信息</string>
 
     <!-- Expiry Info -->
     <string name="hockeyapp_expiry_info_title">版本过期</string>
@@ -60,6 +68,12 @@
     <string name="hockeyapp_feedback_sending_feedback_text">发送反馈中…</string>
     <string name="hockeyapp_feedback_fetching_feedback_text">获取相关讨论内容中…</string>
 
+    <!-- Feedback Screenshot -->
+    <string name="hockeyapp_feedback_screenshot_publish">Gallery中可见截图 \"%s\"</string>
+    <string name="hockeyapp_feedback_screenshot_fail">截图失败</string>
+    <string name="hockeyapp_feedback_screenshot_notification_title">您的反馈意见</string>
+    <string name="hockeyapp_feedback_screenshot_notification_message">您的反馈意见截图</string>
+    
     <!-- Login Activity -->
     <string name="hockeyapp_login_headline_text">请输入您的 HockeyApp 帐户邮件地址和密码来授权对此应用程序的访问。</string>
     <string name="hockeyapp_login_headline_text_email_only">请输入您的 HockeyApp 帐户邮件地址来授权对此应用程序的访问。</string>

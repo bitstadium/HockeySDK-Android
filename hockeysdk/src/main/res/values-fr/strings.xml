@@ -17,9 +17,17 @@
     <string name="hockeyapp_update_mandatory_toast">%s est disponible. Cette mise à jour est obligatoire!</string>
     <string name="hockeyapp_update_dialog_title">Mise à jour disponible</string>
     <string name="hockeyapp_update_button">Mise à jour</string>
+    <string name="hockeyapp_update_restore">Restaurer</string>
     <string name="hockeyapp_update_dialog_message">Afficher les informations sur la mise à jour?</string>
     <string name="hockeyapp_update_dialog_negative_button">Ignorer</string>
     <string name="hockeyapp_update_dialog_positive_button">Afficher</string>
+    <string name="hockeyapp_update_title">Mise à jour de l\'application</string>
+    <string name="hockeyapp_update_unknown_size">taille inconnue</string>
+    <string name="hockeyapp_update_version">Version %s</string>
+    <string name="hockeyapp_update_newest_version">dernière version</string>
+    <string name="hockeyapp_update_already_installed">installée</string>
+    <string name="hockeyapp_update_loading">Chargement…</string>
+    <string name="hockeyapp_update_no_info">Pas d\'information</string>
 
     <!-- Expiry Info -->
     <string name="hockeyapp_expiry_info_title">Version expirée</string>
@@ -59,6 +67,12 @@
     <!-- Send Feedback Task -->
     <string name="hockeyapp_feedback_sending_feedback_text">Envoi…</string>
     <string name="hockeyapp_feedback_fetching_feedback_text">Chargement des commentaires…</string>
+
+    <!-- Feedback Screenshot -->
+    <string name="hockeyapp_feedback_screenshot_publish">Capture d\'écran disponible dans la gallerie</string>
+    <string name="hockeyapp_feedback_screenshot_fail">La capture d\'écran n\'a pas pu être créée, désolé</string>
+    <string name="hockeyapp_feedback_screenshot_notification_title">Commentaires HockeyApp</string>
+    <string name="hockeyapp_feedback_screenshot_notification_message">Prendre une capture d\'écran pour votre commentaire.</string>
 
     <!-- Login Activity -->
     <string name="hockeyapp_login_headline_text">Saisissez l\'adresse électronique et le mot de passe de votre compte HockeyApp pour autoriser l\'accès à cette application.</string>

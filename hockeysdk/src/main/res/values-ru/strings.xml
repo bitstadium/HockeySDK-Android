@@ -17,9 +17,17 @@
     <string name="hockeyapp_update_mandatory_toast">%s доступен и является обязательным для обновления!</string>
     <string name="hockeyapp_update_dialog_title">Доступно обновление</string>
     <string name="hockeyapp_update_button">Обновить</string>
+    <string name="hockeyapp_update_restore">Восстановить</string>
     <string name="hockeyapp_update_dialog_message">Показывать информацию о доступных обновлениях?</string>
     <string name="hockeyapp_update_dialog_negative_button">Игнорировать</string>
     <string name="hockeyapp_update_dialog_positive_button">Показать</string>
+    <string name="hockeyapp_update_title">Обновление приложения</string>
+    <string name="hockeyapp_update_unknown_size">Размер неизвестен</string>
+    <string name="hockeyapp_update_version">Версия %s</string>
+    <string name="hockeyapp_update_newest_version">Последняя версия</string>
+    <string name="hockeyapp_update_already_installed">УСТАНОВЛЕНО</string>
+    <string name="hockeyapp_update_loading">Загрузка…</string>
+    <string name="hockeyapp_update_no_info">Нет информации.</string>
 
     <!-- Expiry Info -->
     <string name="hockeyapp_expiry_info_title">Сборка истекла</string>
@@ -62,6 +70,12 @@
     <!-- Send Feedback Task -->
     <string name="hockeyapp_feedback_sending_feedback_text">Отправка отзыва…</string>
     <string name="hockeyapp_feedback_fetching_feedback_text">Получение отзывов…</string>
+
+    <!-- Feedback Screenshot -->
+    <string name="hockeyapp_feedback_screenshot_publish">Снимок экрана \"%s\" достпен в галерее.</string>
+    <string name="hockeyapp_feedback_screenshot_fail">Невозможно создать снимок экрана.</string>
+    <string name="hockeyapp_feedback_screenshot_notification_title">Обратная связь с HockeyApp</string>
+    <string name="hockeyapp_feedback_screenshot_notification_message">Сделать снимок экрана для обратной связи.</string>
 
     <!-- Login Activity -->
     <string name="hockeyapp_login_headline_text">Пожалуйста, введите ваш HockeyApp email адресс и пароль для получения доступа в это приложение.</string>
