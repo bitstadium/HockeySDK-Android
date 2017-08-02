@@ -67,7 +67,7 @@ subprojects {
 
         gradle.taskGraph.whenReady { taskGraph ->
             taskGraph.getAllTasks().find {
-                it.path == ":$project.name:generatePomFileForMavenPublication"
+                it.path == ":$project.name:publishReleasePublicationToMavenLocal"
             }.doLast {
                 file("build/publications/maven/pom-default.xml").delete()
                 println 'Overriding pom-file to make sure we can sync to maven central!'
