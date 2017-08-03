@@ -15,7 +15,6 @@ import net.hockeyapp.android.UpdateFragment;
 import net.hockeyapp.android.UpdateManagerListener;
 import net.hockeyapp.android.utils.HockeyLog;
 import net.hockeyapp.android.utils.Util;
-import net.hockeyapp.android.utils.VersionCache;
 
 import org.json.JSONArray;
 
@@ -67,14 +66,6 @@ public class CheckUpdateTaskWithUI extends CheckUpdateTask {
     }
 
     private void showDialog(final JSONArray updateInfo) {
-
-        //Reason for enabled Caching
-        //we want to prevent users from being able to weasle around mandatory updates by going offline.
-        if (getCachingEnabled()) {
-            HockeyLog.verbose("HockeyUpdate", "Caching is enabled. Setting version to cached one.");
-            VersionCache.setVersionInfo(mActivity, updateInfo.toString());
-        }
-
         if ((mActivity == null) || (mActivity.isFinishing())) {
             return;
         }
@@ -105,10 +96,6 @@ public class CheckUpdateTaskWithUI extends CheckUpdateTask {
 
             builder.setPositiveButton(R.string.hockeyapp_update_dialog_positive_button, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
-                    if (getCachingEnabled()) {
-                        VersionCache.setVersionInfo(mActivity, "[]");
-                    }
-
                     WeakReference<Activity> weakActivity = new WeakReference<>(mActivity);
                     if (Util.runsOnTablet(weakActivity)) {
                         showUpdateFragment(updateInfo);
@@ -147,7 +134,7 @@ public class CheckUpdateTaskWithUI extends CheckUpdateTask {
 
             try {
                 Method method = fragmentClass.getMethod("newInstance", String.class, String.class, boolean.class);
-                DialogFragment updateFragment = (DialogFragment) method.invoke(null, updateInfo.toString(), getURLString("apk"), true);
+                DialogFragment updateFragment = (DialogFragment) method.invoke(null, updateInfo.toString(), apkUrlString, true);
                 updateFragment.show(fragmentTransaction, UpdateFragment.FRAGMENT_TAG);
             } catch (Exception e) { // can't catch ReflectiveOperationException here because not targeting API level 19 or later
                 HockeyLog.error("An exception happened while showing the update fragment", e);
@@ -166,7 +153,7 @@ public class CheckUpdateTaskWithUI extends CheckUpdateTask {
             intent.setClass(mActivity, UpdateActivity.class);
             intent.putExtra(UpdateActivity.FRAGMENT_CLASS, fragmentClass.getName());
             intent.putExtra(UpdateFragment.FRAGMENT_VERSION_INFO, updateInfo.toString());
-            intent.putExtra(UpdateFragment.FRAGMENT_URL, getURLString(APK));
+            intent.putExtra(UpdateFragment.FRAGMENT_URL, apkUrlString);
             intent.putExtra(UpdateFragment.FRAGMENT_DIALOG, false);
             mActivity.startActivity(intent);
 

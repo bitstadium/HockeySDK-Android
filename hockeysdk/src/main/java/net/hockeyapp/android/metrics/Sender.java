@@ -258,6 +258,14 @@ public class Sender {
             //trigger send next file or log unexpected responses
             StringBuilder builder = new StringBuilder();
             if (isExpected(responseCode)) {
+                try {
+                    InputStream inputStream = connection.getInputStream();
+                    if (inputStream != null) {
+                        inputStream.close();
+                    }
+                } catch (IOException e) {
+                    HockeyLog.error(TAG, "Could not close input stream", e);
+                }
                 triggerSending();
             } else {
                 this.onUnexpected(connection, responseCode, builder);

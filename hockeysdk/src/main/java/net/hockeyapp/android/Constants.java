@@ -1,22 +1,22 @@
 package net.hockeyapp.android;
 
-import android.annotation.SuppressLint;
-import android.content.ContentResolver;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.os.Build;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.Settings;
-import android.text.TextUtils;
 
+import net.hockeyapp.android.utils.AsyncTaskUtils;
+import net.hockeyapp.android.utils.CompletedFuture;
 import net.hockeyapp.android.utils.HockeyLog;
 
 import java.io.File;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Future;
 
 /**
  * <h3>Description</h3>
@@ -80,14 +80,30 @@ public class Constants {
      * The device's model manufacturer name.
      */
     public static String PHONE_MANUFACTURER = null;
-    /**
-     * Unique identifier for crash reports. This is package and device specific.
-     */
-    public static String CRASH_IDENTIFIER = null;
+
     /**
      * Unique identifier for device, not dependent on package or device.
      */
-    public static String DEVICE_IDENTIFIER = null;
+    private static String DEVICE_IDENTIFIER = null;
+
+    /**
+     * Lock used to wait identifiers.
+     */
+    private static CountDownLatch latch = new CountDownLatch(1);
+
+    public static Future<String> getDeviceIdentifier() {
+        if (latch.getCount() == 0) {
+            return new CompletedFuture<>(DEVICE_IDENTIFIER);
+        }
+        return AsyncTaskUtils.execute(new Callable<String>() {
+
+            @Override
+            public String call() throws Exception {
+                latch.await();
+                return DEVICE_IDENTIFIER;
+            }
+        });
+    }
 
     /**
      * Initializes constants from the given context. The context is used to set
@@ -102,8 +118,7 @@ public class Constants {
         Constants.PHONE_MANUFACTURER = android.os.Build.MANUFACTURER;
 
         loadPackageData(context);
-        loadCrashIdentifier(context);
-        loadDeviceIdentifier(context);
+        loadIdentifiers(context);
     }
 
     /**
@@ -166,109 +181,31 @@ public class Constants {
     }
 
     /**
-     * Helper method to load the crash identifier.
+     * Helper method to load the identifiers.
      *
      * @param context the context to use. Usually your Activity object.
      */
-    private static void loadCrashIdentifier(Context context) {
-        @SuppressLint("HardwareIds") String deviceIdentifier = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
-        if (!TextUtils.isEmpty(Constants.APP_PACKAGE) && !TextUtils.isEmpty(deviceIdentifier)) {
-            String combined = Constants.APP_PACKAGE + ":" + deviceIdentifier + ":" + createSalt(context);
-            try {
-                MessageDigest digest = MessageDigest.getInstance("SHA-1");
-                byte[] bytes = combined.getBytes("UTF-8");
-                digest.update(bytes, 0, bytes.length);
-                bytes = digest.digest();
-
-                Constants.CRASH_IDENTIFIER = bytesToHex(bytes);
-            } catch (Throwable e) {
-                HockeyLog.error("Couldn't create CrashIdentifier with Exception:" + e.toString());
-                //TODO handle the exception
+    private static void loadIdentifiers(final Context context) {
+        if (Constants.DEVICE_IDENTIFIER != null) {
+            return;
+        }
+        AsyncTaskUtils.execute(new AsyncTask<Void, Object, String>() {
+            @Override
+            protected String doInBackground(Void... voids) {
+                final SharedPreferences preferences = context.getSharedPreferences("HockeyApp", Context.MODE_PRIVATE);
+                String deviceIdentifier = preferences.getString("deviceIdentifier", null);
+                if (deviceIdentifier == null) {
+                    deviceIdentifier = UUID.randomUUID().toString();
+                    preferences.edit().putString("deviceIdentifier", deviceIdentifier).apply();
+                }
+                return deviceIdentifier;
             }
-        }
-    }
 
-    /**
-     * Helper method to generate a device identifier for telemetry and crashes,
-     *
-     * @param context The context to use. Usually your Activity object.
-     */
-    private static void loadDeviceIdentifier(Context context) {
-        // get device ID
-        ContentResolver resolver = context.getContentResolver();
-        @SuppressLint("HardwareIds") String deviceIdentifier = Settings.Secure.getString(resolver, Settings.Secure.ANDROID_ID);
-        if (deviceIdentifier != null) {
-            String deviceIdentifierAnonymized = tryHashStringSha256(context, deviceIdentifier);
-            // if anonymized device identifier is null we should use a random UUID
-            Constants.DEVICE_IDENTIFIER = deviceIdentifierAnonymized != null ? deviceIdentifierAnonymized : UUID.randomUUID().toString();
-        }
-    }
-
-    /**
-     * Get a SHA-256 hash of the input string if the algorithm is available. If the algorithm is
-     * unavailable, return empty string.
-     *
-     * @param input the string to hash.
-     * @return a SHA-256 hash of the input or null if SHA-256 is not available (should never happen).
-     */
-    private static String tryHashStringSha256(Context context, String input) {
-        String salt = createSalt(context);
-        try {
-            // Get a Sha256 digest
-            MessageDigest hash = MessageDigest.getInstance("SHA-256");
-            hash.reset();
-            hash.update(input.getBytes());
-            hash.update(salt.getBytes());
-            byte[] hashedBytes = hash.digest();
-
-            return bytesToHex(hashedBytes);
-        } catch (NoSuchAlgorithmException e) {
-            // All android devices should support SHA256, but if unavailable return null
-            return null;
-        }
-    }
-
-    /**
-     * Helper method to create a salt for the crash identifier.
-     *
-     * @param context the context to use. Usually your Activity object.
-     */
-    @SuppressLint("InlinedApi")
-    @SuppressWarnings("deprecation")
-    private static String createSalt(Context context) {
-        String abiString;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            abiString = Build.SUPPORTED_ABIS[0];
-        } else {
-            abiString = Build.CPU_ABI;
-        }
-
-        String fingerprint = "HA" + (Build.BOARD.length() % 10) + (Build.BRAND.length() % 10) +
-                (abiString.length() % 10) + (Build.PRODUCT.length() % 10);
-        String serial = "";
-        try {
-            serial = android.os.Build.class.getField("SERIAL").get(null).toString();
-        } catch (Throwable ignored) {
-        }
-
-        return fingerprint + ":" + serial;
-    }
-
-    /**
-     * Helper method to convert a byte array to the hex string.
-     * Based on http://stackoverflow.com/questions/9655181/convert-from-byte-array-to-hex-string-in-java
-     *
-     * @param bytes a byte array
-     */
-    private static String bytesToHex(byte[] bytes) {
-        final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
-        char[] hex = new char[bytes.length * 2];
-        for (int index = 0; index < bytes.length; index++) {
-            int value = bytes[index] & 0xFF;
-            hex[index * 2] = HEX_ARRAY[value >>> 4];
-            hex[index * 2 + 1] = HEX_ARRAY[value & 0x0F];
-        }
-        String result = new String(hex);
-        return result.replaceAll("(\\w{8})(\\w{4})(\\w{4})(\\w{4})(\\w{12})", "$1-$2-$3-$4-$5");
+            @Override
+            protected void onPostExecute(String deviceIdentifier) {
+                Constants.DEVICE_IDENTIFIER = deviceIdentifier;
+                latch.countDown();
+            }
+        });
     }
 }

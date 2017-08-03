@@ -3,6 +3,7 @@ package net.hockeyapp.android.metrics;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Point;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.telephony.TelephonyManager;
 import android.view.Display;
@@ -11,6 +12,7 @@ import android.view.WindowManager;
 import net.hockeyapp.android.BuildConfig;
 import net.hockeyapp.android.Constants;
 import net.hockeyapp.android.metrics.model.*;
+import net.hockeyapp.android.utils.AsyncTaskUtils;
 import net.hockeyapp.android.utils.HockeyLog;
 import net.hockeyapp.android.utils.Util;
 
@@ -19,6 +21,7 @@ import java.lang.reflect.Method;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 /**
  * <h3>Description</h3>
@@ -108,9 +111,23 @@ class TelemetryContext {
         mInstrumentationKey = Util.convertAppIdentifierToGuid(appIdentifier);
 
         configDeviceContext();
-        configUserId();
         configInternalContext();
         configApplicationContext();
+
+        // Set device identifier.
+        AsyncTaskUtils.execute(new AsyncTask<Void, Object, Object>() {
+            @Override
+            protected Object doInBackground(Void... voids) {
+                try {
+                    String deviceId = Constants.getDeviceIdentifier().get();
+                    setDeviceId(deviceId);
+                    setAnonymousUserId(deviceId);
+                } catch (InterruptedException | ExecutionException e) {
+                    HockeyLog.debug("Error config device identifier", e);
+                }
+                return null;
+            }
+        });
     }
 
     /**
@@ -173,16 +190,6 @@ class TelemetryContext {
     }
 
     /**
-     * Load the user context associated with telemetry data.
-     */
-    private void configUserId() {
-        HockeyLog.debug(TAG, "Configuring user context");
-
-        HockeyLog.debug("Using pre-supplied anonymous device identifier.");
-        setAnonymousUserId(Constants.CRASH_IDENTIFIER);
-    }
-
-    /**
      * Sets the device telemetryContext tags.
      */
     private void configDeviceContext() {
@@ -194,7 +201,6 @@ class TelemetryContext {
         setOsLocale(Locale.getDefault().toString());
         setOsLanguage(Locale.getDefault().getLanguage());
         updateScreenResolution();
-        setDeviceId(Constants.DEVICE_IDENTIFIER);
 
         // check device type
         Context context = getContext();

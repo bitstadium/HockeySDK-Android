@@ -26,6 +26,8 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
 import java.net.URLEncoder;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -338,5 +340,30 @@ public class Util {
             }
         }
         return stringBuilder.toString();
+    }
+
+    public static byte[] hash(final byte[] bytes, String algorithm) throws NoSuchAlgorithmException {
+        MessageDigest digest = MessageDigest.getInstance(algorithm);
+        digest.update(bytes);
+        return digest.digest();
+    }
+
+    /**
+     * Helper method to convert a byte array to the hex string.
+     * Based on http://stackoverflow.com/questions/9655181/convert-from-byte-array-to-hex-string-in-java
+     *
+     * @param bytes a byte array
+     */
+    public static String bytesToHex(final byte[] bytes) {
+        //noinspection SpellCheckingInspection
+        final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
+        char[] hex = new char[bytes.length * 2];
+        for (int index = 0; index < bytes.length; index++) {
+            int value = bytes[index] & 0xFF;
+            hex[index * 2] = HEX_ARRAY[value >>> 4];
+            hex[index * 2 + 1] = HEX_ARRAY[value & 0x0F];
+        }
+        String result = new String(hex);
+        return result.replaceAll("(\\w{8})(\\w{4})(\\w{4})(\\w{4})(\\w{12})", "$1-$2-$3-$4-$5");
     }
 }

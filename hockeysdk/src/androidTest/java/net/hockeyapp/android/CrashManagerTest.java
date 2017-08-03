@@ -70,7 +70,7 @@ public class CrashManagerTest {
         CrashManager.register(InstrumentationRegistry.getTargetContext(), DUMMY_APP_IDENTIFIER);
 
         assertTrue(CrashManager.didCrashInLastSession().get());
-        assertNotNull(CrashManager.getLastCrashDetails());
+        assertNotNull(CrashManager.getLastCrashDetails().get());
     }
 
     @Test
@@ -87,7 +87,7 @@ public class CrashManagerTest {
         assertNotNull(lastStackTrace);
 
         assertEquals(lastStackTrace.getName().substring(0, lastStackTrace.getName().indexOf(".stacktrace")), crashDetails.getCrashIdentifier());
-        assertEquals(Constants.CRASH_IDENTIFIER, crashDetails.getReporterKey());
+        assertEquals(Constants.getDeviceIdentifier().get(), crashDetails.getReporterKey());
 
         fakeCrashReport();
         fakeCrashReport();
