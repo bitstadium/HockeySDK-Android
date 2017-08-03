@@ -81,7 +81,7 @@
     <string name="hockeyapp_login_headline_text">Пожалуйста, введите ваш HockeyApp email адресс и пароль для получения доступа в это приложение.</string>
     <string name="hockeyapp_login_headline_text_email_only">Пожалуйста, введите ваш HockeyApp email адресс для получения доступа в это приложение.</string>
     <string name="hockeyapp_login_missing_credentials_toast">Пожалуйста, заполните недостающие учётные данные.</string>
-    <string name="hockeyapp_login_login_button_text">Логин</string>
+    <string name="hockeyapp_login_login_button_text">Войти</string>
     <string name="hockeyapp_login_email_hint_required">Email (oбязательное поле)</string>
     <string name="hockeyapp_login_password_hint_required">Пароль (oбязательное поле)</string>
 
@@ -104,5 +104,7 @@
     <!-- Misc -->
     <string name="hockeyapp_error_no_network_message">Ваше устройство не имеет доступа в интернет. Пожалуйста, восстановите подключение и попробуйте снова.</string>
     <string name="hockeyapp_feedback_sent_toast">Отзыв отправлен</string>
+    <string name="hockeyapp_error_no_external_storage_permission">Разрешение на доспуп к памяти устройства отсутствует. Пожалуйста, свяжитесь с разработчиком.</string>
+    <string name="hockeyapp_error_install_form_unknown_sources_disabled">Установка их неизвестных источников выключена. Пожалуйста, проверьте настройки устройства.</string>
 
 </resources>

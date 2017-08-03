@@ -39,6 +39,9 @@
     <string name="hockeyapp_feedback_subject_hint">Titel</string>
     <string name="hockeyapp_feedback_message_hint">Nachricht</string>
     <string name="hockeyapp_feedback_last_updated_text">Letztes Update: %s</string>
+    <string name="hockeyapp_feedback_attachment_added">Anhang wurde hinzugefügt</string>
+    <string name="hockeyapp_feedback_attachment_removed">Anhang wurde entfernt</string>
+    <string name="hockeyapp_feedback_attachment_remove_description">Anhang entfernen</string>
     <string name="hockeyapp_feedback_attachment_button_text">Anhang hinzufügen</string>
     <string name="hockeyapp_feedback_send_button_text">Feedback senden</string>
     <string name="hockeyapp_feedback_response_button_text">Antworten</string>
@@ -67,6 +70,7 @@
     <!-- Send Feedback Task -->
     <string name="hockeyapp_feedback_sending_feedback_text">Feedback wird gesendet…</string>
     <string name="hockeyapp_feedback_fetching_feedback_text">Feedback wird geladen…</string>
+    <string name="hockeyapp_feedback_sent_toast">Feedback wurde gesendet</string>
 
     <!-- Feedback Screenshot -->
     <string name="hockeyapp_feedback_screenshot_publish">Der Screenshot \"%s\" ist in der Bildergalerie verfügbar.</string>
@@ -100,9 +104,7 @@
 
     <!-- Misc -->
     <string name="hockeyapp_error_no_network_message">Ihr Gerät ist offline. Bitte stellen Sie eine Internetverbindung her und versuchen Sie es erneut.</string>
-    <string name="hockeyapp_feedback_attachment_added">Anhang wurde hinzugefügt</string>
-    <string name="hockeyapp_feedback_attachment_removed">Anhang wurde entfernt</string>
-    <string name="hockeyapp_feedback_attachment_remove_description">Anhang entfernen</string>
-    <string name="hockeyapp_feedback_sent_toast">Feedback wurde gesendet</string>
+    <string name="hockeyapp_error_no_external_storage_permission">Das Recht auf externen Speicher zuzugreifen wurde nicht gesetzt. Bitte wende dich an die Entwickler.</string>
+    <string name="hockeyapp_error_install_form_unknown_sources_disabled">Die Installation von Apps aus unbekannten Quellen wurde nicht zugelassen. Bitte überprüfe die Einstellungen deines Geräts.</string>
 
 </resources>

@@ -39,6 +39,9 @@
     <string name="hockeyapp_feedback_subject_hint">主题</string>
     <string name="hockeyapp_feedback_message_hint">内容</string>
     <string name="hockeyapp_feedback_last_updated_text">最后更新时间: %s</string>
+    <string name="hockeyapp_feedback_attachment_added">附件␈已加</string>
+    <string name="hockeyapp_feedback_attachment_removed">附件已被移除</string>
+    <string name="hockeyapp_feedback_attachment_remove_description">移除附件</string>
     <string name="hockeyapp_feedback_attachment_button_text">添加附件</string>
     <string name="hockeyapp_feedback_send_button_text">发送反馈</string>
     <string name="hockeyapp_feedback_response_button_text">回复</string>
@@ -67,6 +70,7 @@
     <!-- Send Feedback Task -->
     <string name="hockeyapp_feedback_sending_feedback_text">发送反馈中…</string>
     <string name="hockeyapp_feedback_fetching_feedback_text">获取相关讨论内容中…</string>
+    <string name="hockeyapp_feedback_sent_toast">反馈已发送</string>
 
     <!-- Feedback Screenshot -->
     <string name="hockeyapp_feedback_screenshot_publish">Gallery中可见截图 \"%s\"</string>
@@ -100,9 +104,7 @@
 
     <!-- Misc -->
     <string name="hockeyapp_error_no_network_message">您的设备无法访问 网络。请在解决网络连接问题后重试。</string>
-    <string name="hockeyapp_feedback_attachment_added">附件␈已加</string>
-    <string name="hockeyapp_feedback_attachment_removed">附件已被移除</string>
-    <string name="hockeyapp_feedback_attachment_remove_description">移除附件</string>
-    <string name="hockeyapp_feedback_sent_toast">反馈已发送</string>
+    <string name="hockeyapp_error_no_external_storage_permission">未设置访问外部存储器的权限。如有疑问，请联系开发者。</string>
+    <string name="hockeyapp_error_install_form_unknown_sources_disabled">安装未知来源程序失败。请检查设备设置。</string>
 
 </resources>

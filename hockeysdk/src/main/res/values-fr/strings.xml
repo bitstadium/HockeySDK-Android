@@ -39,6 +39,9 @@
     <string name="hockeyapp_feedback_subject_hint">Sujet</string>
     <string name="hockeyapp_feedback_message_hint">Message</string>
     <string name="hockeyapp_feedback_last_updated_text">Dernière mise à jour: %s</string>
+    <string name="hockeyapp_feedback_attachment_added">Pièce jointe ajoutée</string>
+    <string name="hockeyapp_feedback_attachment_removed">Pièce jointe supprimée</string>
+    <string name="hockeyapp_feedback_attachment_remove_description">Supprimer la pièce jointe</string>
     <string name="hockeyapp_feedback_attachment_button_text">Ajouter un fichier</string>
     <string name="hockeyapp_feedback_send_button_text">Envoyez vos commentaires</string>
     <string name="hockeyapp_feedback_response_button_text">Ajouter une réponse</string>
@@ -67,6 +70,7 @@
     <!-- Send Feedback Task -->
     <string name="hockeyapp_feedback_sending_feedback_text">Envoi…</string>
     <string name="hockeyapp_feedback_fetching_feedback_text">Chargement des commentaires…</string>
+    <string name="hockeyapp_feedback_sent_toast">Commentaires envoyé</string>
 
     <!-- Feedback Screenshot -->
     <string name="hockeyapp_feedback_screenshot_publish">Capture d\'écran disponible dans la gallerie</string>
@@ -100,9 +104,7 @@
 
     <!-- Misc -->
     <string name="hockeyapp_error_no_network_message">Votre Android est déconnecté. Établissez une connexion internet et essayez à nouveau, s\'il vous plaît.</string>
-    <string name="hockeyapp_feedback_attachment_added">Pièce jointe ajoutée</string>
-    <string name="hockeyapp_feedback_attachment_removed">Pièce jointe supprimée</string>
-    <string name="hockeyapp_feedback_attachment_remove_description">Supprimer la pièce jointe</string>
-    <string name="hockeyapp_feedback_sent_toast">Commentaires envoyé</string>
+    <string name="hockeyapp_error_no_external_storage_permission">La permission d\'accès au stockage externe n\'est pas définie. Merci de contacter le développeur.</string>
+    <string name="hockeyapp_error_install_form_unknown_sources_disabled">L\'installation depuis une source inconnue n\'est pas activée. Merci de vérifier les paramètres du périphérique.</string>
 
 </resources>
