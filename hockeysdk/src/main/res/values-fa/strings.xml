@@ -17,22 +17,31 @@
     <string name="hockeyapp_update_mandatory_toast">%s به عنوان یک بروز رسانی الزامی آماده دریافت است</string>
     <string name="hockeyapp_update_dialog_title">بروز رسانی جدید آماده دریافت است</string>
     <string name="hockeyapp_update_button">بروز رسانی</string>
+    <string name="hockeyapp_update_restore">بازگرداندن</string>
     <string name="hockeyapp_update_dialog_message">نمایش اطلاعات در مورد بروز رسانی جدید ؟</string>
     <string name="hockeyapp_update_dialog_negative_button">خیر</string>
     <string name="hockeyapp_update_dialog_positive_button">نمایش بده</string>
+    <string name="hockeyapp_update_title">بروز رسانی برنامه</string>
+    <string name="hockeyapp_update_unknown_size">اندازه نامعلوم</string>
+    <string name="hockeyapp_update_version">%s نسخه</string>
+    <string name="hockeyapp_update_newest_version">نسخه جدید</string>
+    <string name="hockeyapp_update_already_installed">نصب شد</string>
+    <string name="hockeyapp_update_loading">…بارگیری</string>
+    <string name="hockeyapp_update_no_info">بدون اطلاعات</string>
 
     <!-- Expiry Info -->
     <string name="hockeyapp_expiry_info_title">زمان این شماره ساخت به پایان رسیده است</string>
     <string name="hockeyapp_expiry_info_text">%s منقضی شده است. لطفا برای دریافت بروز رسانی جدید به HockeyApp مراجعه کنید.</string>
 
     <!-- Feedback Activity -->
-    <string name="hockeyapp_feedback_failed_title">در حال انتظار</string>
-    <string name="hockeyapp_feedback_failed_text">آیا تمایل دارید که دوباره نظر خود را ارسال کنید؟</string>
     <string name="hockeyapp_feedback_name_hint">نام</string>
     <string name="hockeyapp_feedback_email_hint">ایمیل</string>
     <string name="hockeyapp_feedback_subject_hint">موضوع</string>
     <string name="hockeyapp_feedback_message_hint">متن پیام</string>
     <string name="hockeyapp_feedback_last_updated_text">آخرین بروز رسانی : %s</string>
+    <string name="hockeyapp_feedback_attachment_added">پیوست اضافه شد</string>
+    <string name="hockeyapp_feedback_attachment_removed">فایل پیوست حذف شد</string>
+    <string name="hockeyapp_feedback_attachment_remove_description">حذف پیوست</string>
     <string name="hockeyapp_feedback_attachment_button_text">افزودن ضمیمه</string>
     <string name="hockeyapp_feedback_send_button_text">ارسال نظر</string>
     <string name="hockeyapp_feedback_response_button_text">افزودن پاسخ</string>
@@ -51,7 +60,7 @@
     <string name="hockeyapp_feedback_select_file">انتخاب فایل</string>
     <string name="hockeyapp_feedback_select_picture">انتخاب عکس</string>
     <string name="hockeyapp_feedback_max_attachments_allowed">تنها %d ضمیمه مجاز است.</string>
-    <string name="hockeyapp_feedback_attachment_loading">...در حال بارگذاری</string>
+    <string name="hockeyapp_feedback_attachment_loading">…در حال بارگذاری</string>
     <string name="hockeyapp_feedback_attachment_error">خطا</string>
     <string name="hockeyapp_feedback_name_hint_required">نام (مورد نیاز)</string>
     <string name="hockeyapp_feedback_email_hint_required">ایمیل (مورد نیاز)</string>
@@ -59,15 +68,20 @@
     <string name="hockeyapp_feedback_message_hint_required">متن پیام (مورد نیاز)</string>
 
     <!-- Send Feedback Task -->
-    <string name="hockeyapp_feedback_sending_feedback_text">...در حال ارسال بازخورد</string>
+    <string name="hockeyapp_feedback_sending_feedback_text">…در حال ارسال بازخورد</string>
     <string name="hockeyapp_feedback_fetching_feedback_text">بازیابی بحث …</string>
+    <string name="hockeyapp_feedback_sent_toast">فیدبک ارسال شد</string>
+
+    <!-- Feedback Screenshot -->
+    <string name="hockeyapp_feedback_screenshot_publish"> موجود در گالری\"%s\" عکس</string>
+    <string name="hockeyapp_feedback_screenshot_fail">عکس نمیتواند ایجاد شود متاسف.</string>
+    <string name="hockeyapp_feedback_screenshot_notification_title">فیدبک هاکی اپ</string>
+    <string name="hockeyapp_feedback_screenshot_notification_message">تصویری برای فیدبک خود بگیرید</string>
 
     <!-- Login Activity -->
     <string name="hockeyapp_login_headline_text">برای دسترسی به این نرم افزار لطفا ایمیل و کلمه عبور حساب کاربری خود در HockeyApp را وارد کنید.</string>
     <string name="hockeyapp_login_headline_text_email_only">لطفا برای دسترسی به این نرم افزار، ایمیل حساب کاربری خود در HockeyApp را وارد کنید.</string>
     <string name="hockeyapp_login_missing_credentials_toast">لطفا گزینه های خالی را وارد کنید</string>
-    <string name="hockeyapp_login_email_hint">ایمیل</string>
-    <string name="hockeyapp_login_password_hint">کلمه عبور</string>
     <string name="hockeyapp_login_login_button_text">ورود</string>
     <string name="hockeyapp_login_email_hint_required">ایمیل (مورد نیاز)</string>
     <string name="hockeyapp_login_password_hint_required">کلمه عبور (مورد نیاز)</string>
@@ -82,12 +96,6 @@
     <string name="hockeyapp_paint_dialog_positive_button">ذخیره</string>
     <string name="hockeyapp_paint_dialog_neutral_button">لغو</string>
 
-    <!-- Permissions -->
-    <string name="hockeyapp_permission_update_title">نیاز به دسترسی برای ذخیره سازی</string>
-    <string name="hockeyapp_permission_update_message">برای دریافت و نصب بروز رسانی های برنامه، شما باید اجازه دسترسی به حافظه دستگاه خود را بدهید</string>
-    <string name="hockeyapp_permission_dialog_negative_button">لغو</string>
-    <string name="hockeyapp_permission_dialog_positive_button">تلاش مجدد</string>
-
     <!-- Dialogs -->
     <string name="hockeyapp_dialog_positive_button">تایید</string>
     <string name="hockeyapp_dialog_negative_button">لغو</string>
@@ -96,8 +104,7 @@
 
     <!-- Misc -->
     <string name="hockeyapp_error_no_network_message">دستگاه شما به اینترنت متصل نیست. لطفا مشکل اتصال را حل و دوباره امتحان کنید.</string>
-    <string name="hockeyapp_feedback_attachment_added">پیوست اضافه شد</string>
-    <string name="hockeyapp_feedback_attachment_removed">فایل پیوست حذف شد</string>
-    <string name="hockeyapp_feedback_attachment_remove_description">حذف پیوست</string>
-    <string name="hockeyapp_feedback_sent_toast">فیدبک ارسال شد</string>
+    <string name="hockeyapp_error_no_external_storage_permission">مجوز دسترسی به ذخیره سازی خارجی تنظیم نشده است. لطفا با ما تماس بگیرید</string>
+    <string name="hockeyapp_error_install_form_unknown_sources_disabled">نصب برنامه های ناشناخته فعال نیست. لطفا تنظیمات دستگاه را بررسی کنید</string>
+
 </resources>

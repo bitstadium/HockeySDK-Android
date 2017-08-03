@@ -140,10 +140,10 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
         nameLabel.setContentDescription(nameLabel.getText());
 
         final TextView versionLabel = view.findViewById(R.id.label_version);
-        final String versionString = "Version " + versionHelper.getVersionString();
+        final String versionString = String.format(getString(R.string.hockeyapp_update_version), versionHelper.getVersionString());
         final String fileDate = versionHelper.getFileDateString();
 
-        String appSizeString = "Unknown size";
+        String appSizeString = getString(R.string.hockeyapp_update_unknown_size);
         long appSize = versionHelper.getFileSizeBytes();
         if (appSize >= 0L) {
             appSizeString = String.format(Locale.US, "%.2f", appSize / (1024.0f * 1024.0f)) + " MB";
