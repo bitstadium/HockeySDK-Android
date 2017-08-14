@@ -46,11 +46,6 @@ public class LoginManager {
     public static final int LOGIN_MODE_VALIDATE = 3;
 
     /**
-     * The key for the intent of the main activity.
-     */
-    static final String LOGIN_EXIT_KEY = "net.hockeyapp.android.EXIT";
-
-    /**
      * The entry activity of this app.
      */
     static Class<?> mainActivity;
@@ -181,14 +176,6 @@ public class LoginManager {
      * @param intent  The intent that the activity has been created with.
      */
     public static void verifyLogin(final Activity context, Intent intent) {
-        // Check if application needs to be exited.
-        if (intent != null) {
-            if (intent.getBooleanExtra(LOGIN_EXIT_KEY, false)) {
-                context.finish();
-                return;
-            }
-        }
-
         //Don't verify anything if we're in LOGIN_MODE_ANONYMOUS
         if (context == null || mode == LOGIN_MODE_ANONYMOUS) {
             return;
