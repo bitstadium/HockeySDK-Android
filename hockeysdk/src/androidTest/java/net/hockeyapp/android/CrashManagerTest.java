@@ -70,7 +70,7 @@ public class CrashManagerTest {
         CrashManager.register(InstrumentationRegistry.getTargetContext(), DUMMY_APP_IDENTIFIER);
 
         assertTrue(CrashManager.didCrashInLastSession().get());
-        assertNotNull(CrashManager.getLastCrashDetails().get());
+        assertNotNull(CrashManager.getLastCrashDetails(InstrumentationRegistry.getTargetContext()).get());
     }
 
     @Test
@@ -79,7 +79,7 @@ public class CrashManagerTest {
 
         CrashManager.register(InstrumentationRegistry.getTargetContext(), DUMMY_APP_IDENTIFIER);
 
-        CrashDetails crashDetails = CrashManager.getLastCrashDetails().get();
+        CrashDetails crashDetails = CrashManager.getLastCrashDetails(InstrumentationRegistry.getTargetContext()).get();
 
         assertNotNull(crashDetails);
 
@@ -93,7 +93,7 @@ public class CrashManagerTest {
         fakeCrashReport();
         fakeCrashReport();
 
-        crashDetails = CrashManager.getLastCrashDetails().get();
+        crashDetails = CrashManager.getLastCrashDetails(InstrumentationRegistry.getTargetContext()).get();
 
         assertNotNull(crashDetails);
 
@@ -111,7 +111,7 @@ public class CrashManagerTest {
 
         fakeXamarinCrashReport();
 
-        CrashDetails crashDetails = CrashManager.getLastCrashDetails().get();
+        CrashDetails crashDetails = CrashManager.getLastCrashDetails(InstrumentationRegistry.getTargetContext()).get();
         assertNotNull(crashDetails);
         assertEquals(crashDetails.getFormat(), "Xamarin");
         String throwableStackTrace = crashDetails.getThrowableStackTrace();
