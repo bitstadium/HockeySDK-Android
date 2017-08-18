@@ -105,6 +105,12 @@ public abstract class CrashManagerListener {
     }
 
     /**
+     * Called when the crash manager didn't find any crash logs.
+     */
+    public void onNoCrashesFound() {
+    }
+
+    /**
      * Called when the crash manager has sent crashes to HockeyApp.
      */
     public void onCrashesSent() {

@@ -229,7 +229,11 @@ public class CrashManager {
                     }
 
                     sendCrashes(weakContext, listener, ignoreDefaultHandler, null);
-                } else {
+                } else if (foundOrSend == STACK_TRACES_FOUND_NONE) {
+                    if (listener != null) {
+                        listener.onNoCrashesFound();
+                    }
+
                     registerHandler(listener, ignoreDefaultHandler);
                 }
             }
