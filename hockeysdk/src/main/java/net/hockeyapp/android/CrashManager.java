@@ -192,13 +192,12 @@ public class CrashManager {
      */
     public static void execute(final CrashManagerListener listener) {
         AsyncTaskUtils.execute(new AsyncTask<Void, Object, Integer>() {
-            private boolean autoSend = true;
+            private boolean autoSend = false;
 
             @Override
             protected Integer doInBackground(Void... voids) {
                 Context context = getContext();
                 if (context != null) {
-                    autoSend = !(context instanceof Activity);
                     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
                     autoSend |= prefs.getBoolean(ALWAYS_SEND_KEY, false);
                 }
@@ -219,9 +218,7 @@ public class CrashManager {
                         listener.onNewCrashesFound();
                     }
 
-                    if (!autoSend) {
-                        showDialog(listener, ignoreDefaultHandler);
-                    } else {
+                    if (autoSend || !showDialog(listener, ignoreDefaultHandler)) {
                         sendCrashes(listener, ignoreDefaultHandler, null);
                     }
                 } else if (foundOrSend == STACK_TRACES_FOUND_CONFIRMED) {
@@ -568,18 +565,17 @@ public class CrashManager {
      * Shows a dialog to ask the user whether he wants to send crash reports to
      * HockeyApp or delete them.
      */
-    private static void showDialog(final CrashManagerListener listener, final boolean ignoreDefaultHandler) {
+    private static boolean showDialog(final CrashManagerListener listener, final boolean ignoreDefaultHandler) {
+        if (listener != null && listener.onHandleAlertView()) {
+            return true;
+        }
+
         Context context = null;
         if (weakContext != null) {
             context = weakContext.get();
         }
-
-        if (context == null) {
-            return;
-        }
-
-        if (listener != null && listener.onHandleAlertView()) {
-            return;
+        if (context == null || !(context instanceof Activity)) {
+            return false;
         }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -606,6 +602,7 @@ public class CrashManager {
         });
 
         builder.create().show();
+        return true;
     }
 
     private static String getAlertTitle(Context context) {
