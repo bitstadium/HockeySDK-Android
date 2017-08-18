@@ -216,9 +216,6 @@ public class CrashManager {
                 if (foundOrSend == STACK_TRACES_FOUND_NEW) {
                     if (listener != null) {
                         autoSend |= listener.shouldAutoUploadCrashes();
-                        //noinspection deprecation
-                        autoSend |= listener.onCrashesFound();
-
                         listener.onNewCrashesFound();
                     }
 
