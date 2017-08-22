@@ -1,6 +1,5 @@
 package net.hockeyapp.android.utils;
 
-import android.app.Activity;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -24,7 +23,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.lang.ref.WeakReference;
 import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -79,20 +77,15 @@ public class Util {
     /**
      * Returns true if the app runs on large or very large screens (i.e. tablets).
      *
-     * @param weakActivity the context to use
+     * @param context the context to use
      * @return true if the app runs on large or very large screens
      */
-    public static Boolean runsOnTablet(WeakReference<Activity> weakActivity) {
-        if (weakActivity != null) {
-            Activity activity = weakActivity.get();
-            if (activity != null) {
-                Configuration configuration = activity.getResources().getConfiguration();
-
-                return (((configuration.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE) ||
-                        ((configuration.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_XLARGE));
-            }
+    public static Boolean runsOnTablet(Context context) {
+        if (context != null) {
+            Configuration configuration = context.getResources().getConfiguration();
+            return (((configuration.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE) ||
+                    ((configuration.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_XLARGE));
         }
-
         return false;
     }
 

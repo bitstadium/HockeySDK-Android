@@ -1,5 +1,9 @@
 package net.hockeyapp.android;
 
+import android.content.Context;
+
+import net.hockeyapp.android.utils.Util;
+
 import org.json.JSONArray;
 
 import java.util.Date;
@@ -30,6 +34,17 @@ public abstract class UpdateManagerListener {
      */
     public Class<? extends UpdateFragment> getUpdateFragmentClass() {
         return UpdateFragment.class;
+    }
+
+    /**
+     * Determines how update fragment will be presented: as dialog or activity.
+     * Default behaviour: as dialog on tablets, as activity otherwise.
+     *
+     * @param context the context to use
+     * @return true for show update fragment as dialog
+     */
+    public boolean useUpdateDialog(Context context) {
+        return Util.runsOnTablet(context);
     }
 
     /**
