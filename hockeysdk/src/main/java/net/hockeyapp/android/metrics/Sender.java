@@ -156,7 +156,7 @@ public class Sender {
                 mRequestCount.getAndDecrement();
                 if (this.getPersistence() != null) {
                     HockeyLog.debug(TAG, "Persisting because of IOException: We're probably offline.");
-                    this.getPersistence().makeAvailable(file); //send again later
+                    this.getPersistence().makeAvailable(file); // Send again later
                 }
             } catch (SecurityException e) {
                 // Permission denied
@@ -164,7 +164,15 @@ public class Sender {
                 mRequestCount.getAndDecrement();
                 if (this.getPersistence() != null) {
                     HockeyLog.debug(TAG, "Persisting because of SecurityException: Missing INTERNET permission or the user might have removed the internet permission.");
-                    this.getPersistence().makeAvailable(file); //send again later
+                    this.getPersistence().makeAvailable(file); // Send again later
+                }
+            } catch (Exception e) {
+                // Catch all unknown exceptions
+                HockeyLog.debug(TAG, "Couldn't send data with " + e.toString());
+                mRequestCount.getAndDecrement();
+                if (this.getPersistence() != null) {
+                    HockeyLog.debug(TAG, "Persisting because of unknown exception.");
+                    this.getPersistence().makeAvailable(file); // Send again later
                 }
             }
         }
