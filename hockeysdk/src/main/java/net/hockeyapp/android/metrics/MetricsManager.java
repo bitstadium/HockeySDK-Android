@@ -233,7 +233,6 @@ public class MetricsManager {
                 if (!result.mSessionTrackingDisabled) {
                     setSessionTrackingDisabled(false);
                 }
-
             }
 
             PrivateEventManager.addEventListener(new PrivateEventManager.HockeyEventListener() {
@@ -269,10 +268,12 @@ public class MetricsManager {
 
     private static void setUserMetricsEnabled(boolean enabled) {
         sUserMetricsEnabled = enabled;
-        if (sUserMetricsEnabled) {
-            instance.registerTelemetryLifecycleCallbacks();
-        } else {
-            instance.unregisterTelemetryLifecycleCallbacks();
+        if (instance != null) {
+            if (sUserMetricsEnabled) {
+                instance.registerTelemetryLifecycleCallbacks();
+            } else {
+                instance.unregisterTelemetryLifecycleCallbacks();
+            }
         }
     }
 
