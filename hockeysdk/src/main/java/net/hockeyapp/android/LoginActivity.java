@@ -116,13 +116,6 @@ public class LoginActivity extends Activity {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if (LoginManager.listener != null) {
                 LoginManager.listener.onBack();
-            } else {
-                if (LoginManager.mainActivity != null) {
-                    Intent intent = new Intent(this, LoginManager.mainActivity);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    intent.putExtra(LoginManager.LOGIN_EXIT_KEY, true);
-                    startActivity(intent);
-                }
             }
             return true;
         }
