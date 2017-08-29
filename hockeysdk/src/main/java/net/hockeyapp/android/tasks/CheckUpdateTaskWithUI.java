@@ -96,8 +96,10 @@ public class CheckUpdateTaskWithUI extends CheckUpdateTask {
 
             builder.setPositiveButton(R.string.hockeyapp_update_dialog_positive_button, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
-                    WeakReference<Activity> weakActivity = new WeakReference<>(mActivity);
-                    if (Util.runsOnTablet(weakActivity)) {
+                    boolean useUpdateDialog = listener != null
+                            ? listener.useUpdateDialog(mActivity)
+                            : Util.runsOnTablet(mActivity);
+                    if (useUpdateDialog) {
                         showUpdateFragment(updateInfo);
                     } else {
                         startUpdateIntent(updateInfo, false);
