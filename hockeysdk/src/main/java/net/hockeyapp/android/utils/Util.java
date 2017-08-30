@@ -343,20 +343,17 @@ public class Util {
 
     /**
      * Helper method to convert a byte array to the hex string.
-     * Based on http://stackoverflow.com/questions/9655181/convert-from-byte-array-to-hex-string-in-java
      *
      * @param bytes a byte array
      */
     public static String bytesToHex(final byte[] bytes) {
-        //noinspection SpellCheckingInspection
-        final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
-        char[] hex = new char[bytes.length * 2];
-        for (int index = 0; index < bytes.length; index++) {
-            int value = bytes[index] & 0xFF;
-            hex[index * 2] = HEX_ARRAY[value >>> 4];
-            hex[index * 2 + 1] = HEX_ARRAY[value & 0x0F];
+        StringBuilder hexString = new StringBuilder();
+        for (byte aMessageDigest : bytes) {
+            String h = Integer.toHexString(0xFF & aMessageDigest);
+            while (h.length() < 2)
+                h = "0" + h;
+            hexString.append(h);
         }
-        String result = new String(hex);
-        return result.replaceAll("(\\w{8})(\\w{4})(\\w{4})(\\w{4})(\\w{12})", "$1-$2-$3-$4-$5");
+        return hexString.toString();
     }
 }
