@@ -410,17 +410,7 @@ public class FeedbackManager {
 
             @Override
             protected void onPostExecute(Boolean success) {
-                if (success) {
-
-                    /* Publish to gallery. */
-                    MediaScannerClient client = new MediaScannerClient(result.getAbsolutePath());
-                    MediaScannerConnection connection = new MediaScannerConnection(currentActivity, client);
-                    client.setConnection(connection);
-                    connection.connect();
-
-                    Toast.makeText(context, currentActivity.getString(R.string.hockeyapp_feedback_screenshot_publish, result.getName()),
-                            Toast.LENGTH_LONG).show();
-                } else {
+                if (!success) {
                     Toast.makeText(context, R.string.hockeyapp_feedback_screenshot_fail, Toast.LENGTH_LONG)
                             .show();
                 }
