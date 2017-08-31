@@ -28,8 +28,12 @@ import net.hockeyapp.android.utils.Util;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * <h3>Description</h3>
@@ -221,13 +225,42 @@ public class FeedbackManager {
                     intent.putExtra(FeedbackActivity.EXTRA_INITIAL_USER_NAME, userName);
                     intent.putExtra(FeedbackActivity.EXTRA_INITIAL_USER_EMAIL, userEmail);
                     intent.putExtra(FeedbackActivity.EXTRA_INITIAL_USER_EMAIL, userSubject);
-                    intent.putExtra(FeedbackActivity.EXTRA_INITIAL_ATTACHMENTS, attachments);
+                    intent.putExtra(FeedbackActivity.EXTRA_INITIAL_ATTACHMENTS, getInitialAttachments(attachments));
                     return intent;
                 }
 
                 @Override
                 protected void onPostExecute(Intent intent) {
                     context.startActivity(intent);
+                }
+
+                private Uri[] getInitialAttachments(Uri[] userAttachments) {
+                    ArrayList<Uri> initialAttachments = new ArrayList<>();
+                    File[] screenshots = searchScreenshots();
+                    if (screenshots != null) {
+                        for (File screenshot : screenshots) {
+                            initialAttachments.add(Uri.fromFile(screenshot));
+                        }
+                    }
+                    if (attachments != null && attachments.length > 0) {
+                        initialAttachments.addAll(Arrays.asList(attachments));
+                    }
+                    if (initialAttachments.size() > 0) {
+                        return initialAttachments.toArray(new Uri[0]);
+                    }
+                    return null;
+                }
+
+                private File[] searchScreenshots() {
+                    File dir = Constants.getHockeyAppStorageDir(context);
+                    if (dir != null) {
+                        return dir.listFiles(new FilenameFilter() {
+                            public boolean accept(File dir, String name) {
+                                return name.endsWith(".jpg");
+                            }
+                        });
+                    }
+                    return null;
                 }
             });
         }
