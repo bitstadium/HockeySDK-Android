@@ -73,7 +73,7 @@
     <string name="hockeyapp_feedback_fetching_feedback_text">Retrieving discussions…</string>
     <string name="hockeyapp_feedback_sent_toast">Feedback sent</string>
     <string name="hockeyapp_feedback_screenshot_fail">Screenshot could not be created. Sorry.</string>
-    <string name="hockeyapp_feedback_notification_channel">HockeyApp</string>
+    <string name="hockeyapp_feedback_notification_channel" translatable="false">HockeyApp</string>
     <string name="hockeyapp_feedback_notification_title">HockeyApp Feedback</string>
     <string name="hockeyapp_feedback_screenshot_notification_message">Take a screenshot for your feedback.</string>
     <string name="hockeyapp_feedback_new_answer_notification_message">A new answer to your feedback is available.</string>
