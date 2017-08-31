@@ -434,6 +434,7 @@ public class FeedbackManager {
                     FileOutputStream out = new FileOutputStream(result);
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
                     out.close();
+                    HockeyLog.debug("Screenshot '" + result.getName() + "' has been saved");
                     return true;
                 } catch (IOException e) {
                     HockeyLog.error("Could not save screenshot.", e);

@@ -846,6 +846,11 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
                 } else if (responseString != null) {
                     feedbackActivity.startParseFeedbackTask(responseString, requestType);
                     if ("send".equals(requestType)) {
+
+                        // Remove sent initial attachments.
+                        ArrayList<Uri> attachments = feedbackActivity.mAttachmentListView.getAttachments();
+                        feedbackActivity.mInitialAttachments.removeAll(attachments);
+
                         Toast.makeText(feedbackActivity, R.string.hockeyapp_feedback_sent_toast, Toast.LENGTH_LONG).show();
                     }
                     success = true;
