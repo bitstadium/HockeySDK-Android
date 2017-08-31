@@ -75,6 +75,7 @@
     <string name="hockeyapp_feedback_screenshot_fail">Невозможно создать снимок экрана.</string>
     <string name="hockeyapp_feedback_notification_title">Обратная связь с HockeyApp</string>
     <string name="hockeyapp_feedback_screenshot_notification_message">Сделать снимок экрана для обратной связи.</string>
+    <string name="hockeyapp_feedback_new_answer_notification_message">На ваш отзыв получен новый ответ.</string>
 
     <!-- Login Activity -->
     <string name="hockeyapp_login_headline_text">Пожалуйста, введите ваш HockeyApp email адресс и пароль для получения доступа в это приложение.</string>

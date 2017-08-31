@@ -76,7 +76,8 @@
     <string name="hockeyapp_feedback_screenshot_fail">截图失败</string>
     <string name="hockeyapp_feedback_notification_title">您的反馈意见</string>
     <string name="hockeyapp_feedback_screenshot_notification_message">您的反馈意见截图</string>
-    
+    <string name="hockeyapp_feedback_new_answer_notification_message">您的反馈有一条新的回复</string>
+
     <!-- Login Activity -->
     <string name="hockeyapp_login_headline_text">请输入您的 HockeyApp 帐户邮件地址和密码来授权对此应用程序的访问。</string>
     <string name="hockeyapp_login_headline_text_email_only">请输入您的 HockeyApp 帐户邮件地址来授权对此应用程序的访问。</string>

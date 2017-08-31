@@ -76,6 +76,7 @@
     <string name="hockeyapp_feedback_screenshot_fail">Es tut uns leid, aber der Screenshot konnte nicht erstellt werden.</string>
     <string name="hockeyapp_feedback_notification_title">HockeyApp Feedback</string>
     <string name="hockeyapp_feedback_screenshot_notification_message">Einen Screenshot für Feedback aufnehmen.</string>
+    <string name="hockeyapp_feedback_new_answer_notification_message">Eine neue Antwort auf dein Feedback ist verfügbar.</string>
 
     <!-- Login Activity -->
     <string name="hockeyapp_login_headline_text">Geben Sie die E-Mail-Adresse und das Kennwort Ihres HockeyApp-Accounts ein, um Zugriff auf diese App zu erhalten.</string>
