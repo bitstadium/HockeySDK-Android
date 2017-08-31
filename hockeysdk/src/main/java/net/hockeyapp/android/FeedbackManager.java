@@ -224,7 +224,7 @@ public class FeedbackManager {
                     }
                     intent.putExtra(FeedbackActivity.EXTRA_INITIAL_USER_NAME, userName);
                     intent.putExtra(FeedbackActivity.EXTRA_INITIAL_USER_EMAIL, userEmail);
-                    intent.putExtra(FeedbackActivity.EXTRA_INITIAL_USER_EMAIL, userSubject);
+                    intent.putExtra(FeedbackActivity.EXTRA_INITIAL_USER_SUBJECT, userSubject);
                     intent.putExtra(FeedbackActivity.EXTRA_INITIAL_ATTACHMENTS, getInitialAttachments(attachments));
                     return intent;
                 }
