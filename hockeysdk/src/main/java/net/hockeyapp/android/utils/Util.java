@@ -1,6 +1,8 @@
 package net.hockeyapp.android.utils;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
@@ -158,18 +160,38 @@ public class Util {
      * @return the created notification
      */
     @SuppressWarnings("deprecation")
-    public static Notification createNotification(Context context, PendingIntent pendingIntent, String title, String text, int iconId) {
-        android.app.Notification.Builder builder = new android.app.Notification.Builder(context)
-                .setContentTitle(title)
-                .setContentText(text)
-                .setContentIntent(pendingIntent)
-                .setSmallIcon(iconId);
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-            return builder.getNotification();
+    public static Notification createNotification(Context context, PendingIntent pendingIntent, String title, String text, int iconId, String channelId) {
+        Notification.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            builder = new Notification.Builder(context, channelId);
         } else {
-            return builder.build();
+            builder = new Notification.Builder(context);
         }
+        builder.setContentTitle(title)
+               .setContentText(text)
+               .setContentIntent(pendingIntent)
+               .setSmallIcon(iconId);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            return builder.build();
+        } else {
+            return builder.getNotification();
+        }
+    }
+
+    public static void sendNotification(Context context, int id, Notification notification, String channelId, CharSequence channelName) {
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(channelId,
+                    channelName, NotificationManager.IMPORTANCE_DEFAULT);
+            notificationManager.createNotificationChannel(channel);
+        }
+        notificationManager.notify(id, notification);
+    }
+
+    public static void cancelNotification(Context context, int id) {
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancel(id);
     }
 
     public static void announceForAccessibility(View view, CharSequence text) {

@@ -182,7 +182,7 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
                     if (screenshot.delete()) {
                         HockeyLog.debug(TAG, "Screenshot '" + screenshot.getName() + "' has been deleted");
                     } else {
-                        HockeyLog.debug(TAG, "Error deleting screenshot");
+                        HockeyLog.error(TAG, "Error deleting screenshot");
                     }
                 }
             }

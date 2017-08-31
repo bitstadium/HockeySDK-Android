@@ -3,7 +3,6 @@ package net.hockeyapp.android;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.NotificationManager;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -21,7 +20,6 @@ import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -235,8 +233,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
         }
 
         // Cancel notification
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancel(ParseFeedbackTask.NEW_ANSWER_NOTIFICATION_ID);
+        Util.cancelNotification(this, FeedbackManager.NEW_ANSWER_NOTIFICATION_ID);
 
         initFeedbackHandler();
         initParseFeedbackHandler();
