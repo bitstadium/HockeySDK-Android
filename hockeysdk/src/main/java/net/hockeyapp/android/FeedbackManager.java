@@ -33,7 +33,6 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * <h3>Description</h3>
@@ -403,7 +402,7 @@ public class FeedbackManager {
 
     /**
      * Takes a screenshot of the currently set activity and stores it in the HockeyApp folder on the
-     * external storage also publishing it to the Android gallery.
+     * external storage. It will be attached to feedback automatically.
      *
      * @param context toast messages will be displayed using this context
      */
