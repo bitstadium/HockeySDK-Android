@@ -73,7 +73,7 @@
 
     <!-- Feedback Screenshot -->
     <string name="hockeyapp_feedback_screenshot_fail">Невозможно создать снимок экрана.</string>
-    <string name="hockeyapp_feedback_screenshot_notification_title">Обратная связь с HockeyApp</string>
+    <string name="hockeyapp_feedback_notification_title">Обратная связь с HockeyApp</string>
     <string name="hockeyapp_feedback_screenshot_notification_message">Сделать снимок экрана для обратной связи.</string>
 
     <!-- Login Activity -->
