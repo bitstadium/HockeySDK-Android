@@ -16,6 +16,7 @@ import net.hockeyapp.android.utils.HttpURLConnectionBuilder;
 import net.hockeyapp.android.utils.Util;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.HashMap;
@@ -165,6 +166,23 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
                         if (!success) {
                             HockeyLog.debug(TAG, "Error deleting file from temporary folder");
                         }
+                    }
+                }
+            }
+
+            // Delete sent screenshots as well.
+            File hockeyAppStorageDir = Constants.getHockeyAppStorageDir(mContext);
+            File[] screenshots = hockeyAppStorageDir.listFiles(new FilenameFilter() {
+                public boolean accept(File dir, String name) {
+                    return name.endsWith(".jpg");
+                }
+            });
+            for (File screenshot : screenshots) {
+                if (mAttachmentUris.contains(Uri.fromFile(screenshot))) {
+                    if (screenshot.delete()) {
+                        HockeyLog.debug(TAG, "Screenshot '" + screenshot.getName() + "' has been deleted");
+                    } else {
+                        HockeyLog.debug(TAG, "Error deleting screenshot");
                     }
                 }
             }

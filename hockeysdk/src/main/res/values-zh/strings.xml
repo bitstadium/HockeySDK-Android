@@ -73,7 +73,6 @@
     <string name="hockeyapp_feedback_sent_toast">反馈已发送</string>
 
     <!-- Feedback Screenshot -->
-    <string name="hockeyapp_feedback_screenshot_publish">Gallery中可见截图 \"%s\"</string>
     <string name="hockeyapp_feedback_screenshot_fail">截图失败</string>
     <string name="hockeyapp_feedback_screenshot_notification_title">您的反馈意见</string>
     <string name="hockeyapp_feedback_screenshot_notification_message">您的反馈意见截图</string>

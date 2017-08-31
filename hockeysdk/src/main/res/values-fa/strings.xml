@@ -73,7 +73,6 @@
     <string name="hockeyapp_feedback_sent_toast">فیدبک ارسال شد</string>
 
     <!-- Feedback Screenshot -->
-    <string name="hockeyapp_feedback_screenshot_publish"> موجود در گالری\"%s\" عکس</string>
     <string name="hockeyapp_feedback_screenshot_fail">عکس نمیتواند ایجاد شود متاسف.</string>
     <string name="hockeyapp_feedback_screenshot_notification_title">فیدبک هاکی اپ</string>
     <string name="hockeyapp_feedback_screenshot_notification_message">تصویری برای فیدبک خود بگیرید</string>
