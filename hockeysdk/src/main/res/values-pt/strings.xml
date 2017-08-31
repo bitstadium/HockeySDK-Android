@@ -73,7 +73,6 @@
     <string name="hockeyapp_feedback_sent_toast">Feedback enviado</string>
 
     <!-- Feedback Screenshot -->
-    <string name="hockeyapp_feedback_screenshot_publish">Captura de tela \"%s\" disponível na galeria.</string>
     <string name="hockeyapp_feedback_screenshot_fail">Captura de tela não pôde ser feita.</string>
     <string name="hockeyapp_feedback_screenshot_notification_title">HockeyApp Feedback</string>
     <string name="hockeyapp_feedback_screenshot_notification_message">Envie uma captura de tela para o seu feedback.</string>

@@ -116,22 +116,28 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
     /**
      * Initial user's name to pre-fill the feedback form with
      */
-    private String initialUserName;
+    private String mInitialUserName;
 
     /**
      * Initial user's e-mail to pre-fill the feedback form with
      */
-    private String initialUserEmail;
+    private String mInitialUserEmail;
 
     /**
      * Initial user's subject to pre-fill the feedback form with
      */
-    private String initialUserSubject;
+    private String mInitialUserSubject;
+
+    /**
+     * Initial attachment uris
+     */
+    private List<Uri> mInitialAttachments;
 
     /**
      * Reference to this
      **/
     private Context mContext;
+
     /**
      * Widgets and layout
      **/
@@ -142,6 +148,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
     private EditText mTextInput;
     private Button mSendFeedbackButton;
     private ListView mMessagesListView;
+    private AttachmentListView mAttachmentListView;
     /**
      * Send feedback {@link AsyncTask}
      */
@@ -153,11 +160,6 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
      */
     private ParseFeedbackTask mParseFeedbackTask;
     private Handler mParseFeedbackHandler;
-
-    /**
-     * Initial attachment uris
-     */
-    private List<Uri> mInitialAttachments;
 
     /**
      * URL for HockeyApp API
@@ -210,9 +212,9 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
             mUrl = extras.getString(EXTRA_URL);
             mToken = extras.getString(EXTRA_TOKEN);
             mForceNewThread = extras.getBoolean(EXTRA_FORCE_NEW_THREAD);
-            initialUserName = extras.getString(EXTRA_INITIAL_USER_NAME);
-            initialUserEmail = extras.getString(EXTRA_INITIAL_USER_EMAIL);
-            initialUserSubject = extras.getString(EXTRA_INITIAL_USER_SUBJECT);
+            mInitialUserName = extras.getString(EXTRA_INITIAL_USER_NAME);
+            mInitialUserEmail = extras.getString(EXTRA_INITIAL_USER_EMAIL);
+            mInitialUserSubject = extras.getString(EXTRA_INITIAL_USER_SUBJECT);
 
             Parcelable[] initialAttachmentsArray = extras.getParcelableArray(EXTRA_INITIAL_ATTACHMENTS);
             if (initialAttachmentsArray != null) {
@@ -260,12 +262,11 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
-            ViewGroup attachmentList = findViewById(R.id.wrapper_attachments);
             ArrayList<Uri> attachmentsUris = savedInstanceState.getParcelableArrayList("attachments");
             if (attachmentsUris != null) {
                 for (Uri attachmentUri : attachmentsUris) {
-                    if (!mInitialAttachments.contains(attachmentUri)) {
-                        attachmentList.addView(new AttachmentView(this, attachmentList, attachmentUri, true));
+                    if (mInitialAttachments == null || !mInitialAttachments.contains(attachmentUri)) {
+                        mAttachmentListView.addView(new AttachmentView(this, mAttachmentListView, attachmentUri, true));
                     }
                 }
             }
@@ -280,9 +281,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
      */
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        AttachmentListView attachmentListView = findViewById(R.id.wrapper_attachments);
-
-        outState.putParcelableArrayList("attachments", attachmentListView.getAttachments());
+        outState.putParcelableArrayList("attachments", mAttachmentListView.getAttachments());
         outState.putBoolean("feedbackViewInitialized", mFeedbackViewInitialized);
         outState.putBoolean("inSendFeedback", mInSendFeedback);
         outState.putString("token", mToken);
@@ -349,8 +348,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
         if (viewId == R.id.button_send) {
             sendFeedback();
         } else if (viewId == R.id.button_attachment) {
-            ViewGroup attachments = findViewById(R.id.wrapper_attachments);
-            if (attachments.getChildCount() >= MAX_ATTACHMENTS_PER_MSG) {
+            if (mAttachmentListView.getChildCount() >= MAX_ATTACHMENTS_PER_MSG) {
                 Toast.makeText(this, getString(R.string.hockeyapp_feedback_max_attachments_allowed, MAX_ATTACHMENTS_PER_MSG), Toast.LENGTH_SHORT).show();
             } else {
                 openContextMenu(v);
@@ -415,9 +413,8 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
             Uri uri = data.getData();
 
             if (uri != null) {
-                final ViewGroup attachments = findViewById(R.id.wrapper_attachments);
-                attachments.addView(new AttachmentView(this, attachments, uri, true));
-                Util.announceForAccessibility(attachments, getString(R.string.hockeyapp_feedback_attachment_added));
+                mAttachmentListView.addView(new AttachmentView(this, mAttachmentListView, uri, true));
+                Util.announceForAccessibility(mAttachmentListView, getString(R.string.hockeyapp_feedback_attachment_added));
             }
 
         } else if (requestCode == ATTACH_PICTURE) {
@@ -441,9 +438,8 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
             Uri uri = data.getParcelableExtra(PaintActivity.EXTRA_IMAGE_URI);
 
             if (uri != null) {
-                final ViewGroup attachments = findViewById(R.id.wrapper_attachments);
-                attachments.addView(new AttachmentView(this, attachments, uri, true));
-                Util.announceForAccessibility(attachments, getString(R.string.hockeyapp_feedback_attachment_added));
+                mAttachmentListView.addView(new AttachmentView(this, mAttachmentListView, uri, true));
+                Util.announceForAccessibility(mAttachmentListView, getString(R.string.hockeyapp_feedback_attachment_added));
             }
 
         }
@@ -475,6 +471,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
         ScrollView feedbackScrollView = findViewById(R.id.wrapper_feedback_scroll);
         LinearLayout wrapperLayoutFeedbackAndMessages = findViewById(R.id.wrapper_messages);
         mMessagesListView = findViewById(R.id.list_feedback_messages);
+        mAttachmentListView = findViewById(R.id.wrapper_attachments);
 
         if (haveToken) {
             /** If a token exists, the list of messages should be displayed */
@@ -508,14 +505,14 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
             configureHints();
 
             if (!mFeedbackViewInitialized) {
-                mNameInput.setText(initialUserName);
-                mEmailInput.setText(initialUserEmail);
-                mSubjectInput.setText(initialUserSubject);
-                if (TextUtils.isEmpty(initialUserName)) {
+                mNameInput.setText(mInitialUserName);
+                mEmailInput.setText(mInitialUserEmail);
+                mSubjectInput.setText(mInitialUserSubject);
+                if (TextUtils.isEmpty(mInitialUserName)) {
                     mNameInput.requestFocus();
-                } else if (TextUtils.isEmpty(initialUserEmail)) {
+                } else if (TextUtils.isEmpty(mInitialUserEmail)) {
                     mEmailInput.requestFocus();
-                } else if (TextUtils.isEmpty(initialUserSubject)) {
+                } else if (TextUtils.isEmpty(mInitialUserSubject)) {
                     mSubjectInput.requestFocus();
                 } else {
                     mTextInput.requestFocus();
@@ -539,12 +536,11 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
             }
 
             /** Reset the attachment list */
-            ViewGroup attachmentListView = findViewById(R.id.wrapper_attachments);
-            attachmentListView.removeAllViews();
+            mAttachmentListView.removeAllViews();
 
             if (mInitialAttachments != null) {
                 for (Uri attachmentUri : mInitialAttachments) {
-                    attachmentListView.addView(new AttachmentView(this, attachmentListView, attachmentUri, true));
+                    mAttachmentListView.addView(new AttachmentView(this, mAttachmentListView, attachmentUri, true));
                 }
             }
 
@@ -768,8 +764,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
             });
 
             /** Make list for attachments file paths */
-            AttachmentListView attachmentListView = findViewById(R.id.wrapper_attachments);
-            List<Uri> attachmentUris = attachmentListView.getAttachments();
+            List<Uri> attachmentUris = mAttachmentListView.getAttachments();
 
             /** Start the Send Feedback {@link AsyncTask} */
             sendFetchFeedback(mUrl, name, email, subject, text, attachmentUris, token, mFeedbackHandler, false);
@@ -851,6 +846,11 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
                 } else if (responseString != null) {
                     feedbackActivity.startParseFeedbackTask(responseString, requestType);
                     if ("send".equals(requestType)) {
+
+                        // Remove sent initial attachments.
+                        ArrayList<Uri> attachments = feedbackActivity.mAttachmentListView.getAttachments();
+                        feedbackActivity.mInitialAttachments.removeAll(attachments);
+
                         Toast.makeText(feedbackActivity, R.string.hockeyapp_feedback_sent_toast, Toast.LENGTH_LONG).show();
                     }
                     success = true;
