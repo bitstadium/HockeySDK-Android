@@ -74,7 +74,7 @@
 
     <!-- Feedback Screenshot -->
     <string name="hockeyapp_feedback_screenshot_fail">La capture d\'écran n\'a pas pu être créée, désolé</string>
-    <string name="hockeyapp_feedback_screenshot_notification_title">Commentaires HockeyApp</string>
+    <string name="hockeyapp_feedback_notification_title">Commentaires HockeyApp</string>
     <string name="hockeyapp_feedback_screenshot_notification_message">Prendre une capture d\'écran pour votre commentaire.</string>
 
     <!-- Login Activity -->

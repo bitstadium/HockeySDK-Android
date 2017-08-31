@@ -74,7 +74,7 @@
 
     <!-- Feedback Screenshot -->
     <string name="hockeyapp_feedback_screenshot_fail">截图失败</string>
-    <string name="hockeyapp_feedback_screenshot_notification_title">您的反馈意见</string>
+    <string name="hockeyapp_feedback_notification_title">您的反馈意见</string>
     <string name="hockeyapp_feedback_screenshot_notification_message">您的反馈意见截图</string>
     
     <!-- Login Activity -->

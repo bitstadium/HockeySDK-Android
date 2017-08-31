@@ -2,7 +2,6 @@ package net.hockeyapp.android;
 
 import android.app.Activity;
 import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -46,7 +45,17 @@ public class FeedbackManager {
     /**
      * The id of the notification to take a screenshot.
      */
-    private static final int SCREENSHOT_NOTIFICATION_ID = 1;
+    public static final int SCREENSHOT_NOTIFICATION_ID = 1;
+
+    /**
+     * The id of the new feedback answer notification.
+     */
+    public static final int NEW_ANSWER_NOTIFICATION_ID = 2;
+
+    /**
+     * Notification channel id.
+     */
+    public static final String NOTIFICATION_CHANNEL_ID = "net.hockeyapp.android.NOTIFICATION";
 
     /**
      * The request code for the broadcast.
@@ -381,7 +390,7 @@ public class FeedbackManager {
         weakActivity = new WeakReference<>(activity);
 
         if (!notificationActive) {
-            startNotification();
+            startScreenshotNotification();
         }
     }
 
@@ -396,7 +405,7 @@ public class FeedbackManager {
             return;
         }
 
-        endNotification();
+        endScreenshotNotification();
         weakActivity = null;
     }
 
@@ -451,26 +460,22 @@ public class FeedbackManager {
         });
     }
 
-    @SuppressWarnings("deprecation")
-    private static void startNotification() {
+    private static void startScreenshotNotification() {
         Activity currentActivity = getCurrentActivity();
         if (currentActivity == null) {
             return;
         }
         notificationActive = true;
-        NotificationManager notificationManager = (NotificationManager) currentActivity.getSystemService(Context.NOTIFICATION_SERVICE);
         int iconId = currentActivity.getResources().getIdentifier("ic_menu_camera", "drawable", "android");
-
         Intent intent = new Intent();
         intent.setAction(BROADCAST_ACTION);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(currentActivity, BROADCAST_REQUEST_CODE, intent, PendingIntent.FLAG_ONE_SHOT);
-
         Notification notification = Util.createNotification(currentActivity, pendingIntent,
-                currentActivity.getString(R.string.hockeyapp_feedback_screenshot_notification_title),
+                currentActivity.getString(R.string.hockeyapp_feedback_notification_title),
                 currentActivity.getString(R.string.hockeyapp_feedback_screenshot_notification_message),
-                iconId);
-
-        notificationManager.notify(SCREENSHOT_NOTIFICATION_ID, notification);
+                iconId, NOTIFICATION_CHANNEL_ID);
+        Util.sendNotification(currentActivity, SCREENSHOT_NOTIFICATION_ID, notification, NOTIFICATION_CHANNEL_ID,
+                currentActivity.getString(R.string.hockeyapp_feedback_notification_channel));
 
         if (receiver == null) {
             receiver = new BroadcastReceiver() {
@@ -483,7 +488,7 @@ public class FeedbackManager {
         currentActivity.registerReceiver(receiver, new IntentFilter(BROADCAST_ACTION));
     }
 
-    private static void endNotification() {
+    private static void endScreenshotNotification() {
         Activity currentActivity = getCurrentActivity();
         if (currentActivity == null) {
             return;
@@ -491,8 +496,7 @@ public class FeedbackManager {
 
         notificationActive = false;
         currentActivity.unregisterReceiver(receiver);
-        NotificationManager notificationManager = (NotificationManager) currentActivity.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancel(SCREENSHOT_NOTIFICATION_ID);
+        Util.cancelNotification(currentActivity, SCREENSHOT_NOTIFICATION_ID);
     }
 
     private static Activity getCurrentActivity() {
