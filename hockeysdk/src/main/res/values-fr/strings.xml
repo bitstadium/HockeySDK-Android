@@ -76,6 +76,7 @@
     <string name="hockeyapp_feedback_screenshot_fail">La capture d\'écran n\'a pas pu être créée, désolé</string>
     <string name="hockeyapp_feedback_notification_title">Commentaires HockeyApp</string>
     <string name="hockeyapp_feedback_screenshot_notification_message">Prendre une capture d\'écran pour votre commentaire.</string>
+    <string name="hockeyapp_feedback_new_answer_notification_message">Une nouvelle réponse à votre commentaire est disponible.</string>
 
     <!-- Login Activity -->
     <string name="hockeyapp_login_headline_text">Saisissez l\'adresse électronique et le mot de passe de votre compte HockeyApp pour autoriser l\'accès à cette application.</string>
