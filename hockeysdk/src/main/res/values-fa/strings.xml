@@ -76,6 +76,7 @@
     <string name="hockeyapp_feedback_screenshot_fail">عکس نمیتواند ایجاد شود متاسف.</string>
     <string name="hockeyapp_feedback_notification_title">فیدبک هاکی اپ</string>
     <string name="hockeyapp_feedback_screenshot_notification_message">تصویری برای فیدبک خود بگیرید</string>
+    <string name="hockeyapp_feedback_new_answer_notification_message">پاسخ جدید به نظرات شما در دسترس است.</string>
 
     <!-- Login Activity -->
     <string name="hockeyapp_login_headline_text">برای دسترسی به این نرم افزار لطفا ایمیل و کلمه عبور حساب کاربری خود در HockeyApp را وارد کنید.</string>
