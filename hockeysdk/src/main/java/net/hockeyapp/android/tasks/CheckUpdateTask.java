@@ -42,7 +42,7 @@ public class CheckUpdateTask extends AsyncTask<Void, String, JSONArray> {
     protected String apkUrlString = null;
     protected String appIdentifier = null;
 
-    private Context context = null;
+    private WeakReference<Context> weakContext = null;
     protected Boolean mandatory = false;
     protected UpdateManagerListener listener;
     private long usageTime = 0;
@@ -66,7 +66,7 @@ public class CheckUpdateTask extends AsyncTask<Void, String, JSONArray> {
         }
 
         if (ctx != null) {
-            this.context = ctx.getApplicationContext();
+            this.weakContext = new WeakReference<>(ctx.getApplicationContext());
             this.usageTime = Tracking.getUsageTime(ctx);
             Constants.loadFromContext(ctx);
         }
@@ -79,13 +79,13 @@ public class CheckUpdateTask extends AsyncTask<Void, String, JSONArray> {
         }
 
         if (ctx != null) {
-            this.context = ctx.getApplicationContext();
+            this.weakContext = new WeakReference<>(ctx.getApplicationContext());
             Constants.loadFromContext(ctx);
         }
     }
 
     public void detach() {
-        context = null;
+        weakContext = null;
     }
 
     protected int getVersionCode() {
@@ -95,12 +95,17 @@ public class CheckUpdateTask extends AsyncTask<Void, String, JSONArray> {
     @Override
     protected JSONArray doInBackground(Void... args) {
 
+        Context context = weakContext != null ? weakContext.get() : null;
+        if (context == null) {
+            return null;
+        }
+
         // It must be called in background, since it depends on shared preferences
-        apkUrlString = getURLString("apk");
+        apkUrlString = getURLString(context, "apk");
 
         try {
             int versionCode = getVersionCode();
-            URL url = new URL(getURLString("json"));
+            URL url = new URL(getURLString(context, "json"));
             URLConnection connection = createConnection(url);
             connection.connect();
 
@@ -109,12 +114,12 @@ public class CheckUpdateTask extends AsyncTask<Void, String, JSONArray> {
             inputStream.close();
 
             JSONArray json = new JSONArray(jsonString);
-            if (findNewVersion(json, versionCode)) {
+            if (findNewVersion(context, json, versionCode)) {
                 json = limitResponseSize(json);
                 return json;
             }
         } catch (IOException | JSONException e) {
-            if(this.context != null && Util.isConnectedToNetwork(this.context)) {
+            if(Util.isConnectedToNetwork(context)) {
                 HockeyLog.error("HockeyUpdate", "Could not fetch updates although connected to internet", e);
             }
         }
@@ -128,7 +133,7 @@ public class CheckUpdateTask extends AsyncTask<Void, String, JSONArray> {
         return connection;
     }
 
-    private boolean findNewVersion(JSONArray json, int versionCode) {
+    private boolean findNewVersion(Context context, JSONArray json, int versionCode) {
         try {
             boolean newerVersionFound = false;
 
@@ -186,7 +191,7 @@ public class CheckUpdateTask extends AsyncTask<Void, String, JSONArray> {
         appIdentifier = null;
     }
 
-    private String getURLString(String format) {
+    private String getURLString(Context context, String format) {
         StringBuilder builder = new StringBuilder();
         builder.append(urlString);
         builder.append("api/2/apps/");
