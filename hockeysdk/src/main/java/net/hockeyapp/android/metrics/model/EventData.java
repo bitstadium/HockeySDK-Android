@@ -89,7 +89,7 @@ public class EventData extends TelemetryData {
      */
     public Map<String, String> getProperties() {
         if (this.properties == null) {
-            this.properties = new LinkedHashMap<String, String>();
+            this.properties = new LinkedHashMap<>();
         }
         return this.properties;
     }
@@ -98,7 +98,7 @@ public class EventData extends TelemetryData {
      * Sets the Properties property.
      */
     public void setProperties(Map<String, String> value) {
-        this.properties = value != null ? new LinkedHashMap<String, String>(value) : null;
+        this.properties = value != null ? new LinkedHashMap<>(value) : null;
     }
 
     /**
@@ -106,7 +106,7 @@ public class EventData extends TelemetryData {
      */
     public Map<String, Double> getMeasurements() {
         if (this.measurements == null) {
-            this.measurements = new LinkedHashMap<String, Double>();
+            this.measurements = new LinkedHashMap<>();
         }
         return this.measurements;
     }
@@ -115,7 +115,7 @@ public class EventData extends TelemetryData {
      * Sets the Measurements property.
      */
     public void setMeasurements(Map<String, Double> value) {
-        this.measurements = value != null ? new LinkedHashMap<String, Double>(value) : null;
+        this.measurements = value != null ? new LinkedHashMap<>(value) : null;
     }
 
     /**

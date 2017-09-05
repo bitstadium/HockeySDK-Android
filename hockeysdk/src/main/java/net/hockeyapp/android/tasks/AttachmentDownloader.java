@@ -1,8 +1,8 @@
 package net.hockeyapp.android.tasks;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 
@@ -38,19 +38,20 @@ public class AttachmentDownloader {
      * or the first access to FeedbackParserHolder.INSTANCE, not before.
      */
     private static class AttachmentDownloaderHolder {
-        public static final AttachmentDownloader INSTANCE = new AttachmentDownloader();
+        static final AttachmentDownloader INSTANCE = new AttachmentDownloader();
     }
 
+    @SuppressWarnings("SameReturnValue")
     public static AttachmentDownloader getInstance() {
         return AttachmentDownloaderHolder.INSTANCE;
     }
 
     private Queue<DownloadJob> queue;
-
     private boolean downloadRunning;
+    private final Handler downloadHandler = new DownloadHandler(this);
 
     private AttachmentDownloader() {
-        this.queue = new LinkedList<DownloadJob>();
+        this.queue = new LinkedList<>();
         this.downloadRunning = false;
     }
 
@@ -66,25 +67,33 @@ public class AttachmentDownloader {
 
         DownloadJob downloadJob = queue.peek();
         if (downloadJob != null) {
-            DownloadTask downloadTask = new DownloadTask(downloadJob, new Handler() {
-                @Override
-                public void handleMessage(Message msg) {
-                    final DownloadJob retryCandidate = queue.poll();
-                    if (!retryCandidate.isSuccess() && retryCandidate.consumeRetry()) {
-                        this.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                queue.add(retryCandidate);
-                                downloadNext();
-                            }
-                        }, 3000);
-                    }
-                    downloadRunning = false;
-                    downloadNext();
-                }
-            });
             downloadRunning = true;
-            AsyncTaskUtils.execute(downloadTask);
+            AsyncTaskUtils.execute(new DownloadTask(downloadJob, downloadHandler));
+        }
+    }
+
+    private static class DownloadHandler extends Handler
+    {
+        private final AttachmentDownloader downloader;
+
+        DownloadHandler(AttachmentDownloader downloader) {
+            this.downloader = downloader;
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            final DownloadJob retryCandidate = downloader.queue.poll();
+            if (!retryCandidate.isSuccess() && retryCandidate.consumeRetry()) {
+                this.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        downloader.queue.add(retryCandidate);
+                        downloader.downloadNext();
+                    }
+                }, 3000);
+            }
+            downloader.downloadRunning = false;
+            downloader.downloadNext();
         }
     }
 
@@ -105,28 +114,29 @@ public class AttachmentDownloader {
             this.remainingRetries = 2;
         }
 
-        public FeedbackAttachment getFeedbackAttachment() {
+        FeedbackAttachment getFeedbackAttachment() {
             return feedbackAttachment;
         }
 
-        public AttachmentView getAttachmentView() {
+        AttachmentView getAttachmentView() {
             return attachmentView;
         }
 
-        public boolean isSuccess() {
+        @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+        boolean isSuccess() {
             return success;
         }
 
-        public void setSuccess(boolean success) {
+        void setSuccess(boolean success) {
             this.success = success;
         }
 
-        public boolean hasRetry() {
+        boolean hasRetry() {
             return remainingRetries > 0;
         }
 
-        public boolean consumeRetry() {
-            return --remainingRetries < 0 ? false : true;
+        boolean consumeRetry() {
+            return --remainingRetries >= 0;
         }
     }
 
@@ -136,19 +146,15 @@ public class AttachmentDownloader {
     private static class DownloadTask extends AsyncTask<Void, Integer, Boolean> {
 
         private final DownloadJob downloadJob;
-
         private final Handler handler;
-
-        private File dropFolder;
-
+        private final Context context;
         private Bitmap bitmap;
-
         private int bitmapOrientation;
 
-        public DownloadTask(DownloadJob downloadJob, Handler handler) {
+        DownloadTask(DownloadJob downloadJob, Handler handler) {
             this.downloadJob = downloadJob;
             this.handler = handler;
-            this.dropFolder = Constants.getHockeyAppStorageDir();
+            this.context = downloadJob.getAttachmentView().getContext();
             this.bitmap = null;
             this.bitmapOrientation = ImageUtils.ORIENTATION_PORTRAIT; // default
         }
@@ -160,17 +166,18 @@ public class AttachmentDownloader {
         @Override
         protected Boolean doInBackground(Void... args) {
             FeedbackAttachment attachment = downloadJob.getFeedbackAttachment();
+            File file = new File(Constants.getHockeyAppStorageDir(context), attachment.getCacheId());
 
-            if (attachment.isAvailableInCache()) {
+            if (file.exists()) {
                 HockeyLog.error("Cached...");
-                loadImageThumbnail();
+                loadImageThumbnail(file);
                 return true;
 
             } else {
                 HockeyLog.error("Downloading...");
-                boolean success = downloadAttachment(attachment.getUrl(), attachment.getCacheId());
+                boolean success = downloadAttachment(attachment.getUrl(), file);
                 if (success) {
-                    loadImageThumbnail();
+                    loadImageThumbnail(file);
                 }
                 return success;
             }
@@ -197,32 +204,29 @@ public class AttachmentDownloader {
             handler.sendEmptyMessage(0);
         }
 
-        private void loadImageThumbnail() {
+        private void loadImageThumbnail(File file) {
             try {
-                String filename = downloadJob.getFeedbackAttachment().getCacheId();
                 AttachmentView attachmentView = downloadJob.getAttachmentView();
-
-                bitmapOrientation = ImageUtils.determineOrientation(new File(dropFolder, filename));
+                bitmapOrientation = ImageUtils.determineOrientation(file);
                 int width = bitmapOrientation == ImageUtils.ORIENTATION_LANDSCAPE ?
                         attachmentView.getWidthLandscape() : attachmentView.getWidthPortrait();
                 int height = bitmapOrientation == ImageUtils.ORIENTATION_LANDSCAPE ?
                         attachmentView.getMaxHeightLandscape() : attachmentView.getMaxHeightPortrait();
 
-                bitmap = ImageUtils.decodeSampledBitmap(new File(dropFolder, filename), width, height);
+                bitmap = ImageUtils.decodeSampledBitmap(file, width, height);
 
             } catch (IOException e) {
-                e.printStackTrace();
+                HockeyLog.error("Failed to load image thumbnail", e);
                 bitmap = null;
             }
         }
 
-        private boolean downloadAttachment(String urlString, String filename) {
+        private boolean downloadAttachment(String url, File file) {
             InputStream input = null;
             OutputStream output = null;
             HttpURLConnection connection = null;
             try {
-                URL url = new URL(urlString);
-                connection = (HttpURLConnection) createConnection(url);
+                connection = (HttpURLConnection) createConnection(new URL(url));
                 connection.connect();
 
                 int lengthOfFile = connection.getContentLength();
@@ -234,12 +238,11 @@ public class AttachmentDownloader {
                     }
                 }
 
-                File file = new File(dropFolder, filename);
                 input = new BufferedInputStream(connection.getInputStream());
                 output = new FileOutputStream(file);
 
                 byte data[] = new byte[1024];
-                int count = 0;
+                int count;
                 long total = 0;
                 while ((count = input.read(data)) != -1) {
                     total += count;
@@ -251,7 +254,7 @@ public class AttachmentDownloader {
                 return (total > 0);
 
             } catch (IOException e) {
-                e.printStackTrace();
+                HockeyLog.error("Failed to download attachment to " + file, e);
                 return false;
             } finally {
                 try {
@@ -261,8 +264,7 @@ public class AttachmentDownloader {
                     if (input != null) {
                         input.close();
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
+                } catch (IOException ignored) {
                 }
                 if (connection != null) {
                     connection.disconnect();
@@ -274,10 +276,6 @@ public class AttachmentDownloader {
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.addRequestProperty("User-Agent", Constants.SDK_USER_AGENT);
             connection.setInstanceFollowRedirects(true);
-      /* connection bug workaround for SDK<=2.x */
-            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.GINGERBREAD) {
-                connection.setRequestProperty("connection", "close");
-            }
             return connection;
         }
     }

@@ -16,6 +16,7 @@ import net.hockeyapp.android.utils.HttpURLConnectionBuilder;
 import net.hockeyapp.android.utils.Util;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.HashMap;
@@ -72,10 +73,9 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
      *                        If false, the {@link AsyncTask} will perform a POST, sending the
      *                        feedback message
      */
-    public SendFeedbackTask(Context context, String urlString, String name, String email, String
-            subject,
-                            String text, List<Uri> attachmentUris, String token, Handler handler,
-                            boolean isFetchMessages) {
+    public SendFeedbackTask(Context context, String urlString, String name, String email,
+                            String subject,String text, List<Uri> attachmentUris, String token,
+                            Handler handler, boolean isFetchMessages) {
 
         this.mContext = context;
         this.mUrlString = urlString;
@@ -159,13 +159,30 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
         String status = result.get("status");
         if ((status != null) && (status.startsWith("2")) && (mContext != null)) {
             File folder = new File(mContext.getCacheDir(), FILE_TAG);
-            if ((folder != null) && folder.exists()) {
+            if (folder.exists()) {
                 for (File file : folder.listFiles()) {
                     if (file != null) {
                         Boolean success = file.delete();
                         if (!success) {
                             HockeyLog.debug(TAG, "Error deleting file from temporary folder");
                         }
+                    }
+                }
+            }
+
+            // Delete sent screenshots as well.
+            File hockeyAppStorageDir = Constants.getHockeyAppStorageDir(mContext);
+            File[] screenshots = hockeyAppStorageDir.listFiles(new FilenameFilter() {
+                public boolean accept(File dir, String name) {
+                    return name.endsWith(".jpg");
+                }
+            });
+            for (File screenshot : screenshots) {
+                if (mAttachmentUris.contains(Uri.fromFile(screenshot))) {
+                    if (screenshot.delete()) {
+                        HockeyLog.debug(TAG, "Screenshot '" + screenshot.getName() + "' has been deleted");
+                    } else {
+                        HockeyLog.error(TAG, "Error deleting screenshot");
                     }
                 }
             }
@@ -177,8 +194,7 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
         if (mProgressDialog != null) {
             try {
                 mProgressDialog.dismiss();
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (Exception ignored) {
             }
         }
 
@@ -207,12 +223,12 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
      * @return
      */
     private HashMap<String, String> doPostPut() {
-        HashMap<String, String> result = new HashMap<String, String>();
+        HashMap<String, String> result = new HashMap<>();
         result.put("type", "send");
 
         HttpURLConnection urlConnection = null;
         try {
-            Map<String, String> parameters = new HashMap<String, String>();
+            Map<String, String> parameters = new HashMap<>();
             parameters.put("name", mName);
             parameters.put("email", mEmail);
             parameters.put("subject", mSubject);
@@ -239,7 +255,7 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
             result.put("status", String.valueOf(urlConnection.getResponseCode()));
             result.put("response", getStringFromConnection(urlConnection));
         } catch (IOException e) {
-            e.printStackTrace();
+            HockeyLog.error("Failed to send feedback message", e);
         } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();
@@ -255,12 +271,12 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
      * @return
      */
     private HashMap<String, String> doPostPutWithAttachments() {
-        HashMap<String, String> result = new HashMap<String, String>();
+        HashMap<String, String> result = new HashMap<>();
         result.put("type", "send");
 
         HttpURLConnection urlConnection = null;
         try {
-            Map<String, String> parameters = new HashMap<String, String>();
+            Map<String, String> parameters = new HashMap<>();
             parameters.put("name", mName);
             parameters.put("email", mEmail);
             parameters.put("subject", mSubject);
@@ -288,7 +304,7 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
             result.put("response", getStringFromConnection(urlConnection));
 
         } catch (IOException e) {
-            e.printStackTrace();
+            HockeyLog.error("Failed to send feedback message", e);
         } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();
@@ -305,13 +321,13 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
      */
     private HashMap<String, String> doGet() {
         StringBuilder sb = new StringBuilder();
-        sb.append(mUrlString + Util.encodeParam(mToken));
+        sb.append(mUrlString).append(Util.encodeParam(mToken));
 
         if (mLastMessageId != -1) {
-            sb.append("?last_message_id=" + mLastMessageId);
+            sb.append("?last_message_id=").append(mLastMessageId);
         }
 
-        HashMap<String, String> result = new HashMap<String, String>();
+        HashMap<String, String> result = new HashMap<>();
 
         HttpURLConnection urlConnection = null;
         try {
@@ -326,7 +342,7 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
             result.put("status", String.valueOf(urlConnection.getResponseCode()));
             result.put("response", getStringFromConnection(urlConnection));
         } catch (IOException e) {
-            e.printStackTrace();
+            HockeyLog.error("Failed to fetching feedback messages", e);
         } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();

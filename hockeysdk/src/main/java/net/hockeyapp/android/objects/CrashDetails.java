@@ -1,7 +1,7 @@
 package net.hockeyapp.android.objects;
 
+import android.content.Context;
 import android.text.TextUtils;
-import net.hockeyapp.android.Constants;
 import net.hockeyapp.android.utils.HockeyLog;
 
 import java.io.*;
@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class CrashDetails {
 
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US);
@@ -91,7 +92,7 @@ public class CrashDetails {
             //print the managed exception
             throwable.printStackTrace(printWriter);
         } else {
-            //If we have managedExceptionString, we hava a MIXED (Java & C#)
+            //If we have managedExceptionString, we have a MIXED (Java & C#)
             //exception, The throwable will be the Java exception.
             if (!TextUtils.isEmpty(managedExceptionString)) {
                 //Print the java exception
@@ -184,18 +185,18 @@ public class CrashDetails {
         return result;
     }
 
-    public void writeCrashReport() {
-        String path = Constants.FILES_PATH + "/" + crashIdentifier + ".stacktrace";
-        writeCrashReport(path);
+    public void writeCrashReport(Context context) {
+        File file = new File(context.getFilesDir(), crashIdentifier + ".stacktrace");
+        writeCrashReport(file);
     }
 
-    public void writeCrashReport(final String path) {
-        HockeyLog.debug("Writing unhandled exception to: " + path);
+    public void writeCrashReport(final File file) {
+        HockeyLog.debug("Writing unhandled exception to: " + file.getAbsolutePath());
 
         BufferedWriter writer = null;
 
         try {
-            writer = new BufferedWriter(new FileWriter(path));
+            writer = new BufferedWriter(new FileWriter(file));
 
             writeHeader(writer, FIELD_APP_PACKAGE, appPackage);
             writeHeader(writer, FIELD_APP_VERSION_CODE, appVersionCode);

@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import net.hockeyapp.android.utils.AsyncTaskUtils;
 import net.hockeyapp.android.utils.HockeyLog;
 import net.hockeyapp.android.utils.ImageUtils;
 import net.hockeyapp.android.views.PaintView;
@@ -39,7 +40,7 @@ public class PaintActivity extends Activity {
     private static final int MENU_CLEAR_ID = Menu.FIRST + 2;
 
     private PaintView mPaintView;
-    private String mImageName;
+    private Uri mImageUri;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -51,47 +52,31 @@ public class PaintActivity extends Activity {
             HockeyLog.error("Can't set up PaintActivity as image extra was not provided!");
             return;
         }
+        mImageUri = extras.getParcelable(EXTRA_IMAGE_URI);
 
-        Uri imageUri = extras.getParcelable(EXTRA_IMAGE_URI);
+        AsyncTaskUtils.execute(new AsyncTask<Void, Object, Integer>() {
+            @Override
+            protected Integer doInBackground(Void... voids) {
+                return ImageUtils.determineOrientation(PaintActivity.this, mImageUri);
+            }
 
-        mImageName = determineFilename(imageUri, imageUri.getLastPathSegment());
+            @Override
+            protected void onPostExecute(Integer desiredOrientation) {
+                setRequestedOrientation(desiredOrientation);
 
-        int displayWidth = getResources().getDisplayMetrics().widthPixels;
-        int displayHeight = getResources().getDisplayMetrics().heightPixels;
-        int currentOrientation = displayWidth > displayHeight ? ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE :
-                ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+                int displayWidth = getResources().getDisplayMetrics().widthPixels;
+                int displayHeight = getResources().getDisplayMetrics().heightPixels;
+                int currentOrientation = displayWidth > displayHeight ? ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE :
+                        ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+                if (currentOrientation != desiredOrientation) {
+                    /* Activity will be destroyed again.. skip the following expensive operations. */
+                    HockeyLog.debug("Image loading skipped because activity will be destroyed for orientation change.");
+                    return;
+                }
 
-        int desiredOrientation = ImageUtils.determineOrientation(this, imageUri);
-        //noinspection ResourceType
-        setRequestedOrientation(desiredOrientation);
-
-        if (currentOrientation != desiredOrientation) {
-      /* Activity will be destroyed again.. skip the following expensive operations. */
-            HockeyLog.debug("Image loading skipped because activity will be destroyed for orientation change.");
-            return;
-        }
-
-    /* Create view and find out which orientation is needed. */
-        mPaintView = new PaintView(this, imageUri, displayWidth, displayHeight);
-
-        LinearLayout vLayout = new LinearLayout(this);
-        LinearLayout.LayoutParams vParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-        vLayout.setLayoutParams(vParams);
-        vLayout.setGravity(Gravity.CENTER);
-        vLayout.setOrientation(LinearLayout.VERTICAL);
-
-        LinearLayout hLayout = new LinearLayout(this);
-        LinearLayout.LayoutParams hParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-        hLayout.setLayoutParams(hParams);
-        hLayout.setGravity(Gravity.CENTER);
-        hLayout.setOrientation(LinearLayout.HORIZONTAL);
-
-        vLayout.addView(hLayout);
-        hLayout.addView(mPaintView);
-        setContentView(vLayout);
-
-        Toast toast = Toast.makeText(this, getString(R.string.hockeyapp_paint_indicator_toast), Toast.LENGTH_LONG);
-        toast.show();
+                showPaintView();
+            }
+        });
     }
 
     @Override
@@ -146,7 +131,7 @@ public class PaintActivity extends Activity {
                                 break;
 
                             case DialogInterface.BUTTON_NEUTRAL:
-                /* No action. */
+                                /* No action. */
                                 break;
                         }
                     }
@@ -165,46 +150,85 @@ public class PaintActivity extends Activity {
         return super.onKeyDown(keyCode, event);
     }
 
+    private void showPaintView() {
+        int displayWidth = getResources().getDisplayMetrics().widthPixels;
+        int displayHeight = getResources().getDisplayMetrics().heightPixels;
+
+        /* Create view and find out which orientation is needed. */
+        mPaintView = new PaintView(this, mImageUri, displayWidth, displayHeight);
+
+        LinearLayout vLayout = new LinearLayout(this);
+        LinearLayout.LayoutParams vParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+        vLayout.setLayoutParams(vParams);
+        vLayout.setGravity(Gravity.CENTER);
+        vLayout.setOrientation(LinearLayout.VERTICAL);
+
+        LinearLayout hLayout = new LinearLayout(this);
+        LinearLayout.LayoutParams hParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+        hLayout.setLayoutParams(hParams);
+        hLayout.setGravity(Gravity.CENTER);
+        hLayout.setOrientation(LinearLayout.HORIZONTAL);
+
+        vLayout.addView(hLayout);
+        hLayout.addView(mPaintView);
+        setContentView(vLayout);
+
+        Toast toast = Toast.makeText(this, R.string.hockeyapp_paint_indicator_toast, Toast.LENGTH_LONG);
+        toast.show();
+    }
+
     private void makeResult() {
-        File hockeyAppCache = new File(getCacheDir(), "HockeyApp");
-        hockeyAppCache.mkdir();
-
-        String filename = mImageName + ".jpg";
-        File result = new File(hockeyAppCache, filename);
-
-        int suffix = 1;
-        while (result.exists()) {
-            result = new File(hockeyAppCache, mImageName + "_" + suffix + ".jpg");
-            suffix++;
-        }
-
         mPaintView.setDrawingCacheEnabled(true);
         final Bitmap bitmap = mPaintView.getDrawingCache();
-        new AsyncTask<File, Void, Void>() {
+        AsyncTaskUtils.execute(new AsyncTask<Void, Object, Boolean>() {
+            File result;
+
             @Override
-            protected Void doInBackground(File... args) {
+            protected Boolean doInBackground(Void... args) {
+                File hockeyAppCache = new File(getCacheDir(), Constants.FILES_DIRECTORY_NAME);
+                if (!hockeyAppCache.exists() && !hockeyAppCache.mkdir()) {
+                    return false;
+                }
+                String imageName = determineFilename(mImageUri, mImageUri.getLastPathSegment());
+                String filename = imageName + ".jpg";
+                result = new File(hockeyAppCache, filename);
+                int suffix = 1;
+                while (result.exists()) {
+                    result = new File(hockeyAppCache, imageName + "_" + suffix + ".jpg");
+                    suffix++;
+                }
                 try {
-                    FileOutputStream out = new FileOutputStream(args[0]);
+                    FileOutputStream out = new FileOutputStream(result);
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
                     out.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
                     HockeyLog.error("Could not save image.", e);
+                    return false;
                 }
-                return null;
+                return true;
             }
-        }.execute(result);
 
-        Intent intent = new Intent();
-        Uri uri = Uri.fromFile(result);
-        intent.putExtra(EXTRA_IMAGE_URI, uri);
-
-        if (getParent() == null) {
-            setResult(Activity.RESULT_OK, intent);
-        } else {
-            getParent().setResult(Activity.RESULT_OK, intent);
-        }
-        finish();
+            @Override
+            protected void onPostExecute(Boolean success) {
+                if (success) {
+                    Intent intent = new Intent();
+                    Uri uri = Uri.fromFile(result);
+                    intent.putExtra(EXTRA_IMAGE_URI, uri);
+                    if (getParent() == null) {
+                        setResult(Activity.RESULT_OK, intent);
+                    } else {
+                        getParent().setResult(Activity.RESULT_OK, intent);
+                    }
+                } else {
+                    if (getParent() == null) {
+                        setResult(Activity.RESULT_CANCELED);
+                    } else {
+                        getParent().setResult(Activity.RESULT_CANCELED);
+                    }
+                }
+                finish();
+            }
+        });
     }
 
     private String determineFilename(Uri uri, String fallback) {

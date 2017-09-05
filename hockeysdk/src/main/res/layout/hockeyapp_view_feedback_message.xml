@@ -14,13 +14,10 @@
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:layout_marginTop="20dp"
-        android:shadowColor="@color/hockeyapp_text_white"
-        android:shadowDx="1"
-        android:shadowRadius="1"
-        android:singleLine="true"
-        android:textColor="@color/hockeyapp_text_white"
+        android:textColor="@color/hockeyapp_text_black"
         android:textSize="15sp"
-        android:typeface="normal" />
+        android:typeface="normal"
+        android:maxLines="1" />
 
     <TextView
         android:id="@+id/label_date"
@@ -31,14 +28,11 @@
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:layout_marginTop="0dp"
-        android:shadowColor="@color/hockeyapp_text_white"
-        android:shadowDx="1"
-        android:shadowRadius="1"
-        android:singleLine="true"
-        android:textColor="@color/hockeyapp_text_white"
+        android:textColor="@color/hockeyapp_text_black"
         android:textSize="15sp"
         android:textStyle="italic"
-        android:typeface="normal" />
+        android:typeface="normal"
+        android:maxLines="1" />
 
     <TextView
         android:id="@+id/label_text"
@@ -48,10 +42,6 @@
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:layout_marginTop="0dp"
-        android:shadowColor="@color/hockeyapp_text_white"
-        android:shadowDx="1"
-        android:shadowRadius="1"
-        android:singleLine="false"
         android:textColor="@color/hockeyapp_text_black"
         android:textSize="18sp"
         android:typeface="normal" />
@@ -64,8 +54,6 @@
         android:layout_marginBottom="20dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:layout_marginTop="0dp"
-
-        />
+        android:layout_marginTop="0dp" />
 
 </LinearLayout>

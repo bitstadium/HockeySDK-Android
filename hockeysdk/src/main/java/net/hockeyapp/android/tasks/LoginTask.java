@@ -10,12 +10,12 @@ import android.os.Message;
 import android.text.TextUtils;
 import net.hockeyapp.android.Constants;
 import net.hockeyapp.android.LoginManager;
+import net.hockeyapp.android.utils.HockeyLog;
 import net.hockeyapp.android.utils.HttpURLConnectionBuilder;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.util.Map;
 
@@ -28,7 +28,7 @@ import java.util.Map;
 public class LoginTask extends ConnectionTask<Void, Void, Boolean> {
 
     /**
-     * Key for login success in the returend bundle
+     * Key for login success in the returned bundle
      */
     public static final String BUNDLE_SUCCESS = "success";
     private final int mMode;
@@ -101,10 +101,8 @@ public class LoginTask extends ConnectionTask<Void, Void, Boolean> {
                     return handleResponse(responseStr);
                 }
             }
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
         } catch (IOException e) {
-            e.printStackTrace();
+            HockeyLog.error("Failed to login", e);
         } finally {
             if (connection != null) {
                 connection.disconnect();
@@ -119,8 +117,7 @@ public class LoginTask extends ConnectionTask<Void, Void, Boolean> {
         if (mProgressDialog != null) {
             try {
                 mProgressDialog.dismiss();
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (Exception ignored) {
             }
         }
 
@@ -153,7 +150,7 @@ public class LoginTask extends ConnectionTask<Void, Void, Boolean> {
             String type = params.get("type");
             String id = params.get("id");
             String paramUrl = mUrlString + "?" + type + "=" + id;
-            
+
             return new HttpURLConnectionBuilder(paramUrl)
                     .build();
         } else {
@@ -212,7 +209,7 @@ public class LoginTask extends ConnectionTask<Void, Void, Boolean> {
 
             return false;
         } catch (JSONException e) {
-            e.printStackTrace();
+            HockeyLog.error("Failed to parse login response", e);
             return false;
         }
     }

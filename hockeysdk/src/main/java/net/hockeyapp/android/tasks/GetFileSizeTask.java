@@ -3,6 +3,7 @@ package net.hockeyapp.android.tasks;
 import android.content.Context;
 
 import net.hockeyapp.android.listeners.DownloadFileListener;
+import net.hockeyapp.android.utils.HockeyLog;
 
 import java.io.IOException;
 import java.net.URL;
@@ -29,7 +30,7 @@ public class GetFileSizeTask extends DownloadFileTask {
             URLConnection connection = createConnection(url, MAX_REDIRECTS);
             return (long) connection.getContentLength();
         } catch (IOException e) {
-            e.printStackTrace();
+            HockeyLog.error("Failed to get size " + mUrlString, e);
             return 0L;
         }
     }

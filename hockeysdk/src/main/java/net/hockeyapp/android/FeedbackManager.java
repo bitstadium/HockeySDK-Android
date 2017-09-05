@@ -2,7 +2,6 @@ package net.hockeyapp.android;
 
 import android.app.Activity;
 import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -28,7 +27,12 @@ import net.hockeyapp.android.utils.Util;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 
 /**
  * <h3>Description</h3>
@@ -36,12 +40,23 @@ import java.io.IOException;
  * The FeedbackManager displays the feedback currentActivity.
  *
  **/
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class FeedbackManager {
 
     /**
      * The id of the notification to take a screenshot.
      */
-    private static final int SCREENSHOT_NOTIFICATION_ID = 1;
+    public static final int SCREENSHOT_NOTIFICATION_ID = 1;
+
+    /**
+     * The id of the new feedback answer notification.
+     */
+    public static final int NEW_ANSWER_NOTIFICATION_ID = 2;
+
+    /**
+     * Notification channel id.
+     */
+    public static final String NOTIFICATION_CHANNEL_ID = "net.hockeyapp.android.NOTIFICATION";
 
     /**
      * The request code for the broadcast.
@@ -59,9 +74,9 @@ public class FeedbackManager {
     private static BroadcastReceiver receiver = null;
 
     /**
-     * Used to hold a reference to the currently visible currentActivity of this app.
+     * Used to hold a reference to the currently visible activity of this app.
      */
-    private static Activity currentActivity;
+    private static WeakReference<Activity> weakActivity;
 
     /**
      * Tells if a notification has been created and is visible to the user.
@@ -183,29 +198,80 @@ public class FeedbackManager {
      * @param attachments the optional attachment {@link Uri}s
      * @param extras      a bundle to be added to the Intent that starts the FeedbackActivity instance
      */
-    public static void showFeedbackActivity(Context context, Bundle extras, Uri... attachments) {
+    public static void showFeedbackActivity(final Context context, final Bundle extras, final Uri... attachments) {
         if (context != null) {
-            Class<?> activityClass = null;
-            if (lastListener != null) {
-                activityClass = lastListener.getFeedbackActivityClass();
-            }
-            if (activityClass == null) {
-                activityClass = FeedbackActivity.class;
-            }
-            boolean forceNewThread = lastListener != null && lastListener.shouldCreateNewFeedbackThread();
+            final Class<?> activityClass = lastListener != null ? lastListener.getFeedbackActivityClass() : null;
+            final boolean forceNewThread = lastListener != null && lastListener.shouldCreateNewFeedbackThread();
 
-            Intent intent = new Intent();
-            if (extras != null && !extras.isEmpty()) {
-                intent.putExtras(extras);
-            }
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.setClass(context, activityClass);
-            intent.putExtra(FeedbackActivity.EXTRA_URL, getURLString(context));
-            intent.putExtra(FeedbackActivity.EXTRA_FORCE_NEW_THREAD, forceNewThread);
-            intent.putExtra(FeedbackActivity.EXTRA_INITIAL_USER_NAME, userName);
-            intent.putExtra(FeedbackActivity.EXTRA_INITIAL_USER_EMAIL, userEmail);
-            intent.putExtra(FeedbackActivity.EXTRA_INITIAL_ATTACHMENTS, attachments);
-            context.startActivity(intent);
+            AsyncTaskUtils.execute(new AsyncTask<Void, Object, Intent>() {
+                @Override
+                protected Intent doInBackground(Void... voids) {
+                    Intent intent = new Intent();
+                    if (extras != null && !extras.isEmpty()) {
+                        intent.putExtras(extras);
+                    }
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.setClass(context, activityClass != null ? activityClass : FeedbackActivity.class);
+                    intent.putExtra(FeedbackActivity.EXTRA_URL, getURLString(context));
+                    String token = !forceNewThread ? PrefsUtil.getInstance().getFeedbackTokenFromPrefs(context) : null;
+                    intent.putExtra(FeedbackActivity.EXTRA_TOKEN, token);
+                    intent.putExtra(FeedbackActivity.EXTRA_FORCE_NEW_THREAD, forceNewThread);
+                    String userName = FeedbackManager.userName;
+                    String userEmail = FeedbackManager.userEmail;
+                    String userSubject = null;
+                    String nameEmailSubject = PrefsUtil.getInstance().getNameEmailFromPrefs(context);
+                    if (nameEmailSubject != null) {
+                        // Prepopulate the appropriate fields
+                        String[] nameEmailSubjectArray = nameEmailSubject.split("\\|");
+                        if (nameEmailSubjectArray != null && nameEmailSubjectArray.length >= 2) {
+                            userName = nameEmailSubjectArray[0];
+                            userEmail = nameEmailSubjectArray[1];
+                            if (!forceNewThread && nameEmailSubjectArray.length >= 3) {
+                                userSubject = nameEmailSubjectArray[2];
+                            }
+                        }
+                    }
+                    intent.putExtra(FeedbackActivity.EXTRA_INITIAL_USER_NAME, userName);
+                    intent.putExtra(FeedbackActivity.EXTRA_INITIAL_USER_EMAIL, userEmail);
+                    intent.putExtra(FeedbackActivity.EXTRA_INITIAL_USER_SUBJECT, userSubject);
+                    intent.putExtra(FeedbackActivity.EXTRA_INITIAL_ATTACHMENTS, getInitialAttachments(attachments));
+                    return intent;
+                }
+
+                @Override
+                protected void onPostExecute(Intent intent) {
+                    context.startActivity(intent);
+                }
+
+                private Uri[] getInitialAttachments(Uri[] userAttachments) {
+                    ArrayList<Uri> initialAttachments = new ArrayList<>();
+                    File[] screenshots = searchScreenshots();
+                    if (screenshots != null) {
+                        for (File screenshot : screenshots) {
+                            initialAttachments.add(Uri.fromFile(screenshot));
+                        }
+                    }
+                    if (attachments != null && attachments.length > 0) {
+                        initialAttachments.addAll(Arrays.asList(attachments));
+                    }
+                    if (initialAttachments.size() > 0) {
+                        return initialAttachments.toArray(new Uri[0]);
+                    }
+                    return null;
+                }
+
+                private File[] searchScreenshots() {
+                    File dir = Constants.getHockeyAppStorageDir(context);
+                    if (dir != null) {
+                        return dir.listFiles(new FilenameFilter() {
+                            public boolean accept(File dir, String name) {
+                                return name.endsWith(".jpg");
+                            }
+                        });
+                    }
+                    return null;
+                }
+            });
         }
     }
 
@@ -224,19 +290,20 @@ public class FeedbackManager {
         int lastMessageId = context.getSharedPreferences(ParseFeedbackTask.PREFERENCES_NAME, 0)
                 .getInt(ParseFeedbackTask.ID_LAST_MESSAGE_SEND, -1);
 
-        SendFeedbackTask sendFeedbackTask = new SendFeedbackTask(context, getURLString(context), null, null, null, null, null, token, new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                Bundle bundle = msg.getData();
-                String responseString = bundle.getString(SendFeedbackTask.BUNDLE_FEEDBACK_RESPONSE);
+        SendFeedbackTask sendFeedbackTask = new SendFeedbackTask(context, getURLString(context), null, null, null, null, null, token, null, true) {
 
+            @Override
+            protected void onPostExecute(HashMap<String, String> result) {
+                super.onPostExecute(result);
+
+                String responseString = result.get("response");
                 if (responseString != null) {
                     ParseFeedbackTask task = new ParseFeedbackTask(context, responseString, null, "fetch");
                     task.setUrlString(getURLString(context));
                     AsyncTaskUtils.execute(task);
                 }
             }
-        }, true);
+        };
         sendFeedbackTask.setShowProgressDialog(false);
         sendFeedbackTask.setLastMessageId(lastMessageId);
         AsyncTaskUtils.execute(sendFeedbackTask);
@@ -255,7 +322,7 @@ public class FeedbackManager {
      * Populates the URL String with the appIdentifier
      *
      * @param context {@link Context} object
-     * @return
+     * @return URL String with the appIdentifier
      */
     private static String getURLString(Context context) {
         return urlString + "api/2/apps/" + identifier + "/feedback/";
@@ -322,10 +389,10 @@ public class FeedbackManager {
      * @param activity {@link Activity} object
      */
     public static void setActivityForScreenshot(Activity activity) {
-        currentActivity = activity;
+        weakActivity = new WeakReference<>(activity);
 
         if (!notificationActive) {
-            startNotification();
+            startScreenshotNotification();
         }
     }
 
@@ -335,41 +402,49 @@ public class FeedbackManager {
      * @param activity activity for screenshot
      */
     public static void unsetCurrentActivityForScreenshot(Activity activity) {
+        Activity currentActivity = getCurrentActivity();
         if (currentActivity == null || currentActivity != activity) {
             return;
         }
 
-        endNotification();
-        currentActivity = null;
+        endScreenshotNotification();
+        weakActivity = null;
     }
 
     /**
      * Takes a screenshot of the currently set activity and stores it in the HockeyApp folder on the
-     * external storage also publishing it to the Android gallery.
+     * external storage. It will be attached to feedback automatically.
      *
      * @param context toast messages will be displayed using this context
      */
     public static void takeScreenshot(final Context context) {
+        final Activity currentActivity = getCurrentActivity();
+        if (currentActivity == null) {
+            return;
+        }
+
         View view = currentActivity.getWindow().getDecorView();
         view.setDrawingCacheEnabled(true);
         final Bitmap bitmap = view.getDrawingCache();
+        final String filename = currentActivity.getLocalClassName();
 
-        String filename = currentActivity.getLocalClassName();
-        File dir = Constants.getHockeyAppStorageDir();
-        File result = new File(dir, filename + ".jpg");
-        int suffix = 1;
-        while (result.exists()) {
-            result = new File(dir, filename + "_" + suffix + ".jpg");
-            suffix++;
-        }
+        AsyncTaskUtils.execute(new AsyncTask<Void, Void, Boolean>() {
+            File result;
 
-        new AsyncTask<File, Void, Boolean>() {
             @Override
-            protected Boolean doInBackground(File... args) {
+            protected Boolean doInBackground(Void... args) {
+                File dir = Constants.getHockeyAppStorageDir(context);
+                result = new File(dir, filename + ".jpg");
+                int suffix = 1;
+                while (result.exists()) {
+                    result = new File(dir, filename + "_" + suffix + ".jpg");
+                    suffix++;
+                }
                 try {
-                    FileOutputStream out = new FileOutputStream(args[0]);
+                    FileOutputStream out = new FileOutputStream(result);
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
                     out.close();
+                    HockeyLog.debug("Screenshot '" + result.getName() + "' has been saved");
                     return true;
                 } catch (IOException e) {
                     HockeyLog.error("Could not save screenshot.", e);
@@ -379,38 +454,30 @@ public class FeedbackManager {
 
             @Override
             protected void onPostExecute(Boolean success) {
-                if (success == false) {
-                    Toast.makeText(context, "Screenshot could not be created. Sorry.", Toast.LENGTH_LONG)
+                if (!success) {
+                    Toast.makeText(context, R.string.hockeyapp_feedback_screenshot_fail, Toast.LENGTH_LONG)
                             .show();
                 }
             }
-        }.execute(result);
-
-    /* Publish to gallery. */
-        MediaScannerClient client = new MediaScannerClient(result.getAbsolutePath());
-        MediaScannerConnection connection = new MediaScannerConnection(currentActivity, client);
-        client.setConnection(connection);
-        connection.connect();
-
-        Toast.makeText(context, "Screenshot '" + result.getName() + "' is available in gallery.",
-                Toast.LENGTH_LONG).show();
+        });
     }
 
-    @SuppressWarnings("deprecation")
-    private static void startNotification() {
+    private static void startScreenshotNotification() {
+        Activity currentActivity = getCurrentActivity();
+        if (currentActivity == null) {
+            return;
+        }
         notificationActive = true;
-
-        NotificationManager notificationManager = (NotificationManager) currentActivity.getSystemService(Context.NOTIFICATION_SERVICE);
-
         int iconId = currentActivity.getResources().getIdentifier("ic_menu_camera", "drawable", "android");
-
         Intent intent = new Intent();
         intent.setAction(BROADCAST_ACTION);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(currentActivity, BROADCAST_REQUEST_CODE, intent, PendingIntent.FLAG_ONE_SHOT);
-
-        Notification notification = Util.createNotification(currentActivity, pendingIntent, "HockeyApp Feedback", "Take a screenshot for your feedback.", iconId);
-
-        notificationManager.notify(SCREENSHOT_NOTIFICATION_ID, notification);
+        Notification notification = Util.createNotification(currentActivity, pendingIntent,
+                currentActivity.getString(R.string.hockeyapp_feedback_notification_title),
+                currentActivity.getString(R.string.hockeyapp_feedback_screenshot_notification_message),
+                iconId, NOTIFICATION_CHANNEL_ID);
+        Util.sendNotification(currentActivity, SCREENSHOT_NOTIFICATION_ID, notification, NOTIFICATION_CHANNEL_ID,
+                currentActivity.getString(R.string.hockeyapp_feedback_notification_channel));
 
         if (receiver == null) {
             receiver = new BroadcastReceiver() {
@@ -423,13 +490,19 @@ public class FeedbackManager {
         currentActivity.registerReceiver(receiver, new IntentFilter(BROADCAST_ACTION));
     }
 
+    private static void endScreenshotNotification() {
+        Activity currentActivity = getCurrentActivity();
+        if (currentActivity == null) {
+            return;
+        }
 
-    private static void endNotification() {
         notificationActive = false;
-
         currentActivity.unregisterReceiver(receiver);
-        NotificationManager notificationManager = (NotificationManager) currentActivity.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancel(SCREENSHOT_NOTIFICATION_ID);
+        Util.cancelNotification(currentActivity, SCREENSHOT_NOTIFICATION_ID);
+    }
+
+    private static Activity getCurrentActivity() {
+        return weakActivity != null ? weakActivity.get() : null;
     }
 
     /**

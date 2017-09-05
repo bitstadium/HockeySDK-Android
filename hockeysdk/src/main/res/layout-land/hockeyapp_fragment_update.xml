@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/hockeyapp_background_white">
@@ -10,7 +11,8 @@
         android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
         android:background="@color/hockeyapp_background_header"
-        android:padding="0dp">
+        android:padding="0dp"
+        tools:ignore="RtlHardcoded">
 
 
         <TextView
@@ -25,11 +27,11 @@
             android:shadowColor="@color/hockeyapp_text_white"
             android:shadowDx="1"
             android:shadowRadius="1"
-            android:singleLine="true"
             android:textColor="@color/hockeyapp_text_black"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:typeface="normal" />
+            android:typeface="normal"
+            android:maxLines="1" />
 
         <TextView
             android:id="@+id/label_version"
@@ -63,7 +65,8 @@
             android:text="@string/hockeyapp_update_button"
             android:contentDescription="@string/hockeyapp_update_button"
             android:textColor="@color/hockeyapp_text_white"
-            android:textSize="16sp"/>
+            android:textSize="16sp"
+            tools:ignore="RtlHardcoded" />
 
 
     </RelativeLayout>
@@ -73,6 +76,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_toRightOf="@id/view_header"
-        android:background="@color/hockeyapp_background_white" />
+        android:background="@color/hockeyapp_background_white"
+        tools:ignore="RtlHardcoded" />
 
 </RelativeLayout>

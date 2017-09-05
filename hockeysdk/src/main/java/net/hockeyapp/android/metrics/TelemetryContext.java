@@ -1,31 +1,34 @@
 package net.hockeyapp.android.metrics;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.graphics.Point;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.telephony.TelephonyManager;
 import android.view.Display;
 import android.view.WindowManager;
+
 import net.hockeyapp.android.BuildConfig;
 import net.hockeyapp.android.Constants;
 import net.hockeyapp.android.metrics.model.*;
+import net.hockeyapp.android.utils.AsyncTaskUtils;
 import net.hockeyapp.android.utils.HockeyLog;
 import net.hockeyapp.android.utils.Util;
 
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 /**
  * <h3>Description</h3>
  *
  * Class that manages the context in which telemetry items get sent.
- **/
+ */
+@SuppressWarnings("WeakerAccess")
 class TelemetryContext {
 
     private static final String TAG = "HockeyApp-Metrics";
@@ -43,27 +46,27 @@ class TelemetryContext {
     /**
      * Device telemetryContext.
      */
-    protected final Device mDevice;
+    final Device mDevice;
 
     /**
      * Session context.
      */
-    protected final Session mSession;
+    final Session mSession;
 
     /**
      * User context.
      */
-    protected final User mUser;
+    final User mUser;
 
     /**
      * Internal context.
      */
-    protected final Internal mInternal;
+    final Internal mInternal;
 
     /**
      * Application context.
      */
-    protected final Application mApplication;
+    final Application mApplication;
 
     /**
      * Synchronization LOCK for setting instrumentation key.
@@ -71,14 +74,9 @@ class TelemetryContext {
     private final Object IKEY_LOCK = new Object();
 
     /**
-     * The application context needed to update some context values.
+     * A weak reference to the application context needed to update some context values.
      */
-    protected Context mContext;
-
-    /**
-     * The shared preferences INSTANCE for reading persistent context.
-     */
-    private SharedPreferences mSettings;
+    private WeakReference<Context> mWeakContext;
 
     /**
      * Device context.
@@ -107,16 +105,29 @@ class TelemetryContext {
      * @param context       the context for this telemetryContext
      * @param appIdentifier the app identifier for this application
      */
-    protected TelemetryContext(Context context, String appIdentifier) {
+    TelemetryContext(Context context, String appIdentifier) {
         this();
-        mSettings = context.getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
-        mContext = context;
+        mWeakContext = new WeakReference<>(context);
         mInstrumentationKey = Util.convertAppIdentifierToGuid(appIdentifier);
 
         configDeviceContext();
-        configUserId();
         configInternalContext();
         configApplicationContext();
+
+        // Set device identifier.
+        AsyncTaskUtils.execute(new AsyncTask<Void, Object, Object>() {
+            @Override
+            protected Object doInBackground(Void... voids) {
+                try {
+                    String deviceId = Constants.getDeviceIdentifier().get();
+                    setDeviceId(deviceId);
+                    setAnonymousUserId(deviceId);
+                } catch (InterruptedException | ExecutionException e) {
+                    HockeyLog.debug("Error config device identifier", e);
+                }
+                return null;
+            }
+        });
     }
 
     /**
@@ -124,7 +135,7 @@ class TelemetryContext {
      *
      * @param sessionId the current session Id
      */
-    protected void renewSessionContext(String sessionId) {
+    void renewSessionContext(String sessionId) {
         configSessionContext(sessionId);
     }
 
@@ -133,15 +144,21 @@ class TelemetryContext {
      *
      * @param sessionId the current session Id
      */
-    protected void configSessionContext(String sessionId) {
+    private void configSessionContext(String sessionId) {
         HockeyLog.debug(TAG, "Configuring session context");
 
         setSessionId(sessionId);
         HockeyLog.debug(TAG, "Setting the isNew-flag to true, as we only count new sessions");
         setIsNewSession("true");
 
-        SharedPreferences.Editor editor = mSettings.edit();
-        if (!mSettings.getBoolean(SESSION_IS_FIRST_KEY, false)) {
+        Context context = getContext();
+        if (context == null) {
+            HockeyLog.warn(TAG, "Failed to write to SharedPreferences, context is null");
+            return;
+        }
+        SharedPreferences settings = context.getSharedPreferences(SHARED_PREFERENCES_KEY, Context.MODE_PRIVATE);
+        if (!settings.getBoolean(SESSION_IS_FIRST_KEY, false)) {
+            SharedPreferences.Editor editor = settings.edit();
             editor.putBoolean(SESSION_IS_FIRST_KEY, true);
             editor.apply();
             setIsFirstSession("true");
@@ -155,11 +172,11 @@ class TelemetryContext {
     /**
      * Sets the application telemetryContext tags.
      */
-    protected void configApplicationContext() {
+    private void configApplicationContext() {
         HockeyLog.debug(TAG, "Configuring application context");
 
         // App version
-        String version = "unknown";
+        String version;
         mPackageName = "";
         if (Constants.APP_PACKAGE != null) {
             mPackageName = Constants.APP_PACKAGE;
@@ -173,19 +190,9 @@ class TelemetryContext {
     }
 
     /**
-     * Load the user context associated with telemetry data.
-     */
-    protected void configUserId() {
-        HockeyLog.debug(TAG, "Configuring user context");
-
-        HockeyLog.debug("Using pre-supplied anonymous device identifier.");
-        setAnonymousUserId(Constants.CRASH_IDENTIFIER);
-    }
-
-    /**
      * Sets the device telemetryContext tags.
      */
-    protected void configDeviceContext() {
+    private void configDeviceContext() {
         HockeyLog.debug(TAG, "Configuring device context");
         setOsVersion(Build.VERSION.RELEASE);
         setOsName("Android");
@@ -194,12 +201,13 @@ class TelemetryContext {
         setOsLocale(Locale.getDefault().toString());
         setOsLanguage(Locale.getDefault().getLanguage());
         updateScreenResolution();
-        setDeviceId(Constants.DEVICE_IDENTIFIER);
 
         // check device type
-        final TelephonyManager telephonyManager = (TelephonyManager)
-                mContext.getSystemService(Context.TELEPHONY_SERVICE);
-        if (telephonyManager.getPhoneType() != TelephonyManager.PHONE_TYPE_NONE) {
+        Context context = getContext();
+        final TelephonyManager telephonyManager = context != null
+                ? (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE)
+                : null;
+        if (telephonyManager == null || telephonyManager.getPhoneType() != TelephonyManager.PHONE_TYPE_NONE) {
             setDeviceType("Phone");
         } else {
             setDeviceType("Tablet");
@@ -211,16 +219,14 @@ class TelemetryContext {
         }
     }
 
-    @SuppressWarnings("deprecation")
-    @SuppressLint({"NewApi", "Deprecation"})
-    protected void updateScreenResolution() {
+    void updateScreenResolution() {
         String resolutionString;
         int width;
         int height;
 
-        if (mContext != null) {
-            WindowManager wm = (WindowManager) mContext.getSystemService(
-                    Context.WINDOW_SERVICE);
+        Context context = getContext();
+        if (context != null) {
+            WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                 Point size = new Point();
                 Display d = wm.getDefaultDisplay();
@@ -232,12 +238,11 @@ class TelemetryContext {
                     width = 0;
                     height = 0;
                 }
-
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+            } else {
                 try {
-                    //We have to use undocumented API here. Android 4.0 introduced soft buttons for
-                    //back, home and menu, but there's no API present to get the real display size
-                    //all available methods only return the size of the contentView.
+                    // We have to use undocumented API here. Android 4.0 introduced soft buttons for
+                    // back, home and menu, but there's no API present to get the real display size
+                    // all available methods only return the size of the contentView.
                     Method mGetRawW = Display.class.getMethod("getRawWidth");
                     Method mGetRawH = Display.class.getMethod("getRawHeight");
                     Display display = wm.getDefaultDisplay();
@@ -247,7 +252,7 @@ class TelemetryContext {
                     Point size = new Point();
                     Display d = wm.getDefaultDisplay();
                     if (d != null) {
-                        d.getRealSize(size);
+                        d.getSize(size);
                         width = size.x;
                         height = size.y;
                     } else {
@@ -256,16 +261,8 @@ class TelemetryContext {
                     }
                     HockeyLog.debug(TAG, "Couldn't determine screen resolution: " + ex.toString());
                 }
-
-            } else {
-                //Use old, and now deprecated API to get width and height of the display
-                Display d = wm.getDefaultDisplay();
-                width = d.getWidth();
-                height = d.getHeight();
             }
-
             resolutionString = String.valueOf(height) + "x" + String.valueOf(width);
-
             setScreenResolution(resolutionString);
         }
     }
@@ -273,9 +270,18 @@ class TelemetryContext {
     /**
      * Sets the internal package context.
      */
-    protected void configInternalContext() {
+    void configInternalContext() {
         String sdkVersionString = BuildConfig.VERSION_NAME;
         setSdkVersion("android:" + sdkVersionString);
+    }
+
+    /**
+     * Retrieves the context from the weak reference.
+     *
+     * @return The context object for this instance.
+     */
+    private Context getContext() {
+        return mWeakContext != null ? mWeakContext.get() : null;
     }
 
     /**

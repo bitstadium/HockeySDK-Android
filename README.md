@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/bitstadium/HockeySDK-Android.svg?branch=develop)](https://travis-ci.org/bitstadium/HockeySDK-Android)
 [![Slack Status](https://slack.hockeyapp.net/badge.svg)](https://slack.hockeyapp.net)
 
-## Version 4.1.5
+## Version 5.0.0
 
 HockeySDK-Android implements support for using HockeyApp in your Android applications.
 
@@ -15,7 +15,7 @@ The following features are currently supported:
 
 4. **Feedback:** Besides crash reports, collecting feedback from your users from within your app is a great option to help with improving your app. You act on and answer feedback directly from the HockeyApp backend.
 
-5. **Authenticate:** To help you stay in control of closed tester groups you can identify and authenticate users against your registered testers with the HockeyApp backend. The authentication feature supports several ways of authentication.
+5. **Authenticate:** To help you stay in control of closed tester groups you can identify and authenticate users against your registered testers with the HockeyApp backend.
 
 
 ## 1. Setup
@@ -26,7 +26,7 @@ It is super easy to use HockeyApp in your Android app. Have a look at our [docum
 
 Please visit [our landing page](https://support.hockeyapp.net/kb/client-integration-android) as a starting point for all of our documentation.
 
-Please check out our [getting started documentation](https://support.hockeyapp.net/kb/client-integration-android/hockeyapp-for-android-sdk), [changelog](https://github.com/bitstadium/HockeySDK-Android/releases/tag/4.1.5), [java doc](https://www.hockeyapp.net/help/sdk/android/4.1.5/index.html) as well as our [troubleshooting section](https://support.hockeyapp.net/kb/client-integration-android/hockeyapp-for-android-sdk#troubleshooting).
+Please check out our [getting started documentation](https://support.hockeyapp.net/kb/client-integration-android/hockeyapp-for-android-sdk), [change log](https://github.com/bitstadium/HockeySDK-Android/releases/tag/5.0.0), [java doc](https://www.hockeyapp.net/help/sdk/android/5.0.0/index.html) as well as our [troubleshooting section](https://support.hockeyapp.net/kb/client-integration-android/hockeyapp-for-android-sdk#troubleshooting).
 
 ## 3. Contributing
 
@@ -43,7 +43,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 
 ### 3.3 Contributor License
 
-You must sign a [Contributor License Agreement](https://cla.microsoft.com/) before submitting your pull request. To complete the Contributor License Agreement (CLA), you will need to submit a request via the [form](https://cla.microsoft.com/) and then electronically sign the CLA when you receive the email containing the link to the document. You need to sign the CLA only once to cover submission to any Microsoft OSS project. 
+You must sign a [Contributor License Agreement](https://cla.microsoft.com/) before submitting your pull request. To complete the Contributor License Agreement (CLA), you will need to submit a request via the [form](https://cla.microsoft.com/) and then electronically sign the CLA when you receive the email containing the link to the document. You need to sign the CLA only once to cover submission to any Microsoft OSS project.
 
 ## 4. Contact
 

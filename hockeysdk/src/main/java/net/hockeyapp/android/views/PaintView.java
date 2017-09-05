@@ -37,7 +37,7 @@ public class PaintView extends ImageView {
         super(context);
 
         path = new Path();
-        paths = new Stack<Path>();
+        paths = new Stack<>();
         paint = new Paint();
         paint.setAntiAlias(true);
         paint.setDither(true);
@@ -50,8 +50,8 @@ public class PaintView extends ImageView {
         new AsyncTask<Object, Void, Bitmap>() {
             @Override
             protected void onPreExecute() {
-        /* This is essential to make the image view to wrap exactly the displayed image and avoiding any
-        empty space around it that would be drawable but doesn't belong to the image. */
+                /* This is essential to make the image view to wrap exactly the displayed image and avoiding any
+                empty space around it that would be drawable but doesn't belong to the image. */
                 setAdjustViewBounds(true);
             }
 
@@ -62,8 +62,7 @@ public class PaintView extends ImageView {
                 Integer displayWidth = (Integer) args[2];
                 Integer displayHeight = (Integer) args[3];
                 try {
-                    Bitmap bm = ImageUtils.decodeSampledBitmap(context, imageUri, displayWidth, displayHeight);
-                    return bm;
+                    return ImageUtils.decodeSampledBitmap(context, imageUri, displayWidth, displayHeight);
                 } catch (IOException e) {
                     HockeyLog.error("Could not load image into ImageView.", e);
                 }
@@ -99,12 +98,12 @@ public class PaintView extends ImageView {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-    /* Draw existing paths. */
+        /* Draw existing paths. */
         for (Path path : paths) {
             canvas.drawPath(path, paint);
         }
 
-    /* Draw current path. */
+        /* Draw current path. */
         canvas.drawPath(path, paint);
     }
 

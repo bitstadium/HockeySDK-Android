@@ -1,9 +1,8 @@
 package net.hockeyapp.android.utils;
 
-import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
@@ -21,10 +20,14 @@ import android.view.accessibility.AccessibilityManager;
 
 import net.hockeyapp.android.R;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.lang.ref.WeakReference;
-import java.lang.reflect.Method;
 import java.net.URLEncoder;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -32,22 +35,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Util {
-
-    public static final String PREFS_FEEDBACK_TOKEN = "net.hockeyapp.android.prefs_feedback_token";
-    public static final String PREFS_KEY_FEEDBACK_TOKEN = "net.hockeyapp.android.prefs_key_feedback_token";
-
-    public static final String PREFS_NAME_EMAIL_SUBJECT = "net.hockeyapp.android.prefs_name_email";
-    public static final String PREFS_KEY_NAME_EMAIL_SUBJECT = "net.hockeyapp.android.prefs_key_name_email";
-    public static final String APP_IDENTIFIER_PATTERN = "[0-9a-f]+";
-    public static final int APP_IDENTIFIER_LENGTH = 32;
-    public static final String APP_IDENTIFIER_KEY = "net.hockeyapp.android.appIdentifier";
-    public static final String LOG_IDENTIFIER = "HockeyApp";
+    private static final String APP_IDENTIFIER_PATTERN = "[0-9a-f]+";
+    private static final int APP_IDENTIFIER_LENGTH = 32;
+    private static final String APP_IDENTIFIER_KEY = "net.hockeyapp.android.appIdentifier";
     private static final String APP_SECRET_KEY = "net.hockeyapp.android.appSecret";
     private static final Pattern appIdentifierPattern = Pattern.compile(APP_IDENTIFIER_PATTERN, Pattern.CASE_INSENSITIVE);
-
-    private static final String SDK_VERSION_KEY = "net.hockeyapp.android.sdkVersion";
-
-    private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
 
     private static final ThreadLocal<DateFormat> DATE_FORMAT_THREAD_LOCAL = new ThreadLocal<DateFormat>() {
         @Override
@@ -69,7 +61,7 @@ public class Util {
             return URLEncoder.encode(param, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             // UTF-8 should be available, so just in case
-            e.printStackTrace();
+            HockeyLog.error("Failed to encode param " + param, e);
             return "";
         }
     }
@@ -80,41 +72,22 @@ public class Util {
      * @param value a string
      * @return true if value is a valid email
      */
-    public final static boolean isValidEmail(String value) {
+    public static boolean isValidEmail(String value) {
         return !TextUtils.isEmpty(value) && android.util.Patterns.EMAIL_ADDRESS.matcher(value).matches();
-    }
-
-    /**
-     * Returns true if the Fragment API is supported (should be on Android 3.0+).
-     *
-     * @return true if the Fragment API is supported
-     */
-    @SuppressLint("NewApi")
-    public static Boolean fragmentsSupported() {
-        try {
-            return (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) && classExists("android.app.Fragment");
-        } catch (NoClassDefFoundError e) {
-            return false;
-        }
     }
 
     /**
      * Returns true if the app runs on large or very large screens (i.e. tablets).
      *
-     * @param weakActivity the context to use
+     * @param context the context to use
      * @return true if the app runs on large or very large screens
      */
-    public static Boolean runsOnTablet(WeakReference<Activity> weakActivity) {
-        if (weakActivity != null) {
-            Activity activity = weakActivity.get();
-            if (activity != null) {
-                Configuration configuration = activity.getResources().getConfiguration();
-
-                return (((configuration.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE) ||
-                        ((configuration.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_XLARGE));
-            }
+    public static Boolean runsOnTablet(Context context) {
+        if (context != null) {
+            Configuration configuration = context.getResources().getConfiguration();
+            return (((configuration.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE) ||
+                    ((configuration.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_XLARGE));
         }
-
         return false;
     }
 
@@ -152,7 +125,7 @@ public class Util {
      * @throws UnsupportedEncodingException when your system does not know how to handle the UTF-8 charset
      */
     public static String getFormString(Map<String, String> params) throws UnsupportedEncodingException {
-        List<String> protoList = new ArrayList<String>();
+        List<String> protoList = new ArrayList<>();
         for (String key : params.keySet()) {
             String value = params.get(key);
             key = URLEncoder.encode(key, "UTF-8");
@@ -177,61 +150,48 @@ public class Util {
     }
 
     /**
-     * Checks if the Notification.Builder API is supported.
-     *
-     * @return if builder API is supported
-     */
-    public static boolean isNotificationBuilderSupported() {
-        return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) && classExists("android.app.Notification.Builder");
-    }
-
-    /**
      * Creates a notification on API levels from 9 to 23
      *
      * @param context       the context to use, e.g. your Activity
      * @param pendingIntent the Intent to call
      * @param title         the title string for the notification
-     * @param text          the text content for the notificationcrash
+     * @param text          the text content for the notification
      * @param iconId        the icon resource ID for the notification
      * @return the created notification
      */
-    public static Notification createNotification(Context context, PendingIntent pendingIntent, String title, String text, int iconId) {
-        Notification notification;
-        if (Util.isNotificationBuilderSupported()) {
-            notification = buildNotificationWithBuilder(context, pendingIntent, title, text, iconId);
-        } else {
-            notification = buildNotificationPreHoneycomb(context, pendingIntent, title, text, iconId);
-        }
-        return notification;
-    }
-
     @SuppressWarnings("deprecation")
-    private static Notification buildNotificationPreHoneycomb(Context context, PendingIntent pendingIntent, String title, String text, int iconId) {
-        Notification notification = new Notification(iconId, "", System.currentTimeMillis());
-        try {
-            // try to call "setLatestEventInfo" if available
-            Method m = notification.getClass().getMethod("setLatestEventInfo", Context.class, CharSequence.class, CharSequence.class, PendingIntent.class);
-            m.invoke(notification, context, title, text, pendingIntent);
-        } catch (Exception e) {
-            // do nothing
-        }
-        return notification;
-    }
-
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    @SuppressWarnings("deprecation")
-    private static Notification buildNotificationWithBuilder(Context context, PendingIntent pendingIntent, String title, String text, int iconId) {
-        android.app.Notification.Builder builder = new android.app.Notification.Builder(context)
-                .setContentTitle(title)
-                .setContentText(text)
-                .setContentIntent(pendingIntent)
-                .setSmallIcon(iconId);
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-            return builder.getNotification();
+    public static Notification createNotification(Context context, PendingIntent pendingIntent, String title, String text, int iconId, String channelId) {
+        Notification.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            builder = new Notification.Builder(context, channelId);
         } else {
+            builder = new Notification.Builder(context);
+        }
+        builder.setContentTitle(title)
+               .setContentText(text)
+               .setContentIntent(pendingIntent)
+               .setSmallIcon(iconId);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             return builder.build();
+        } else {
+            return builder.getNotification();
         }
+    }
+
+    public static void sendNotification(Context context, int id, Notification notification, String channelId, CharSequence channelName) {
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(channelId,
+                    channelName, NotificationManager.IMPORTANCE_DEFAULT);
+            notificationManager.createNotificationChannel(channel);
+        }
+        notificationManager.notify(id, notification);
+    }
+
+    public static void cancelNotification(Context context, int id) {
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancel(id);
     }
 
     public static void announceForAccessibility(View view, CharSequence text) {
@@ -252,9 +212,7 @@ public class Util {
 
         final AccessibilityEvent event = AccessibilityEvent.obtain(eventType);
         event.getText().add(text);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-            event.setSource(view);
-        }
+        event.setSource(view);
         event.setEnabled(view.isEnabled());
         event.setClassName(view.getClass().getName());
         event.setPackageName(view.getContext().getPackageName());
@@ -307,30 +265,20 @@ public class Util {
                 return activeNetwork != null && activeNetwork.isConnected();
             }
         } catch (Exception e) {
-            HockeyLog.error("Exception thrown when check network is connected:");
-            e.printStackTrace();
+            HockeyLog.error("Exception thrown when check network is connected", e);
         }
         return false;
     }
 
     public static String getAppName(Context context) {
-        if (context == null) {
-            return "";
-        }
-
         PackageManager packageManager = context.getPackageManager();
         ApplicationInfo applicationInfo = null;
         try {
             applicationInfo = packageManager.getApplicationInfo(context.getApplicationInfo().packageName, 0);
-        } catch (final PackageManager.NameNotFoundException e) {
+        } catch (final PackageManager.NameNotFoundException ignored) {
         }
-        String appTitle = (applicationInfo != null ? (String) packageManager.getApplicationLabel(applicationInfo)
-                : context.getString(R.string.hockeyapp_crash_dialog_app_name_fallback));
-        return appTitle;
-    }
-
-    public static String getSdkVersionFromManifest(Context context) {
-        return getManifestString(context, SDK_VERSION_KEY);
+        return applicationInfo != null ? (String) packageManager.getApplicationLabel(applicationInfo)
+                : context.getString(R.string.hockeyapp_crash_dialog_app_name_fallback);
     }
 
     /**
@@ -342,19 +290,12 @@ public class Util {
      * @throws java.lang.IllegalArgumentException if the app identifier can't be converted because
      *                                            of unrecoverable input character errors
      */
-    public static String convertAppIdentifierToGuid(String appIdentifier) throws
-            IllegalArgumentException {
-        String sanitizedAppIdentifier = null;
+    public static String convertAppIdentifierToGuid(String appIdentifier) throws IllegalArgumentException {
+        String sanitizedAppIdentifier= sanitizeAppIdentifier(appIdentifier);
         String guid = null;
 
-        try {
-            sanitizedAppIdentifier = sanitizeAppIdentifier(appIdentifier);
-        } catch (IllegalArgumentException e) {
-            throw e;
-        }
-
         if (sanitizedAppIdentifier != null) {
-            StringBuffer idBuf = new StringBuffer(sanitizedAppIdentifier);
+            StringBuilder idBuf = new StringBuilder(sanitizedAppIdentifier);
             idBuf.insert(20, '-');
             idBuf.insert(16, '-');
             idBuf.insert(12, '-');
@@ -388,20 +329,53 @@ public class Util {
     }
 
     /**
-     * Determines if Session is possible for the current user or not.
-     *
-     * @return YES if app runs on at least OS 4.0
-     */
-    public static boolean sessionTrackingSupported() {
-        return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH);
-    }
-
-    /**
      * Determines if a debugger is currently attached.
      *
      * @return YES if debugger is attached, otherwise NO.
      */
     public static boolean isDebuggerConnected(){
         return Debug.isDebuggerConnected();
+    }
+
+    public static String convertStreamToString(InputStream inputStream) {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream), 1024);
+        StringBuilder stringBuilder = new StringBuilder();
+
+        String line;
+        try {
+            while ((line = reader.readLine()) != null) {
+                stringBuilder.append(line).append('\n');
+            }
+        } catch (IOException e) {
+            HockeyLog.error("Failed to convert stream to string", e);
+        } finally {
+            try {
+                inputStream.close();
+            } catch (IOException ignored) {
+            }
+        }
+        return stringBuilder.toString();
+    }
+
+    public static byte[] hash(final byte[] bytes, String algorithm) throws NoSuchAlgorithmException {
+        MessageDigest digest = MessageDigest.getInstance(algorithm);
+        digest.update(bytes);
+        return digest.digest();
+    }
+
+    /**
+     * Helper method to convert a byte array to the hex string.
+     *
+     * @param bytes a byte array
+     */
+    public static String bytesToHex(final byte[] bytes) {
+        StringBuilder hexString = new StringBuilder();
+        for (byte aMessageDigest : bytes) {
+            String h = Integer.toHexString(0xFF & aMessageDigest);
+            while (h.length() < 2)
+                h = "0" + h;
+            hexString.append(h);
+        }
+        return hexString.toString();
     }
 }

@@ -6,7 +6,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.3.3'
-        classpath 'com.novoda:bintray-release:0.3.4'
+        classpath 'com.novoda:bintray-release:0.5.0'
     }
 }
 
@@ -35,14 +35,14 @@ allprojects {
 
 ext {
     ARTIFACT_ID = 'HockeySDK'
-    VERSION_NAME = '4.1.5'
-    VERSION_CODE = 12
+    VERSION_NAME = '5.0.0'
+    VERSION_CODE = 14
     SITE_URL = 'https://github.com/bitstadium/hockeysdk-android'
     GIT_URL = 'https://github.com/bitstadium/HockeySDK-Android.git'
     BINTRAY_USER = HOCKEYAPP_BINTRAY_USER
     GROUP_NAME = 'net.hockeyapp.android'
     COMPILE_SDK = 26
-    BUILD_TOOLS = '26.0.0'
+    BUILD_TOOLS = '26.0.1'
     IS_UPLOADING = project.getGradle().startParameter.taskNames.any{it.contains('bintrayUpload')}
     DESCRIPTION = 'HockeySDK-Android implements support for using HockeyApp in your Android application. The following features are currently supported:\n' +
             '\n' +
@@ -54,7 +54,7 @@ ext {
             '\n' +
             'Feedback: Besides crash reports, collecting feedback from your users from within your app is a great option to help with improving your app. You act on and answer feedback directly from the HockeyApp backend.\n' +
             '\n' +
-            'Authenticate: Identify and authenticate users against your registered testers with the HockeyApp backend. The authentication feature supports several ways of authentication.'
+            'Authenticate: Identify and authenticate users against your registered testers with the HockeyApp backend.'
 }
 
 subprojects {
@@ -67,9 +67,10 @@ subprojects {
 
         gradle.taskGraph.whenReady { taskGraph ->
             taskGraph.getAllTasks().find {
-                it.path == ":$project.name:generatePomFileForMavenPublication"
+                it.path == ":$project.name:generatePomFileForReleasePublication"
             }.doLast {
                 file("build/publications/maven/pom-default.xml").delete()
+                file("build/publications/release/pom-default.xml").delete()
                 println 'Overriding pom-file to make sure we can sync to maven central!'
                 pom {
                     //noinspection GroovyAssignabilityCheck
@@ -101,7 +102,7 @@ subprojects {
                             }
                         }
                     }
-                }.writeTo("build/publications/maven/pom-default.xml")
+                }.writeTo("build/publications/maven/pom-default.xml").writeTo("build/publications/release/pom-default.xml")
             }
         }
     }
