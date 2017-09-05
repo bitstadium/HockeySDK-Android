@@ -47,8 +47,8 @@ public class AttachmentDownloader {
     }
 
     private Queue<DownloadJob> queue;
-
     private boolean downloadRunning;
+    private final Handler downloadHandler = new DownloadHandler(this);
 
     private AttachmentDownloader() {
         this.queue = new LinkedList<>();
@@ -68,23 +68,32 @@ public class AttachmentDownloader {
         DownloadJob downloadJob = queue.peek();
         if (downloadJob != null) {
             downloadRunning = true;
-            AsyncTaskUtils.execute(new DownloadTask(downloadJob, new Handler() {
-                @Override
-                public void handleMessage(Message msg) {
-                    final DownloadJob retryCandidate = queue.poll();
-                    if (!retryCandidate.isSuccess() && retryCandidate.consumeRetry()) {
-                        this.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                queue.add(retryCandidate);
-                                downloadNext();
-                            }
-                        }, 3000);
+            AsyncTaskUtils.execute(new DownloadTask(downloadJob, downloadHandler));
+        }
+    }
+
+    private static class DownloadHandler extends Handler
+    {
+        private final AttachmentDownloader downloader;
+
+        DownloadHandler(AttachmentDownloader downloader) {
+            this.downloader = downloader;
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            final DownloadJob retryCandidate = downloader.queue.poll();
+            if (!retryCandidate.isSuccess() && retryCandidate.consumeRetry()) {
+                this.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        downloader.queue.add(retryCandidate);
+                        downloader.downloadNext();
                     }
-                    downloadRunning = false;
-                    downloadNext();
-                }
-            }));
+                }, 3000);
+            }
+            downloader.downloadRunning = false;
+            downloader.downloadNext();
         }
     }
 
