@@ -17,17 +17,23 @@
     <string name="hockeyapp_update_mandatory_toast">%s доступен и является обязательным для обновления!</string>
     <string name="hockeyapp_update_dialog_title">Доступно обновление</string>
     <string name="hockeyapp_update_button">Обновить</string>
+    <string name="hockeyapp_update_restore">Восстановить</string>
     <string name="hockeyapp_update_dialog_message">Показывать информацию о доступных обновлениях?</string>
     <string name="hockeyapp_update_dialog_negative_button">Игнорировать</string>
     <string name="hockeyapp_update_dialog_positive_button">Показать</string>
+    <string name="hockeyapp_update_title">Обновление приложения</string>
+    <string name="hockeyapp_update_unknown_size">Размер неизвестен</string>
+    <string name="hockeyapp_update_version">Версия %s</string>
+    <string name="hockeyapp_update_newest_version">Последняя версия</string>
+    <string name="hockeyapp_update_already_installed">УСТАНОВЛЕНО</string>
+    <string name="hockeyapp_update_loading">Загрузка…</string>
+    <string name="hockeyapp_update_no_info">Нет информации.</string>
 
     <!-- Expiry Info -->
     <string name="hockeyapp_expiry_info_title">Сборка истекла</string>
     <string name="hockeyapp_expiry_info_text">%s истек. Пожалуйста, проверьте обновления HockeyApp.</string>
 
     <!-- Feedback Activity -->
-    <string name="hockeyapp_feedback_failed_title">Ожидаем</string>
-    <string name="hockeyapp_feedback_failed_text">Вы хотите отправить отзыв снова?</string>
     <string name="hockeyapp_feedback_name_hint">Имя</string>
     <string name="hockeyapp_feedback_email_hint">Email</string>
     <string name="hockeyapp_feedback_subject_hint">Тема</string>
@@ -65,13 +71,17 @@
     <string name="hockeyapp_feedback_sending_feedback_text">Отправка отзыва…</string>
     <string name="hockeyapp_feedback_fetching_feedback_text">Получение отзывов…</string>
 
+    <!-- Feedback Screenshot -->
+    <string name="hockeyapp_feedback_screenshot_fail">Невозможно создать снимок экрана.</string>
+    <string name="hockeyapp_feedback_notification_title">Обратная связь с HockeyApp</string>
+    <string name="hockeyapp_feedback_screenshot_notification_message">Сделать снимок экрана для обратной связи.</string>
+    <string name="hockeyapp_feedback_new_answer_notification_message">На ваш отзыв получен новый ответ.</string>
+
     <!-- Login Activity -->
     <string name="hockeyapp_login_headline_text">Пожалуйста, введите ваш HockeyApp email адресс и пароль для получения доступа в это приложение.</string>
     <string name="hockeyapp_login_headline_text_email_only">Пожалуйста, введите ваш HockeyApp email адресс для получения доступа в это приложение.</string>
     <string name="hockeyapp_login_missing_credentials_toast">Пожалуйста, заполните недостающие учётные данные.</string>
-    <string name="hockeyapp_login_email_hint">Email</string>
-    <string name="hockeyapp_login_password_hint">Пароль</string>
-    <string name="hockeyapp_login_login_button_text">Логин</string>
+    <string name="hockeyapp_login_login_button_text">Войти</string>
     <string name="hockeyapp_login_email_hint_required">Email (oбязательное поле)</string>
     <string name="hockeyapp_login_password_hint_required">Пароль (oбязательное поле)</string>
 
@@ -85,12 +95,6 @@
     <string name="hockeyapp_paint_dialog_positive_button">Сохранить</string>
     <string name="hockeyapp_paint_dialog_neutral_button">Закрыть</string>
 
-    <!-- Permissions -->
-    <string name="hockeyapp_permission_update_title">Нужен доступ к хранилищу данных</string>
-    <string name="hockeyapp_permission_update_message">Во время загрузки и установки приложения вы должны предоставить доступ к хранилищу данных.</string>
-    <string name="hockeyapp_permission_dialog_negative_button">Закрыть</string>
-    <string name="hockeyapp_permission_dialog_positive_button">Повторить</string>
-
     <!-- Dialogs -->
     <string name="hockeyapp_dialog_positive_button">OK</string>
     <string name="hockeyapp_dialog_negative_button">Закрыть</string>
@@ -100,5 +104,7 @@
     <!-- Misc -->
     <string name="hockeyapp_error_no_network_message">Ваше устройство не имеет доступа в интернет. Пожалуйста, восстановите подключение и попробуйте снова.</string>
     <string name="hockeyapp_feedback_sent_toast">Отзыв отправлен</string>
+    <string name="hockeyapp_error_no_external_storage_permission">Разрешение на доспуп к памяти устройства отсутствует. Пожалуйста, свяжитесь с разработчиком.</string>
+    <string name="hockeyapp_error_install_form_unknown_sources_disabled">Установка их неизвестных источников выключена. Пожалуйста, проверьте настройки устройства.</string>
 
 </resources>

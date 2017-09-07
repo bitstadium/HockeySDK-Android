@@ -1,9 +1,5 @@
 package net.hockeyapp.android.objects;
 
-import net.hockeyapp.android.Constants;
-
-import java.io.File;
-import java.io.FilenameFilter;
 import java.io.Serializable;
 
 /**
@@ -12,6 +8,7 @@ import java.io.Serializable;
  * Model for feedback attachments.
  *
  */
+@SuppressWarnings("unused")
 public class FeedbackAttachment implements Serializable {
 
     private static final long serialVersionUID = 5059651319640956830L;
@@ -78,26 +75,6 @@ public class FeedbackAttachment implements Serializable {
      */
     public String getCacheId() {
         return "" + mMessageId + mId;
-    }
-
-    /**
-     * Checks if attachment has already been downloaded.
-     *
-     * @return true if available, false if not.
-     */
-    public boolean isAvailableInCache() {
-        File folder = Constants.getHockeyAppStorageDir();
-        if (folder.exists() && folder.isDirectory()) {
-            File[] match = folder.listFiles(new FilenameFilter() {
-                @Override
-                public boolean accept(File dir, String filename) {
-                    return filename.equals(getCacheId());
-                }
-            });
-
-            return match != null && match.length == 1;
-
-        } else return false;
     }
 
     @Override

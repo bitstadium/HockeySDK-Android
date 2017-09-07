@@ -30,9 +30,10 @@ public class FeedbackParser {
      * or the first access to FeedbackParserHolder.INSTANCE, not before.
      */
     private static class FeedbackParserHolder {
-        public static final FeedbackParser INSTANCE = new FeedbackParser();
+        static final FeedbackParser INSTANCE = new FeedbackParser();
     }
 
+    @SuppressWarnings("SameReturnValue")
     public static FeedbackParser getInstance() {
         return FeedbackParserHolder.INSTANCE;
     }
@@ -45,7 +46,7 @@ public class FeedbackParser {
      */
     public FeedbackResponse parseFeedbackResponse(String feedbackResponseJson) {
         FeedbackResponse feedbackResponse = null;
-        Feedback feedback = null;
+        Feedback feedback;
         if (feedbackResponseJson != null) {
             try {
                 JSONObject jsonObject = new JSONObject(feedbackResponseJson);
@@ -57,29 +58,29 @@ public class FeedbackParser {
                 JSONArray messagesArray = feedbackObject.getJSONArray("messages");
                 ArrayList<FeedbackMessage> messages = null;
 
-                FeedbackMessage feedbackMessage = null;
+                FeedbackMessage feedbackMessage;
                 if (messagesArray.length() > 0) {
-                    messages = new ArrayList<FeedbackMessage>();
+                    messages = new ArrayList<>();
 
                     for (int i = 0; i < messagesArray.length(); i++) {
-                        String subject = messagesArray.getJSONObject(i).getString("subject").toString();
-                        String text = messagesArray.getJSONObject(i).getString("text").toString();
-                        String oem = messagesArray.getJSONObject(i).getString("oem").toString();
-                        String model = messagesArray.getJSONObject(i).getString("model").toString();
-                        String osVersion = messagesArray.getJSONObject(i).getString("os_version").toString();
-                        String createdAt = messagesArray.getJSONObject(i).getString("created_at").toString();
+                        String subject = messagesArray.getJSONObject(i).getString("subject");
+                        String text = messagesArray.getJSONObject(i).getString("text");
+                        String oem = messagesArray.getJSONObject(i).getString("oem");
+                        String model = messagesArray.getJSONObject(i).getString("model");
+                        String osVersion = messagesArray.getJSONObject(i).getString("os_version");
+                        String createdAt = messagesArray.getJSONObject(i).getString("created_at");
                         int id = messagesArray.getJSONObject(i).getInt("id");
-                        String token = messagesArray.getJSONObject(i).getString("token").toString();
+                        String token = messagesArray.getJSONObject(i).getString("token");
                         int via = messagesArray.getJSONObject(i).getInt("via");
-                        String userString = messagesArray.getJSONObject(i).getString("user_string").toString();
-                        String cleanText = messagesArray.getJSONObject(i).getString("clean_text").toString();
-                        String name = messagesArray.getJSONObject(i).getString("name").toString();
-                        String appId = messagesArray.getJSONObject(i).getString("app_id").toString();
+                        String userString = messagesArray.getJSONObject(i).getString("user_string");
+                        String cleanText = messagesArray.getJSONObject(i).getString("clean_text");
+                        String name = messagesArray.getJSONObject(i).getString("name");
+                        String appId = messagesArray.getJSONObject(i).getString("app_id");
 
                         JSONArray jsonAttachments = messagesArray.getJSONObject(i).optJSONArray("attachments");
                         List<FeedbackAttachment> feedbackAttachments = Collections.emptyList();
                         if (jsonAttachments != null) {
-                            feedbackAttachments = new ArrayList<FeedbackAttachment>();
+                            feedbackAttachments = new ArrayList<>();
 
                             for (int j = 0; j < jsonAttachments.length(); j++) {
                                 int attachmentId = jsonAttachments.getJSONObject(j).getInt("id");
@@ -109,7 +110,7 @@ public class FeedbackParser {
                         feedbackMessage.setName(name);
                         feedbackMessage.setOem(oem);
                         feedbackMessage.setOsVersion(osVersion);
-                        feedbackMessage.setSubjec(subject);
+                        feedbackMessage.setSubject(subject);
                         feedbackMessage.setText(text);
                         feedbackMessage.setToken(token);
                         feedbackMessage.setUserString(userString);
@@ -122,45 +123,45 @@ public class FeedbackParser {
                 feedback.setMessages(messages);
 
                 try {
-                    feedback.setName(feedbackObject.getString("name").toString());
+                    feedback.setName(feedbackObject.getString("name"));
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    HockeyLog.error("Failed to parse \"name\" in feedback response", e);
                 }
 
                 try {
-                    feedback.setEmail(feedbackObject.getString("email").toString());
+                    feedback.setEmail(feedbackObject.getString("email"));
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    HockeyLog.error("Failed to parse \"email\" in feedback response", e);
                 }
 
                 try {
                     feedback.setId(feedbackObject.getInt("id"));
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    HockeyLog.error("Failed to parse \"id\" in feedback response", e);
                 }
 
                 try {
-                    feedback.setCreatedAt(feedbackObject.getString("created_at").toString());
+                    feedback.setCreatedAt(feedbackObject.getString("created_at"));
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    HockeyLog.error("Failed to parse \"created_at\" in feedback response", e);
                 }
 
                 feedbackResponse = new FeedbackResponse();
                 feedbackResponse.setFeedback(feedback);
                 try {
-                    feedbackResponse.setStatus(jsonObject.getString("status").toString());
+                    feedbackResponse.setStatus(jsonObject.getString("status"));
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    HockeyLog.error("Failed to parse \"status\" in feedback response", e);
                 }
 
 
                 try {
-                    feedbackResponse.setToken(jsonObject.getString("token").toString());
+                    feedbackResponse.setToken(jsonObject.getString("token"));
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    HockeyLog.error("Failed to parse \"token\" in feedback response", e);
                 }
             } catch (JSONException e) {
-                e.printStackTrace();
+                HockeyLog.error("Failed to parse feedback response", e);
             }
         }
 

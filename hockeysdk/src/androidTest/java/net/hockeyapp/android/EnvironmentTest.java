@@ -1,5 +1,6 @@
 package net.hockeyapp.android;
 
+import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
 import junit.framework.TestCase;
@@ -22,10 +23,9 @@ public class EnvironmentTest extends TestCase {
      */
     @Test
     public void basicStorageDirTest() {
-        File storageDir = Constants.getHockeyAppStorageDir();
+        File storageDir = Constants.getHockeyAppStorageDir(InstrumentationRegistry.getTargetContext());
 
         assertNotNull(storageDir);
         assertTrue(storageDir.exists());
     }
-
 }

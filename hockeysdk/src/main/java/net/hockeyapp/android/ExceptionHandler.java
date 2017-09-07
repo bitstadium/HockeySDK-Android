@@ -1,11 +1,13 @@
 package net.hockeyapp.android;
 
+import android.content.Context;
 import android.text.TextUtils;
 
 import net.hockeyapp.android.objects.CrashDetails;
 import net.hockeyapp.android.utils.HockeyLog;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -14,6 +16,7 @@ import java.io.Writer;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.Date;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 /**
  * <h3>Description</h3>
@@ -63,8 +66,14 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
         final Date startDate = new Date(CrashManager.getInitializeTimestamp());
         final Writer result = new StringWriter();
         final PrintWriter printWriter = new PrintWriter(result);
-        BufferedWriter writer = null;
         exception.printStackTrace(printWriter);
+
+        Context context = CrashManager.weakContext != null ? CrashManager.weakContext.get() : null;
+        if (context == null)
+        {
+            HockeyLog.error("Failed to save exception: context in CrashManager is null");
+            return;
+        }
 
         String filename = UUID.randomUUID().toString();
 
@@ -86,17 +95,22 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
             crashDetails.setThreadName(thread.getName() + "-" + thread.getId());
         }
 
-        if (Constants.CRASH_IDENTIFIER != null && (listener == null || listener.includeDeviceIdentifier())) {
-            crashDetails.setReporterKey(Constants.CRASH_IDENTIFIER);
+        String deviceIdentifier = null;
+        try {
+            deviceIdentifier = Constants.getDeviceIdentifier().get();
+        } catch (Exception ignored) {
+        }
+        if (deviceIdentifier != null && (listener == null || listener.includeDeviceIdentifier())) {
+            crashDetails.setReporterKey(deviceIdentifier);
         }
 
-        crashDetails.writeCrashReport();
+        crashDetails.writeCrashReport(context);
 
         if (listener != null) {
             try {
-                writeValueToFile(limitedString(listener.getUserID()), filename + ".user");
-                writeValueToFile(limitedString(listener.getContact()), filename + ".contact");
-                writeValueToFile(listener.getDescription(), filename + ".description");
+                writeValueToFile(context, limitedString(listener.getUserID()), filename + ".user");
+                writeValueToFile(context, limitedString(listener.getContact()), filename + ".contact");
+                writeValueToFile(context, listener.getDescription(), filename + ".description");
             } catch (IOException e) {
                 HockeyLog.error("Error saving crash meta data!", e);
             }
@@ -152,6 +166,13 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
             exception.printStackTrace(printWriter);
         }
 
+        Context context = CrashManager.weakContext != null ? CrashManager.weakContext.get() : null;
+        if (context == null)
+        {
+            HockeyLog.error("Failed to save exception: context in CrashManager is null");
+            return;
+        }
+
         CrashDetails crashDetails = new CrashDetails(filename, exception, additionalManagedException, isManagedException);
         crashDetails.setAppPackage(Constants.APP_PACKAGE);
         crashDetails.setAppVersionCode(Constants.APP_VERSION);
@@ -170,17 +191,22 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
             crashDetails.setThreadName(thread.getName() + "-" + thread.getId());
         }
 
-        if (Constants.CRASH_IDENTIFIER != null && (listener == null || listener.includeDeviceIdentifier())) {
-            crashDetails.setReporterKey(Constants.CRASH_IDENTIFIER);
+        String deviceIdentifier = null;
+        try {
+            deviceIdentifier = Constants.getDeviceIdentifier().get();
+        } catch (Exception ignored) {
+        }
+        if (deviceIdentifier != null && (listener == null || listener.includeDeviceIdentifier())) {
+            crashDetails.setReporterKey(deviceIdentifier);
         }
 
-        crashDetails.writeCrashReport();
+        crashDetails.writeCrashReport(context);
 
         if (listener != null) {
             try {
-                writeValueToFile(limitedString(listener.getUserID()), filename + ".user");
-                writeValueToFile(limitedString(listener.getContact()), filename + ".contact");
-                writeValueToFile(listener.getDescription(), filename + ".description");
+                writeValueToFile(context, limitedString(listener.getUserID()), filename + ".user");
+                writeValueToFile(context, limitedString(listener.getContact()), filename + ".contact");
+                writeValueToFile(context, listener.getDescription(), filename + ".description");
             } catch (IOException e) {
                 HockeyLog.error("Error saving crash meta data!", e);
             }
@@ -189,7 +215,8 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
     }
 
     public void uncaughtException(Thread thread, Throwable exception) {
-        if (Constants.FILES_PATH == null) {
+        Context context = CrashManager.weakContext != null ? CrashManager.weakContext.get() : null;
+        if (context == null || context.getFilesDir() == null) {
             // If the files path is null, the exception can't be stored
             // Always call the default handler instead
             mDefaultExceptionHandler.uncaughtException(thread, exception);
@@ -205,20 +232,20 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
         }
     }
 
-    private static void writeValueToFile(String value, String filename) throws IOException {
+    private static void writeValueToFile(Context context, String value, String filename) throws IOException {
         if (TextUtils.isEmpty(value)) {
             return;
         }
         BufferedWriter writer = null;
         try {
-            String path = Constants.FILES_PATH + "/" + filename;
+            File file = new File(context.getFilesDir(), filename);
             if (!TextUtils.isEmpty(value) && TextUtils.getTrimmedLength(value) > 0) {
-                writer = new BufferedWriter(new FileWriter(path));
+                writer = new BufferedWriter(new FileWriter(file));
                 writer.write(value);
                 writer.flush();
             }
         } catch (IOException e) {
-            // TODO: Handle exception here
+            HockeyLog.error("Failed to write value to " + filename, e);
         } finally {
             if (writer != null) {
                 writer.close();

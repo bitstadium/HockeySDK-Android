@@ -1,28 +1,14 @@
 package net.hockeyapp.android;
 
-import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
-import android.test.InstrumentationTestCase;
 
-import net.hockeyapp.android.PrivateEventManager;
-import net.hockeyapp.android.suite.InstrumentationTestSuite;
-
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.*;
 
 @RunWith(AndroidJUnit4.class)
-public class PrivateEventManagerTest extends InstrumentationTestCase {
-
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-        injectInstrumentation(InstrumentationRegistry.getInstrumentation());
-    }
+public class PrivateEventManagerTest {
 
     @Test
     public void addEventListenerWorks() {

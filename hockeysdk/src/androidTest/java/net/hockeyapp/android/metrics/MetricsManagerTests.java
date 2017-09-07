@@ -3,37 +3,20 @@ package net.hockeyapp.android.metrics;
 import android.app.Application;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
-import android.test.InstrumentationTestCase;
 
 import net.hockeyapp.android.util.DummyExecutor;
 import net.hockeyapp.android.utils.AsyncTaskUtils;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.concurrent.Executor;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 @RunWith(AndroidJUnit4.class)
-public class MetricsManagerTests extends InstrumentationTestCase {
-
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-        injectInstrumentation(InstrumentationRegistry.getInstrumentation());
-
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
+public class MetricsManagerTests {
 
     @Test
     public void initializationWorks() {
@@ -41,7 +24,7 @@ public class MetricsManagerTests extends InstrumentationTestCase {
         PublicChannel mockChannel = mock(PublicChannel.class);
         PublicSender mockSender = mock(PublicSender.class);
         PublicPersistence mockPersistence = mock(PublicPersistence.class);
-        MetricsManager sut = new MetricsManager(getInstrumentation().getContext(),
+        MetricsManager sut = new MetricsManager(InstrumentationRegistry.getContext(),
                 mockTelemetryContext, mockSender, mockPersistence, mockChannel);
         verify(mockSender).setPersistence(mockPersistence);
         verify(mockPersistence).setSender(mockSender);
@@ -56,7 +39,7 @@ public class MetricsManagerTests extends InstrumentationTestCase {
         Channel mockChannel = mock(PublicChannel.class);
         Sender mockSender = mock(PublicSender.class);
         Application mockApplication = mock(Application.class);
-        when(mockApplication.getApplicationContext()).thenReturn(getInstrumentation().getContext());
+        when(mockApplication.getApplicationContext()).thenReturn(InstrumentationRegistry.getContext());
 
         MetricsManager.register(mockApplication, "12345678901234567890123456789032",
                 mockSender, mockPersistence, mockChannel);

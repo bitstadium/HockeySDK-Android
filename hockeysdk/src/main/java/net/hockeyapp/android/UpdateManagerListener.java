@@ -1,5 +1,9 @@
 package net.hockeyapp.android;
 
+import android.content.Context;
+
+import net.hockeyapp.android.utils.Util;
+
 import org.json.JSONArray;
 
 import java.util.Date;
@@ -10,14 +14,17 @@ import java.util.Date;
  * Abstract class for callbacks to be invoked from the UpdateManager.
  *
  **/
+@SuppressWarnings({"WeakerAccess"})
 public abstract class UpdateManagerListener {
     /**
      * Return your own subclass of UpdateActivity for customization.
      *
      * @return subclass of UpdateActivity
      */
+    @Deprecated
+    @SuppressWarnings("unused")
     public Class<? extends UpdateActivity> getUpdateActivityClass() {
-        return UpdateActivity.class;
+        return null;
     }
 
     /**
@@ -27,6 +34,17 @@ public abstract class UpdateManagerListener {
      */
     public Class<? extends UpdateFragment> getUpdateFragmentClass() {
         return UpdateFragment.class;
+    }
+
+    /**
+     * Determines how update fragment will be presented: as dialog or activity.
+     * Default behaviour: as dialog on tablets, as activity otherwise.
+     *
+     * @param context the context to use
+     * @return true for show update fragment as dialog
+     */
+    public boolean useUpdateDialog(Context context) {
+        return Util.runsOnTablet(context);
     }
 
     /**
@@ -95,9 +113,9 @@ public abstract class UpdateManagerListener {
      * Called when the update permissions had not been granted.
      * Implement your custom action to override the default behavior.
      */
+    @Deprecated
+    @SuppressWarnings("unused")
     public void onUpdatePermissionsNotGranted() {
         // Do nothing
     }
-
 }
-  

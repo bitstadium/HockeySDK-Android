@@ -1,6 +1,5 @@
 package net.hockeyapp.android.objects.metrics;
 
-import junit.framework.Assert;
 import junit.framework.TestCase;
 
 import net.hockeyapp.android.metrics.model.Base;
@@ -21,12 +20,12 @@ public class EnvelopeTests extends TestCase {
         Envelope item = new Envelope();
         item.setVer(expected);
         int actual = item.getVer();
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
 
         expected = 456;
         item.setVer(expected);
         actual = item.getVer();
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
     }
 
     public void testNameProperty() {
@@ -34,12 +33,12 @@ public class EnvelopeTests extends TestCase {
         Envelope item = new Envelope();
         item.setName(expected);
         String actual = item.getName();
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
 
         expected = "Other string";
         item.setName(expected);
         actual = item.getName();
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
     }
 
     public void testTimeProperty() {
@@ -47,12 +46,12 @@ public class EnvelopeTests extends TestCase {
         Envelope item = new Envelope();
         item.setTime(expected);
         String actual = item.getTime();
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
 
         expected = "Other string";
         item.setTime(expected);
         actual = item.getTime();
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
     }
 
     public void testI_keyProperty() {
@@ -60,12 +59,12 @@ public class EnvelopeTests extends TestCase {
         Envelope item = new Envelope();
         item.setIKey(expected);
         String actual = item.getIKey();
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
 
         expected = "Other string";
         item.setIKey(expected);
         actual = item.getIKey();
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
     }
 
     public void testFlagsProperty() {
@@ -73,12 +72,12 @@ public class EnvelopeTests extends TestCase {
         Envelope item = new Envelope();
         item.setFlags(expected);
         long actual = item.getFlags();
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
 
         expected = 13;
         item.setFlags(expected);
         actual = item.getFlags();
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
     }
 
     public void testOsProperty() {
@@ -86,12 +85,12 @@ public class EnvelopeTests extends TestCase {
         Envelope item = new Envelope();
         item.setOs(expected);
         String actual = item.getOs();
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
 
         expected = "Other string";
         item.setOs(expected);
         actual = item.getOs();
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
     }
 
     public void testOs_verProperty() {
@@ -99,12 +98,12 @@ public class EnvelopeTests extends TestCase {
         Envelope item = new Envelope();
         item.setOsVer(expected);
         String actual = item.getOsVer();
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
 
         expected = "Other string";
         item.setOsVer(expected);
         actual = item.getOsVer();
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
     }
 
     public void testApp_idProperty() {
@@ -112,12 +111,12 @@ public class EnvelopeTests extends TestCase {
         Envelope item = new Envelope();
         item.setAppId(expected);
         String actual = item.getAppId();
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
 
         expected = "Other string";
         item.setAppId(expected);
         actual = item.getAppId();
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
     }
 
     public void testApp_verProperty() {
@@ -125,18 +124,18 @@ public class EnvelopeTests extends TestCase {
         Envelope item = new Envelope();
         item.setAppVer(expected);
         String actual = item.getAppVer();
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
 
         expected = "Other string";
         item.setAppVer(expected);
         actual = item.getAppVer();
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
     }
 
     public void testTagsProperty() {
         Envelope item = new Envelope();
         LinkedHashMap<String, String> actual = (LinkedHashMap<String, String>) item.getTags();
-        Assert.assertNotNull(actual);
+        assertNotNull(actual);
     }
 
     public void testDataProperty() {
@@ -144,12 +143,12 @@ public class EnvelopeTests extends TestCase {
         Envelope item = new Envelope();
         item.setData(expected);
         Base actual = item.getData();
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
 
         expected = new Base();
         item.setData(expected);
         actual = item.getData();
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
     }
 
     public void testSerialize() throws IOException {
@@ -173,7 +172,7 @@ public class EnvelopeTests extends TestCase {
         StringWriter writer = new StringWriter();
         item.serialize(writer);
         String expected = "{\"ver\":1234,\"name\":\"Test string\",\"time\":\"Test string\",\"sampleRate\":100,\"iKey\":\"Test string\",\"flags\":42,\"os\":\"Test string\",\"osVer\":\"Test string\",\"appId\":\"Test string\",\"appVer\":\"Test string\",\"tags\":{\"key1\":\"test value 1\",\"key2\":\"test value 2\"},\"data\":{}}";
-        Assert.assertEquals(expected, writer.toString());
+        assertEquals(expected, writer.toString());
     }
 
 }

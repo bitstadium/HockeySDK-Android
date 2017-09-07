@@ -1,6 +1,5 @@
 package net.hockeyapp.android.objects.metrics;
 
-import junit.framework.Assert;
 import junit.framework.TestCase;
 
 import net.hockeyapp.android.metrics.model.Application;
@@ -18,12 +17,12 @@ public class ApplicationTests extends TestCase {
         Application item = new Application();
         item.setVer(expected);
         String actual = item.getVer();
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
 
         expected = "Other string";
         item.setVer(expected);
         actual = item.getVer();
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
     }
 
     public void testSerialize() throws IOException {
@@ -32,7 +31,7 @@ public class ApplicationTests extends TestCase {
         StringWriter writer = new StringWriter();
         item.serialize(writer);
         String expected = "{\"ai.application.ver\":\"Test string\"}";
-        Assert.assertEquals(expected, writer.toString());
+        assertEquals(expected, writer.toString());
     }
 
 }

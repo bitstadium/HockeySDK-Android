@@ -2,13 +2,12 @@ package net.hockeyapp.android.utils;
 
 import android.content.Context;
 import android.net.Uri;
-import android.os.Build;
 import android.text.TextUtils;
 
 import net.hockeyapp.android.Constants;
 
-import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -21,7 +20,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * <h3>Description</h3>
@@ -47,7 +45,7 @@ public class HttpURLConnectionBuilder {
 
     public HttpURLConnectionBuilder(String urlString) {
         mUrlString = urlString;
-        mHeaders = new HashMap<String, String>();
+        mHeaders = new HashMap<>();
         mHeaders.put("User-Agent", Constants.SDK_USER_AGENT);
     }
 
@@ -70,7 +68,7 @@ public class HttpURLConnectionBuilder {
 
         for (String key: fields.keySet()) {
             String value = fields.get(key);
-            if (value.length() > FORM_FIELD_LIMIT) {
+            if (value != null && value.length() > FORM_FIELD_LIMIT) {
                 throw new IllegalArgumentException("Form field " + key + " size too large: " + value.length() + " - max allowed: " + FORM_FIELD_LIMIT);
             }
         }
@@ -87,7 +85,8 @@ public class HttpURLConnectionBuilder {
 
     public HttpURLConnectionBuilder writeMultipartData(Map<String, String> fields, Context context, List<Uri> attachmentUris) {
         try {
-            mMultipartEntity = new SimpleMultipartEntity();
+            File tempFile = File.createTempFile("multipart", null, context.getCacheDir());
+            mMultipartEntity = new SimpleMultipartEntity(tempFile);
             mMultipartEntity.writeFirstBoundaryIfNeeds();
 
             for (String key : fields.keySet()) {
@@ -142,10 +141,6 @@ public class HttpURLConnectionBuilder {
         connection.setConnectTimeout(mTimeout);
         connection.setReadTimeout(mTimeout);
 
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.GINGERBREAD) {
-            connection.setRequestProperty("Connection", "close");
-        }
-
         if (!TextUtils.isEmpty(mRequestMethod)) {
             connection.setRequestMethod(mRequestMethod);
             if (!TextUtils.isEmpty(mRequestBody) || mRequestMethod.equalsIgnoreCase("POST") || mRequestMethod.equalsIgnoreCase("PUT")) {
@@ -167,17 +162,14 @@ public class HttpURLConnectionBuilder {
 
         if (mMultipartEntity != null) {
             connection.setRequestProperty("Content-Length", String.valueOf(mMultipartEntity.getContentLength()));
-            BufferedOutputStream outputStream = new BufferedOutputStream(connection.getOutputStream());
-            outputStream.write(mMultipartEntity.getOutputStream().toByteArray());
-            outputStream.flush();
-            outputStream.close();
+            mMultipartEntity.writeTo(connection.getOutputStream());
         }
 
         return connection;
     }
 
     private static String getFormString(Map<String, String> params, String charset) throws UnsupportedEncodingException {
-        List<String> protoList = new ArrayList<String>();
+        List<String> protoList = new ArrayList<>();
         for (String key : params.keySet()) {
             String value = params.get(key);
             key = URLEncoder.encode(key, charset);

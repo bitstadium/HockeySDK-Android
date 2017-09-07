@@ -1,10 +1,12 @@
 package net.hockeyapp.android.utils;
 
-import java.io.ByteArrayOutputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Random;
 
 /**
@@ -23,17 +25,23 @@ public class SimpleMultipartEntity {
 
     private boolean mIsSetFirst;
 
-    private ByteArrayOutputStream mOut;
+    private File mTempFile;
+    private OutputStream mOut;
 
     private String mBoundary;
 
-    public SimpleMultipartEntity() {
+    public SimpleMultipartEntity(File tempFile) {
         this.mIsSetFirst = false;
         this.mIsSetLast = false;
-        this.mOut = new ByteArrayOutputStream();
+        this.mTempFile = tempFile;
+        try {
+            this.mOut = new FileOutputStream(mTempFile);
+        } catch (IOException e) {
+            HockeyLog.error("Failed to open temp file", e);
+        }
 
         /** Create boundary String */
-        final StringBuffer buffer = new StringBuffer();
+        final StringBuilder buffer = new StringBuilder();
         final Random rand = new Random();
 
         for (int i = 0; i < 30; i++) {
@@ -59,9 +67,11 @@ public class SimpleMultipartEntity {
         }
         try {
             mOut.write(("\r\n--" + mBoundary + "--\r\n").getBytes());
-
+            mOut.flush();
+            mOut.close();
+            mOut = null;
         } catch (final IOException e) {
-            e.printStackTrace();
+            HockeyLog.error("Failed to close temp file", e);
         }
         mIsSetLast = true;
     }
@@ -93,7 +103,7 @@ public class SimpleMultipartEntity {
             mOut.write("Content-Transfer-Encoding: binary\r\n\r\n".getBytes());
 
             final byte[] tmp = new byte[4096];
-            int l = 0;
+            int l;
             while ((l = fin.read(tmp)) != -1) {
                 mOut.write(tmp, 0, l);
             }
@@ -111,24 +121,33 @@ public class SimpleMultipartEntity {
         } finally {
             try {
                 fin.close();
-            } catch (final IOException e) {
-                e.printStackTrace();
+            } catch (final IOException ignored) {
             }
         }
     }
 
     public long getContentLength() {
         writeLastBoundaryIfNeeds();
-        return mOut.toByteArray().length;
+        return mTempFile.length();
     }
 
     public String getContentType() {
         return "multipart/form-data; boundary=" + getBoundary();
     }
 
-    public ByteArrayOutputStream getOutputStream() {
+    public void writeTo(OutputStream out) throws IOException {
         writeLastBoundaryIfNeeds();
-        return mOut;
+        FileInputStream fileInputStream = new FileInputStream(mTempFile);
+        BufferedOutputStream outputStream = new BufferedOutputStream(out);
+        final byte[] tmp = new byte[4096];
+        int l;
+        while ((l = fileInputStream.read(tmp)) != -1) {
+            outputStream.write(tmp, 0, l);
+        }
+        fileInputStream.close();
+        outputStream.flush();
+        outputStream.close();
+        mTempFile.delete();
+        mTempFile = null;
     }
-
 }

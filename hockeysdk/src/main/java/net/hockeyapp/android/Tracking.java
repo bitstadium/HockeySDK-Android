@@ -101,6 +101,7 @@ public class Tracking {
      * Checks if the versionCode was set. If not, try to load it. Returns false
      * if it is still null.
      */
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private static boolean checkVersion(Context context) {
         if (Constants.APP_VERSION == null) {
             Constants.loadFromContext(context);

@@ -24,12 +24,12 @@ public class ExpiryInfoActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setTitle(getString(R.string.hockeyapp_expiry_info_title));
+        setTitle(R.string.hockeyapp_expiry_info_title);
         setContentView(R.layout.hockeyapp_activity_expiry_info);
 
         String appName = Util.getAppName(this);
-        String text = String.format(getString(R.string.hockeyapp_expiry_info_text), appName);
-        TextView messageView = (TextView) findViewById(R.id.label_message);
+        String text = getString(R.string.hockeyapp_expiry_info_text, appName);
+        TextView messageView = findViewById(R.id.label_message);
         messageView.setText(text);
     }
 

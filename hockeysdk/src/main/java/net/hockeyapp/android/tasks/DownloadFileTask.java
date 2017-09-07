@@ -8,12 +8,12 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.os.Environment;
 import android.os.StrictMode;
 
 import net.hockeyapp.android.Constants;
 import net.hockeyapp.android.R;
 import net.hockeyapp.android.listeners.DownloadFileListener;
+import net.hockeyapp.android.utils.HockeyLog;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -40,7 +40,7 @@ public class DownloadFileTask extends AsyncTask<Void, Integer, Long> {
     protected DownloadFileListener mNotifier;
     protected String mUrlString;
     protected String mFilename;
-    protected String mFilePath;
+    protected File mDirectory;
     protected ProgressDialog mProgressDialog;
     private String mDownloadErrorMessage;
 
@@ -48,7 +48,7 @@ public class DownloadFileTask extends AsyncTask<Void, Integer, Long> {
         this.mContext = context;
         this.mUrlString = urlString;
         this.mFilename = UUID.randomUUID() + ".apk";
-        this.mFilePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Download";
+        this.mDirectory = new File(context.getExternalFilesDir(null), "Download");
         this.mNotifier = notifier;
         this.mDownloadErrorMessage = null;
     }
@@ -81,12 +81,11 @@ public class DownloadFileTask extends AsyncTask<Void, Integer, Long> {
                 return 0L;
             }
 
-            File dir = new File(this.mFilePath);
-            boolean result = dir.mkdirs();
-            if (!result && !dir.exists()) {
-                throw new IOException("Could not create the dir(s):" + dir.getAbsolutePath());
+            boolean result = mDirectory.mkdirs();
+            if (!result && !mDirectory.exists()) {
+                throw new IOException("Could not create the dir(s):" + mDirectory.getAbsolutePath());
             }
-            File file = new File(dir, this.mFilename);
+            File file = new File(mDirectory, this.mFilename);
 
             input = new BufferedInputStream(connection.getInputStream());
             output = new FileOutputStream(file);
@@ -104,7 +103,7 @@ public class DownloadFileTask extends AsyncTask<Void, Integer, Long> {
 
             return total;
         } catch (IOException e) {
-            e.printStackTrace();
+            HockeyLog.error("Failed to download " + mUrlString, e);
             return 0L;
         } finally {
             try {
@@ -114,8 +113,7 @@ public class DownloadFileTask extends AsyncTask<Void, Integer, Long> {
                 if (input != null) {
                     input.close();
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IOException ignored) {
             }
         }
     }
@@ -123,11 +121,6 @@ public class DownloadFileTask extends AsyncTask<Void, Integer, Long> {
     protected void setConnectionProperties(HttpURLConnection connection) {
         connection.addRequestProperty("User-Agent", Constants.SDK_USER_AGENT);
         connection.setInstanceFollowRedirects(true);
-
-        // connection bug workaround for SDK<=2.x
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.GINGERBREAD) {
-            connection.setRequestProperty("connection", "close");
-        }
     }
 
     /**
@@ -169,7 +162,7 @@ public class DownloadFileTask extends AsyncTask<Void, Integer, Long> {
             if (mProgressDialog == null) {
                 mProgressDialog = new ProgressDialog(mContext);
                 mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-                mProgressDialog.setMessage("Loading...");
+                mProgressDialog.setMessage(mContext.getString(R.string.hockeyapp_update_loading));
                 mProgressDialog.setCancelable(false);
                 mProgressDialog.show();
             }
@@ -191,9 +184,8 @@ public class DownloadFileTask extends AsyncTask<Void, Integer, Long> {
 
         if (result > 0L) {
             mNotifier.downloadSuccessful(this);
-
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setDataAndType(Uri.fromFile(new File(this.mFilePath, this.mFilename)),
+            Intent intent = new Intent(Intent.ACTION_INSTALL_PACKAGE);
+            intent.setDataAndType(Uri.fromFile(new File(this.mDirectory, this.mFilename)),
                     "application/vnd.android.package-archive");
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 

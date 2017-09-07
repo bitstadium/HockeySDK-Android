@@ -1,15 +1,8 @@
 language: android
 
-# Run on new travis infrastructure
-sudo: false
-
-# Don't check out submodules for faster builds with less dependencies
-git:
-  submodules: false
-
 env:
   matrix:
-    - ANDROID_TARGET=android-19 ANDROID_ABI=armeabi-v7a
+    - ANDROID_TARGET=android-22 ANDROID_ABI=armeabi-v7a
 
 jdk:
   - oraclejdk8
@@ -21,7 +14,7 @@ android:
     - platform-tools
 
     # Use the desired build tools
-    - build-tools-26.0.0
+    - build-tools-26.0.1
 
     # Project target SDK
     - android-26
@@ -29,6 +22,10 @@ android:
     # Project extra configuration
     - extra-google-m2repository
     - extra-android-m2repository
+
+    # Emulator system image for tests
+    - android-22
+    - sys-img-armeabi-v7a-android-22
 
 before_script:
   - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI

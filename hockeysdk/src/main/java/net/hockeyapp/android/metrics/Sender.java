@@ -24,7 +24,6 @@ import java.util.zip.GZIPOutputStream;
  * Either calls execute or executeOnExecutor on an AsyncTask depending on the
  * API level.
  **/
-
 public class Sender {
 
     /**
@@ -157,7 +156,7 @@ public class Sender {
                 mRequestCount.getAndDecrement();
                 if (this.getPersistence() != null) {
                     HockeyLog.debug(TAG, "Persisting because of IOException: We're probably offline.");
-                    this.getPersistence().makeAvailable(file); //send again later
+                    this.getPersistence().makeAvailable(file); // Send again later
                 }
             } catch (SecurityException e) {
                 // Permission denied
@@ -165,7 +164,15 @@ public class Sender {
                 mRequestCount.getAndDecrement();
                 if (this.getPersistence() != null) {
                     HockeyLog.debug(TAG, "Persisting because of SecurityException: Missing INTERNET permission or the user might have removed the internet permission.");
-                    this.getPersistence().makeAvailable(file); //send again later
+                    this.getPersistence().makeAvailable(file); // Send again later
+                }
+            } catch (Exception e) {
+                // Catch all unknown exceptions
+                HockeyLog.debug(TAG, "Couldn't send data with " + e.toString());
+                mRequestCount.getAndDecrement();
+                if (this.getPersistence() != null) {
+                    HockeyLog.debug(TAG, "Persisting because of unknown exception.");
+                    this.getPersistence().makeAvailable(file); // Send again later
                 }
             }
         }
@@ -259,6 +266,14 @@ public class Sender {
             //trigger send next file or log unexpected responses
             StringBuilder builder = new StringBuilder();
             if (isExpected(responseCode)) {
+                try {
+                    InputStream inputStream = connection.getInputStream();
+                    if (inputStream != null) {
+                        inputStream.close();
+                    }
+                } catch (IOException e) {
+                    HockeyLog.error(TAG, "Could not close input stream", e);
+                }
                 triggerSending();
             } else {
                 this.onUnexpected(connection, responseCode, builder);
@@ -350,8 +365,8 @@ public class Sender {
      * @param builder    a string builder for storing the response
      */
     protected void readResponse(HttpURLConnection connection, StringBuilder builder) {
-        String result = null;
-        StringBuffer buffer = new StringBuffer();
+        String result;
+        StringBuilder buffer = new StringBuilder();
         InputStream inputStream = null;
 
         try {
@@ -362,7 +377,7 @@ public class Sender {
 
             if(inputStream != null){
                 BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
-                String inputLine = "";
+                String inputLine;
                 while ((inputLine = br.readLine()) != null) {
                     buffer.append(inputLine);
                 }

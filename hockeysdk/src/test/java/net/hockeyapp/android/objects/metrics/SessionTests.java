@@ -1,6 +1,5 @@
 package net.hockeyapp.android.objects.metrics;
 
-import junit.framework.Assert;
 import junit.framework.TestCase;
 
 import net.hockeyapp.android.metrics.model.Session;
@@ -18,12 +17,12 @@ public class SessionTests extends TestCase {
         Session item = new Session();
         item.setId(expected);
         String actual = item.getId();
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
 
         expected = "Other string";
         item.setId(expected);
         actual = item.getId();
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
     }
 
     public void testIsFirstProperty() {
@@ -31,12 +30,12 @@ public class SessionTests extends TestCase {
         Session item = new Session();
         item.setIsFirst(expected);
         String actual = item.getIsFirst();
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
 
         expected = "Other string";
         item.setIsFirst(expected);
         actual = item.getIsFirst();
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
     }
 
     public void testIsNewProperty() {
@@ -44,12 +43,12 @@ public class SessionTests extends TestCase {
         Session item = new Session();
         item.setIsNew(expected);
         String actual = item.getIsNew();
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
 
         expected = "Other string";
         item.setIsNew(expected);
         actual = item.getIsNew();
-        Assert.assertEquals(expected, actual);
+        assertEquals(expected, actual);
     }
 
     public void testSerialize() throws IOException {
@@ -60,7 +59,7 @@ public class SessionTests extends TestCase {
         StringWriter writer = new StringWriter();
         item.serialize(writer);
         String expected = "{\"ai.session.id\":\"Test string\",\"ai.session.isFirst\":\"Test string\",\"ai.session.isNew\":\"Test string\"}";
-        Assert.assertEquals(expected, writer.toString());
+        assertEquals(expected, writer.toString());
     }
 
 }

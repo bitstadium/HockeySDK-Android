@@ -8,6 +8,7 @@ import net.hockeyapp.android.objects.FeedbackMessage;
  * Abstract class for callbacks to be invoked from the {@link FeedbackManager}
  *
  **/
+@SuppressWarnings("WeakerAccess")
 public abstract class FeedbackManagerListener {
     /**
      * Return your own subclass of FeedbackActivity for customization.

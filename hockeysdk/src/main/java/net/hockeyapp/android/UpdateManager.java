@@ -1,6 +1,5 @@
 package net.hockeyapp.android;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
@@ -32,11 +31,6 @@ public class UpdateManager {
      * Singleton for update task.
      */
     private static CheckUpdateTask updateTask = null;
-
-    /**
-     * Last listener instance.
-     */
-    private static UpdateManagerListener lastListener = null;
 
     /**
      * Registers new update manager.
@@ -129,10 +123,10 @@ public class UpdateManager {
     public static void register(Activity activity, String urlString, String appIdentifier, UpdateManagerListener listener, boolean isDialogRequired) {
         appIdentifier = Util.sanitizeAppIdentifier(appIdentifier);
 
-        lastListener = listener;
+        Constants.loadFromContext(activity);
 
-        WeakReference<Activity> weakActivity = new WeakReference<Activity>(activity);
-        if ((Util.fragmentsSupported()) && (dialogShown(weakActivity))) {
+        WeakReference<Activity> weakActivity = new WeakReference<>(activity);
+        if (dialogShown(weakActivity)) {
             return;
         }
 
@@ -163,9 +157,7 @@ public class UpdateManager {
     public static void registerForBackground(Context appContext, String urlString, String appIdentifier, UpdateManagerListener listener) {
         appIdentifier = Util.sanitizeAppIdentifier(appIdentifier);
 
-        lastListener = listener;
-
-        WeakReference<Context> weakContext = new WeakReference<Context>(appContext);
+        WeakReference<Context> weakContext = new WeakReference<>(appContext);
 
         if ((!checkExpiryDateForBackground(listener)) && ((listener != null && listener.canUpdateInMarket()) || !installedFromMarket(weakContext))) {
             startUpdateTaskForBackground(weakContext, urlString, appIdentifier, listener);
@@ -181,8 +173,6 @@ public class UpdateManager {
             updateTask.detach();
             updateTask = null;
         }
-
-        lastListener = null;
     }
 
     /**
@@ -245,7 +235,7 @@ public class UpdateManager {
                     }
                 }
 
-            } catch (Throwable e) {
+            } catch (Throwable ignored) {
             }
         }
 
@@ -296,9 +286,8 @@ public class UpdateManager {
     }
 
     /**
-     * Returns true if the dialog is already shown (only works on Android 3.0+).
+     * Returns true if the dialog is already shown.
      */
-    @TargetApi(11)
     private static boolean dialogShown(WeakReference<Activity> weakActivity) {
         if (weakActivity != null) {
             Activity activity = weakActivity.get();
@@ -307,16 +296,6 @@ public class UpdateManager {
                 return (existingFragment != null);
             }
         }
-
         return false;
-    }
-
-    /**
-     * Returns the last listener which has been registered with any update manager.
-     *
-     * @return last update manager listener
-     */
-    public static UpdateManagerListener getLastListener() {
-        return lastListener;
     }
 }

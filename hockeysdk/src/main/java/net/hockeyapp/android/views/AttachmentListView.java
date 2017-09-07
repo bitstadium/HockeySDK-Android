@@ -36,7 +36,7 @@ public class AttachmentListView extends ViewGroup {
      * @return ArrayList of Uri
      */
     public ArrayList<Uri> getAttachments() {
-        ArrayList<Uri> attachments = new ArrayList<Uri>();
+        ArrayList<Uri> attachments = new ArrayList<>();
 
         for (int i = 0; i < getChildCount(); i++) {
             AttachmentView attachmentView = (AttachmentView) getChildAt(i);
@@ -99,7 +99,7 @@ public class AttachmentListView extends ViewGroup {
 
     @Override
     protected boolean checkLayoutParams(LayoutParams p) {
-        return (p instanceof LayoutParams);
+        return p != null;
     }
 
     @Override

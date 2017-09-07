@@ -17,22 +17,31 @@
     <string name="hockeyapp_update_mandatory_toast">%s è disponibile ed è un aggiornamento obbligatorio!</string>
     <string name="hockeyapp_update_dialog_title">Aggiornamento disponibile</string>
     <string name="hockeyapp_update_button">Aggiorna</string>
+    <string name="hockeyapp_update_restore">Ripristina</string>
     <string name="hockeyapp_update_dialog_message">Mostrare informazioni sul nuovo aggiornamento?</string>
     <string name="hockeyapp_update_dialog_negative_button">Ignora</string>
     <string name="hockeyapp_update_dialog_positive_button">Mostra</string>
+    <string name="hockeyapp_update_title">Aggiorna Applicazione</string>
+    <string name="hockeyapp_update_unknown_size">Dimensione sconosciuta</string>
+    <string name="hockeyapp_update_version">Versione %s</string>
+    <string name="hockeyapp_update_newest_version">Ultima versione</string>
+    <string name="hockeyapp_update_already_installed">INSTALLATO</string>
+    <string name="hockeyapp_update_loading">Caricamento…</string>
+    <string name="hockeyapp_update_no_info">Nessuna informazione.</string>
 
     <!-- Expiry Info -->
     <string name="hockeyapp_expiry_info_title">Build scaduta</string>
     <string name="hockeyapp_expiry_info_text">%s è scaduta. Controlla HockeyApp per aggiornamenti.</string>
 
     <!-- Feedback Activity -->
-    <string name="hockeyapp_feedback_failed_title">In attesa</string>
-    <string name="hockeyapp_feedback_failed_text">Vuoi mandare il tuo feedback nuovamente?</string>
     <string name="hockeyapp_feedback_name_hint">Nome</string>
     <string name="hockeyapp_feedback_email_hint">E-mail</string>
     <string name="hockeyapp_feedback_subject_hint">Soggetto</string>
     <string name="hockeyapp_feedback_message_hint">Messaggio</string>
     <string name="hockeyapp_feedback_last_updated_text">Ultimo aggiornamento: %s</string>
+    <string name="hockeyapp_feedback_attachment_added">Allegato aggiunto</string>
+    <string name="hockeyapp_feedback_attachment_removed">Allegato rimosso</string>
+    <string name="hockeyapp_feedback_attachment_remove_description">Rimuovere allegato</string>
     <string name="hockeyapp_feedback_attachment_button_text">Aggiungi allegato</string>
     <string name="hockeyapp_feedback_send_button_text">Invia feedback</string>
     <string name="hockeyapp_feedback_response_button_text">Aggiungi una risposta</string>
@@ -61,13 +70,18 @@
     <!-- Send Feedback Task -->
     <string name="hockeyapp_feedback_sending_feedback_text">Invio feedback…</string>
     <string name="hockeyapp_feedback_fetching_feedback_text">Recupero discussioni…</string>
+    <string name="hockeyapp_feedback_sent_toast">Feedback inviato</string>
+
+    <!-- Feedback Screenshot -->
+    <string name="hockeyapp_feedback_screenshot_fail">Purtroppo non è stato possibile creare lo screenshot.</string>
+    <string name="hockeyapp_feedback_notification_title">HockeyApp Feedback</string>
+    <string name="hockeyapp_feedback_screenshot_notification_message">Fai uno screenshot per il tuo feedback.</string>
+    <string name="hockeyapp_feedback_new_answer_notification_message"> È disponibile una nuova risposta alle tue risposte.</string>
 
     <!-- Login Activity -->
     <string name="hockeyapp_login_headline_text">Inserisci l\'indirizzo e-mail e la password del tuo account HockeyApp per autorizzare l\'accesso a questa app.</string>
     <string name="hockeyapp_login_headline_text_email_only">Inserisci l\'indirizzo e-mail del tuo account HockeyApp per autorizzare l\'accesso a questa app.</string>
     <string name="hockeyapp_login_missing_credentials_toast">Inserisci le credenziali dell\'account mancanti.</string>
-    <string name="hockeyapp_login_email_hint">E-mail</string>
-    <string name="hockeyapp_login_password_hint">Password</string>
     <string name="hockeyapp_login_login_button_text">Accedi</string>
     <string name="hockeyapp_login_email_hint_required">E-mail (richiesto)</string>
     <string name="hockeyapp_login_password_hint_required">Password (richiesto)</string>
@@ -82,12 +96,6 @@
     <string name="hockeyapp_paint_dialog_positive_button">Salva</string>
     <string name="hockeyapp_paint_dialog_neutral_button">Annulla</string>
 
-    <!-- Permissions -->
-    <string name="hockeyapp_permission_update_title">Accesso allo spazio di archiviazione richiesto</string>
-    <string name="hockeyapp_permission_update_message">Per scaricare ed installare gli aggiornamenti dell\'app devi consentire l\'accesso allo spazio di archiviazione del dispositivo.</string>
-    <string name="hockeyapp_permission_dialog_negative_button">Annulla</string>
-    <string name="hockeyapp_permission_dialog_positive_button">Riprova</string>
-
     <!-- Dialogs -->
     <string name="hockeyapp_dialog_positive_button">OK</string>
     <string name="hockeyapp_dialog_negative_button">Annulla</string>
@@ -96,9 +104,7 @@
 
     <!-- Misc -->
     <string name="hockeyapp_error_no_network_message">Il tuo dispositivo non è connesso ad internet. Risolvi i problemi di connessione e riprova.</string>
-    <string name="hockeyapp_feedback_attachment_added">Allegato aggiunto</string>
-    <string name="hockeyapp_feedback_attachment_removed">Allegato rimosso</string>
-    <string name="hockeyapp_feedback_attachment_remove_description">Rimuovere allegato</string>
-    <string name="hockeyapp_feedback_sent_toast">Feedback inviato</string>
+    <string name="hockeyapp_error_no_external_storage_permission">Il permesso per accedere alla memoria esterna non è definito. Per favore contatta lo sviluppatore.</string>
+    <string name="hockeyapp_error_install_form_unknown_sources_disabled">L\'installazione da origini sconosciute non è abilitata. Per favore controlla i settaggi del dispositivo.</string>
 
 </resources>

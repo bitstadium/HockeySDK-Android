@@ -1,15 +1,17 @@
 package net.hockeyapp.android;
 
-import android.annotation.TargetApi;
-import android.app.Activity;
+import android.Manifest;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.DialogFragment;
-import android.content.DialogInterface;
-import android.content.pm.ApplicationInfo;
+import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -23,12 +25,11 @@ import net.hockeyapp.android.listeners.DownloadFileListener;
 import net.hockeyapp.android.tasks.DownloadFileTask;
 import net.hockeyapp.android.tasks.GetFileSizeTask;
 import net.hockeyapp.android.utils.AsyncTaskUtils;
-import net.hockeyapp.android.utils.HockeyLog;
+import net.hockeyapp.android.utils.PermissionsUtil;
+import net.hockeyapp.android.utils.Util;
 import net.hockeyapp.android.utils.VersionHelper;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-
+import java.util.ArrayList;
 import java.util.Locale;
 
 /**
@@ -38,7 +39,6 @@ import java.util.Locale;
  * process if the user taps the corresponding button.
  *
  **/
-@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class UpdateFragment extends DialogFragment implements OnClickListener, UpdateInfoListener {
 
     /**
@@ -52,14 +52,16 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
     public static final String FRAGMENT_VERSION_INFO = "versionInfo";
 
     /**
-     * Task to download the .apk file.
+     * Show as dialog
      */
-    private DownloadFileTask mDownloadTask;
+    public static final String FRAGMENT_DIALOG = "dialog";
+
+    public static final String FRAGMENT_TAG = "hockey_update_dialog";
 
     /**
-     * JSON array with a JSON object for each version.
+     * JSON string with info for each version.
      */
-    private JSONArray mVersionInfo;
+    private String mVersionInfo;
 
     /**
      * HockeyApp URL as a string.
@@ -67,26 +69,36 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
     private String mUrlString;
 
     /**
-     * Helper for version management.
-     */
-    private VersionHelper mVersionHelper;
-
-    /**
      * Creates a new instance of the fragment.
      *
-     * @param versionInfo JSON array with a JSON object for each version.
+     * @param versionInfo JSON string with info for each version.
      * @param urlString   HockeyApp URL as a string.
      * @return Instance of Fragment
      */
     @SuppressWarnings("unused")
-    static public UpdateFragment newInstance(final JSONArray versionInfo, String urlString) {
+    static public UpdateFragment newInstance(String versionInfo, String urlString, boolean dialog) {
         Bundle arguments = new Bundle();
         arguments.putString(FRAGMENT_URL, urlString);
-        arguments.putString(FRAGMENT_VERSION_INFO, versionInfo.toString());
+        arguments.putString(FRAGMENT_VERSION_INFO, versionInfo);
+        arguments.putBoolean(FRAGMENT_DIALOG, dialog);
 
         UpdateFragment fragment = new UpdateFragment();
         fragment.setArguments(arguments);
         return fragment;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // To properly support landscape dialog
+        Dialog dialog = getDialog();
+        if (dialog != null && dialog.getWindow() != null)
+        {
+            int width = ViewGroup.LayoutParams.MATCH_PARENT;
+            int height = ViewGroup.LayoutParams.MATCH_PARENT;
+            dialog.getWindow().setLayout(width, height);
+        }
     }
 
     /**
@@ -100,19 +112,18 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        try {
-            this.mUrlString = getArguments().getString(FRAGMENT_URL);
-            this.mVersionInfo = new JSONArray(getArguments().getString(FRAGMENT_VERSION_INFO));
-        } catch (JSONException e) {
-            dismiss();
-            return;
-        }
+        // Retain this fragment across configuration changes.
+        setRetainInstance(true);
 
-        setStyle(DialogFragment.STYLE_NO_TITLE, android.R.style.Theme_Holo_Light_Dialog);
+        Bundle arguments = getArguments();
+        this.mUrlString = arguments.getString(FRAGMENT_URL);
+        this.mVersionInfo = arguments.getString(FRAGMENT_VERSION_INFO);
+        boolean dialog = arguments.getBoolean(FRAGMENT_DIALOG);
+        setShowsDialog(dialog);
     }
 
     /**
-     * Creates the root view of the fragement, set title, the version number and
+     * Creates the root view of the fragment, set title, the version number and
      * the listener for the download button.
      *
      * @return The fragment's root view.
@@ -121,17 +132,19 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = getLayoutView();
 
-        mVersionHelper = new VersionHelper(getActivity(), mVersionInfo.toString(), this);
+        // Helper for version management.
+        VersionHelper versionHelper = new VersionHelper(getActivity(), mVersionInfo, this);
 
-        TextView nameLabel = (TextView) view.findViewById(R.id.label_title);
-        nameLabel.setText(getAppName());
+        TextView nameLabel = view.findViewById(R.id.label_title);
+        nameLabel.setText(Util.getAppName(getActivity()));
+        nameLabel.setContentDescription(nameLabel.getText());
 
-        final TextView versionLabel = (TextView) view.findViewById(R.id.label_version);
-        final String versionString = "Version " + mVersionHelper.getVersionString();
-        final String fileDate = mVersionHelper.getFileDateString();
+        final TextView versionLabel = view.findViewById(R.id.label_version);
+        final String versionString = String.format(getString(R.string.hockeyapp_update_version), versionHelper.getVersionString());
+        final String fileDate = versionHelper.getFileDateString();
 
-        String appSizeString = "Unknown size";
-        long appSize = mVersionHelper.getFileSizeBytes();
+        String appSizeString = getString(R.string.hockeyapp_update_unknown_size);
+        long appSize = versionHelper.getFileSizeBytes();
         if (appSize >= 0L) {
             appSizeString = String.format(Locale.US, "%.2f", appSize / (1024.0f * 1024.0f)) + " MB";
         } else {
@@ -149,15 +162,25 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
         }
         versionLabel.setText(getString(R.string.hockeyapp_update_version_details_label, versionString, fileDate, appSizeString));
 
-        Button updateButton = (Button) view.findViewById(R.id.button_update);
+        Button updateButton = view.findViewById(R.id.button_update);
         updateButton.setOnClickListener(this);
 
-        WebView webView = (WebView) view.findViewById(R.id.web_update_details);
+        WebView webView = view.findViewById(R.id.web_update_details);
         webView.clearCache(true);
         webView.destroyDrawingCache();
-        webView.loadDataWithBaseURL(Constants.BASE_URL, mVersionHelper.getReleaseNotes(false), "text/html", "utf-8", null);
+        webView.loadDataWithBaseURL(Constants.BASE_URL, versionHelper.getReleaseNotes(false), "text/html", "utf-8", null);
 
         return view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        // To properly support orientation change
+        Dialog dialog = getDialog();
+        if (dialog != null && getRetainInstance()) {
+            dialog.setDismissMessage(null);
+        }
+        super.onDestroyView();
     }
 
     /**
@@ -169,43 +192,6 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
         prepareDownload();
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if (permissions.length == 0 || grantResults.length == 0) {
-            // User cancelled permissions dialog -> don't do anything.
-            return;
-        }
-
-        if (requestCode == Constants.UPDATE_PERMISSIONS_REQUEST) {
-            // Check for the grant result on write permission
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission granted, start download
-                startDownloadTask(getActivity());
-            } else {
-                // Permission denied, show user alert
-                HockeyLog.warn("User denied write permission, can't continue with updater task.");
-
-                UpdateManagerListener listener = UpdateManager.getLastListener();
-                if (listener != null) {
-                    listener.onUpdatePermissionsNotGranted();
-                } else {
-                    final UpdateFragment updateFragment = this;
-                    new AlertDialog.Builder(getActivity())
-                            .setTitle(getString(R.string.hockeyapp_permission_update_title))
-                            .setMessage(getString(R.string.hockeyapp_permission_update_message))
-                            .setNegativeButton(getString(R.string.hockeyapp_permission_dialog_negative_button), null)
-                            .setPositiveButton(getString(R.string.hockeyapp_permission_dialog_positive_button), new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    updateFragment.prepareDownload();
-                                }
-                            })
-                            .create()
-                            .show();
-                }
-            }
-        }
-    }
-
     /**
      * Returns the current version of the app.
      *
@@ -213,65 +199,78 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
      */
     public int getCurrentVersionCode() {
         int currentVersionCode = -1;
-
         try {
             currentVersionCode = getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), PackageManager.GET_META_DATA).versionCode;
-        } catch (NameNotFoundException e) {
-        } catch (NullPointerException e) {
+        } catch (NameNotFoundException | NullPointerException ignored) {
         }
-
         return currentVersionCode;
     }
 
-    public void prepareDownload() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            // Only if we're running on Android M or later
-            if (getActivity().checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                // We don't have the permission to write to external storage yet, so we have to request it asynchronously.
-                requestPermissions(new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, Constants.UPDATE_PERMISSIONS_REQUEST);
-                return;
-            }
+    private void showError(final int message) {
+        AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
+                .setTitle(R.string.hockeyapp_dialog_error_title)
+                .setMessage(message)
+                .setCancelable(false)
+                .setPositiveButton(R.string.hockeyapp_dialog_positive_button, null)
+                .create();
+        alertDialog.show();
+    }
+
+    private static String[] requiredPermissions() {
+        ArrayList<String> permissions = new ArrayList<>();
+        if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+        return permissions.toArray(new String[0]);
+    }
+
+    protected void prepareDownload() {
+        Context context = getActivity();
+        if (!Util.isConnectedToNetwork(context)) {
+            showError(R.string.hockeyapp_error_no_network_message);
+            return;
         }
 
-        startDownloadTask(this.getActivity());
-        dismiss();
+        String[] permissions = requiredPermissions();
+        int[] permissionsState = PermissionsUtil.permissionsState(context, permissions);
+        if (!PermissionsUtil.permissionsAreGranted(permissionsState)) {
+            showError(R.string.hockeyapp_error_no_external_storage_permission);
+            return;
+        }
+
+        if (!PermissionsUtil.isUnknownSourcesEnabled(context)) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES);
+                intent.setData(Uri.parse("package:" + context.getPackageName()));
+                context.startActivity(intent);
+            } else {
+                showError(R.string.hockeyapp_error_install_form_unknown_sources_disabled);
+            }
+            return;
+        }
+
+        startDownloadTask();
+        if (getShowsDialog()) {
+            dismiss();
+        }
     }
 
     /**
      * Starts the download task and sets the listener for a successful
      * download, a failed download, and configuration strings.
      */
-    private void startDownloadTask(final Activity activity) {
-        mDownloadTask = new DownloadFileTask(activity, mUrlString, new DownloadFileListener() {
+    protected void startDownloadTask() {
+        AsyncTaskUtils.execute(new DownloadFileTask(getActivity(), mUrlString, new DownloadFileListener() {
             public void downloadFailed(DownloadFileTask task, Boolean userWantsRetry) {
                 if (userWantsRetry) {
-                    startDownloadTask(activity);
+                    startDownloadTask();
                 }
             }
 
             public void downloadSuccessful(DownloadFileTask task) {
                 // Do nothing as the fragment is already dismissed
             }
-
-        });
-        AsyncTaskUtils.execute(mDownloadTask);
-    }
-
-    /**
-     * Returns the app's name.
-     *
-     * @return The app's name as a String.
-     */
-    public String getAppName() {
-        Activity activity = getActivity();
-
-        try {
-            PackageManager pm = activity.getPackageManager();
-            ApplicationInfo applicationInfo = pm.getApplicationInfo(activity.getPackageName(), 0);
-            return pm.getApplicationLabel(applicationInfo).toString();
-        } catch (NameNotFoundException exception) {
-            return "";
-        }
+        }));
     }
 
     /**
