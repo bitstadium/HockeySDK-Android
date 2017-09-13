@@ -55,6 +55,16 @@ public class LoginManager {
      */
     static LoginManagerListener listener;
 
+    **
+     * Email that is passed to login manager
+     */
+    private static String emailID = null;
+
+    /**
+     * Optional flag set to true, when email is passed externally
+     */
+    private static boolean emailExternal;
+
     /**
      * App identifier from HockeyApp.
      */
@@ -165,6 +175,24 @@ public class LoginManager {
             Constants.loadFromContext(context);
         }
     }
+    
+    **
+     * Checks the authentication status. If not authenticated authenticates using the email Provided
+     * If the user has authenticated before, the SDK will not check for authorization again or validate the user's
+     * access to the app. In case of emailID change authentication will be performed again, it will verify if the user
+     * is still allowed to use this app. If email is null or empty, the Login Activity is started
+     *
+     * @param email The email ID against which the user should Authenticate.
+     * @param context The activity from which this method is called.
+     * @param intent  The intent that the activity has been created with.
+     */
+    public static void verifyLogin(String email, Activity context, Intent intent) {
+        if(!email.isEmpty() && email != null && mode == LOGIN_MODE_EMAIL_ONLY) {
+            emailID = email;
+            emailExternal =true;
+        }
+        verifyLogin(context,intent);
+    }
 
     /**
      * Checks the authentication status. If not authenticated at all it will start the LoginActivity.
@@ -212,6 +240,27 @@ public class LoginManager {
                 boolean auidMissing = (auid == null) && ((mode == LOGIN_MODE_EMAIL_PASSWORD) || mode == LOGIN_MODE_VALIDATE);
                 boolean iuidMissing = (iuid == null) && (mode == LOGIN_MODE_EMAIL_ONLY);
 
+                // Authenticate every time if we are accepting the email from the user
+                // and the email ID has changed from the previous one.
+                if(emailExternal && getLoginEmail(context) != emailID) {
+                    HockeyLog.verbose("HockeyAuth", "Email has changed, require re-auth.");
+
+                    // Clear the shared preferences
+                    SharedPreferences prefs = context.getSharedPreferences("net.hockeyapp.android.login", 0);
+                    prefs.edit()
+                            .remove("iuid")
+                            .remove("email")
+                            .apply();
+
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("email", emailID);
+                    params.put("authcode", Util.md5(secret + emailID));
+                    LoginTask emailLogin = new LoginTask(context, null, getURLString(LOGIN_MODE_EMAIL_ONLY), LoginManager.LOGIN_MODE_EMAIL_ONLY, params);
+                    emailLogin.setShowProgressDialog(false);
+                    AsyncTaskUtils.execute(emailLogin);
+                    return;
+                }
+                
                 if (notAuthenticated || auidMissing || iuidMissing) {
                     HockeyLog.verbose("HockeyAuth", "Not authenticated or correct ID missing, re-authenticate.");
                     startLoginActivity(context);

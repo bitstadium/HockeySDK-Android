@@ -378,4 +378,19 @@ public class Util {
         }
         return hexString.toString();
     }
+    
+    
+    /**
+     * Helper method to convert a string to the md5 hash.
+     *
+     * @param s input string
+     */
+    public static String md5(final String s) {
+        try {
+            return Util.bytesToHex(Util.hash(s.getBytes(), "MD5"));
+        } catch (NoSuchAlgorithmException e) {
+            HockeyLog.error("Failed to create MD5 hash", e);
+        }
+        return "";
+    }
 }

@@ -161,7 +161,7 @@ public class LoginActivity extends Activity {
         if (mMode == LoginManager.LOGIN_MODE_EMAIL_ONLY) {
             ready = !TextUtils.isEmpty(email);
             params.put("email", email);
-            params.put("authcode", md5(mSecret + email));
+            params.put("authcode", Util.md5(mSecret + email));
         } else if (mMode == LoginManager.LOGIN_MODE_EMAIL_PASSWORD) {
             ready = !TextUtils.isEmpty(email) && !TextUtils.isEmpty(password);
             params.put("email", email);
@@ -174,15 +174,6 @@ public class LoginActivity extends Activity {
         } else {
             Toast.makeText(this, getString(R.string.hockeyapp_login_missing_credentials_toast), Toast.LENGTH_LONG).show();
         }
-    }
-
-    public String md5(final String s) {
-        try {
-            return Util.bytesToHex(Util.hash(s.getBytes(), "MD5"));
-        } catch (NoSuchAlgorithmException e) {
-            HockeyLog.error("Failed to create MD5 hash", e);
-        }
-        return "";
     }
 
     private static class LoginHandler extends Handler {
