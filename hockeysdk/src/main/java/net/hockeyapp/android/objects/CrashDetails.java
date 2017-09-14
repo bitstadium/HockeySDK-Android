@@ -189,7 +189,7 @@ public class CrashDetails {
         try {
             writeCrashReport(file);
         } catch (JSONException e) {
-            HockeyLog.error("Could not write exception with error " + e.toString());
+            HockeyLog.error("Could not write crash report with error " + e.toString());
         }
     }
 
