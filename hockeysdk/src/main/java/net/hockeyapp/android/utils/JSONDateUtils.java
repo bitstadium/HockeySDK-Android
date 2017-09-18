@@ -20,7 +20,6 @@ public final class JSONDateUtils {
      * Date formatter.
      */
     private static final ThreadLocal<DateFormat> DATE_FORMAT = new ThreadLocal<DateFormat>() {
-
         @Override
         protected DateFormat initialValue() {
             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
