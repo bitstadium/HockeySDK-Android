@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 /**
  * <h3>Description</h3>
@@ -289,19 +290,20 @@ public class FeedbackManager {
         int lastMessageId = context.getSharedPreferences(ParseFeedbackTask.PREFERENCES_NAME, 0)
                 .getInt(ParseFeedbackTask.ID_LAST_MESSAGE_SEND, -1);
 
-        SendFeedbackTask sendFeedbackTask = new SendFeedbackTask(context, getURLString(context), null, null, null, null, null, token, new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                Bundle bundle = msg.getData();
-                String responseString = bundle.getString(SendFeedbackTask.BUNDLE_FEEDBACK_RESPONSE);
+        SendFeedbackTask sendFeedbackTask = new SendFeedbackTask(context, getURLString(context), null, null, null, null, null, token, null, true) {
 
+            @Override
+            protected void onPostExecute(HashMap<String, String> result) {
+                super.onPostExecute(result);
+
+                String responseString = result.get("response");
                 if (responseString != null) {
                     ParseFeedbackTask task = new ParseFeedbackTask(context, responseString, null, "fetch");
                     task.setUrlString(getURLString(context));
                     AsyncTaskUtils.execute(task);
                 }
             }
-        }, true);
+        };
         sendFeedbackTask.setShowProgressDialog(false);
         sendFeedbackTask.setLastMessageId(lastMessageId);
         AsyncTaskUtils.execute(sendFeedbackTask);

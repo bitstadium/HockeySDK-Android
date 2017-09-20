@@ -30,17 +30,14 @@ import java.lang.reflect.Method;
  **/
 public class CheckUpdateTaskWithUI extends CheckUpdateTask {
 
-    private Activity mActivity = null;
+    private WeakReference<Activity> mWeakActivity = null;
     private AlertDialog mDialog = null;
     protected boolean mIsDialogRequired = false;
 
     public CheckUpdateTaskWithUI(WeakReference<Activity> weakActivity, String urlString, String appIdentifier, UpdateManagerListener listener, boolean isDialogRequired) {
         super(weakActivity, urlString, appIdentifier, listener);
 
-        if (weakActivity != null) {
-            mActivity = weakActivity.get();
-        }
-
+        this.mWeakActivity = weakActivity;
         this.mIsDialogRequired = isDialogRequired;
     }
 
@@ -48,8 +45,7 @@ public class CheckUpdateTaskWithUI extends CheckUpdateTask {
     public void detach() {
         super.detach();
 
-        mActivity = null;
-
+        mWeakActivity = null;
         if (mDialog != null) {
             mDialog.dismiss();
             mDialog = null;
@@ -61,16 +57,16 @@ public class CheckUpdateTaskWithUI extends CheckUpdateTask {
         super.onPostExecute(updateInfo);
 
         if ((updateInfo != null) && (mIsDialogRequired)) {
-            showDialog(updateInfo);
+            showDialog(mWeakActivity.get(), updateInfo);
         }
     }
 
-    private void showDialog(final JSONArray updateInfo) {
-        if ((mActivity == null) || (mActivity.isFinishing())) {
+    private void showDialog(final Activity activity, final JSONArray updateInfo) {
+        if ((activity == null) || (activity.isFinishing())) {
             return;
         }
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle(R.string.hockeyapp_update_dialog_title);
 
         if (!mandatory) {
@@ -97,12 +93,12 @@ public class CheckUpdateTaskWithUI extends CheckUpdateTask {
             builder.setPositiveButton(R.string.hockeyapp_update_dialog_positive_button, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
                     boolean useUpdateDialog = listener != null
-                            ? listener.useUpdateDialog(mActivity)
-                            : Util.runsOnTablet(mActivity);
+                            ? listener.useUpdateDialog(activity)
+                            : Util.runsOnTablet(activity);
                     if (useUpdateDialog) {
-                        showUpdateFragment(updateInfo);
+                        showUpdateFragment(activity, updateInfo);
                     } else {
-                        startUpdateIntent(updateInfo, false);
+                        startUpdateIntent(activity, updateInfo, false);
                     }
                 }
             });
@@ -110,19 +106,19 @@ public class CheckUpdateTaskWithUI extends CheckUpdateTask {
             mDialog = builder.create();
             mDialog.show();
         } else {
-            String appName = Util.getAppName(mActivity);
-            String toast = mActivity.getString(R.string.hockeyapp_update_mandatory_toast, appName);
-            Toast.makeText(mActivity, toast, Toast.LENGTH_LONG).show();
-            startUpdateIntent(updateInfo, true);
+            String appName = Util.getAppName(activity);
+            String toast = activity.getString(R.string.hockeyapp_update_mandatory_toast, appName);
+            Toast.makeText(activity, toast, Toast.LENGTH_LONG).show();
+            startUpdateIntent(activity, updateInfo, true);
         }
     }
 
-    private void showUpdateFragment(final JSONArray updateInfo) {
-        if (mActivity != null) {
-            FragmentTransaction fragmentTransaction = mActivity.getFragmentManager().beginTransaction();
+    private void showUpdateFragment(Activity activity, final JSONArray updateInfo) {
+        if (activity != null) {
+            FragmentTransaction fragmentTransaction = activity.getFragmentManager().beginTransaction();
             fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
 
-            Fragment existingFragment = mActivity.getFragmentManager().findFragmentByTag(UpdateFragment.FRAGMENT_TAG);
+            Fragment existingFragment = activity.getFragmentManager().findFragmentByTag(UpdateFragment.FRAGMENT_TAG);
             if (existingFragment != null) {
                 fragmentTransaction.remove(existingFragment);
             }
@@ -144,23 +140,23 @@ public class CheckUpdateTaskWithUI extends CheckUpdateTask {
         }
     }
 
-    private void startUpdateIntent(final JSONArray updateInfo, Boolean finish) {
-        if (mActivity != null) {
+    private void startUpdateIntent(Activity activity, final JSONArray updateInfo, Boolean finish) {
+        if (activity != null) {
             Class<? extends UpdateFragment> fragmentClass = UpdateFragment.class;
             if (listener != null) {
                 fragmentClass = listener.getUpdateFragmentClass();
             }
 
             Intent intent = new Intent();
-            intent.setClass(mActivity, UpdateActivity.class);
+            intent.setClass(activity, UpdateActivity.class);
             intent.putExtra(UpdateActivity.FRAGMENT_CLASS, fragmentClass.getName());
             intent.putExtra(UpdateFragment.FRAGMENT_VERSION_INFO, updateInfo.toString());
             intent.putExtra(UpdateFragment.FRAGMENT_URL, apkUrlString);
             intent.putExtra(UpdateFragment.FRAGMENT_DIALOG, false);
-            mActivity.startActivity(intent);
+            activity.startActivity(intent);
 
             if (finish) {
-                mActivity.finish();
+                activity.finish();
             }
         }
 
@@ -170,7 +166,7 @@ public class CheckUpdateTaskWithUI extends CheckUpdateTask {
     @Override
     protected void cleanUp() {
         super.cleanUp();
-        mActivity = null;
+        mWeakActivity = null;
         mDialog = null;
     }
 }
