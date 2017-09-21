@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/bitstadium/HockeySDK-Android.svg?branch=develop)](https://travis-ci.org/bitstadium/HockeySDK-Android)
+[![Build Status](https://www.bitrise.io/app/562949a18404dad6/status.svg?token=IZE4w-D2xii7QjqvJVc51A&branch=master)](https://www.bitrise.io/app/562949a18404dad6)
 [![Slack Status](https://slack.hockeyapp.net/badge.svg)](https://slack.hockeyapp.net)
 
 ## Version 5.0.1
