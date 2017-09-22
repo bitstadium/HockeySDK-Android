@@ -51,10 +51,7 @@ publish {
 
 dependencies {
     // Mocking
-    androidTestCompile 'org.mockito:mockito-core:1.10.19'
-    androidTestCompile 'com.crittercism.dexmaker:dexmaker:1.4'
-    androidTestCompile 'com.crittercism.dexmaker:dexmaker-dx:1.4'
-    androidTestCompile 'com.crittercism.dexmaker:dexmaker-mockito:1.4'
+    androidTestCompile 'com.linkedin.dexmaker:dexmaker-mockito:2.2.0'
 
     testCompile 'org.powermock:powermock-api-mockito:1.6.6'
     testCompile 'org.powermock:powermock-module-junit4:1.6.6'
@@ -64,6 +61,6 @@ dependencies {
     androidTestCompile 'org.hamcrest:hamcrest-library:1.3'
     testCompile 'junit:junit:4.12'
 
-    androidTestCompile 'com.android.support.test:runner:0.5'
-    androidTestCompile 'com.android.support.test:rules:0.5'
+    androidTestCompile 'com.android.support.test:runner:1.0.1'
+    androidTestCompile 'com.android.support.test:rules:1.0.1'
 }
