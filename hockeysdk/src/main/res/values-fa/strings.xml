@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Crash Dialog -->
     <string name="hockeyapp_crash_dialog_app_name_fallback">نرم افزار</string>
     <string name="hockeyapp_crash_dialog_title">%s بر خلاف انتظار متوقف شد</string>
@@ -54,7 +54,7 @@
     <string name="hockeyapp_feedback_validate_email_empty">لطفا یک ایمیل وارد کنید</string>
     <string name="hockeyapp_feedback_validate_name_error">لطفا نام خود را وارد کنید</string>
     <string name="hockeyapp_feedback_validate_text_error">پیام نمی تواند ارسال شود. لطفا متن پیام خود را وارد کنید</string>
-    <string name="hockeyapp_feedback_generic_error">بروز خطا</string>
+    <string name="hockeyapp_feedback_generic_error" tools:ignore="UnusedResources">بروز خطا</string>
     <string name="hockeyapp_feedback_attach_file">ضمیمه فایل</string>
     <string name="hockeyapp_feedback_attach_picture">ضمیمه عکس</string>
     <string name="hockeyapp_feedback_select_file">انتخاب فایل</string>
@@ -98,7 +98,7 @@
 
     <!-- Dialogs -->
     <string name="hockeyapp_dialog_positive_button">تایید</string>
-    <string name="hockeyapp_dialog_negative_button">لغو</string>
+    <string name="hockeyapp_dialog_negative_button" tools:ignore="UnusedResources">لغو</string>
     <string name="hockeyapp_dialog_error_title">خطا</string>
     <string name="hockeyapp_dialog_error_message">بروز خطا</string>
 
