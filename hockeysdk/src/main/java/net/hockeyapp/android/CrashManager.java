@@ -1,5 +1,6 @@
 package net.hockeyapp.android;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -191,6 +192,7 @@ public class CrashManager {
      * @param context  The context to use. Usually your Activity object.
      * @param listener Implement for callback functions.
      */
+    @SuppressLint("StaticFieldLeak")
     public static void execute(Context context, final CrashManagerListener listener) {
         final WeakReference<Context> weakContext = new WeakReference<>(context);
         AsyncTaskUtils.execute(new AsyncTask<Void, Object, Integer>() {
@@ -495,6 +497,7 @@ public class CrashManager {
      * @see CrashMetaData
      * @see CrashManagerListener
      */
+    @SuppressLint("StaticFieldLeak")
     @SuppressWarnings("WeakerAccess")
     public static boolean handleUserInput(final CrashManagerUserInput userInput,
                                           final CrashMetaData userProvidedMetaData, final CrashManagerListener listener,
@@ -626,6 +629,7 @@ public class CrashManager {
      * Starts thread to send crashes to HockeyApp, then registers the exception
      * handler.
      */
+    @SuppressLint("StaticFieldLeak")
     private static void sendCrashes(final WeakReference<Context> weakContext, final CrashManagerListener listener, final boolean ignoreDefaultHandler, final CrashMetaData crashMetaData) {
         registerHandler(listener, ignoreDefaultHandler);
         Context context = weakContext != null ? weakContext.get() : null;

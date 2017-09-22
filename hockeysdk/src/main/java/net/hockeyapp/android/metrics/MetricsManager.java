@@ -1,5 +1,6 @@
 package net.hockeyapp.android.metrics;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
@@ -408,6 +409,7 @@ public class MetricsManager {
         }
     }
 
+    @SuppressLint("StaticFieldLeak")
     private void renewSession() {
         final String sessionId = UUID.randomUUID().toString();
         try {
@@ -463,6 +465,7 @@ public class MetricsManager {
         trackEvent(eventName, properties, null);
     }
 
+    @SuppressLint("StaticFieldLeak")
     public static void trackEvent(final String eventName, final Map<String, String> properties, final Map<String, Double> measurements) {
         if (TextUtils.isEmpty(eventName)) {
             return;

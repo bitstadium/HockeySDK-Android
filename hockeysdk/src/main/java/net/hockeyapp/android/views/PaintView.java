@@ -33,6 +33,7 @@ public class PaintView extends ImageView {
     private Paint paint;
     private float mX, mY;
 
+    @SuppressLint("StaticFieldLeak")
     public PaintView(Context context, Uri imageUri, int displayWidth, int displayHeight) {
         super(context);
 
