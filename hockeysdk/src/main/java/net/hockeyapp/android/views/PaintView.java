@@ -131,6 +131,7 @@ public class PaintView extends ImageView {
         path = new Path();
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         float x = event.getX();
