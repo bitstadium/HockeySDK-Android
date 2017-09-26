@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- Crash Dialog -->
     <string name="hockeyapp_crash_dialog_app_name_fallback">Questa app</string>
     <string name="hockeyapp_crash_dialog_title">%s chiusa inaspettatamente</string>
@@ -54,7 +54,6 @@
     <string name="hockeyapp_feedback_validate_email_empty">Inserisci un indirizzo e-mail</string>
     <string name="hockeyapp_feedback_validate_name_error">Inserisci il tuo nome</string>
     <string name="hockeyapp_feedback_validate_text_error">Impossibile pubblicare il messaggio. Inserisci un testo per il feedback</string>
-    <string name="hockeyapp_feedback_generic_error" tools:ignore="UnusedResources">Si è verificato un errore</string>
     <string name="hockeyapp_feedback_attach_file">Allega un file</string>
     <string name="hockeyapp_feedback_attach_picture">Allega un\'immagine</string>
     <string name="hockeyapp_feedback_select_file">Seleziona il file</string>
@@ -98,7 +97,6 @@
 
     <!-- Dialogs -->
     <string name="hockeyapp_dialog_positive_button">OK</string>
-    <string name="hockeyapp_dialog_negative_button" tools:ignore="UnusedResources">Annulla</string>
     <string name="hockeyapp_dialog_error_title">Errore</string>
     <string name="hockeyapp_dialog_error_message">Si è verificato un errore</string>
 

@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- Crash Dialog -->
     <string name="hockeyapp_crash_dialog_app_name_fallback">此应用</string>
     <string name="hockeyapp_crash_dialog_title">%s 意外终止</string>
@@ -54,7 +54,6 @@
     <string name="hockeyapp_feedback_validate_email_empty">请输入电子邮件</string>
     <string name="hockeyapp_feedback_validate_name_error">请输入姓名</string>
     <string name="hockeyapp_feedback_validate_text_error">请输入反馈内容</string>
-    <string name="hockeyapp_feedback_generic_error" tools:ignore="UnusedResources">发生错误</string>
     <string name="hockeyapp_feedback_attach_file">添加附件</string>
     <string name="hockeyapp_feedback_attach_picture">添加图片</string>
     <string name="hockeyapp_feedback_select_file">选择文件</string>
@@ -98,7 +97,6 @@
 
     <!-- Dialogs -->
     <string name="hockeyapp_dialog_positive_button">确定</string>
-    <string name="hockeyapp_dialog_negative_button" tools:ignore="UnusedResources">取消</string>
     <string name="hockeyapp_dialog_error_title">错误</string>
     <string name="hockeyapp_dialog_error_message">发生错误</string>
 
