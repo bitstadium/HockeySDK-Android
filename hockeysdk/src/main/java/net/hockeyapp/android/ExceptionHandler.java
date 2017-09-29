@@ -78,8 +78,7 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
         final String[] list = CrashManager.searchForStackTraces(CrashManager.weakContext);
         HockeyLog.debug("ExceptionHandler: Found " + list.length + " stacktrace(s).");
         if(list.length >= 50) {
-            HockeyLog.warn("ExceptionHandler: HockeyApp will not save this exception as there are already 50 unsent " +
-                    "exceptions on disk");
+            HockeyLog.warn("ExceptionHandler: HockeyApp will not save this exception as there are already 50 unsent exceptions on disk");
             return;
         }
 
