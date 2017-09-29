@@ -25,6 +25,7 @@ import java.util.UUID;
  *
  **/
 public class ExceptionHandler implements UncaughtExceptionHandler {
+    private static final int MAX_NUMBER_OF_CRASHFILES = 50;
     private boolean mIgnoreDefaultHandler = false;
     private CrashManagerListener mCrashManagerListener;
     private UncaughtExceptionHandler mDefaultExceptionHandler;
@@ -76,8 +77,9 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
 
         // Check for number of crashes on disk and don't save the crash in case we have more than 50 on disk.
         final String[] list = CrashManager.searchForStackTraces(CrashManager.weakContext);
-        HockeyLog.debug("ExceptionHandler: Found " + list.length + " stacktrace(s).");
-        if(list.length >= 50) {
+        final int number = list.length;
+        HockeyLog.debug("ExceptionHandler: Found " + number + " stacktrace(s).");
+        if(number >= MAX_NUMBER_OF_CRASHFILES) {
             HockeyLog.warn("ExceptionHandler: HockeyApp will not save this exception as there are already 50 unsent exceptions on disk");
             return;
         }
