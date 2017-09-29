@@ -80,7 +80,7 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
         final int number = list.length;
         HockeyLog.debug("ExceptionHandler: Found " + number + " stacktrace(s).");
         if(number >= MAX_NUMBER_OF_CRASHFILES) {
-            HockeyLog.warn("ExceptionHandler: HockeyApp will not save this exception as there are already 50 or more unsent exceptions on disk");
+            HockeyLog.warn("ExceptionHandler: HockeyApp will not save this exception as there are already" + MAX_NUMBER_OF_CRASHFILES + "or more unsent exceptions on disk");
             return;
         }
 
