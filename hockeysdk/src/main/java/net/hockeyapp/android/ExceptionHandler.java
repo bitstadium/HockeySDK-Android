@@ -74,11 +74,11 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
             return;
         }
 
-        // Check for number of crashes on disk and don't save the crash in case we have more than 25 on disk.
+        // Check for number of crashes on disk and don't save the crash in case we have more than 50 on disk.
         final String[] list = CrashManager.searchForStackTraces(CrashManager.weakContext);
         HockeyLog.debug("ExceptionHandler: Found " + list.length + " stacktrace(s).");
         if(list.length >= 50) {
-            HockeyLog.warn("ExceptionHandler: HockeyApp will not save this exception as there are already 25 unsent " +
+            HockeyLog.warn("ExceptionHandler: HockeyApp will not save this exception as there are already 50 unsent " +
                     "exceptions on disk");
             return;
         }
