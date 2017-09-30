@@ -268,6 +268,12 @@ public class MetricsManager {
     private static void setUserMetricsEnabled(boolean enabled) {
         sUserMetricsEnabled = enabled;
         if (instance != null) {
+            synchronized (LOCK) {
+                if (sUserMetricsEnabled) {
+                    instance.registerTelemetryLifecycleCallbacks();
+                } else {
+                    instance.unregisterTelemetryLifecycleCallbacks();
+                }
             }
         }
     }
