@@ -25,7 +25,7 @@ import java.util.UUID;
  *
  **/
 public class ExceptionHandler implements UncaughtExceptionHandler {
-    private static final int MAX_NUMBER_OF_CRASHFILES = 50;
+    private static final int MAX_NUMBER_OF_CRASHFILES = 100;
     private boolean mIgnoreDefaultHandler = false;
     private CrashManagerListener mCrashManagerListener;
     private UncaughtExceptionHandler mDefaultExceptionHandler;
