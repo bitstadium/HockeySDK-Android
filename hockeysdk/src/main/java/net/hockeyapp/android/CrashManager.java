@@ -793,7 +793,7 @@ public class CrashManager {
     /**
      * Searches .stacktrace files and returns them as array.
      */
-    private static String[] searchForStackTraces(final WeakReference<Context> weakContext) {
+    protected static String[] searchForStackTraces(final WeakReference<Context> weakContext) {
         Context context = weakContext != null ? weakContext.get() : null;
         if (context != null) {
             File dir = context.getFilesDir();
