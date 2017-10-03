@@ -170,41 +170,6 @@ public class MetricsManager {
     }
 
     /**
-     * Register a new MetricsManager and collect metrics about user and session.
-     * HockeyApp app identifier is read from configuration values in AndroidManifest.xml.
-     *
-     * @param context     The context to use. Usually your activity.
-     * @param application The application which is required to get application lifecycle
-     *                    callbacks.
-     * @deprecated Use {@link #register(Application)} instead.
-     */
-    @Deprecated
-    @SuppressWarnings("deprecation")
-    public static void register(Context context, Application application) {
-        String appIdentifier = Util.getAppIdentifier(context);
-        if (appIdentifier == null || appIdentifier.length() == 0) {
-            throw new IllegalArgumentException("HockeyApp app identifier was not configured correctly in manifest or build configuration.");
-        }
-        register(context, application, appIdentifier);
-    }
-
-    /**
-     * Register a new MetricsManager and collect metrics about user and session, while
-     * explicitly providing your HockeyApp app identifier.
-     *
-     * @param context       The context to use. Usually your activity.
-     * @param application   The application which is required to get application lifecycle
-     *                      callbacks.
-     * @param appIdentifier Your HockeyApp App Identifier.
-     * @deprecated Use {@link #register(Application, String)} instead.
-     */
-    @SuppressWarnings({"WeakerAccess", "UnusedParameters"})
-    @Deprecated
-    public static void register(Context context, Application application, String appIdentifier) {
-        register(application, appIdentifier, null, null, null);
-    }
-
-    /**
      * Register a new MetricsManager and collect metrics information about user and session.
      * Intended to be used for unit testing only.
      *
