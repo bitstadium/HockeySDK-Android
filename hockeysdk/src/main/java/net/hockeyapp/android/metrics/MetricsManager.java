@@ -7,7 +7,6 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 
 import net.hockeyapp.android.Constants;
 import net.hockeyapp.android.PrivateEventManager;
@@ -284,7 +283,13 @@ public class MetricsManager {
      * @return YES if session tracking is enabled
      */
     public static boolean sessionTrackingEnabled() {
-        return isUserMetricsEnabled() && !instance.mSessionTrackingDisabled;
+        if (instance == null) {
+            HockeyLog.error(TAG, "MetricsManager hasn't been registered or User Metrics has been disabled. No User Metrics will be collected!");
+            return false;
+        }
+        else {
+            return isUserMetricsEnabled() && !instance.mSessionTrackingDisabled;
+        }
     }
 
     /**
@@ -471,7 +476,7 @@ public class MetricsManager {
             return;
         }
         if (instance == null) {
-            Log.w(TAG, "MetricsManager hasn't been registered or User Metrics has been disabled. No User Metrics will be collected!");
+            HockeyLog.error(TAG, "MetricsManager hasn't been registered or User Metrics has been disabled. No User Metrics will be collected!");
             return;
         }
         if (!isUserMetricsEnabled()) {

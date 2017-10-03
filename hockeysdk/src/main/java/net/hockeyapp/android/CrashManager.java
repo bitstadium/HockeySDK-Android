@@ -205,14 +205,14 @@ public class CrashManager {
                     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
                     autoSend |= prefs.getBoolean(ALWAYS_SEND_KEY, false);
                 }
-                return hasStackTraces(weakContext);
+                int foundOrSend = hasStackTraces(weakContext);
+                didCrashInLastSession = foundOrSend == STACK_TRACES_FOUND_NEW;
+                latch.countDown();
+                return foundOrSend;
             }
 
             @Override
             protected void onPostExecute(Integer foundOrSend) {
-                didCrashInLastSession = foundOrSend == STACK_TRACES_FOUND_NEW;
-                latch.countDown();
-
                 boolean autoSend = this.autoSend;
                 boolean ignoreDefaultHandler = (listener != null) && (listener.ignoreDefaultHandler());
 
