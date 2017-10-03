@@ -16,7 +16,6 @@ import java.io.Writer;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.Date;
 import java.util.UUID;
-import java.util.concurrent.ExecutionException;
 
 /**
  * <h3>Description</h3>
@@ -26,6 +25,7 @@ import java.util.concurrent.ExecutionException;
  *
  **/
 public class ExceptionHandler implements UncaughtExceptionHandler {
+    private static final int MAX_NUMBER_OF_CRASHFILES = 100;
     private boolean mIgnoreDefaultHandler = false;
     private CrashManagerListener mCrashManagerListener;
     private UncaughtExceptionHandler mDefaultExceptionHandler;
@@ -72,6 +72,15 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
         if (context == null)
         {
             HockeyLog.error("Failed to save exception: context in CrashManager is null");
+            return;
+        }
+
+        // Check for number of crashes on disk and don't save the crash in case we reached the defined limit.
+        final String[] list = CrashManager.searchForStackTraces(CrashManager.weakContext);
+        final int number = list.length;
+        HockeyLog.debug("ExceptionHandler: Found " + number + " stacktrace(s).");
+        if(number >= MAX_NUMBER_OF_CRASHFILES) {
+            HockeyLog.warn("ExceptionHandler: HockeyApp will not save this exception as there are already " + MAX_NUMBER_OF_CRASHFILES + " or more unsent exceptions on disk");
             return;
         }
 
