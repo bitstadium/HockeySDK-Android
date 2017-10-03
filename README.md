@@ -1,7 +1,7 @@
 [![Build Status](https://www.bitrise.io/app/562949a18404dad6/status.svg?token=IZE4w-D2xii7QjqvJVc51A&branch=master)](https://www.bitrise.io/app/562949a18404dad6)
 [![Slack Status](https://slack.hockeyapp.net/badge.svg)](https://slack.hockeyapp.net)
 
-## Version 5.0.2
+## Version 5.0.3
 
 HockeySDK-Android implements support for using HockeyApp in your Android applications.
 
@@ -26,7 +26,7 @@ It is super easy to use HockeyApp in your Android app. Have a look at our [docum
 
 Please visit [our landing page](https://support.hockeyapp.net/kb/client-integration-android) as a starting point for all of our documentation.
 
-Please check out our [getting started documentation](https://support.hockeyapp.net/kb/client-integration-android/hockeyapp-for-android-sdk), [change log](https://github.com/bitstadium/HockeySDK-Android/releases/tag/5.0.2), [java doc](https://www.hockeyapp.net/help/sdk/android/5.0.2/index.html) as well as our [troubleshooting section](https://support.hockeyapp.net/kb/client-integration-android/hockeyapp-for-android-sdk#troubleshooting).
+Please check out our [getting started documentation](https://support.hockeyapp.net/kb/client-integration-android/hockeyapp-for-android-sdk), [change log](https://github.com/bitstadium/HockeySDK-Android/releases/tag/5.0.3), [java doc](https://www.hockeyapp.net/help/sdk/android/5.0.3/index.html) as well as our [troubleshooting section](https://support.hockeyapp.net/kb/client-integration-android/hockeyapp-for-android-sdk#troubleshooting).
 
 ## 3. Contributing
 
