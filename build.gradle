@@ -37,8 +37,8 @@ allprojects {
 
 ext {
     ARTIFACT_ID = 'HockeySDK'
-    VERSION_NAME = '5.0.2'
-    VERSION_CODE = 16
+    VERSION_NAME = '5.0.3'
+    VERSION_CODE = 17
     SITE_URL = 'https://github.com/bitstadium/hockeysdk-android'
     GIT_URL = 'https://github.com/bitstadium/HockeySDK-Android.git'
     BINTRAY_USER = HOCKEYAPP_BINTRAY_USER
