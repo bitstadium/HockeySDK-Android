@@ -86,6 +86,13 @@ public class CrashManager {
     private static final int STACK_TRACES_FOUND_NEW = 1;
     private static final int STACK_TRACES_FOUND_CONFIRMED = 2;
 
+    private static final FilenameFilter STACK_TRACES_FILTER = new FilenameFilter() {
+        @Override
+        public boolean accept(File dir, String filename) {
+            return filename.endsWith(".stacktrace");
+        }
+    };
+
     /**
      * Registers new crash manager and handles existing crash logs.
      * HockeyApp App Identifier is read from configuration values in AndroidManifest.xml
@@ -318,12 +325,7 @@ public class CrashManager {
                 if (dir == null) {
                     return null;
                 }
-                File[] files = dir.listFiles(new FilenameFilter() {
-                    @Override
-                    public boolean accept(File dir, String filename) {
-                        return filename.endsWith(".stacktrace");
-                    }
-                });
+                File[] files = dir.listFiles(STACK_TRACES_FILTER);
 
                 long lastModification = 0;
                 File lastModifiedFile = null;
@@ -809,12 +811,7 @@ public class CrashManager {
                 }
 
                 // Filter for ".stacktrace" files
-                FilenameFilter filter = new FilenameFilter() {
-                    public boolean accept(File dir, String name) {
-                        return name.endsWith(".stacktrace");
-                    }
-                };
-                return dir.list(filter);
+                return dir.list(STACK_TRACES_FILTER);
             } else {
                 HockeyLog.debug("Can't search for exception as file path is null.");
             }
