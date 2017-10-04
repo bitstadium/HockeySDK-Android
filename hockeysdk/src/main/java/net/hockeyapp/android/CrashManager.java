@@ -77,6 +77,11 @@ public class CrashManager {
     private static final String PREFERENCES_NAME = "HockeySDK";
     private static final String CONFIRMED_FILENAMES_KEY = "ConfirmedFilenames";
 
+    /**
+     * Maximum number of files with saved crashes.
+     */
+    static final int MAX_NUMBER_OF_CRASHFILES = 100;
+
     private static final int STACK_TRACES_FOUND_NONE = 0;
     private static final int STACK_TRACES_FOUND_NEW = 1;
     private static final int STACK_TRACES_FOUND_CONFIRMED = 2;
@@ -793,7 +798,7 @@ public class CrashManager {
     /**
      * Searches .stacktrace files and returns them as array.
      */
-    protected static String[] searchForStackTraces(final WeakReference<Context> weakContext) {
+    static String[] searchForStackTraces(final WeakReference<Context> weakContext) {
         Context context = weakContext != null ? weakContext.get() : null;
         if (context != null) {
             File dir = context.getFilesDir();
