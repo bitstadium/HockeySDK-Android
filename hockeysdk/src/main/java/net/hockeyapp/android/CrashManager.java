@@ -28,6 +28,7 @@ import java.lang.Thread.UncaughtExceptionHandler;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -78,9 +79,21 @@ public class CrashManager {
     private static final String PREFERENCES_NAME = "HockeySDK";
     private static final String CONFIRMED_FILENAMES_KEY = "ConfirmedFilenames";
 
+    /**
+     * Maximum number of files with saved crashes.
+     */
+    static final int MAX_NUMBER_OF_CRASHFILES = 100;
+
     private static final int STACK_TRACES_FOUND_NONE = 0;
     private static final int STACK_TRACES_FOUND_NEW = 1;
     private static final int STACK_TRACES_FOUND_CONFIRMED = 2;
+
+    private static final FilenameFilter STACK_TRACES_FILTER = new FilenameFilter() {
+        @Override
+        public boolean accept(File dir, String filename) {
+            return filename.endsWith(".stacktrace");
+        }
+    };
 
     /**
      * Registers new crash manager and handles existing crash logs.
@@ -315,12 +328,7 @@ public class CrashManager {
                 if (dir == null) {
                     return null;
                 }
-                File[] files = dir.listFiles(new FilenameFilter() {
-                    @Override
-                    public boolean accept(File dir, String filename) {
-                        return filename.endsWith(".stacktrace");
-                    }
-                });
+                File[] files = dir.listFiles(STACK_TRACES_FILTER);
 
                 long lastModification = 0;
                 File lastModifiedFile = null;
@@ -368,6 +376,13 @@ public class CrashManager {
         String[] list = searchForStackTraces(weakContext);
         if (list != null && list.length > 0) {
             HockeyLog.debug("Found " + list.length + " stacktrace(s).");
+            if (list.length > MAX_NUMBER_OF_CRASHFILES) {
+                deleteRedundantStackTraces(weakContext);
+                list = searchForStackTraces(weakContext);
+                if (list == null) {
+                    return;
+                }
+            }
             for (String file : list) {
                 submitStackTrace(weakContext, file, listener, crashMetaData);
             }
@@ -463,18 +478,11 @@ public class CrashManager {
         String[] list = searchForStackTraces(weakContext);
         if (list != null && list.length > 0) {
             HockeyLog.debug("Found " + list.length + " stacktrace(s).");
-
             for (String file : list) {
                 try {
-                    Context context;
                     if (weakContext != null) {
                         HockeyLog.debug("Delete stacktrace " + file + ".");
                         deleteStackTrace(weakContext, file);
-
-                        context = weakContext.get();
-                        if (context != null) {
-                            context.deleteFile(file);
-                        }
                     }
                 } catch (Exception e) {
                     HockeyLog.error("Failed to delete stacktrace", e);
@@ -643,8 +651,16 @@ public class CrashManager {
         AsyncTaskUtils.execute(new AsyncTask<Void, Object, Object>() {
             @Override
             protected Object doInBackground(Void... voids) {
-                final String[] list = searchForStackTraces(weakContext);
-                if (list != null) {
+                String[] list = searchForStackTraces(weakContext);
+                if (list != null && list.length > 0) {
+                    HockeyLog.debug("Found " + list.length + " stacktrace(s).");
+                    if (list.length > MAX_NUMBER_OF_CRASHFILES) {
+                        deleteRedundantStackTraces(weakContext);
+                        list = searchForStackTraces(weakContext);
+                        if (list == null) {
+                            return null;
+                        }
+                    }
                     saveConfirmedStackTraces(weakContext, list);
                     if (isConnectedToNetwork) {
                         for (String file : list) {
@@ -797,7 +813,7 @@ public class CrashManager {
     /**
      * Searches .stacktrace files and returns them as array.
      */
-    protected static String[] searchForStackTraces(final WeakReference<Context> weakContext) {
+    static String[] searchForStackTraces(final WeakReference<Context> weakContext) {
         Context context = weakContext != null ? weakContext.get() : null;
         if (context != null) {
             File dir = context.getFilesDir();
@@ -808,17 +824,36 @@ public class CrashManager {
                 }
 
                 // Filter for ".stacktrace" files
-                FilenameFilter filter = new FilenameFilter() {
-                    public boolean accept(File dir, String name) {
-                        return name.endsWith(".stacktrace");
-                    }
-                };
-                return dir.list(filter);
+                return dir.list(STACK_TRACES_FILTER);
             } else {
                 HockeyLog.debug("Can't search for exception as file path is null.");
             }
         }
         return null;
+    }
+
+    private static void deleteRedundantStackTraces(final WeakReference<Context> weakContext) {
+        Context context = weakContext != null ? weakContext.get() : null;
+        if (context != null) {
+            File dir = context.getFilesDir();
+            if (dir == null || !dir.exists()) {
+                return;
+            }
+            File[] files = dir.listFiles(STACK_TRACES_FILTER);
+            if (files.length <= MAX_NUMBER_OF_CRASHFILES) {
+                return;
+            }
+            HockeyLog.debug("Delete " + (files.length - MAX_NUMBER_OF_CRASHFILES) + " redundant stacktrace(s).");
+            Arrays.sort(files, new Comparator<File>() {
+                @Override
+                public int compare(File file1, File file2) {
+                    return Long.valueOf(file1.lastModified()).compareTo(file2.lastModified());
+                }
+            });
+            for (int i = 0; i < files.length - MAX_NUMBER_OF_CRASHFILES; i++) {
+                deleteStackTrace(weakContext, files[i].getName());
+            }
+        }
     }
 
     @SuppressWarnings("WeakerAccess")
