@@ -700,6 +700,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
         }
     }
 
+    @SuppressLint("StaticFieldLeak")
     private void resetFeedbackView() {
         mToken = null;
         AsyncTaskUtils.execute(new AsyncTask<Void, Object, Object>() {
@@ -722,6 +723,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
     /**
      * Send feedback to HockeyApp.
      */
+    @SuppressLint("StaticFieldLeak")
     private void sendFeedback() {
         if (!Util.isConnectedToNetwork(this)) {
             Toast errorToast = Toast.makeText(this, R.string.hockeyapp_error_no_network_message, Toast.LENGTH_LONG);
@@ -873,6 +875,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
             mWeakFeedbackActivity = new WeakReference<>(feedbackActivity);
         }
 
+        @SuppressLint("StaticFieldLeak")
         @Override
         public void handleMessage(Message msg) {
             boolean success = false;

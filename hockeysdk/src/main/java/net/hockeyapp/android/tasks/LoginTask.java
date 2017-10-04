@@ -1,5 +1,6 @@
 package net.hockeyapp.android.tasks;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -25,6 +26,7 @@ import java.util.Map;
  * Perform the authentication process.
  *
  **/
+@SuppressLint("StaticFieldLeak")
 public class LoginTask extends ConnectionTask<Void, Void, Boolean> {
 
     /**

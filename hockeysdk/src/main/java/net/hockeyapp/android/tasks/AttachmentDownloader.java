@@ -1,5 +1,6 @@
 package net.hockeyapp.android.tasks;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
@@ -143,6 +144,7 @@ public class AttachmentDownloader {
     /**
      * The AsyncTask that downloads the image and the updates the view.
      */
+    @SuppressLint("StaticFieldLeak")
     private static class DownloadTask extends AsyncTask<Void, Integer, Boolean> {
 
         private final DownloadJob downloadJob;

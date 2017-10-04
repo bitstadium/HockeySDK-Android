@@ -1,5 +1,6 @@
 package net.hockeyapp.android.metrics;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.AsyncTask;
 
@@ -95,6 +96,7 @@ class Persistence {
         }
     }
 
+    @SuppressLint("StaticFieldLeak")
     void sendAvailable() {
         AsyncTaskUtils.execute(new AsyncTask<Void, Object, Object>() {
 

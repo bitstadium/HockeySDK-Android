@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Crash Dialog -->
     <string name="hockeyapp_crash_dialog_app_name_fallback">This app</string>
     <string name="hockeyapp_crash_dialog_title">%s Unexpectedly Quit</string>
@@ -55,12 +55,11 @@
     <string name="hockeyapp_feedback_validate_email_empty">Please enter an email address</string>
     <string name="hockeyapp_feedback_validate_name_error">Please enter your name</string>
     <string name="hockeyapp_feedback_validate_text_error">Message couldn\'t be posted. Please enter a feedback text</string>
-    <string name="hockeyapp_feedback_generic_error">An error has occurred</string>
     <string name="hockeyapp_feedback_attach_file">Attach File</string>
     <string name="hockeyapp_feedback_attach_picture">Attach Picture</string>
     <string name="hockeyapp_feedback_select_file">Select File</string>
     <string name="hockeyapp_feedback_select_picture">Select Picture</string>
-    <string name="hockeyapp_feedback_max_attachments_allowed">Only %d attachments allowed.</string>
+    <string name="hockeyapp_feedback_max_attachments_allowed" tools:ignore="PluralsCandidate">Only %d attachments allowed.</string>
     <string name="hockeyapp_feedback_attachment_loading">Loading…</string>
     <string name="hockeyapp_feedback_attachment_error">Error</string>
     <string name="hockeyapp_feedback_name_hint_required">Name (required)</string>
@@ -98,7 +97,6 @@
 
     <!-- Dialogs -->
     <string name="hockeyapp_dialog_positive_button">OK</string>
-    <string name="hockeyapp_dialog_negative_button">Cancel</string>
     <string name="hockeyapp_dialog_error_title">Error</string>
     <string name="hockeyapp_dialog_error_message">An error has occurred</string>
 
