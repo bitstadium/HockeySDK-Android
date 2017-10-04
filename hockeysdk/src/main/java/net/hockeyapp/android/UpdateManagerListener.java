@@ -18,6 +18,19 @@ import java.util.Date;
 public abstract class UpdateManagerListener {
 
     /**
+     * Return your own subclass of UpdateActivity for customization.
+     *
+     * @return subclass of UpdateActivity
+     *
+     * @deprecated as of 5.0.0, use {@link #getUpdateFragmentClass()} instead.
+     */
+    @Deprecated
+    @SuppressWarnings("unused")
+    public Class<? extends UpdateActivity> getUpdateActivityClass() {
+        return null;
+    }
+
+    /**
      * Return your own subclass of UpdateFragment for customization.
      *
      * @return subclass of UpdateFragment
