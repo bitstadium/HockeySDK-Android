@@ -471,15 +471,9 @@ public class CrashManager {
 
             for (String file : list) {
                 try {
-                    Context context;
                     if (weakContext != null) {
                         HockeyLog.debug("Delete stacktrace " + file + ".");
                         deleteStackTrace(weakContext, file);
-
-                        context = weakContext.get();
-                        if (context != null) {
-                            context.deleteFile(file);
-                        }
                     }
                 } catch (Exception e) {
                     HockeyLog.error("Failed to delete stacktrace", e);
