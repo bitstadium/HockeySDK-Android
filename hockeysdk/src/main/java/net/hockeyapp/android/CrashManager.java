@@ -476,7 +476,6 @@ public class CrashManager {
         String[] list = searchForStackTraces(weakContext);
         if (list != null && list.length > 0) {
             HockeyLog.debug("Found " + list.length + " stacktrace(s).");
-
             for (String file : list) {
                 try {
                     if (weakContext != null) {
@@ -649,7 +648,8 @@ public class CrashManager {
             @Override
             protected Object doInBackground(Void... voids) {
                 String[] list = searchForStackTraces(weakContext);
-                if (list != null) {
+                if (list != null && list.length > 0) {
+                    HockeyLog.debug("Found " + list.length + " stacktrace(s).");
                     if (list.length > MAX_NUMBER_OF_CRASHFILES) {
                         deleteRedundantStackTraces(weakContext);
                         list = searchForStackTraces(weakContext);
