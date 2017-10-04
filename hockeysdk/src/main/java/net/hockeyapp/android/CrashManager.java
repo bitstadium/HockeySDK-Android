@@ -27,6 +27,7 @@ import java.lang.Thread.UncaughtExceptionHandler;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -373,6 +374,13 @@ public class CrashManager {
         String[] list = searchForStackTraces(weakContext);
         if (list != null && list.length > 0) {
             HockeyLog.debug("Found " + list.length + " stacktrace(s).");
+            if (list.length > MAX_NUMBER_OF_CRASHFILES) {
+                deleteRedundantStackTraces(weakContext);
+                list = searchForStackTraces(weakContext);
+                if (list == null) {
+                    return;
+                }
+            }
             for (String file : list) {
                 submitStackTrace(weakContext, file, listener, crashMetaData);
             }
@@ -640,8 +648,15 @@ public class CrashManager {
         AsyncTaskUtils.execute(new AsyncTask<Void, Object, Object>() {
             @Override
             protected Object doInBackground(Void... voids) {
-                final String[] list = searchForStackTraces(weakContext);
+                String[] list = searchForStackTraces(weakContext);
                 if (list != null) {
+                    if (list.length > MAX_NUMBER_OF_CRASHFILES) {
+                        deleteRedundantStackTraces(weakContext);
+                        list = searchForStackTraces(weakContext);
+                        if (list == null) {
+                            return null;
+                        }
+                    }
                     saveConfirmedStackTraces(weakContext, list);
                     if (isConnectedToNetwork) {
                         for (String file : list) {
@@ -811,6 +826,30 @@ public class CrashManager {
             }
         }
         return null;
+    }
+
+    private static void deleteRedundantStackTraces(final WeakReference<Context> weakContext) {
+        Context context = weakContext != null ? weakContext.get() : null;
+        if (context != null) {
+            File dir = context.getFilesDir();
+            if (dir == null || !dir.exists()) {
+                return;
+            }
+            File[] files = dir.listFiles(STACK_TRACES_FILTER);
+            if (files.length <= MAX_NUMBER_OF_CRASHFILES) {
+                return;
+            }
+            HockeyLog.debug("Delete " + (files.length - MAX_NUMBER_OF_CRASHFILES) + " redundant stacktrace(s).");
+            Arrays.sort(files, new Comparator<File>() {
+                @Override
+                public int compare(File file1, File file2) {
+                    return Long.valueOf(file1.lastModified()).compareTo(file2.lastModified());
+                }
+            });
+            for (int i = 0; i < files.length - MAX_NUMBER_OF_CRASHFILES; i++) {
+                deleteStackTrace(weakContext, files[i].getName());
+            }
+        }
     }
 
     @SuppressWarnings("WeakerAccess")
