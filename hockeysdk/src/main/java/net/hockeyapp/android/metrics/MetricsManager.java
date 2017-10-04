@@ -268,10 +268,12 @@ public class MetricsManager {
     private static void setUserMetricsEnabled(boolean enabled) {
         sUserMetricsEnabled = enabled;
         if (instance != null) {
-            if (sUserMetricsEnabled) {
-                instance.registerTelemetryLifecycleCallbacks();
-            } else {
-                instance.unregisterTelemetryLifecycleCallbacks();
+            synchronized (LOCK) {
+                if (sUserMetricsEnabled) {
+                    instance.registerTelemetryLifecycleCallbacks();
+                } else {
+                    instance.unregisterTelemetryLifecycleCallbacks();
+                }
             }
         }
     }
@@ -279,8 +281,12 @@ public class MetricsManager {
     /**
      * Determines if session tracking was enabled.
      *
+     * @deprecated Use {@link #isUserMetricsEnabled()} instead.
+     *
      * @return YES if session tracking is enabled
      */
+    @Deprecated
+    @SuppressWarnings("unused")
     public static boolean sessionTrackingEnabled() {
         if (instance == null) {
             HockeyLog.error(TAG, "MetricsManager hasn't been registered or User Metrics has been disabled. No User Metrics will be collected!");
@@ -295,7 +301,11 @@ public class MetricsManager {
      * Enable and disable tracking of sessions
      *
      * @param disabled flag to indicate
+     *
+     * @deprecated Use {@link #disableUserMetrics()} or {@link #enableUserMetrics()}  instead.
      */
+    @Deprecated
+    @SuppressWarnings("unused")
     public static void setSessionTrackingDisabled(Boolean disabled) {
         if (instance == null || !isUserMetricsEnabled()) {
             HockeyLog.warn(TAG, "MetricsManager hasn't been registered or User Metrics has been disabled. No User Metrics will be collected!");
