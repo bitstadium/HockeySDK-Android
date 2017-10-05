@@ -8,7 +8,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="18" />
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
-    <application>
+    <application android:supportsRtl="true">
 
         <activity android:name=".UpdateActivity" />
         <activity android:name=".FeedbackActivity" android:windowSoftInputMode="adjustResize|stateVisible" />

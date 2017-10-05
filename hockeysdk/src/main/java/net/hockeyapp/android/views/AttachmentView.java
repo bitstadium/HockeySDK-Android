@@ -65,6 +65,7 @@ public class AttachmentView extends FrameLayout {
 
     private int mOrientation;
 
+    @SuppressLint("StaticFieldLeak")
     public AttachmentView(Context context, ViewGroup parent, Uri attachmentUri, boolean removable) {
         super(context);
 

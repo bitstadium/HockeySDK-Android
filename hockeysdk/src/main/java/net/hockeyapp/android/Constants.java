@@ -1,5 +1,6 @@
 package net.hockeyapp.android;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
@@ -185,6 +186,7 @@ public class Constants {
      *
      * @param context the context to use. Usually your Activity object.
      */
+    @SuppressLint("StaticFieldLeak")
     private static void loadIdentifiers(final Context context) {
         if (Constants.DEVICE_IDENTIFIER != null) {
             return;

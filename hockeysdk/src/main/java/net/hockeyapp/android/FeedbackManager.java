@@ -1,5 +1,6 @@
 package net.hockeyapp.android;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -198,6 +199,7 @@ public class FeedbackManager {
      * @param attachments the optional attachment {@link Uri}s
      * @param extras      a bundle to be added to the Intent that starts the FeedbackActivity instance
      */
+    @SuppressLint("StaticFieldLeak")
     public static void showFeedbackActivity(final Context context, final Bundle extras, final Uri... attachments) {
         if (context != null) {
             final Class<?> activityClass = lastListener != null ? lastListener.getFeedbackActivityClass() : null;
@@ -281,6 +283,7 @@ public class FeedbackManager {
      *
      * @param context the context to use
      */
+    @SuppressLint("StaticFieldLeak")
     public static void checkForAnswersAndNotify(final Context context) {
         String token = PrefsUtil.getInstance().getFeedbackTokenFromPrefs(context);
         if (token == null) {
@@ -417,6 +420,7 @@ public class FeedbackManager {
      *
      * @param context toast messages will be displayed using this context
      */
+    @SuppressLint("StaticFieldLeak")
     public static void takeScreenshot(final Context context) {
         final Activity currentActivity = getCurrentActivity();
         if (currentActivity == null) {

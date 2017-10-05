@@ -1,5 +1,6 @@
 package net.hockeyapp.android.tasks;
 
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -28,6 +29,7 @@ import java.util.ArrayList;
  * {@link AsyncTask} that parses the Feedback JSON response
  *
  */
+@SuppressLint("StaticFieldLeak")
 public class ParseFeedbackTask extends AsyncTask<Void, Void, FeedbackResponse> {
 
     public static final String PREFERENCES_NAME = "net.hockeyapp.android.feedback";
