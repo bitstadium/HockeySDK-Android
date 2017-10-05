@@ -16,10 +16,13 @@ import java.util.Date;
  **/
 @SuppressWarnings({"WeakerAccess"})
 public abstract class UpdateManagerListener {
+
     /**
      * Return your own subclass of UpdateActivity for customization.
      *
      * @return subclass of UpdateActivity
+     *
+     * @deprecated as of 5.0.0, use {@link #getUpdateFragmentClass()} instead.
      */
     @Deprecated
     @SuppressWarnings("unused")
@@ -112,6 +115,8 @@ public abstract class UpdateManagerListener {
     /**
      * Called when the update permissions had not been granted.
      * Implement your custom action to override the default behavior.
+     *
+     * @deprecated as of 5.0.0.
      */
     @Deprecated
     @SuppressWarnings("unused")
