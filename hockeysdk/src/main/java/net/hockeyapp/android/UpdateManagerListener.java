@@ -111,4 +111,16 @@ public abstract class UpdateManagerListener {
     public boolean canUpdateInMarket() {
         return false;
     }
+
+    /**
+     * Called when the update permissions had not been granted.
+     * Implement your custom action to override the default behavior.
+     *
+     * @deprecated as of 5.0.0.
+     */
+    @Deprecated
+    @SuppressWarnings("unused")
+    public void onUpdatePermissionsNotGranted() {
+        // Do nothing
+    }
 }
