@@ -44,7 +44,7 @@ ext {
     BINTRAY_USER = HOCKEYAPP_BINTRAY_USER
     GROUP_NAME = 'net.hockeyapp.android'
     COMPILE_SDK = 26
-    BUILD_TOOLS = '26.0.1'
+    BUILD_TOOLS = '26.0.2'
     IS_UPLOADING = project.getGradle().startParameter.taskNames.any{it.contains('bintrayUpload')}
     DESCRIPTION = 'HockeySDK-Android implements support for using HockeyApp in your Android application. The following features are currently supported:\n' +
             '\n' +
