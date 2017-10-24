@@ -398,11 +398,7 @@ public class MetricsManager {
                 @Override
                 protected Void doInBackground(Void... params) {
                     sTelemetryContext.renewSessionContext(sessionId);
-
-                    SessionStateData sessionItem = new SessionStateData();
                     trackSessionState(SessionState.START);
-                    Data<Domain> data = createData(sessionItem);
-                    sChannel.enqueueData(data);
                     return null;
                 }
             });
