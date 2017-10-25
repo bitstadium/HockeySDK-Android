@@ -91,11 +91,8 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
             crashDetails.setThreadName(thread.getName() + "-" + thread.getId());
         }
 
-        String deviceIdentifier = null;
-        try {
-            deviceIdentifier = Constants.getDeviceIdentifier().get();
-        } catch (Exception ignored) {
-        }
+        // Get device identifier without waiting for initialization to avoid deadlock.
+        String deviceIdentifier = Constants.DEVICE_IDENTIFIER;
         if (deviceIdentifier != null && (listener == null || listener.includeDeviceIdentifier())) {
             crashDetails.setReporterKey(deviceIdentifier);
         }
@@ -110,7 +107,6 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
             } catch (IOException e) {
                 HockeyLog.error("Error saving crash meta data!", e);
             }
-
         }
     }
 
@@ -187,11 +183,8 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
             crashDetails.setThreadName(thread.getName() + "-" + thread.getId());
         }
 
-        String deviceIdentifier = null;
-        try {
-            deviceIdentifier = Constants.getDeviceIdentifier().get();
-        } catch (Exception ignored) {
-        }
+        // Get device identifier without waiting for initialization to avoid deadlock.
+        String deviceIdentifier = Constants.DEVICE_IDENTIFIER;
         if (deviceIdentifier != null && (listener == null || listener.includeDeviceIdentifier())) {
             crashDetails.setReporterKey(deviceIdentifier);
         }
@@ -206,7 +199,6 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
             } catch (IOException e) {
                 HockeyLog.error("Error saving crash meta data!", e);
             }
-
         }
     }
 

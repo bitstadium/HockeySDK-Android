@@ -85,7 +85,7 @@ public class Constants {
     /**
      * Unique identifier for device, not dependent on package or device.
      */
-    private static String DEVICE_IDENTIFIER = null;
+    static String DEVICE_IDENTIFIER = null;
 
     /**
      * Lock used to wait identifiers.
