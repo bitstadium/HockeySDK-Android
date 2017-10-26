@@ -3,7 +3,6 @@ apply plugin: 'com.novoda.bintray-release' // must be applied after your artifac
 
 android {
     compileSdkVersion COMPILE_SDK
-    buildToolsVersion BUILD_TOOLS
 
     defaultConfig {
         minSdkVersion 15
