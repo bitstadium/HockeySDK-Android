@@ -88,19 +88,19 @@ public class Constants {
     static String DEVICE_IDENTIFIER = null;
 
     /**
-     * Lock used to wait identifiers.
+     * Lock used to wait for loading of identifiers.
      */
-    private static CountDownLatch latch = new CountDownLatch(1);
+    static CountDownLatch LOADING_LATCH = new CountDownLatch(1);
 
     public static Future<String> getDeviceIdentifier() {
-        if (latch.getCount() == 0) {
+        if (LOADING_LATCH.getCount() == 0) {
             return new CompletedFuture<>(DEVICE_IDENTIFIER);
         }
         return AsyncTaskUtils.execute(new Callable<String>() {
 
             @Override
             public String call() throws Exception {
-                latch.await();
+                LOADING_LATCH.await();
                 return DEVICE_IDENTIFIER;
             }
         });
@@ -113,10 +113,10 @@ public class Constants {
      * @param context The context to use. Usually your Activity object.
      */
     public static void loadFromContext(Context context) {
-        Constants.ANDROID_VERSION = android.os.Build.VERSION.RELEASE;
-        Constants.ANDROID_BUILD = android.os.Build.DISPLAY;
-        Constants.PHONE_MODEL = android.os.Build.MODEL;
-        Constants.PHONE_MANUFACTURER = android.os.Build.MANUFACTURER;
+        ANDROID_VERSION = android.os.Build.VERSION.RELEASE;
+        ANDROID_BUILD = android.os.Build.DISPLAY;
+        PHONE_MODEL = android.os.Build.MODEL;
+        PHONE_MANUFACTURER = android.os.Build.MANUFACTURER;
 
         loadPackageData(context);
         loadIdentifiers(context);
@@ -128,7 +128,7 @@ public class Constants {
      * @return A file representing the screenshot folder.
      */
     public static File getHockeyAppStorageDir(Context context) {
-        File dir = new File(context.getExternalFilesDir(null), Constants.FILES_DIRECTORY_NAME);
+        File dir = new File(context.getExternalFilesDir(null), FILES_DIRECTORY_NAME);
         boolean success = dir.exists() || dir.mkdirs();
         if (!success) {
             HockeyLog.warn("Couldn't create HockeyApp Storage dir");
@@ -147,13 +147,13 @@ public class Constants {
             try {
                 PackageManager packageManager = context.getPackageManager();
                 PackageInfo packageInfo = packageManager.getPackageInfo(context.getPackageName(), 0);
-                Constants.APP_PACKAGE = packageInfo.packageName;
-                Constants.APP_VERSION = "" + packageInfo.versionCode;
-                Constants.APP_VERSION_NAME = packageInfo.versionName;
+                APP_PACKAGE = packageInfo.packageName;
+                APP_VERSION = "" + packageInfo.versionCode;
+                APP_VERSION_NAME = packageInfo.versionName;
 
                 int buildNumber = loadBuildNumber(context, packageManager);
                 if ((buildNumber != 0) && (buildNumber > packageInfo.versionCode)) {
-                    Constants.APP_VERSION = "" + buildNumber;
+                    APP_VERSION = "" + buildNumber;
                 }
             } catch (PackageManager.NameNotFoundException e) {
                 HockeyLog.error("Exception thrown when accessing the package info", e);
@@ -188,7 +188,7 @@ public class Constants {
      */
     @SuppressLint("StaticFieldLeak")
     private static void loadIdentifiers(final Context context) {
-        if (Constants.DEVICE_IDENTIFIER != null) {
+        if (DEVICE_IDENTIFIER != null) {
             return;
         }
         AsyncTaskUtils.execute(new AsyncTask<Void, Object, String>() {
@@ -205,8 +205,8 @@ public class Constants {
 
             @Override
             protected void onPostExecute(String deviceIdentifier) {
-                Constants.DEVICE_IDENTIFIER = deviceIdentifier;
-                latch.countDown();
+                DEVICE_IDENTIFIER = deviceIdentifier;
+                LOADING_LATCH.countDown();
             }
         });
     }
