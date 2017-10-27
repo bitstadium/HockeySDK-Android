@@ -25,7 +25,7 @@ public class CrashDetailsTest {
 
     @Before
     public void setUp() throws Exception {
-        Constants.loadFromContext(InstrumentationRegistry.getTargetContext());
+        CrashManagerHelper.loadConstants(InstrumentationRegistry.getTargetContext());
         CrashManagerHelper.reset(InstrumentationRegistry.getTargetContext());
         filesDirectory = CrashManagerHelper.cleanFiles(InstrumentationRegistry.getTargetContext());
 
