@@ -20,6 +20,7 @@ public class CrashManagerHelper {
         // Needed to get directory to write fake crashes
         CrashManager.weakContext = new WeakReference<>(context);
         CrashManager.latch = new CountDownLatch(1);
+        CrashManager.stackTracesCount = 0;
     }
 
     public static File cleanFiles(Context context) {
