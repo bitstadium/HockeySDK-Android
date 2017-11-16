@@ -67,6 +67,11 @@ public class CrashManager {
     private static boolean didCrashInLastSession = false;
 
     /**
+     * Count of stack traces on the last search.
+     */
+    static int stackTracesCount = 0;
+
+    /**
      * Lock used to wait last session crash info.
      */
     static CountDownLatch latch = new CountDownLatch(1);
@@ -330,16 +335,20 @@ public class CrashManager {
                 }
                 File[] files = dir.listFiles(STACK_TRACES_FILTER);
 
+                // Update files count
+                stackTracesCount = files != null ? files.length : 0;
+
                 long lastModification = 0;
                 File lastModifiedFile = null;
                 CrashDetails result = null;
-                for (File file : files) {
-                    if (file.lastModified() > lastModification) {
-                        lastModification = file.lastModified();
-                        lastModifiedFile = file;
+                if (files != null) {
+                    for (File file : files) {
+                        if (file.lastModified() > lastModification) {
+                            lastModification = file.lastModified();
+                            lastModifiedFile = file;
+                        }
                     }
                 }
-
                 if (lastModifiedFile != null && lastModifiedFile.exists()) {
                     try {
                         result = CrashDetails.fromFile(lastModifiedFile);
@@ -757,6 +766,9 @@ public class CrashManager {
 
             String description = filename.replace(".stacktrace", ".description");
             context.deleteFile(description);
+
+            // Decrement stack traces count
+            stackTracesCount--;
         }
     }
 
@@ -824,7 +836,12 @@ public class CrashManager {
                 }
 
                 // Filter for ".stacktrace" files
-                return dir.list(STACK_TRACES_FILTER);
+                String[] list = dir.list(STACK_TRACES_FILTER);
+
+                // Update files count
+                stackTracesCount = list != null ? list.length : 0;
+
+                return list;
             } else {
                 HockeyLog.debug("Can't search for exception as file path is null.");
             }
