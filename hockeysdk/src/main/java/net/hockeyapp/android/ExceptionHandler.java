@@ -61,14 +61,10 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
         }
 
         // Check for number of crashes on disk and don't save the crash in case we reached the defined limit.
-        final String[] list = CrashManager.searchForStackTraces(CrashManager.weakContext);
-        if (list != null) {
-            HockeyLog.debug("ExceptionHandler: Found " + list.length + " stacktrace(s).");
-            if (list.length >= CrashManager.MAX_NUMBER_OF_CRASHFILES) {
-                HockeyLog.warn("ExceptionHandler: HockeyApp will not save this exception as there are already " +
-                        CrashManager.MAX_NUMBER_OF_CRASHFILES + " or more unsent exceptions on disk");
-                return;
-            }
+        if (CrashManager.stackTracesCount >= CrashManager.MAX_NUMBER_OF_CRASHFILES) {
+            HockeyLog.warn("ExceptionHandler: HockeyApp will not save this exception as there are already " +
+                    CrashManager.MAX_NUMBER_OF_CRASHFILES + " or more unsent exceptions on disk");
+            return;
         }
 
         String filename = UUID.randomUUID().toString();
