@@ -10,11 +10,15 @@ import java.util.concurrent.CountDownLatch;
 
 public class CrashManagerHelper {
 
-    public static void reset(Context context) {
+    public static void loadConstants(Context context) throws InterruptedException {
+        Constants.loadFromContext(context);
+        Constants.LOADING_LATCH.await();
+    }
 
-        // Needed to get directory to write fake crashes
+    public static void reset(Context context) {
         CrashManager.weakContext = new WeakReference<>(context);
         CrashManager.latch = new CountDownLatch(1);
+        CrashManager.stackTracesCount = 0;
     }
 
     public static File cleanFiles(Context context) {

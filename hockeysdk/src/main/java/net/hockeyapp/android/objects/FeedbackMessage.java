@@ -28,26 +28,6 @@ public class FeedbackMessage implements Serializable {
     private String mAppId;
     private List<FeedbackAttachment> mFeedbackAttachments;
 
-    /**
-     * @return Subject of the feedback message.
-     * @deprecated as of 3.7.0, replaced by {@link #getSubject()}
-     */
-    @Deprecated
-    @SuppressWarnings("SpellCheckingInspection")
-    public String getSubjec() {
-        return mSubject;
-    }
-
-    /**
-     * @param subjec Subject for the feedback message.
-     * @deprecated as of 3.7.0, replaced by {@link #setSubject(String)}
-     */
-    @Deprecated
-    @SuppressWarnings("SpellCheckingInspection")
-    public void setSubjec(String subjec) {
-        this.mSubject = subjec;
-    }
-
     public String getSubject() {
         return mSubject;
     }

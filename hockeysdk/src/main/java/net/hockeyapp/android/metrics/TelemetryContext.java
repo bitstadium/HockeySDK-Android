@@ -1,5 +1,6 @@
 package net.hockeyapp.android.metrics;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Point;
@@ -105,6 +106,7 @@ class TelemetryContext {
      * @param context       the context for this telemetryContext
      * @param appIdentifier the app identifier for this application
      */
+    @SuppressLint("StaticFieldLeak")
     TelemetryContext(Context context, String appIdentifier) {
         this();
         mWeakContext = new WeakReference<>(context);

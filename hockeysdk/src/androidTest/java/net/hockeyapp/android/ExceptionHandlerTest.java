@@ -1,5 +1,6 @@
 package net.hockeyapp.android;
 
+import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -10,6 +11,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 
 import static org.junit.Assert.*;
 
@@ -20,12 +22,11 @@ public class ExceptionHandlerTest {
 
     @Before
     public void setUp() throws Exception {
-        Constants.loadFromContext(InstrumentationRegistry.getTargetContext());
+        CrashManagerHelper.loadConstants(InstrumentationRegistry.getTargetContext());
         CrashManagerHelper.reset(InstrumentationRegistry.getTargetContext());
         filesDirectory = CrashManagerHelper.cleanFiles(InstrumentationRegistry.getTargetContext());
     }
 
-    @SuppressWarnings("ThrowableInstanceNeverThrown")
     @Test
     public void saveExceptionTest() {
 
@@ -39,6 +40,40 @@ public class ExceptionHandlerTest {
 
         files = filesDirectory.listFiles(new StacktraceFilenameFilter());
         assertEquals(3, files.length);
+    }
+
+    @Test
+    public void maxFilesTest() {
+        WeakReference<Context> weakContext = new WeakReference<>(InstrumentationRegistry.getTargetContext());
+        String[] files;
+        for (int i = 0; i < CrashManager.MAX_NUMBER_OF_CRASHFILES; i++) {
+            files = CrashManager.searchForStackTraces(weakContext);
+            assertNotNull(files);
+            assertEquals(i, files.length);
+            assertEquals(i, CrashManager.stackTracesCount);
+
+            fakeCrashReport();
+        }
+
+        files = CrashManager.searchForStackTraces(weakContext);
+        assertNotNull(files);
+        assertEquals(CrashManager.MAX_NUMBER_OF_CRASHFILES, files.length);
+        assertEquals(CrashManager.MAX_NUMBER_OF_CRASHFILES, CrashManager.stackTracesCount);
+
+        fakeCrashReport();
+
+        files = CrashManager.searchForStackTraces(weakContext);
+        assertNotNull(files);
+        assertEquals(CrashManager.MAX_NUMBER_OF_CRASHFILES, files.length);
+        assertEquals(CrashManager.MAX_NUMBER_OF_CRASHFILES, CrashManager.stackTracesCount);
+
+        fakeCrashReport();
+        fakeCrashReport();
+
+        files = CrashManager.searchForStackTraces(weakContext);
+        assertNotNull(files);
+        assertEquals(CrashManager.MAX_NUMBER_OF_CRASHFILES, files.length);
+        assertEquals(CrashManager.MAX_NUMBER_OF_CRASHFILES, CrashManager.stackTracesCount);
     }
 
     @SuppressWarnings("ThrowableInstanceNeverThrown")

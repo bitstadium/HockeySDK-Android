@@ -49,7 +49,7 @@ public class CrashManagerTest {
 
     @Before
     public void setUp() throws Exception {
-        Constants.loadFromContext(InstrumentationRegistry.getTargetContext());
+        CrashManagerHelper.loadConstants(InstrumentationRegistry.getTargetContext());
         CrashManagerHelper.reset(InstrumentationRegistry.getTargetContext());
         filesDirectory = CrashManagerHelper.cleanFiles(InstrumentationRegistry.getTargetContext());
     }
@@ -61,6 +61,7 @@ public class CrashManagerTest {
 
         // verify that there were no crashes in the last session
         assertFalse(CrashManager.didCrashInLastSession().get());
+        assertEquals(0, CrashManager.stackTracesCount);
     }
 
     @Test
@@ -71,6 +72,7 @@ public class CrashManagerTest {
 
         assertTrue(CrashManager.didCrashInLastSession().get());
         assertNotNull(CrashManager.getLastCrashDetails(InstrumentationRegistry.getTargetContext()).get());
+        assertEquals(1, CrashManager.stackTracesCount);
     }
 
     @Test
@@ -80,8 +82,8 @@ public class CrashManagerTest {
         CrashManager.register(InstrumentationRegistry.getTargetContext(), DUMMY_APP_IDENTIFIER);
 
         CrashDetails crashDetails = CrashManager.getLastCrashDetails(InstrumentationRegistry.getTargetContext()).get();
-
         assertNotNull(crashDetails);
+        assertEquals(1, CrashManager.stackTracesCount);
 
         File lastStackTrace = lastCrashReportFile();
         assertNotNull(lastStackTrace);
@@ -94,8 +96,8 @@ public class CrashManagerTest {
         fakeCrashReport();
 
         crashDetails = CrashManager.getLastCrashDetails(InstrumentationRegistry.getTargetContext()).get();
-
         assertNotNull(crashDetails);
+        assertEquals(4, CrashManager.stackTracesCount);
 
         lastStackTrace = lastCrashReportFile();
         assertNotNull(lastStackTrace);
@@ -113,6 +115,7 @@ public class CrashManagerTest {
 
         CrashDetails crashDetails = CrashManager.getLastCrashDetails(InstrumentationRegistry.getTargetContext()).get();
         assertNotNull(crashDetails);
+        assertEquals(2, CrashManager.stackTracesCount);
         assertEquals(crashDetails.getFormat(), "Xamarin");
         String throwableStackTrace = crashDetails.getThrowableStackTrace();
         Boolean containsCausedByXamarin = throwableStackTrace.contains("Xamarin caused by:");

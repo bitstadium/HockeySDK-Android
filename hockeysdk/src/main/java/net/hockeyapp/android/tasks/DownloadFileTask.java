@@ -1,5 +1,6 @@
 package net.hockeyapp.android.tasks;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -33,6 +34,7 @@ import java.util.UUID;
  * it on external storage. If the download was successful, the file
  * is then opened to trigger the installation.
  **/
+@SuppressLint("StaticFieldLeak")
 public class DownloadFileTask extends AsyncTask<Void, Integer, Long> {
     protected static final int MAX_REDIRECTS = 6;
 

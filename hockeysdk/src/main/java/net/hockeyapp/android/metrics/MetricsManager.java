@@ -1,5 +1,6 @@
 package net.hockeyapp.android.metrics;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
@@ -170,41 +171,6 @@ public class MetricsManager {
     }
 
     /**
-     * Register a new MetricsManager and collect metrics about user and session.
-     * HockeyApp app identifier is read from configuration values in AndroidManifest.xml.
-     *
-     * @param context     The context to use. Usually your activity.
-     * @param application The application which is required to get application lifecycle
-     *                    callbacks.
-     * @deprecated Use {@link #register(Application)} instead.
-     */
-    @Deprecated
-    @SuppressWarnings("deprecation")
-    public static void register(Context context, Application application) {
-        String appIdentifier = Util.getAppIdentifier(context);
-        if (appIdentifier == null || appIdentifier.length() == 0) {
-            throw new IllegalArgumentException("HockeyApp app identifier was not configured correctly in manifest or build configuration.");
-        }
-        register(context, application, appIdentifier);
-    }
-
-    /**
-     * Register a new MetricsManager and collect metrics about user and session, while
-     * explicitly providing your HockeyApp app identifier.
-     *
-     * @param context       The context to use. Usually your activity.
-     * @param application   The application which is required to get application lifecycle
-     *                      callbacks.
-     * @param appIdentifier Your HockeyApp App Identifier.
-     * @deprecated Use {@link #register(Application, String)} instead.
-     */
-    @SuppressWarnings({"WeakerAccess", "UnusedParameters"})
-    @Deprecated
-    public static void register(Context context, Application application, String appIdentifier) {
-        register(application, appIdentifier, null, null, null);
-    }
-
-    /**
      * Register a new MetricsManager and collect metrics information about user and session.
      * Intended to be used for unit testing only.
      *
@@ -268,10 +234,12 @@ public class MetricsManager {
     private static void setUserMetricsEnabled(boolean enabled) {
         sUserMetricsEnabled = enabled;
         if (instance != null) {
-            if (sUserMetricsEnabled) {
-                instance.registerTelemetryLifecycleCallbacks();
-            } else {
-                instance.unregisterTelemetryLifecycleCallbacks();
+            synchronized (LOCK) {
+                if (sUserMetricsEnabled) {
+                    instance.registerTelemetryLifecycleCallbacks();
+                } else {
+                    instance.unregisterTelemetryLifecycleCallbacks();
+                }
             }
         }
     }
@@ -279,8 +247,12 @@ public class MetricsManager {
     /**
      * Determines if session tracking was enabled.
      *
+     * @deprecated Use {@link #isUserMetricsEnabled()} instead.
+     *
      * @return YES if session tracking is enabled
      */
+    @Deprecated
+    @SuppressWarnings("unused")
     public static boolean sessionTrackingEnabled() {
         if (instance == null) {
             HockeyLog.error(TAG, "MetricsManager hasn't been registered or User Metrics has been disabled. No User Metrics will be collected!");
@@ -295,7 +267,11 @@ public class MetricsManager {
      * Enable and disable tracking of sessions
      *
      * @param disabled flag to indicate
+     *
+     * @deprecated Use {@link #disableUserMetrics()} or {@link #enableUserMetrics()}  instead.
      */
+    @Deprecated
+    @SuppressWarnings("unused")
     public static void setSessionTrackingDisabled(Boolean disabled) {
         if (instance == null || !isUserMetricsEnabled()) {
             HockeyLog.warn(TAG, "MetricsManager hasn't been registered or User Metrics has been disabled. No User Metrics will be collected!");
@@ -413,6 +389,7 @@ public class MetricsManager {
         }
     }
 
+    @SuppressLint("StaticFieldLeak")
     private void renewSession() {
         final String sessionId = UUID.randomUUID().toString();
         try {
@@ -421,11 +398,7 @@ public class MetricsManager {
                 @Override
                 protected Void doInBackground(Void... params) {
                     sTelemetryContext.renewSessionContext(sessionId);
-
-                    SessionStateData sessionItem = new SessionStateData();
                     trackSessionState(SessionState.START);
-                    Data<Domain> data = createData(sessionItem);
-                    sChannel.enqueueData(data);
                     return null;
                 }
             });
@@ -468,6 +441,7 @@ public class MetricsManager {
         trackEvent(eventName, properties, null);
     }
 
+    @SuppressLint("StaticFieldLeak")
     public static void trackEvent(final String eventName, final Map<String, String> properties, final Map<String, Double> measurements) {
         if (TextUtils.isEmpty(eventName)) {
             return;
