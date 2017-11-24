@@ -18,7 +18,7 @@ android {
         }
     }
     lintOptions {
-        disable 'GoogleAppIndexingWarning'
+        disable 'GoogleAppIndexingWarning','RtlEnabled'
         textReport true
     }
 }
