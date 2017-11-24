@@ -29,7 +29,7 @@ public class LoginManager {
      * The default mode for authorization. User's won't be authorized.
      */
     public static final int LOGIN_MODE_ANONYMOUS = 0;
-/
+
     /**
      * Testers/users need a HockeyApp account and have to provide their email address to use the app.
      */
