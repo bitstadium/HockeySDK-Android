@@ -124,7 +124,7 @@ public class LoginManager {
 
     /**
      * Registers new LoginManager.
-/     *
+     *
      * @param context       The context to use. Usually your Activity object.
      * @param appIdentifier The App ID of your app on HockeyApp.
      * @param appSecret     The App Secret of your app on HockeyApp.
