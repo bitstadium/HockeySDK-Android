@@ -1,5 +1,6 @@
 package net.hockeyapp.android.metrics;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -74,6 +75,7 @@ public class Sender {
      * for available data, if the max amount of concurrent requests is not reached yet.
      * Does nothing, if the maximum number of concurrent requests is already reached or exceeded.
      */
+    @SuppressLint("StaticFieldLeak")
     protected void triggerSending() {
         if (requestCount() < MAX_REQUEST_COUNT) {
             try {
@@ -95,6 +97,7 @@ public class Sender {
         }
     }
 
+    @SuppressLint("StaticFieldLeak")
     protected void triggerSendingForTesting(final HttpURLConnection connection, final File file, final String persistedData) {
         if (requestCount() < MAX_REQUEST_COUNT) {
             mRequestCount.getAndIncrement();

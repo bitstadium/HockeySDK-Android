@@ -129,7 +129,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
     /**
      * Initial attachment uris
      */
-    private List<Uri> mInitialAttachments;
+    private List<Uri> mInitialAttachments = new ArrayList<>();
 
     /**
      * Reference to this
@@ -216,7 +216,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
 
             Parcelable[] initialAttachmentsArray = extras.getParcelableArray(EXTRA_INITIAL_ATTACHMENTS);
             if (initialAttachmentsArray != null) {
-                mInitialAttachments = new ArrayList<>();
+                mInitialAttachments.clear();
                 for (Parcelable parcelable : initialAttachmentsArray) {
                     mInitialAttachments.add((Uri) parcelable);
                 }
@@ -262,7 +262,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
             ArrayList<Uri> attachmentsUris = savedInstanceState.getParcelableArrayList("attachments");
             if (attachmentsUris != null) {
                 for (Uri attachmentUri : attachmentsUris) {
-                    if (mInitialAttachments == null || !mInitialAttachments.contains(attachmentUri)) {
+                    if (!mInitialAttachments.contains(attachmentUri)) {
                         mAttachmentListView.addView(new AttachmentView(this, mAttachmentListView, attachmentUri, true));
                     }
                 }
@@ -535,10 +535,8 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
             /** Reset the attachment list */
             mAttachmentListView.removeAllViews();
 
-            if (mInitialAttachments != null) {
-                for (Uri attachmentUri : mInitialAttachments) {
-                    mAttachmentListView.addView(new AttachmentView(this, mAttachmentListView, attachmentUri, true));
-                }
+            for (Uri attachmentUri : mInitialAttachments) {
+                mAttachmentListView.addView(new AttachmentView(this, mAttachmentListView, attachmentUri, true));
             }
 
             /** Use of context menu needs to be enabled explicitly */
@@ -702,6 +700,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
         }
     }
 
+    @SuppressLint("StaticFieldLeak")
     private void resetFeedbackView() {
         mToken = null;
         AsyncTaskUtils.execute(new AsyncTask<Void, Object, Object>() {
@@ -724,6 +723,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
     /**
      * Send feedback to HockeyApp.
      */
+    @SuppressLint("StaticFieldLeak")
     private void sendFeedback() {
         if (!Util.isConnectedToNetwork(this)) {
             Toast errorToast = Toast.makeText(this, R.string.hockeyapp_error_no_network_message, Toast.LENGTH_LONG);
@@ -875,6 +875,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
             mWeakFeedbackActivity = new WeakReference<>(feedbackActivity);
         }
 
+        @SuppressLint("StaticFieldLeak")
         @Override
         public void handleMessage(Message msg) {
             boolean success = false;

@@ -33,6 +33,7 @@ public class PaintView extends ImageView {
     private Paint paint;
     private float mX, mY;
 
+    @SuppressLint("StaticFieldLeak")
     public PaintView(Context context, Uri imageUri, int displayWidth, int displayHeight) {
         super(context);
 
@@ -130,6 +131,7 @@ public class PaintView extends ImageView {
         path = new Path();
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         float x = event.getX();

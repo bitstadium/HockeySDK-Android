@@ -2,19 +2,26 @@ package net.hockeyapp.android.objects;
 
 import android.content.Context;
 import android.text.TextUtils;
-import net.hockeyapp.android.utils.HockeyLog;
 
-import java.io.*;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import net.hockeyapp.android.utils.HockeyLog;
+import net.hockeyapp.android.utils.JSONDateUtils;
+
+import org.json.JSONException;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Reader;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.Date;
-import java.util.Locale;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class CrashDetails {
-
-    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.US);
-
     private static final String FIELD_CRASH_REPORTER_KEY = "CrashReporter Key";
     private static final String FIELD_APP_START_DATE = "Start Date";
     private static final String FIELD_APP_CRASH_DATE = "Date";
@@ -32,27 +39,19 @@ public class CrashDetails {
     private static final String FIELD_XAMARIN_CAUSED_BY = "Xamarin caused by: "; //Field that marks a Xamarin Exception
 
     private final String crashIdentifier;
-
     private String reporterKey;
-
     private Date appStartDate;
     private Date appCrashDate;
-
     private String osVersion;
     private String osBuild;
     private String deviceManufacturer;
     private String deviceModel;
-
     private String appPackage;
     private String appVersionName;
     private String appVersionCode;
-
     private String threadName;
-
     private String throwableStackTrace;
-
     private Boolean isXamarinException;
-
     private String format;
 
     public CrashDetails(String crashIdentifier) {
@@ -71,6 +70,7 @@ public class CrashDetails {
         throwable.printStackTrace(printWriter);
         throwableStackTrace = stackTraceResult.toString();
     }
+
 
     public CrashDetails(String crashIdentifier, Throwable throwable, String managedExceptionString, Boolean isManagedException) {
         this(crashIdentifier);
@@ -111,13 +111,12 @@ public class CrashDetails {
         throwableStackTrace = stackTraceResult.toString();
     }
 
-
-    public static CrashDetails fromFile(File file) throws IOException {
+    public static CrashDetails fromFile(File file) throws IOException, JSONException {
         String crashIdentifier = file.getName().substring(0, file.getName().indexOf(".stacktrace"));
         return fromReader(crashIdentifier, new FileReader(file));
     }
 
-    public static CrashDetails fromReader(String crashIdentifier, Reader in) throws IOException {
+    public static CrashDetails fromReader(String crashIdentifier, Reader in) throws IOException, JSONException {
         BufferedReader bufferedReader = new BufferedReader(in);
 
         CrashDetails result = new CrashDetails(crashIdentifier);
@@ -146,14 +145,14 @@ public class CrashDetails {
                     result.setReporterKey(headerValue);
                 } else if (headerName.equals(FIELD_APP_START_DATE)) {
                     try {
-                        result.setAppStartDate(DATE_FORMAT.parse(headerValue));
-                    } catch (ParseException e) {
+                        result.setAppStartDate(JSONDateUtils.toDate(headerValue));
+                    } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
                 } else if (headerName.equals(FIELD_APP_CRASH_DATE)) {
                     try {
-                        result.setAppCrashDate(DATE_FORMAT.parse(headerValue));
-                    } catch (ParseException e) {
+                        result.setAppCrashDate(JSONDateUtils.toDate(headerValue));
+                    } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
                 } else if (headerName.equals(FIELD_OS_VERSION)) {
@@ -187,10 +186,14 @@ public class CrashDetails {
 
     public void writeCrashReport(Context context) {
         File file = new File(context.getFilesDir(), crashIdentifier + ".stacktrace");
-        writeCrashReport(file);
+        try {
+            writeCrashReport(file);
+        } catch (JSONException e) {
+            HockeyLog.error("Could not write crash report with error " + e.toString());
+        }
     }
 
-    public void writeCrashReport(final File file) {
+    public void writeCrashReport(final File file) throws JSONException {
         HockeyLog.debug("Writing unhandled exception to: " + file.getAbsolutePath());
 
         BufferedWriter writer = null;
@@ -208,8 +211,8 @@ public class CrashDetails {
             writeHeader(writer, FIELD_THREAD_NAME, threadName);
             writeHeader(writer, FIELD_CRASH_REPORTER_KEY, reporterKey);
 
-            writeHeader(writer, FIELD_APP_START_DATE, DATE_FORMAT.format(appStartDate));
-            writeHeader(writer, FIELD_APP_CRASH_DATE, DATE_FORMAT.format(appCrashDate));
+            writeHeader(writer, FIELD_APP_START_DATE, JSONDateUtils.toString(appStartDate));
+            writeHeader(writer, FIELD_APP_CRASH_DATE, JSONDateUtils.toString(appCrashDate));
 
             if (isXamarinException) {
                 writeHeader(writer, FIELD_FORMAT, FIELD_FORMAT_VALUE);
@@ -355,6 +358,4 @@ public class CrashDetails {
     public void setFormat(String format) {
         this.format = format;
     }
-
-
 }

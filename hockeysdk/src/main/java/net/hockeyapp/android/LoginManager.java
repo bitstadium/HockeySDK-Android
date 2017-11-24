@@ -1,5 +1,6 @@
 package net.hockeyapp.android;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -203,6 +204,7 @@ public class LoginManager {
      * @param context The activity from which this method is called.
      * @param intent  The intent that the activity has been created with.
      */
+    @SuppressLint("StaticFieldLeak")
     public static void verifyLogin(final Activity context, Intent intent) {
         //Don't verify anything if we're in LOGIN_MODE_ANONYMOUS
         if (context == null || mode == LOGIN_MODE_ANONYMOUS) {

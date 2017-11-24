@@ -1,5 +1,6 @@
 package net.hockeyapp.android;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
@@ -42,6 +43,7 @@ public class PaintActivity extends Activity {
     private PaintView mPaintView;
     private Uri mImageUri;
 
+    @SuppressLint("StaticFieldLeak")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -177,6 +179,7 @@ public class PaintActivity extends Activity {
         toast.show();
     }
 
+    @SuppressLint("StaticFieldLeak")
     private void makeResult() {
         mPaintView.setDrawingCacheEnabled(true);
         final Bitmap bitmap = mPaintView.getDrawingCache();

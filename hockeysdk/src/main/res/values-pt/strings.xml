@@ -54,7 +54,6 @@
     <string name="hockeyapp_feedback_validate_email_empty">Por favor preencha seu email</string>
     <string name="hockeyapp_feedback_validate_name_error">Por favor preencha a mensagem</string>
     <string name="hockeyapp_feedback_validate_text_error">A mensagem não pôde ser enviada. Por favor verifique o formato do seu email.</string>
-    <string name="hockeyapp_feedback_generic_error">Ocorreu um erro</string>
     <string name="hockeyapp_feedback_attach_file">Anexar arquivo</string>
     <string name="hockeyapp_feedback_attach_picture">Anexar imagem</string>
     <string name="hockeyapp_feedback_select_file">Selecionar arquivo</string>
@@ -98,7 +97,6 @@
 
     <!-- Dialogs -->
     <string name="hockeyapp_dialog_positive_button">OK</string>
-    <string name="hockeyapp_dialog_negative_button">Cancelar</string>
     <string name="hockeyapp_dialog_error_title">Erro</string>
     <string name="hockeyapp_dialog_error_message">Ocorreu um erro</string>
 

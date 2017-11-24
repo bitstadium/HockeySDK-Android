@@ -16,7 +16,6 @@ import java.io.Writer;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.Date;
 import java.util.UUID;
-import java.util.concurrent.ExecutionException;
 
 /**
  * <h3>Description</h3>
@@ -44,20 +43,6 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
      * Save a caught exception to disk.
      *
      * @param exception Exception to save.
-     * @param listener  Custom CrashManager listener instance.
-     * @deprecated in 3.7.0-beta.2. Use saveException(Throwable exception, Thread thread,
-     * CrashManagerListener listener) instead.
-     */
-    @Deprecated
-    @SuppressWarnings("unused")
-    public static void saveException(Throwable exception, CrashManagerListener listener) {
-        saveException(exception, null, listener);
-    }
-
-    /**
-     * Save a caught exception to disk.
-     *
-     * @param exception Exception to save.
      * @param thread    Thread that crashed.
      * @param listener  Custom CrashManager listener instance.
      */
@@ -72,6 +57,13 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
         if (context == null)
         {
             HockeyLog.error("Failed to save exception: context in CrashManager is null");
+            return;
+        }
+
+        // Check for number of crashes on disk and don't save the crash in case we reached the defined limit.
+        if (CrashManager.stackTracesCount >= CrashManager.MAX_NUMBER_OF_CRASHFILES) {
+            HockeyLog.warn("ExceptionHandler: HockeyApp will not save this exception as there are already " +
+                    CrashManager.MAX_NUMBER_OF_CRASHFILES + " or more unsent exceptions on disk");
             return;
         }
 
@@ -95,11 +87,8 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
             crashDetails.setThreadName(thread.getName() + "-" + thread.getId());
         }
 
-        String deviceIdentifier = null;
-        try {
-            deviceIdentifier = Constants.getDeviceIdentifier().get();
-        } catch (Exception ignored) {
-        }
+        // Get device identifier without waiting for initialization to avoid deadlock.
+        String deviceIdentifier = Constants.DEVICE_IDENTIFIER;
         if (deviceIdentifier != null && (listener == null || listener.includeDeviceIdentifier())) {
             crashDetails.setReporterKey(deviceIdentifier);
         }
@@ -114,7 +103,6 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
             } catch (IOException e) {
                 HockeyLog.error("Error saving crash meta data!", e);
             }
-
         }
     }
 
@@ -191,11 +179,8 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
             crashDetails.setThreadName(thread.getName() + "-" + thread.getId());
         }
 
-        String deviceIdentifier = null;
-        try {
-            deviceIdentifier = Constants.getDeviceIdentifier().get();
-        } catch (Exception ignored) {
-        }
+        // Get device identifier without waiting for initialization to avoid deadlock.
+        String deviceIdentifier = Constants.DEVICE_IDENTIFIER;
         if (deviceIdentifier != null && (listener == null || listener.includeDeviceIdentifier())) {
             crashDetails.setReporterKey(deviceIdentifier);
         }
@@ -210,7 +195,6 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
             } catch (IOException e) {
                 HockeyLog.error("Error saving crash meta data!", e);
             }
-
         }
     }
 

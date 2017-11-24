@@ -1,4 +1,4 @@
-package net.hockeyapp.android.util;
+package net.hockeyapp.android;
 
 
 import android.support.test.InstrumentationRegistry;
@@ -19,6 +19,8 @@ public class ConstantsTest {
     @Test
     public void testLoadingConstantsWorks() throws Exception {
         Constants.loadFromContext(InstrumentationRegistry.getContext());
+        Constants.LOADING_LATCH.await();
+
         assertNotNull(Constants.BASE_URL);
         assertEquals("https://sdk.hockeyapp.net/", Constants.BASE_URL);
         assertNotNull(Constants.SDK_NAME);

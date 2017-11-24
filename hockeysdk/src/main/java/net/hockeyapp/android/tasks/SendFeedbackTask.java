@@ -1,5 +1,6 @@
 package net.hockeyapp.android.tasks;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -29,6 +30,7 @@ import java.util.Map;
  * Internal helper class. Sends feedback to server.
  *
  **/
+@SuppressLint("StaticFieldLeak")
 public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String, String>> {
 
     public static final String BUNDLE_FEEDBACK_RESPONSE = "feedback_response";
