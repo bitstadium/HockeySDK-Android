@@ -193,7 +193,11 @@ class Persistence {
      */
     @SuppressWarnings("WeakerAccess")
     protected boolean hasFilesAvailable() {
-        return nextAvailableFileInDirectory() != null;
+        File file = nextAvailableFileInDirectory();
+
+        // Don't change availability on checking
+        makeAvailable(file);
+        return file != null;
     }
 
     /**
