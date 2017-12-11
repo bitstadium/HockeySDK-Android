@@ -13,8 +13,6 @@ import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.view.View;
 import android.widget.Toast;
 
@@ -201,6 +199,10 @@ public class FeedbackManager {
      */
     @SuppressLint("StaticFieldLeak")
     public static void showFeedbackActivity(final Context context, final Bundle extras, final Uri... attachments) {
+        if (urlString == null || identifier == null) {
+            HockeyLog.error("FeedbackManager hasn't been registered.");
+            return;
+        }
         if (context != null) {
             final Class<?> activityClass = lastListener != null ? lastListener.getFeedbackActivityClass() : null;
             final boolean forceNewThread = lastListener != null && lastListener.shouldCreateNewFeedbackThread();
@@ -214,7 +216,7 @@ public class FeedbackManager {
                     }
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     intent.setClass(context, activityClass != null ? activityClass : FeedbackActivity.class);
-                    intent.putExtra(FeedbackActivity.EXTRA_URL, getURLString(context));
+                    intent.putExtra(FeedbackActivity.EXTRA_URL, getURLString());
                     String token = !forceNewThread ? PrefsUtil.getInstance().getFeedbackTokenFromPrefs(context) : null;
                     intent.putExtra(FeedbackActivity.EXTRA_TOKEN, token);
                     intent.putExtra(FeedbackActivity.EXTRA_FORCE_NEW_THREAD, forceNewThread);
@@ -285,6 +287,10 @@ public class FeedbackManager {
      */
     @SuppressLint("StaticFieldLeak")
     public static void checkForAnswersAndNotify(final Context context) {
+        if (urlString == null || identifier == null) {
+            HockeyLog.error("FeedbackManager hasn't been registered.");
+            return;
+        }
         String token = PrefsUtil.getInstance().getFeedbackTokenFromPrefs(context);
         if (token == null) {
             return;
@@ -293,7 +299,7 @@ public class FeedbackManager {
         int lastMessageId = context.getSharedPreferences(ParseFeedbackTask.PREFERENCES_NAME, 0)
                 .getInt(ParseFeedbackTask.ID_LAST_MESSAGE_SEND, -1);
 
-        SendFeedbackTask sendFeedbackTask = new SendFeedbackTask(context, getURLString(context), null, null, null, null, null, token, null, true) {
+        SendFeedbackTask sendFeedbackTask = new SendFeedbackTask(context, getURLString(), null, null, null, null, null, token, null, true) {
 
             @Override
             protected void onPostExecute(HashMap<String, String> result) {
@@ -302,7 +308,7 @@ public class FeedbackManager {
                 String responseString = result.get("response");
                 if (responseString != null) {
                     ParseFeedbackTask task = new ParseFeedbackTask(context, responseString, null, "fetch");
-                    task.setUrlString(getURLString(context));
+                    task.setUrlString(getURLString());
                     AsyncTaskUtils.execute(task);
                 }
             }
@@ -324,10 +330,13 @@ public class FeedbackManager {
     /**
      * Populates the URL String with the appIdentifier
      *
-     * @param context {@link Context} object
      * @return URL String with the appIdentifier
      */
-    private static String getURLString(Context context) {
+    private static String getURLString() {
+        if (urlString == null || identifier == null) {
+            HockeyLog.error("FeedbackManager hasn't been registered.");
+            return null;
+        }
         return urlString + "api/2/apps/" + identifier + "/feedback/";
     }
 
