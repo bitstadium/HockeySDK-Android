@@ -100,6 +100,11 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
     public static final String EXTRA_INITIAL_ATTACHMENTS = "initialAttachments";
 
     /**
+     * Extra for user id to be send with the feedback message.
+     */
+    public static final String EXTRA_USER_ID = "userId";
+
+    /**
      * Number of attachments allowed per message.
      **/
     private static final int MAX_ATTACHMENTS_PER_MSG = 3;
@@ -125,6 +130,11 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
      * Initial user's subject to pre-fill the feedback form with
      */
     private String mInitialUserSubject;
+
+    /**
+     * User id to be send with the feedback message
+     */
+    private String mUserId;
 
     /**
      * Initial attachment uris
@@ -213,6 +223,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
             mInitialUserName = extras.getString(EXTRA_INITIAL_USER_NAME);
             mInitialUserEmail = extras.getString(EXTRA_INITIAL_USER_EMAIL);
             mInitialUserSubject = extras.getString(EXTRA_INITIAL_USER_SUBJECT);
+            mUserId = extras.getString(EXTRA_USER_ID);
 
             Parcelable[] initialAttachmentsArray = extras.getParcelableArray(EXTRA_INITIAL_ATTACHMENTS);
             if (initialAttachmentsArray != null) {
@@ -354,7 +365,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
             mInSendFeedback = true;
             configureFeedbackView(false);
         } else if (viewId == R.id.button_refresh) {
-            sendFetchFeedback(mUrl, null, null, null, null, null, mToken, mFeedbackHandler, true);
+            sendFetchFeedback(mUrl, null, null, null, null, null, null, mToken, mFeedbackHandler, true);
         }
     }
 
@@ -601,7 +612,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
         } else {
             /** If Feedback Token is NOT NULL, show the Add Response Button and fetch the feedback messages */
             configureFeedbackView(true);
-            sendFetchFeedback(mUrl, null, null, null, null, null, mToken, mFeedbackHandler, true);
+            sendFetchFeedback(mUrl, null, null, null, null, null, null, mToken, mFeedbackHandler, true);
         }
     }
 
@@ -764,7 +775,7 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
             List<Uri> attachmentUris = mAttachmentListView.getAttachments();
 
             /** Start the Send Feedback {@link AsyncTask} */
-            sendFetchFeedback(mUrl, name, email, subject, text, attachmentUris, token, mFeedbackHandler, false);
+            sendFetchFeedback(mUrl, name, email, subject, text, mUserId, attachmentUris, token, mFeedbackHandler, false);
 
             hideKeyboard();
         }
@@ -795,8 +806,8 @@ public class FeedbackActivity extends Activity implements OnClickListener, View.
      * @param feedbackHandler Handler to handle the response
      * @param isFetchMessages Set true to fetch messages, false to send one
      */
-    private void sendFetchFeedback(String url, String name, String email, String subject, String text, List<Uri> attachmentUris, String token, Handler feedbackHandler, boolean isFetchMessages) {
-        mSendFeedbackTask = new SendFeedbackTask(mContext, url, name, email, subject, text, attachmentUris, token, feedbackHandler, isFetchMessages);
+    private void sendFetchFeedback(String url, String name, String email, String subject, String text, String userId, List<Uri> attachmentUris, String token, Handler feedbackHandler, boolean isFetchMessages) {
+        mSendFeedbackTask = new SendFeedbackTask(mContext, url, name, email, subject, text, userId, attachmentUris, token, feedbackHandler, isFetchMessages);
         AsyncTaskUtils.execute(mSendFeedbackTask);
     }
 

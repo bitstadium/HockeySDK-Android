@@ -47,6 +47,7 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
     private String mEmail;
     private String mSubject;
     private String mText;
+    private String mUserId;
     private List<Uri> mAttachmentUris;
     private String mToken;
     private boolean mIsFetchMessages;
@@ -76,7 +77,7 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
      *                        feedback message
      */
     public SendFeedbackTask(Context context, String urlString, String name, String email,
-                            String subject,String text, List<Uri> attachmentUris, String token,
+                            String subject,String text, String userId, List<Uri> attachmentUris, String token,
                             Handler handler, boolean isFetchMessages) {
 
         this.mContext = context;
@@ -85,6 +86,7 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
         this.mEmail = email;
         this.mSubject = subject;
         this.mText = text;
+        this.mUserId = userId;
         this.mAttachmentUris = attachmentUris;
         this.mToken = token;
         this.mHandler = handler;
@@ -242,6 +244,9 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
             parameters.put("oem", Constants.PHONE_MANUFACTURER);
             parameters.put("model", Constants.PHONE_MODEL);
             parameters.put("sdk_version", Constants.SDK_VERSION);
+            if (mUserId != null) {
+                parameters.put("user_string", mUserId);
+            }
 
             if (mToken != null) {
                 mUrlString += mToken + "/";
@@ -290,7 +295,9 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
             parameters.put("oem", Constants.PHONE_MANUFACTURER);
             parameters.put("model", Constants.PHONE_MODEL);
             parameters.put("sdk_version", Constants.SDK_VERSION);
-
+            if (mUserId != null) {
+                parameters.put("user_string", mUserId);
+            }
             if (mToken != null) {
                 mUrlString += mToken + "/";
             }
