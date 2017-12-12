@@ -87,6 +87,11 @@ public class PersistenceTests {
         servedFiles.add(mockFile1);
         sut.mServedFiles = servedFiles;
 
+        // Test hasFilesAvailable
+        assertTrue(sut.hasFilesAvailable());
+        assertTrue(!sut.mServedFiles.contains(mockFile2));
+        assertTrue(sut.hasFilesAvailable());
+
         // Test one unreserved file left
         File result = sut.nextAvailableFileInDirectory();
         assertEquals(mockFile2, result);
