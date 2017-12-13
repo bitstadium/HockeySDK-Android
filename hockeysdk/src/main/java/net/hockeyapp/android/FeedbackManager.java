@@ -106,6 +106,8 @@ public class FeedbackManager {
 
     private static String userEmail;
 
+    private static String userId;
+
     /**
      * Last listener instance.
      */
@@ -239,6 +241,7 @@ public class FeedbackManager {
                     intent.putExtra(FeedbackActivity.EXTRA_INITIAL_USER_EMAIL, userEmail);
                     intent.putExtra(FeedbackActivity.EXTRA_INITIAL_USER_SUBJECT, userSubject);
                     intent.putExtra(FeedbackActivity.EXTRA_INITIAL_ATTACHMENTS, getInitialAttachments(attachments));
+                    intent.putExtra(FeedbackActivity.EXTRA_USER_ID, FeedbackManager.userId);
                     return intent;
                 }
 
@@ -299,7 +302,7 @@ public class FeedbackManager {
         int lastMessageId = context.getSharedPreferences(ParseFeedbackTask.PREFERENCES_NAME, 0)
                 .getInt(ParseFeedbackTask.ID_LAST_MESSAGE_SEND, -1);
 
-        SendFeedbackTask sendFeedbackTask = new SendFeedbackTask(context, getURLString(), null, null, null, null, null, token, null, true) {
+        SendFeedbackTask sendFeedbackTask = new SendFeedbackTask(context, getURLString(), null, null, null, null, null, null, token, null, true) {
 
             @Override
             protected void onPostExecute(HashMap<String, String> result) {
@@ -392,6 +395,15 @@ public class FeedbackManager {
      */
     public static void setUserEmail(String userEmail) {
         FeedbackManager.userEmail = userEmail;
+    }
+
+    /**
+     * Sets the user id to send as additional data
+     *
+     * @param userId user id
+     */
+    public static void setUserId(String userId) {
+        FeedbackManager.userId = userId;
     }
 
     /**
