@@ -302,7 +302,7 @@ public class FeedbackManager {
         int lastMessageId = context.getSharedPreferences(ParseFeedbackTask.PREFERENCES_NAME, 0)
                 .getInt(ParseFeedbackTask.ID_LAST_MESSAGE_SEND, -1);
 
-        SendFeedbackTask sendFeedbackTask = new SendFeedbackTask(context, getURLString(context), null, null, null, null, null, null, token, null, true) {
+        SendFeedbackTask sendFeedbackTask = new SendFeedbackTask(context, getURLString(), null, null, null, null, null, null, token, null, true) {
 
             @Override
             protected void onPostExecute(HashMap<String, String> result) {
