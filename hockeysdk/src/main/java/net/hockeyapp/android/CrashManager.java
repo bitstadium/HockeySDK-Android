@@ -15,6 +15,7 @@ import net.hockeyapp.android.objects.CrashDetails;
 import net.hockeyapp.android.objects.CrashManagerUserInput;
 import net.hockeyapp.android.objects.CrashMetaData;
 import net.hockeyapp.android.utils.AsyncTaskUtils;
+import net.hockeyapp.android.utils.CompletedFuture;
 import net.hockeyapp.android.utils.HockeyLog;
 import net.hockeyapp.android.utils.HttpURLConnectionBuilder;
 import net.hockeyapp.android.utils.Util;
@@ -302,6 +303,9 @@ public class CrashManager {
 
     @SuppressWarnings("WeakerAccess")
     public static Future<Boolean> didCrashInLastSession() {
+        if (latch.getCount() == 0) {
+            return new CompletedFuture<>(didCrashInLastSession);
+        }
         return AsyncTaskUtils.execute(new Callable<Boolean>() {
 
             @Override
