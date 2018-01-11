@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         minSdkVersion 15
-        targetSdkVersion 26
+        targetSdkVersion 27
         versionCode VERSION_CODE
         versionName VERSION_NAME
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -18,7 +18,7 @@ android {
         }
     }
     lintOptions {
-        disable 'GoogleAppIndexingWarning'
+        disable 'GoogleAppIndexingWarning','RtlEnabled'
         textReport true
     }
 }

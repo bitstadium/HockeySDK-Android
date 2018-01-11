@@ -433,14 +433,40 @@ public class MetricsManager {
         return data;
     }
 
+    /**
+     *  This method allows to track an event that happened in your app.
+     *  Remember to choose meaningful event names to have the best experience when diagnosing your app
+     *  in the HockeyApp web portal.
+     *
+     *  @param eventName The event's name as a string.
+     */
+    @SuppressWarnings({"SameParameterValue", "WeakerAccess"})
     public static void trackEvent(final String eventName) {
         trackEvent(eventName, null);
     }
 
+    /**
+     *  This method allows to track an event that happened in your app.
+     *  Remember to choose meaningful event names to have the best experience when diagnosing your app
+     *  in the web portal.
+     *
+     *  @param eventName the name of the event, which should be tracked.
+     *  @param properties key value pairs with additional info about the event.
+     */
+    @SuppressWarnings({"SameParameterValue", "WeakerAccess"})
     public static void trackEvent(final String eventName, final Map<String, String> properties) {
         trackEvent(eventName, properties, null);
     }
 
+    /**
+     *  This method allows to track an event that happened in your app.
+     *  Remember to choose meaningful event names to have the best experience when diagnosing your app
+     *  in the web portal.
+     *
+     *  @param eventName the name of the event, which should be tracked.
+     *  @param properties key value pairs with additional info about the event.
+     *  @param measurements key value pairs, which contain custom metrics.
+     */
     @SuppressLint("StaticFieldLeak")
     public static void trackEvent(final String eventName, final Map<String, String> properties, final Map<String, Double> measurements) {
         if (TextUtils.isEmpty(eventName)) {
