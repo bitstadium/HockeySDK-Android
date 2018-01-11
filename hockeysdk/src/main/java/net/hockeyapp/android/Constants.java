@@ -10,13 +10,11 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 
 import net.hockeyapp.android.utils.AsyncTaskUtils;
-import net.hockeyapp.android.utils.CompletedFuture;
+import net.hockeyapp.android.utils.LatchFuture;
 import net.hockeyapp.android.utils.HockeyLog;
 
 import java.io.File;
 import java.util.UUID;
-import java.util.concurrent.Callable;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
 
 /**
@@ -85,25 +83,16 @@ public class Constants {
     /**
      * Unique identifier for device, not dependent on package or device.
      */
-    static String DEVICE_IDENTIFIER = null;
+    static LatchFuture<String> DEVICE_IDENTIFIER = new LatchFuture<>();
+
+    private static AsyncTask<Void, Object, String> loadIdentifiersTask;
 
     /**
      * Lock used to wait for loading of identifiers.
      */
-    static CountDownLatch LOADING_LATCH = new CountDownLatch(1);
 
     public static Future<String> getDeviceIdentifier() {
-        if (LOADING_LATCH.getCount() == 0) {
-            return new CompletedFuture<>(DEVICE_IDENTIFIER);
-        }
-        return AsyncTaskUtils.execute(new Callable<String>() {
-
-            @Override
-            public String call() throws Exception {
-                LOADING_LATCH.await();
-                return DEVICE_IDENTIFIER;
-            }
-        });
+        return DEVICE_IDENTIFIER;
     }
 
     /**
@@ -187,11 +176,11 @@ public class Constants {
      * @param context the context to use. Usually your Activity object.
      */
     @SuppressLint("StaticFieldLeak")
-    private static void loadIdentifiers(final Context context) {
-        if (DEVICE_IDENTIFIER != null) {
+    private static synchronized void loadIdentifiers(final Context context) {
+        if (DEVICE_IDENTIFIER.isDone() || loadIdentifiersTask != null) {
             return;
         }
-        AsyncTaskUtils.execute(new AsyncTask<Void, Object, String>() {
+        AsyncTaskUtils.execute(loadIdentifiersTask = new AsyncTask<Void, Object, String>() {
             @Override
             protected String doInBackground(Void... voids) {
                 final SharedPreferences preferences = context.getSharedPreferences("HockeyApp", Context.MODE_PRIVATE);
@@ -200,13 +189,13 @@ public class Constants {
                     deviceIdentifier = UUID.randomUUID().toString();
                     preferences.edit().putString("deviceIdentifier", deviceIdentifier).apply();
                 }
+                DEVICE_IDENTIFIER.complete(deviceIdentifier);
                 return deviceIdentifier;
             }
 
             @Override
             protected void onPostExecute(String deviceIdentifier) {
-                DEVICE_IDENTIFIER = deviceIdentifier;
-                LOADING_LATCH.countDown();
+                loadIdentifiersTask = null;
             }
         });
     }
