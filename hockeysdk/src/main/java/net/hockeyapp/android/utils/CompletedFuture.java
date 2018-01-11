@@ -13,7 +13,7 @@ public class CompletedFuture<T> implements Future<T> {
     }
 
     @Override
-    public boolean cancel(final boolean b) {
+    public boolean cancel(final boolean mayInterruptIfRunning) {
         return false;
     }
 
@@ -34,7 +34,7 @@ public class CompletedFuture<T> implements Future<T> {
 
     @SuppressWarnings("NullableProblems")
     @Override
-    public T get(final long l, final TimeUnit timeUnit) throws InterruptedException, ExecutionException, TimeoutException {
+    public T get(final long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
         return mResult;
     }
 }
