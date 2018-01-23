@@ -408,9 +408,13 @@ public class CrashManager {
         try {
             String stacktrace = contentsOfFile(weakContext, filename);
             if (stacktrace.length() > 0) {
-                // Transmit stack trace with POST request
 
+                // Transmit stack trace with POST request
                 HockeyLog.debug("Transmitting crash data: \n" + stacktrace);
+                if (stacktrace.length() > HttpURLConnectionBuilder.FORM_FIELD_LIMIT) {
+                    HockeyLog.info("The stack trace is too large, truncate a bit");
+                    stacktrace = stacktrace.substring(0, stacktrace.lastIndexOf('\n', HttpURLConnectionBuilder.FORM_FIELD_LIMIT - 1) + 1);
+                }
 
                 // Retrieve user ID and contact information if given
                 String userID = contentsOfFile(weakContext, filename.replace(".stacktrace", ".user"));
