@@ -403,64 +403,72 @@ public class CrashManager {
     }
 
     private static void submitStackTrace(final WeakReference<Context> weakContext, String filename, CrashManagerListener listener, CrashMetaData crashMetaData) {
+        String stacktrace = null;
+        try {
+            stacktrace = contentsOfFile(weakContext, filename);
+        } catch (Exception e) {
+            HockeyLog.error("Failed to read crash data", e);
+        }
+        if (stacktrace.length() == 0) {
+            HockeyLog.warn("The crash data is invalid");
+            deleteStackTrace(weakContext, filename);
+            if (listener != null) {
+                listener.onCrashesSent();
+                deleteRetryCounter(weakContext, filename);
+            }
+            return;
+        }
         Boolean successful = false;
         HttpURLConnection urlConnection = null;
         try {
-            String stacktrace = contentsOfFile(weakContext, filename);
-            if (stacktrace.length() > 0) {
-
-                // Transmit stack trace with POST request
-                HockeyLog.debug("Transmitting crash data: \n" + stacktrace);
-                if (stacktrace.length() > HttpURLConnectionBuilder.FORM_FIELD_LIMIT) {
-                    HockeyLog.info("The stack trace is too large, truncate a bit");
-                    stacktrace = stacktrace.substring(0, stacktrace.lastIndexOf('\n', HttpURLConnectionBuilder.FORM_FIELD_LIMIT - 1) + 1);
-                }
-
-                // Retrieve user ID and contact information if given
-                String userID = contentsOfFile(weakContext, filename.replace(".stacktrace", ".user"));
-                String contact = contentsOfFile(weakContext, filename.replace(".stacktrace", ".contact"));
-
-                if (crashMetaData != null) {
-                    final String crashMetaDataUserID = crashMetaData.getUserID();
-                    if (!TextUtils.isEmpty(crashMetaDataUserID)) {
-                        userID = crashMetaDataUserID;
-                    }
-                    final String crashMetaDataContact = crashMetaData.getUserEmail();
-                    if (!TextUtils.isEmpty(crashMetaDataContact)) {
-                        contact = crashMetaDataContact;
-                    }
-                }
-
-                // Append application log to user provided description if present, if not, just send application log
-                final String applicationLog = contentsOfFile(weakContext, filename.replace(".stacktrace", ".description"));
-                String description = crashMetaData != null ? crashMetaData.getUserDescription() : "";
-                if (!TextUtils.isEmpty(applicationLog)) {
-                    if (!TextUtils.isEmpty(description)) {
-                        description = String.format("%s\n\nLog:\n%s", description, applicationLog);
-                    } else {
-                        description = String.format("Log:\n%s", applicationLog);
-                    }
-                }
-
-                Map<String, String> parameters = new HashMap<>();
-
-                parameters.put("raw", stacktrace);
-                parameters.put("userID", userID);
-                parameters.put("contact", contact);
-                parameters.put("description", description);
-                parameters.put("sdk", Constants.SDK_NAME);
-                parameters.put("sdk_version", BuildConfig.VERSION_NAME);
-
-                urlConnection = new HttpURLConnectionBuilder(getURLString())
-                        .setRequestMethod("POST")
-                        .writeFormFields(parameters)
-                        .build();
-
-                int responseCode = urlConnection.getResponseCode();
-
-                successful = (responseCode == HttpURLConnection.HTTP_ACCEPTED || responseCode == HttpURLConnection.HTTP_CREATED);
-
+            // Transmit stack trace with POST request
+            HockeyLog.debug("Transmitting crash data: \n" + stacktrace);
+            if (stacktrace.length() > HttpURLConnectionBuilder.FORM_FIELD_LIMIT) {
+                HockeyLog.info("The stack trace is too large, truncate a bit");
+                stacktrace = stacktrace.substring(0, stacktrace.lastIndexOf('\n', HttpURLConnectionBuilder.FORM_FIELD_LIMIT - 1) + 1);
             }
+
+            // Retrieve user ID and contact information if given
+            String userID = contentsOfFile(weakContext, filename.replace(".stacktrace", ".user"));
+            String contact = contentsOfFile(weakContext, filename.replace(".stacktrace", ".contact"));
+
+            if (crashMetaData != null) {
+                final String crashMetaDataUserID = crashMetaData.getUserID();
+                if (!TextUtils.isEmpty(crashMetaDataUserID)) {
+                    userID = crashMetaDataUserID;
+                }
+                final String crashMetaDataContact = crashMetaData.getUserEmail();
+                if (!TextUtils.isEmpty(crashMetaDataContact)) {
+                    contact = crashMetaDataContact;
+                }
+            }
+
+            // Append application log to user provided description if present, if not, just send application log
+            final String applicationLog = contentsOfFile(weakContext, filename.replace(".stacktrace", ".description"));
+            String description = crashMetaData != null ? crashMetaData.getUserDescription() : "";
+            if (!TextUtils.isEmpty(applicationLog)) {
+                if (!TextUtils.isEmpty(description)) {
+                    description = String.format("%s\n\nLog:\n%s", description, applicationLog);
+                } else {
+                    description = String.format("Log:\n%s", applicationLog);
+                }
+            }
+
+            Map<String, String> parameters = new HashMap<>();
+            parameters.put("raw", stacktrace);
+            parameters.put("userID", userID);
+            parameters.put("contact", contact);
+            parameters.put("description", description);
+            parameters.put("sdk", Constants.SDK_NAME);
+            parameters.put("sdk_version", BuildConfig.VERSION_NAME);
+
+            urlConnection = new HttpURLConnectionBuilder(getURLString())
+                    .setRequestMethod("POST")
+                    .writeFormFields(parameters)
+                    .build();
+
+            int responseCode = urlConnection.getResponseCode();
+            successful = (responseCode == HttpURLConnection.HTTP_ACCEPTED || responseCode == HttpURLConnection.HTTP_CREATED);
         } catch (Exception e) {
             HockeyLog.error("Failed to transmit crash data", e);
         } finally {
