@@ -3,6 +3,7 @@ package net.hockeyapp.android.objects;
 import android.content.Context;
 import android.text.TextUtils;
 
+import net.hockeyapp.android.utils.BoundedPrintWriter;
 import net.hockeyapp.android.utils.HockeyLog;
 import net.hockeyapp.android.utils.JSONDateUtils;
 
@@ -22,8 +23,6 @@ import java.util.Date;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class CrashDetails {
-    protected static final int STACKTRACE_MAX_LENGTH = 4 * 1024 * 1024;
-
     private static final String FIELD_CRASH_REPORTER_KEY = "CrashReporter Key";
     private static final String FIELD_APP_START_DATE = "Start Date";
     private static final String FIELD_APP_CRASH_DATE = "Date";
@@ -38,7 +37,12 @@ public class CrashDetails {
 
     private static final String FIELD_FORMAT = "Format";
     private static final String FIELD_FORMAT_VALUE = "Xamarin";
-    private static final String FIELD_XAMARIN_CAUSED_BY = "Xamarin caused by: "; //Field that marks a Xamarin Exception
+    protected static final String FIELD_XAMARIN_CAUSED_BY = "Xamarin caused by: "; //Field that marks a Xamarin Exception
+
+    // Visible for testing
+    protected static final int CRASH_FILE_MAX_SIZE = 4 * 1024 * 1024;
+    protected static final int CRASH_FILE_HEADERS_MAX_SIZE = 5 * 1024;
+    protected static final int CRASH_FILE_STACKTRACE_MAX_SIZE = CRASH_FILE_MAX_SIZE - CRASH_FILE_HEADERS_MAX_SIZE;
 
     private final String crashIdentifier;
     private String reporterKey;
@@ -68,7 +72,7 @@ public class CrashDetails {
         isXamarinException = false;
 
         final Writer stackTraceResult = new StringWriter();
-        final PrintWriter printWriter = new PrintWriter(stackTraceResult);
+        final PrintWriter printWriter = new BoundedPrintWriter(stackTraceResult, CRASH_FILE_STACKTRACE_MAX_SIZE);
         throwable.printStackTrace(printWriter);
         throwableStackTrace = stackTraceResult.toString();
     }
@@ -78,7 +82,7 @@ public class CrashDetails {
         this(crashIdentifier);
 
         final Writer stackTraceResult = new StringWriter();
-        final PrintWriter printWriter = new PrintWriter(stackTraceResult);
+        final PrintWriter printWriter = new BoundedPrintWriter(stackTraceResult, CRASH_FILE_STACKTRACE_MAX_SIZE);
 
         isXamarinException = true;
 
@@ -98,12 +102,15 @@ public class CrashDetails {
             //exception, The throwable will be the Java exception.
             if (!TextUtils.isEmpty(managedExceptionString)) {
                 //Print the java exception
-                throwable.printStackTrace(printWriter);
+                PrintWriter javaExceptionWriter = new BoundedPrintWriter(stackTraceResult, CRASH_FILE_STACKTRACE_MAX_SIZE / 2);
+                throwable.printStackTrace(javaExceptionWriter);
 
                 //Add "Xamarin Caused By" before the managed stacktrace. No new line after it.
                 printWriter.print(FIELD_XAMARIN_CAUSED_BY);
+
                 //print the stacktrace of the managed exception
-                printWriter.print(managedExceptionString);
+                PrintWriter managedExceptionWriter = new BoundedPrintWriter(stackTraceResult, CRASH_FILE_STACKTRACE_MAX_SIZE / 2);
+                managedExceptionWriter.print(managedExceptionString);
             } else {
                 //we have a java exception, no "Xamarin Caused By:"
                 throwable.printStackTrace(printWriter);
@@ -221,9 +228,6 @@ public class CrashDetails {
             }
 
             writer.write("\n");
-            if (throwableStackTrace.length() > STACKTRACE_MAX_LENGTH) {
-                throwableStackTrace = throwableStackTrace.substring(0, throwableStackTrace.lastIndexOf('\n', STACKTRACE_MAX_LENGTH - 1) + 1);
-            }
             writer.write(throwableStackTrace);
             writer.flush();
 
