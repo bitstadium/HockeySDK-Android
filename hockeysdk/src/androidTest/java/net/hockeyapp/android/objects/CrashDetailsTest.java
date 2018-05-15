@@ -12,11 +12,21 @@ import net.hockeyapp.android.util.StacktraceFilenameFilter;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import java.io.File;
-import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Arrays;
+import java.util.Random;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
 
 @RunWith(AndroidJUnit4.class)
 public class CrashDetailsTest {
@@ -63,5 +73,31 @@ public class CrashDetailsTest {
         assertNotNull(details.getAppStartDate());
         assertNotNull(details.getAppCrashDate());
         assertTrue("Crash date must be later than initialization date", details.getAppCrashDate().compareTo(details.getAppStartDate()) > 0);
+    }
+
+    @Test
+    public void testCrashStacktraceIsTruncated() throws Exception {
+        Throwable tr = new RuntimeException("Just a test exception");
+        Throwable throwableSpy = Mockito.spy(tr);
+        doAnswer(new Answer<Void>() {
+           public Void answer(InvocationOnMock invocation) {
+               PrintWriter writer = (PrintWriter) invocation.getArguments()[0];
+               char [] stackTraceBuffer = new char[CrashDetails.STACKTRACE_MAX_LENGTH + 1];
+               Arrays.fill(stackTraceBuffer, 0, CrashDetails.STACKTRACE_MAX_LENGTH - 1,'0');
+               int randomIndex = new Random().nextInt(CrashDetails.STACKTRACE_MAX_LENGTH);
+               stackTraceBuffer[randomIndex] = '\n';
+               writer.write(stackTraceBuffer);
+               return null;
+           }
+        }).when(throwableSpy).printStackTrace(any(PrintWriter.class));
+        ExceptionHandler.saveException(throwableSpy, Thread.currentThread(), null);
+
+        File[] stackTraceFiles = filesDirectory.listFiles(new StacktraceFilenameFilter());
+        assertEquals(1, stackTraceFiles.length);
+
+        CrashDetails details = CrashDetails.fromFile(stackTraceFiles[0]);
+        assertNotNull(details);
+
+        assertTrue("Crash stacktrace was not truncated", details.getThrowableStackTrace().length() < CrashDetails.STACKTRACE_MAX_LENGTH);
     }
 }
