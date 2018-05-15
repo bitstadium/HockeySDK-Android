@@ -22,6 +22,8 @@ import java.util.Date;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class CrashDetails {
+    protected static final int STACKTRACE_MAX_LENGTH = 4 * 1024 * 1024;
+
     private static final String FIELD_CRASH_REPORTER_KEY = "CrashReporter Key";
     private static final String FIELD_APP_START_DATE = "Start Date";
     private static final String FIELD_APP_CRASH_DATE = "Date";
@@ -219,8 +221,10 @@ public class CrashDetails {
             }
 
             writer.write("\n");
+            if (throwableStackTrace.length() > STACKTRACE_MAX_LENGTH) {
+                throwableStackTrace = throwableStackTrace.substring(0, throwableStackTrace.lastIndexOf('\n', STACKTRACE_MAX_LENGTH - 1) + 1);
+            }
             writer.write(throwableStackTrace);
-
             writer.flush();
 
         } catch (IOException e) {
