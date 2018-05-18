@@ -413,7 +413,7 @@ public class CrashManager {
             HockeyLog.warn("The crash data is invalid");
             deleteStackTrace(weakContext, filename);
             if (listener != null) {
-                listener.onCrashesSent();
+                listener.onCrashesNotSent();
                 deleteRetryCounter(weakContext, filename);
             }
             return;
