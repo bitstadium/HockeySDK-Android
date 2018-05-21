@@ -409,7 +409,7 @@ public class CrashManager {
         } catch (Exception e) {
             HockeyLog.error("Failed to read crash data", e);
         }
-        if (stacktrace.length() == 0) {
+        if (TextUtils.isEmpty(stacktrace)) {
             HockeyLog.warn("The crash data is invalid");
             deleteStackTrace(weakContext, filename);
             if (listener != null) {
