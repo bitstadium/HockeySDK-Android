@@ -6,12 +6,14 @@ import java.io.Writer;
 public class BoundedPrintWriter extends PrintWriter {
 
     private final int maxLength;
+    private final String lineSeparator;
 
     private int currentLength = 0;
 
     public BoundedPrintWriter(Writer out, int maxLength) {
         super(out);
         this.maxLength = maxLength;
+        this.lineSeparator = System.getProperty("line.separator");
     }
 
     @Override
@@ -23,5 +25,16 @@ public class BoundedPrintWriter extends PrintWriter {
             super.write(buf, off, maxLength - currentLength);
             currentLength = maxLength;
         }
+    }
+
+    @Override
+    public void write(String s, int off, int len) {
+        char [] buffer = s.toCharArray();
+        write(buffer, 0, buffer.length);
+    }
+
+    @Override
+    public void println() {
+        write(lineSeparator);
     }
 }

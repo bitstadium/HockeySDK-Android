@@ -78,11 +78,22 @@ public class CrashDetails {
     }
 
 
+    /**
+     * This constructor uses BoundedPrintWriter to limit the size of the stacktrace to
+     * CRASH_FILE_STACKTRACE_MAX_SIZE constant. If both Java and Xamarin exceptions are
+     * present, each of them takes half of the stacktrace max size.
+     *
+     * @see #CRASH_FILE_STACKTRACE_MAX_SIZE
+     */
     public CrashDetails(String crashIdentifier, Throwable throwable, String managedExceptionString, Boolean isManagedException) {
         this(crashIdentifier);
 
+        final int xamarinCausedByHeaderLength = FIELD_XAMARIN_CAUSED_BY.length();
         final Writer stackTraceResult = new StringWriter();
-        final PrintWriter printWriter = new BoundedPrintWriter(stackTraceResult, CRASH_FILE_STACKTRACE_MAX_SIZE);
+        // Limit stack traces size to CRASH_FILE_STACKTRACE_MAX_SIZE plus
+        // length of the FIELD_XAMARIN_CAUSED_BY field.
+        final PrintWriter printWriter = new BoundedPrintWriter(stackTraceResult,
+                CRASH_FILE_STACKTRACE_MAX_SIZE + xamarinCausedByHeaderLength);
 
         isXamarinException = true;
 
@@ -102,14 +113,16 @@ public class CrashDetails {
             //exception, The throwable will be the Java exception.
             if (!TextUtils.isEmpty(managedExceptionString)) {
                 //Print the java exception
-                PrintWriter javaExceptionWriter = new BoundedPrintWriter(stackTraceResult, CRASH_FILE_STACKTRACE_MAX_SIZE / 2);
+                PrintWriter javaExceptionWriter = new BoundedPrintWriter(printWriter,
+                        CRASH_FILE_STACKTRACE_MAX_SIZE / 2);
                 throwable.printStackTrace(javaExceptionWriter);
 
                 //Add "Xamarin Caused By" before the managed stacktrace. No new line after it.
                 printWriter.print(FIELD_XAMARIN_CAUSED_BY);
 
-                //print the stacktrace of the managed exception
-                PrintWriter managedExceptionWriter = new BoundedPrintWriter(stackTraceResult, CRASH_FILE_STACKTRACE_MAX_SIZE / 2);
+                //Print the stacktrace of the managed exception
+                PrintWriter managedExceptionWriter = new BoundedPrintWriter(printWriter,
+                        CRASH_FILE_STACKTRACE_MAX_SIZE / 2);
                 managedExceptionWriter.print(managedExceptionString);
             } else {
                 //we have a java exception, no "Xamarin Caused By:"
