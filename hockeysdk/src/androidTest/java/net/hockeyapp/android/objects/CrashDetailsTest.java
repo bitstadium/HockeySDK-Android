@@ -19,7 +19,6 @@ import org.mockito.stubbing.Answer;
 import java.io.File;
 import java.io.PrintWriter;
 import java.util.Arrays;
-import java.util.Random;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -93,7 +92,7 @@ public class CrashDetailsTest {
         }).when(throwableSpy).printStackTrace(any(PrintWriter.class));
 
         CrashDetails details = new CrashDetails("id", throwableSpy);
-        assertTrue("Crash stacktrace was not truncated", details.getThrowableStackTrace().length() <= CrashDetails.CRASH_FILE_STACKTRACE_MAX_SIZE);
+        assertTrue("Crash stacktrace was not truncated", details.getThrowableStackTrace().length() <= CrashDetails.CRASH_FILE_STACKTRACE_SIZE);
     }
 
     @Test
@@ -126,6 +125,6 @@ public class CrashDetailsTest {
         CrashDetails details = new CrashDetails("id", throwableSpy, managedException, false);
         final int xamarinHeaderLength = CrashDetails.FIELD_XAMARIN_CAUSED_BY.length();
         assertTrue("Crash stacktrace was not truncated",
-                details.getThrowableStackTrace().length() <= CrashDetails.CRASH_FILE_STACKTRACE_MAX_SIZE + xamarinHeaderLength);
+                details.getThrowableStackTrace().length() <= CrashDetails.CRASH_FILE_STACKTRACE_SIZE + xamarinHeaderLength);
     }
 }

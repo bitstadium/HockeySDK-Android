@@ -1,40 +1,50 @@
 package net.hockeyapp.android.utils;
 
-import java.io.PrintWriter;
+import java.io.IOException;
 import java.io.Writer;
 
-public class BoundedPrintWriter extends PrintWriter {
+public class BoundedPrintWriter extends Writer {
 
     private final int maxLength;
-    private final String lineSeparator;
-
+    private final Writer out;
     private int currentLength = 0;
 
     public BoundedPrintWriter(Writer out, int maxLength) {
         super(out);
+        this.out = out;
         this.maxLength = maxLength;
-        this.lineSeparator = System.getProperty("line.separator");
     }
 
     @Override
     public void write(char[] buf, int off, int len) {
-        if (currentLength + len < maxLength) {
-            super.write(buf, off, len);
-            currentLength += len;
-        } else {
-            super.write(buf, off, maxLength - currentLength);
-            currentLength = maxLength;
+        try {
+            if (currentLength + len < maxLength) {
+                out.write(buf, off, len);
+                currentLength += len;
+            } else {
+                out.write(buf, off, maxLength - currentLength);
+                currentLength = maxLength;
+            }
         }
+        catch (IOException ignored) { }
     }
 
     @Override
-    public void write(String s, int off, int len) {
-        char [] buffer = s.toCharArray();
-        write(buffer, 0, buffer.length);
+    public void close() {
+        try {
+            if (out == null) {
+                return;
+            }
+            out.close();
+        }
+        catch (IOException ignored) {}
     }
 
     @Override
-    public void println() {
-        write(lineSeparator);
+    public void flush() {
+        try {
+            out.flush();
+        }
+        catch (IOException ignored) {}
     }
 }
