@@ -1,5 +1,6 @@
 package net.hockeyapp.android;
 
+import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -11,11 +12,15 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
+import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 @RunWith(AndroidJUnit4.class)
 public class CrashManagerTest {
@@ -120,5 +125,19 @@ public class CrashManagerTest {
         String throwableStackTrace = crashDetails.getThrowableStackTrace();
         Boolean containsCausedByXamarin = throwableStackTrace.contains("Xamarin caused by:");
         assertTrue(containsCausedByXamarin);
+    }
+
+    @Test
+    public void invalidStackTrace() throws Exception {
+        File file = new File(filesDirectory, UUID.randomUUID().toString() + ".stacktrace");
+        file.createNewFile();
+
+        CrashManagerListener listener = mock(CrashManagerListener.class);
+        WeakReference<Context> weakContext = new WeakReference<>(InstrumentationRegistry.getTargetContext());
+
+        CrashManager.submitStackTraces(weakContext, listener);
+
+        verify(listener).onCrashesNotSent();
+        assertEquals(0, CrashManager.stackTracesCount);
     }
 }
