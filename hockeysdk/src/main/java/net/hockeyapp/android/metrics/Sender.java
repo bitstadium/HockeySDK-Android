@@ -267,7 +267,6 @@ public class Sender {
             }
 
             //trigger send next file or log unexpected responses
-            StringBuilder builder = new StringBuilder();
             if (isExpected(responseCode)) {
                 try {
                     InputStream inputStream = connection.getInputStream();
@@ -279,7 +278,7 @@ public class Sender {
                 }
                 triggerSending();
             } else {
-                this.onUnexpected(connection, responseCode, builder);
+                this.onUnexpected(connection, responseCode);
             }
         }
     }
@@ -316,19 +315,12 @@ public class Sender {
      *
      * @param connection   The connection containing the response.
      * @param responseCode The response code from the connection.
-     * @param builder      A string builder for storing the response.
      */
-    protected void onUnexpected(HttpURLConnection connection, int responseCode, StringBuilder
-            builder) {
-        String message = String.format(Locale.ROOT, "Unexpected response code: %d", responseCode);
-        builder.append(message);
-        builder.append("\n");
-
-        // log the unexpected response
-        HockeyLog.error(TAG, message);
+    protected void onUnexpected(HttpURLConnection connection, int responseCode) {
+        HockeyLog.error("Unexpected response code: " + responseCode);
 
         // attempt to read the response stream
-        this.readResponse(connection, builder);
+        this.readResponse(connection);
     }
 
 
@@ -365,11 +357,8 @@ public class Sender {
      * Reads the response from a connection.
      *
      * @param connection the connection which will read the response
-     * @param builder    a string builder for storing the response
      */
-    protected void readResponse(HttpURLConnection connection, StringBuilder builder) {
-        String result;
-        StringBuilder buffer = new StringBuilder();
+    protected void readResponse(HttpURLConnection connection) {
         InputStream inputStream = null;
 
         try {
@@ -378,23 +367,15 @@ public class Sender {
                 inputStream = connection.getInputStream();
             }
 
-            if(inputStream != null){
+            if (inputStream != null) {
+                HockeyLog.verbose("Response:");
                 BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
-                String inputLine;
-                while ((inputLine = br.readLine()) != null) {
-                    buffer.append(inputLine);
+                String line;
+                while ((line = br.readLine()) != null) {
+                    HockeyLog.verbose("> " + line);
                 }
-                result = buffer.toString();
-            }
-            else {
-                result = connection.getResponseMessage();
-            }
-
-            if(!TextUtils.isEmpty(result)) {
-                HockeyLog.verbose(result);
-            }
-            else {
-                HockeyLog.verbose(TAG, "Couldn't log response, result is null or empty string");
+            } else {
+                HockeyLog.verbose("Response message: " + connection.getResponseMessage());
             }
         } catch (IOException e) {
             HockeyLog.error(TAG, e.toString());
