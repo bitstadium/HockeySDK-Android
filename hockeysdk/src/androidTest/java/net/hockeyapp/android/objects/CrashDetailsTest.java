@@ -12,11 +12,20 @@ import net.hockeyapp.android.util.StacktraceFilenameFilter;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import java.io.File;
-import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Arrays;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
 
 @RunWith(AndroidJUnit4.class)
 public class CrashDetailsTest {
@@ -63,5 +72,59 @@ public class CrashDetailsTest {
         assertNotNull(details.getAppStartDate());
         assertNotNull(details.getAppCrashDate());
         assertTrue("Crash date must be later than initialization date", details.getAppCrashDate().compareTo(details.getAppStartDate()) > 0);
+    }
+
+    @Test
+    public void testCrashStacktraceIsTruncated() {
+        Throwable tr = new RuntimeException("Just a test exception");
+        Throwable throwableSpy = Mockito.spy(tr);
+        doAnswer(new Answer<Void>() {
+            public Void answer(InvocationOnMock invocation) {
+                PrintWriter writer = (PrintWriter) invocation.getArguments()[0];
+                final int bufferSize = 1024 * 1024;
+                char [] stackTraceBuffer = new char[bufferSize];
+                Arrays.fill(stackTraceBuffer, 0, bufferSize - 1,'0');
+                for(int i = 0; i < 5; i++) {
+                    writer.write(stackTraceBuffer);
+                }
+                return null;
+            }
+        }).when(throwableSpy).printStackTrace(any(PrintWriter.class));
+
+        CrashDetails details = new CrashDetails("id", throwableSpy);
+        assertTrue("Crash stacktrace was not truncated", details.getThrowableStackTrace().length() <= CrashDetails.CRASH_FILE_STACKTRACE_SIZE);
+    }
+
+    @Test
+    public void testXamarinCrashStacktraceIsTruncated() {
+        final int bufferSize = 1024 * 1024;
+        final char [] stackTraceBuffer = new char[bufferSize];
+        Arrays.fill(stackTraceBuffer, 0, bufferSize - 1,'0');
+        Throwable tr = new RuntimeException("Just a test exception");
+        Throwable throwableSpy = Mockito.spy(tr);
+        doAnswer(new Answer<Void>() {
+            public Void answer(InvocationOnMock invocation) {
+                PrintWriter writer = (PrintWriter) invocation.getArguments()[0];
+                for(int i = 0; i < 5; i++) {
+                    writer.write(stackTraceBuffer);
+                }
+                return null;
+            }
+        }).when(throwableSpy).printStackTrace(any(PrintWriter.class));
+
+        final String managedException = new StringBuilder()
+                .append(stackTraceBuffer)
+                .append("\n")
+                .append(stackTraceBuffer)
+                .append("\n")
+                .append(stackTraceBuffer)
+                .append("\n")
+                .append(stackTraceBuffer)
+                .toString();
+
+        CrashDetails details = new CrashDetails("id", throwableSpy, managedException, false);
+        final int xamarinHeaderLength = CrashDetails.FIELD_XAMARIN_CAUSED_BY.length();
+        assertTrue("Crash stacktrace was not truncated",
+                details.getThrowableStackTrace().length() <= CrashDetails.CRASH_FILE_STACKTRACE_SIZE + xamarinHeaderLength);
     }
 }
