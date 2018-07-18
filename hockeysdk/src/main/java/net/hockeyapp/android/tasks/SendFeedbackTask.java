@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.TrafficStats;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -252,6 +253,7 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
                 mUrlString += mToken + "/";
             }
 
+            TrafficStats.setThreadStatsTag(Constants.THREAD_STATS_TAG);
             urlConnection = new HttpURLConnectionBuilder(mUrlString)
                     .setRequestMethod(mToken != null ? "PUT" : "POST")
                     .writeFormFields(parameters)
@@ -264,6 +266,7 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
         } catch (IOException e) {
             HockeyLog.error("Failed to send feedback message", e);
         } finally {
+            TrafficStats.clearThreadStatsTag();
             if (urlConnection != null) {
                 urlConnection.disconnect();
             }
@@ -302,6 +305,7 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
                 mUrlString += mToken + "/";
             }
 
+            TrafficStats.setThreadStatsTag(Constants.THREAD_STATS_TAG);
             urlConnection = new HttpURLConnectionBuilder(mUrlString)
                     .setRequestMethod(mToken != null ? "PUT" : "POST")
                     .writeMultipartData(parameters, mContext, mAttachmentUris)
@@ -315,6 +319,7 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
         } catch (IOException e) {
             HockeyLog.error("Failed to send feedback message", e);
         } finally {
+            TrafficStats.clearThreadStatsTag();
             if (urlConnection != null) {
                 urlConnection.disconnect();
             }
@@ -340,7 +345,7 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
 
         HttpURLConnection urlConnection = null;
         try {
-
+            TrafficStats.setThreadStatsTag(Constants.THREAD_STATS_TAG);
             urlConnection = new HttpURLConnectionBuilder(sb.toString())
                     .build();
 
@@ -353,6 +358,7 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
         } catch (IOException e) {
             HockeyLog.error("Failed to fetching feedback messages", e);
         } finally {
+            TrafficStats.clearThreadStatsTag();
             if (urlConnection != null) {
                 urlConnection.disconnect();
             }

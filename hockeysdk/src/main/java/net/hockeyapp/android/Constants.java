@@ -39,6 +39,8 @@ public class Constants {
 
     public static final String FILES_DIRECTORY_NAME = "HockeyApp";
 
+    public static final int THREAD_STATS_TAG = SDK_NAME.hashCode();
+
     /**
      * The user agent string the SDK will send with every HockeyApp API request.
      */

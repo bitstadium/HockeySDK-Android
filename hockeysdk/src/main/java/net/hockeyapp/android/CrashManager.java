@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.net.TrafficStats;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
@@ -462,6 +463,7 @@ public class CrashManager {
             parameters.put("sdk", Constants.SDK_NAME);
             parameters.put("sdk_version", BuildConfig.VERSION_NAME);
 
+            TrafficStats.setThreadStatsTag(Constants.THREAD_STATS_TAG);
             urlConnection = new HttpURLConnectionBuilder(getURLString())
                     .setRequestMethod("POST")
                     .writeFormFields(parameters)
@@ -472,6 +474,7 @@ public class CrashManager {
         } catch (Exception e) {
             HockeyLog.error("Failed to transmit crash data", e);
         } finally {
+            TrafficStats.clearThreadStatsTag();
             if (urlConnection != null) {
                 urlConnection.disconnect();
             }

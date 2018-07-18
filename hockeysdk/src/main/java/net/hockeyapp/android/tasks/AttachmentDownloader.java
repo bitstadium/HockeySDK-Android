@@ -3,6 +3,7 @@ package net.hockeyapp.android.tasks;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.net.TrafficStats;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
@@ -229,6 +230,7 @@ public class AttachmentDownloader {
             HttpURLConnection connection = null;
             try {
                 connection = (HttpURLConnection) createConnection(new URL(url));
+                TrafficStats.setThreadStatsTag(Constants.THREAD_STATS_TAG);
                 connection.connect();
 
                 int lengthOfFile = connection.getContentLength();
@@ -259,6 +261,7 @@ public class AttachmentDownloader {
                 HockeyLog.error("Failed to download attachment to " + file, e);
                 return false;
             } finally {
+                TrafficStats.clearThreadStatsTag();
                 try {
                     if (output != null) {
                         output.close();
