@@ -1,4 +1,3 @@
-[![Build Status](https://app.bitrise.io/app/562949a18404dad6/status.svg?token=IZE4w-D2xii7QjqvJVc51A&branch=master)](https://app.bitrise.io/app/562949a18404dad6)
 [![Slack Status](https://slack.hockeyapp.net/badge.svg)](https://slack.hockeyapp.net)
 
 ## Version 5.1.0
