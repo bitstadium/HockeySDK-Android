@@ -31,7 +31,7 @@ public class TrackingTest {
              * will write to a different preferences key than the test tracking module
              */
             Constants.loadFromContext(mActivityRule.getActivity());
-            Constants.LOADING_LATCH.await();
+            Constants.DEVICE_IDENTIFIER.get();
         }
     }
 

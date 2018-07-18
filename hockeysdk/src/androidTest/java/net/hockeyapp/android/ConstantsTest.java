@@ -19,7 +19,7 @@ public class ConstantsTest {
     @Test
     public void testLoadingConstantsWorks() throws Exception {
         Constants.loadFromContext(InstrumentationRegistry.getContext());
-        Constants.LOADING_LATCH.await();
+        Constants.DEVICE_IDENTIFIER.get();
 
         assertNotNull(Constants.BASE_URL);
         assertEquals("https://sdk.hockeyapp.net/", Constants.BASE_URL);

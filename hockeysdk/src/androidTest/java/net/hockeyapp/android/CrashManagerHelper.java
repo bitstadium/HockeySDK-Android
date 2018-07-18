@@ -10,9 +10,9 @@ import java.util.concurrent.CountDownLatch;
 
 public class CrashManagerHelper {
 
-    public static void loadConstants(Context context) throws InterruptedException {
+    public static void loadConstants(Context context) throws Exception {
         Constants.loadFromContext(context);
-        Constants.LOADING_LATCH.await();
+        Constants.DEVICE_IDENTIFIER.get();
     }
 
     public static void reset(Context context) {
