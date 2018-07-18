@@ -2,9 +2,12 @@ package net.hockeyapp.android.metrics;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.net.TrafficStats;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.text.TextUtils;
+
+import net.hockeyapp.android.Constants;
 import net.hockeyapp.android.utils.AsyncTaskUtils;
 import net.hockeyapp.android.utils.HockeyLog;
 
@@ -144,6 +147,7 @@ public class Sender {
         // TODO Why does this get the file and persistedData reference, even though everything is in the connection?
         // TODO Looks like this will have to be rewritten for its own AsyncTask subclass.
         if (connection != null && file != null && persistedData != null) {
+            TrafficStats.setThreadStatsTag(Constants.THREAD_STATS_TAG);
             try {
                 mRequestCount.getAndIncrement();
                 logRequest(connection, persistedData);
@@ -177,6 +181,8 @@ public class Sender {
                     HockeyLog.debug(TAG, "Persisting because of unknown exception.");
                     this.getPersistence().makeAvailable(file); // Send again later
                 }
+            } finally {
+                TrafficStats.clearThreadStatsTag();
             }
         }
     }

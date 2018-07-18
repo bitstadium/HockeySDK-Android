@@ -4,15 +4,18 @@ import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.TrafficStats;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
+
 import net.hockeyapp.android.Constants;
 import net.hockeyapp.android.LoginManager;
 import net.hockeyapp.android.utils.HockeyLog;
 import net.hockeyapp.android.utils.HttpURLConnectionBuilder;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -92,7 +95,7 @@ public class LoginTask extends ConnectionTask<Void, Void, Boolean> {
     protected Boolean doInBackground(Void... args) {
         HttpURLConnection connection = null;
         try {
-
+            TrafficStats.setThreadStatsTag(Constants.THREAD_STATS_TAG);
             connection = makeRequest(mMode, mParams);
             connection.connect();
 
@@ -106,6 +109,7 @@ public class LoginTask extends ConnectionTask<Void, Void, Boolean> {
         } catch (IOException e) {
             HockeyLog.error("Failed to login", e);
         } finally {
+            TrafficStats.clearThreadStatsTag();
             if (connection != null) {
                 connection.disconnect();
             }
