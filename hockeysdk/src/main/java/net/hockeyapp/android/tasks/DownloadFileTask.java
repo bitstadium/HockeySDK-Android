@@ -37,6 +37,7 @@ import java.util.UUID;
 @SuppressLint("StaticFieldLeak")
 public class DownloadFileTask extends AsyncTask<Void, Integer, Long> {
     protected static final int MAX_REDIRECTS = 6;
+    protected static final int TIMEOUT = 60000;
 
     protected Context mContext;
     protected DownloadFileListener mNotifier;
@@ -123,6 +124,8 @@ public class DownloadFileTask extends AsyncTask<Void, Integer, Long> {
     protected void setConnectionProperties(HttpURLConnection connection) {
         connection.addRequestProperty("User-Agent", Constants.SDK_USER_AGENT);
         connection.setInstanceFollowRedirects(true);
+        connection.setConnectTimeout(TIMEOUT);
+        connection.setReadTimeout(TIMEOUT);
     }
 
     /**
