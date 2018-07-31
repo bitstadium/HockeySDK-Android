@@ -182,12 +182,14 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
                     return name.endsWith(".jpg");
                 }
             });
-            for (File screenshot : screenshots) {
-                if (mAttachmentUris.contains(Uri.fromFile(screenshot))) {
-                    if (screenshot.delete()) {
-                        HockeyLog.debug(TAG, "Screenshot '" + screenshot.getName() + "' has been deleted");
-                    } else {
-                        HockeyLog.error(TAG, "Error deleting screenshot");
+            if (screenshots != null) {
+                for (File screenshot : screenshots) {
+                    if (mAttachmentUris.contains(Uri.fromFile(screenshot))) {
+                        if (screenshot.delete()) {
+                            HockeyLog.debug(TAG, "Screenshot '" + screenshot.getName() + "' has been deleted");
+                        } else {
+                            HockeyLog.error(TAG, "Error deleting screenshot");
+                        }
                     }
                 }
             }
