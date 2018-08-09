@@ -26,6 +26,8 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
@@ -406,7 +408,7 @@ public class CrashManager {
     private static void submitStackTrace(final WeakReference<Context> weakContext, String filename, CrashManagerListener listener, CrashMetaData crashMetaData) {
         String stacktrace = null;
         try {
-            stacktrace = contentsOfFile(weakContext, filename);
+            stacktrace = contentsOfFile(weakContext, filename, HttpURLConnectionBuilder.FORM_FIELD_LIMIT);
         } catch (Exception e) {
             HockeyLog.error("Failed to read crash data", e);
         }
@@ -424,14 +426,10 @@ public class CrashManager {
         try {
             // Transmit stack trace with POST request
             HockeyLog.debug("Transmitting crash data: \n" + stacktrace);
-            if (stacktrace.length() > HttpURLConnectionBuilder.FORM_FIELD_LIMIT) {
-                HockeyLog.info("The stack trace is too large, truncate a bit");
-                stacktrace = stacktrace.substring(0, stacktrace.lastIndexOf('\n', HttpURLConnectionBuilder.FORM_FIELD_LIMIT - 1) + 1);
-            }
 
             // Retrieve user ID and contact information if given
-            String userID = contentsOfFile(weakContext, filename.replace(".stacktrace", ".user"));
-            String contact = contentsOfFile(weakContext, filename.replace(".stacktrace", ".contact"));
+            String userID = contentsOfFile(weakContext, filename.replace(".stacktrace", ".user"), 0);
+            String contact = contentsOfFile(weakContext, filename.replace(".stacktrace", ".contact"), 0);
 
             if (crashMetaData != null) {
                 final String crashMetaDataUserID = crashMetaData.getUserID();
@@ -445,7 +443,7 @@ public class CrashManager {
             }
 
             // Append application log to user provided description if present, if not, just send application log
-            final String applicationLog = contentsOfFile(weakContext, filename.replace(".stacktrace", ".description"));
+            final String applicationLog = contentsOfFile(weakContext, filename.replace(".stacktrace", ".description"), 0);
             String description = crashMetaData != null ? crashMetaData.getUserDescription() : "";
             if (!TextUtils.isEmpty(applicationLog)) {
                 if (!TextUtils.isEmpty(description)) {
@@ -794,21 +792,29 @@ public class CrashManager {
     /**
      * Returns the content of a file as a string.
      */
-    private static String contentsOfFile(final WeakReference<Context> weakContext, String filename) {
+    static String contentsOfFile(final WeakReference<Context> weakContext, String filename, int maxLength) {
         Context context = weakContext != null ? weakContext.get() : null;
         if (context != null) {
             File file = context.getFileStreamPath(filename);
             if(file == null || !file.exists()) {
                 return "";
             }
-            StringBuilder contents = new StringBuilder();
+            final StringWriter result = new StringWriter();
+            final PrintWriter writer = new PrintWriter(result);
             BufferedReader reader = null;
             try {
                 reader = new BufferedReader(new InputStreamReader(context.openFileInput(filename)));
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    contents.append(line);
-                    contents.append(System.getProperty("line.separator"));
+
+                    // Break if the line is too long
+                    if (maxLength > 0 && result.getBuffer().length() + line.length() + 1 >= maxLength) {
+                        HockeyLog.info(filename + " is too large, truncate a bit");
+                        break;
+                    }
+
+                    // Write line + line separator
+                    writer.println(line);
                 }
             } catch (IOException e) {
                 HockeyLog.error("Failed to read content of " + filename, e);
@@ -820,7 +826,7 @@ public class CrashManager {
                     }
                 }
             }
-            return contents.toString();
+            return result.toString();
         }
         return "";
     }
