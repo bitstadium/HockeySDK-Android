@@ -98,7 +98,7 @@ public class HttpURLConnectionBuilder {
                 boolean lastFile = (i == attachmentUris.size() - 1);
 
                 InputStream input = context.getContentResolver().openInputStream(attachmentUri);
-                String filename = attachmentUri.getLastPathSegment();
+                String filename = Util.getFileName(context, attachmentUri);
                 mMultipartEntity.addPart("attachment" + i, filename, input, lastFile);
             }
             mMultipartEntity.writeLastBoundaryIfNeeds();
