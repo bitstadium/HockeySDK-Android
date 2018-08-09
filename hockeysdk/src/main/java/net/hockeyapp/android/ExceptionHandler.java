@@ -50,9 +50,6 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
     public static void saveException(Throwable exception, Thread thread, CrashManagerListener listener) {
         final Date now = new Date();
         final Date startDate = new Date(CrashManager.getInitializeTimestamp());
-        final Writer result = new StringWriter();
-        final PrintWriter printWriter = new PrintWriter(result);
-        exception.printStackTrace(printWriter);
 
         Context context = CrashManager.weakContext != null ? CrashManager.weakContext.get() : null;
         if (context == null)
@@ -150,12 +147,6 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
         final Date startDate = new Date(CrashManager.getInitializeTimestamp());
         String filename = UUID.randomUUID().toString();
         final Date now = new Date();
-
-        final Writer result = new StringWriter();
-        final PrintWriter printWriter = new PrintWriter(result);
-        if (exception != null) {
-            exception.printStackTrace(printWriter);
-        }
 
         Context context = CrashManager.weakContext != null ? CrashManager.weakContext.get() : null;
         if (context == null)
