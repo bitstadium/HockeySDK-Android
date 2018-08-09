@@ -4,15 +4,19 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Debug;
+import android.provider.OpenableColumns;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
@@ -377,5 +381,31 @@ public class Util {
             hexString.append(h);
         }
         return hexString.toString();
+    }
+
+    /**
+     * Returns a file's display name from its Uri.
+     *
+     * @param context Context trying to resolve the file's display name.
+     * @param uri Uri of the file.
+     * @return the file's display name.
+     */
+    public static String getFileName(Context context, Uri uri) {
+        String scheme = uri.getScheme();
+        String result = null;
+        if (ContentResolver.SCHEME_FILE.equals(scheme)) {
+            result = uri.getLastPathSegment();
+        } else if (ContentResolver.SCHEME_CONTENT.equals(scheme)) {
+            String[] projection = { OpenableColumns.DISPLAY_NAME };
+            Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null);
+            try {
+                if (cursor != null && cursor.moveToFirst()) {
+                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+        return result != null ? result : uri.toString();
     }
 }
