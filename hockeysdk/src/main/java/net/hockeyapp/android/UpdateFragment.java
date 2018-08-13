@@ -260,7 +260,11 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
      * download, a failed download, and configuration strings.
      */
     protected void startDownloadTask() {
-        AsyncTaskUtils.execute(new DownloadFileTask(getActivity(), mUrlString, new DownloadFileListener() {
+        Context context = getActivity();
+        if (context == null) {
+            return;
+        }
+        AsyncTaskUtils.execute(new DownloadFileTask(context, mUrlString, new DownloadFileListener() {
             public void downloadFailed(DownloadFileTask task, Boolean userWantsRetry) {
                 if (userWantsRetry) {
                     startDownloadTask();
