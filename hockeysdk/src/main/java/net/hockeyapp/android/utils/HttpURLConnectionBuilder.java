@@ -31,7 +31,7 @@ public class HttpURLConnectionBuilder {
 
     private static final int DEFAULT_TIMEOUT = 2 * 60 * 1000;
     public static final String DEFAULT_CHARSET = "UTF-8";
-    public static final long FORM_FIELD_LIMIT = 4 * 1024 * 1024;
+    public static final int FORM_FIELD_LIMIT = 4 * 1024 * 1024;
     public static final int FIELDS_LIMIT = 25;
 
     private final String mUrlString;
@@ -59,7 +59,7 @@ public class HttpURLConnectionBuilder {
         return this;
     }
 
-    public HttpURLConnectionBuilder writeFormFields(Map<String, String> fields) {
+    public HttpURLConnectionBuilder writeFormFields(Map<String, String> fields) throws IllegalArgumentException {
 
         // We should add limit on fields because a large number of fields can throw the OOM exception
         if (fields.size() > FIELDS_LIMIT) {
@@ -69,7 +69,7 @@ public class HttpURLConnectionBuilder {
         for (String key: fields.keySet()) {
             String value = fields.get(key);
             if (value != null && value.length() > FORM_FIELD_LIMIT) {
-                throw new IllegalArgumentException("Form field " + key + " size too large: " + value.length() + " - max allowed: " + FORM_FIELD_LIMIT);
+                throw new IllegalArgumentException("Form field \"" + key + "\" size too large: " + value.length() + " - max allowed: " + FORM_FIELD_LIMIT);
             }
         }
 
@@ -98,7 +98,7 @@ public class HttpURLConnectionBuilder {
                 boolean lastFile = (i == attachmentUris.size() - 1);
 
                 InputStream input = context.getContentResolver().openInputStream(attachmentUri);
-                String filename = attachmentUri.getLastPathSegment();
+                String filename = Util.getFileName(context, attachmentUri);
                 mMultipartEntity.addPart("attachment" + i, filename, input, lastFile);
             }
             mMultipartEntity.writeLastBoundaryIfNeeds();

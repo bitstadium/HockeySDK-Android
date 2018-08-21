@@ -2,6 +2,7 @@ package net.hockeyapp.android.tasks;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.TrafficStats;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.text.TextUtils;
@@ -106,6 +107,7 @@ public class CheckUpdateTask extends AsyncTask<Void, String, JSONArray> {
         try {
             int versionCode = getVersionCode();
             URL url = new URL(getURLString(context, "json"));
+            TrafficStats.setThreadStatsTag(Constants.THREAD_STATS_TAG);
             URLConnection connection = createConnection(url);
             connection.connect();
 
@@ -122,6 +124,8 @@ public class CheckUpdateTask extends AsyncTask<Void, String, JSONArray> {
             if(Util.isConnectedToNetwork(context)) {
                 HockeyLog.error("HockeyUpdate", "Could not fetch updates although connected to internet", e);
             }
+        } finally {
+            TrafficStats.clearThreadStatsTag();
         }
 
         return null;

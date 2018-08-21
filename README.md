@@ -1,7 +1,6 @@
-[![Build Status](https://www.bitrise.io/app/562949a18404dad6/status.svg?token=IZE4w-D2xii7QjqvJVc51A&branch=master)](https://www.bitrise.io/app/562949a18404dad6)
 [![Slack Status](https://slack.hockeyapp.net/badge.svg)](https://slack.hockeyapp.net)
 
-## Version 5.1.0
+## Version 5.1.1
 
 HockeySDK-Android implements support for using HockeyApp in your Android applications.
 

@@ -1,5 +1,6 @@
 package net.hockeyapp.android;
 
+import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -11,11 +12,17 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.lang.ref.WeakReference;
+import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 @RunWith(AndroidJUnit4.class)
 public class CrashManagerTest {
@@ -120,5 +127,43 @@ public class CrashManagerTest {
         String throwableStackTrace = crashDetails.getThrowableStackTrace();
         Boolean containsCausedByXamarin = throwableStackTrace.contains("Xamarin caused by:");
         assertTrue(containsCausedByXamarin);
+    }
+
+    @Test
+    public void invalidStackTrace() throws Exception {
+        File file = new File(filesDirectory, UUID.randomUUID().toString() + ".stacktrace");
+        file.createNewFile();
+
+        CrashManagerListener listener = mock(CrashManagerListener.class);
+        WeakReference<Context> weakContext = new WeakReference<>(InstrumentationRegistry.getTargetContext());
+
+        CrashManager.submitStackTraces(weakContext, listener);
+
+        verify(listener).onCrashesNotSent();
+        assertEquals(0, CrashManager.stackTracesCount);
+    }
+
+    @Test
+    public void largeStackTrace() throws Exception {
+        String stackTrace = "java.lang.OutOfMemoryError: Failed to allocate a 37657308 byte allocation with 16776928 free bytes and 27MB until OOM\n" +
+                "\tat java.lang.String.<init>(String.java:400)\n" +
+                "\tat java.lang.AbstractStringBuilder.toString(AbstractStringBuilder.java:633)\n" +
+                "\tat java.lang.StringBuilder.toString(StringBuilder.java:663)\n" +
+                "\tat net.hockeyapp.android.CrashManager.contentsOfFile(CrashManager.java:772)\n" +
+                "\tat net.hockeyapp.android.CrashManager.submitStackTrace(CrashManager.java:379)\n" +
+                "\tat net.hockeyapp.android.CrashManager.access$500(CrashManager.java:47)\n" +
+                "\tat net.hockeyapp.android.CrashManager$8.doInBackground(CrashManager.java:647)\n" +
+                "\tat net.hockeyapp.android.CrashManager$8.doInBackground(CrashManager.java:639)\n";
+
+        String filename = UUID.randomUUID().toString() + ".stacktrace";
+        File file = new File(filesDirectory, filename);
+        PrintWriter writer = new PrintWriter(file);
+        writer.print(stackTrace);
+        writer.flush();
+        writer.close();
+
+        WeakReference<Context> weakContext = new WeakReference<>(InstrumentationRegistry.getTargetContext());
+        String result = CrashManager.contentsOfFile(weakContext, filename, 500);
+        assertTrue(result.endsWith("submitStackTrace(CrashManager.java:379)\n"));
     }
 }

@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.net.TrafficStats;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
@@ -15,6 +16,7 @@ import net.hockeyapp.android.objects.CrashDetails;
 import net.hockeyapp.android.objects.CrashManagerUserInput;
 import net.hockeyapp.android.objects.CrashMetaData;
 import net.hockeyapp.android.utils.AsyncTaskUtils;
+import net.hockeyapp.android.utils.CompletedFuture;
 import net.hockeyapp.android.utils.HockeyLog;
 import net.hockeyapp.android.utils.HttpURLConnectionBuilder;
 import net.hockeyapp.android.utils.Util;
@@ -24,6 +26,8 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
@@ -302,6 +306,9 @@ public class CrashManager {
 
     @SuppressWarnings("WeakerAccess")
     public static Future<Boolean> didCrashInLastSession() {
+        if (latch.getCount() == 0) {
+            return new CompletedFuture<>(didCrashInLastSession);
+        }
         return AsyncTaskUtils.execute(new Callable<Boolean>() {
 
             @Override
@@ -399,63 +406,73 @@ public class CrashManager {
     }
 
     private static void submitStackTrace(final WeakReference<Context> weakContext, String filename, CrashManagerListener listener, CrashMetaData crashMetaData) {
+        String stacktrace = null;
+        try {
+            stacktrace = contentsOfFile(weakContext, filename, HttpURLConnectionBuilder.FORM_FIELD_LIMIT);
+        } catch (Exception e) {
+            HockeyLog.error("Failed to read crash data", e);
+        }
+        if (TextUtils.isEmpty(stacktrace)) {
+            HockeyLog.warn("The crash data is invalid");
+            deleteStackTrace(weakContext, filename);
+            if (listener != null) {
+                listener.onCrashesNotSent();
+                deleteRetryCounter(weakContext, filename);
+            }
+            return;
+        }
         Boolean successful = false;
         HttpURLConnection urlConnection = null;
         try {
-            String stacktrace = contentsOfFile(weakContext, filename);
-            if (stacktrace.length() > 0) {
-                // Transmit stack trace with POST request
+            // Transmit stack trace with POST request
+            HockeyLog.debug("Transmitting crash data: \n" + stacktrace);
 
-                HockeyLog.debug("Transmitting crash data: \n" + stacktrace);
+            // Retrieve user ID and contact information if given
+            String userID = contentsOfFile(weakContext, filename.replace(".stacktrace", ".user"), 0);
+            String contact = contentsOfFile(weakContext, filename.replace(".stacktrace", ".contact"), 0);
 
-                // Retrieve user ID and contact information if given
-                String userID = contentsOfFile(weakContext, filename.replace(".stacktrace", ".user"));
-                String contact = contentsOfFile(weakContext, filename.replace(".stacktrace", ".contact"));
-
-                if (crashMetaData != null) {
-                    final String crashMetaDataUserID = crashMetaData.getUserID();
-                    if (!TextUtils.isEmpty(crashMetaDataUserID)) {
-                        userID = crashMetaDataUserID;
-                    }
-                    final String crashMetaDataContact = crashMetaData.getUserEmail();
-                    if (!TextUtils.isEmpty(crashMetaDataContact)) {
-                        contact = crashMetaDataContact;
-                    }
+            if (crashMetaData != null) {
+                final String crashMetaDataUserID = crashMetaData.getUserID();
+                if (!TextUtils.isEmpty(crashMetaDataUserID)) {
+                    userID = crashMetaDataUserID;
                 }
-
-                // Append application log to user provided description if present, if not, just send application log
-                final String applicationLog = contentsOfFile(weakContext, filename.replace(".stacktrace", ".description"));
-                String description = crashMetaData != null ? crashMetaData.getUserDescription() : "";
-                if (!TextUtils.isEmpty(applicationLog)) {
-                    if (!TextUtils.isEmpty(description)) {
-                        description = String.format("%s\n\nLog:\n%s", description, applicationLog);
-                    } else {
-                        description = String.format("Log:\n%s", applicationLog);
-                    }
+                final String crashMetaDataContact = crashMetaData.getUserEmail();
+                if (!TextUtils.isEmpty(crashMetaDataContact)) {
+                    contact = crashMetaDataContact;
                 }
-
-                Map<String, String> parameters = new HashMap<>();
-
-                parameters.put("raw", stacktrace);
-                parameters.put("userID", userID);
-                parameters.put("contact", contact);
-                parameters.put("description", description);
-                parameters.put("sdk", Constants.SDK_NAME);
-                parameters.put("sdk_version", BuildConfig.VERSION_NAME);
-
-                urlConnection = new HttpURLConnectionBuilder(getURLString())
-                        .setRequestMethod("POST")
-                        .writeFormFields(parameters)
-                        .build();
-
-                int responseCode = urlConnection.getResponseCode();
-
-                successful = (responseCode == HttpURLConnection.HTTP_ACCEPTED || responseCode == HttpURLConnection.HTTP_CREATED);
-
             }
+
+            // Append application log to user provided description if present, if not, just send application log
+            final String applicationLog = contentsOfFile(weakContext, filename.replace(".stacktrace", ".description"), 0);
+            String description = crashMetaData != null ? crashMetaData.getUserDescription() : "";
+            if (!TextUtils.isEmpty(applicationLog)) {
+                if (!TextUtils.isEmpty(description)) {
+                    description = String.format("%s\n\nLog:\n%s", description, applicationLog);
+                } else {
+                    description = String.format("Log:\n%s", applicationLog);
+                }
+            }
+
+            Map<String, String> parameters = new HashMap<>();
+            parameters.put("raw", stacktrace);
+            parameters.put("userID", userID);
+            parameters.put("contact", contact);
+            parameters.put("description", description);
+            parameters.put("sdk", Constants.SDK_NAME);
+            parameters.put("sdk_version", BuildConfig.VERSION_NAME);
+
+            TrafficStats.setThreadStatsTag(Constants.THREAD_STATS_TAG);
+            urlConnection = new HttpURLConnectionBuilder(getURLString())
+                    .setRequestMethod("POST")
+                    .writeFormFields(parameters)
+                    .build();
+
+            int responseCode = urlConnection.getResponseCode();
+            successful = (responseCode == HttpURLConnection.HTTP_ACCEPTED || responseCode == HttpURLConnection.HTTP_CREATED);
         } catch (Exception e) {
             HockeyLog.error("Failed to transmit crash data", e);
         } finally {
+            TrafficStats.clearThreadStatsTag();
             if (urlConnection != null) {
                 urlConnection.disconnect();
             }
@@ -775,21 +792,29 @@ public class CrashManager {
     /**
      * Returns the content of a file as a string.
      */
-    private static String contentsOfFile(final WeakReference<Context> weakContext, String filename) {
+    static String contentsOfFile(final WeakReference<Context> weakContext, String filename, int maxLength) {
         Context context = weakContext != null ? weakContext.get() : null;
         if (context != null) {
             File file = context.getFileStreamPath(filename);
             if(file == null || !file.exists()) {
                 return "";
             }
-            StringBuilder contents = new StringBuilder();
+            final StringWriter result = new StringWriter();
+            final PrintWriter writer = new PrintWriter(result);
             BufferedReader reader = null;
             try {
                 reader = new BufferedReader(new InputStreamReader(context.openFileInput(filename)));
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    contents.append(line);
-                    contents.append(System.getProperty("line.separator"));
+
+                    // Break if the line is too long
+                    if (maxLength > 0 && result.getBuffer().length() + line.length() + 1 >= maxLength) {
+                        HockeyLog.info(filename + " is too large, truncate a bit");
+                        break;
+                    }
+
+                    // Write line + line separator
+                    writer.println(line);
                 }
             } catch (IOException e) {
                 HockeyLog.error("Failed to read content of " + filename, e);
@@ -801,7 +826,7 @@ public class CrashManager {
                     }
                 }
             }
-            return contents.toString();
+            return result.toString();
         }
         return "";
     }

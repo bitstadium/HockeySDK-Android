@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.TrafficStats;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -37,6 +38,7 @@ import java.util.UUID;
 @SuppressLint("StaticFieldLeak")
 public class DownloadFileTask extends AsyncTask<Void, Integer, Long> {
     protected static final int MAX_REDIRECTS = 6;
+    protected static final int TIMEOUT = 60000;
 
     protected Context mContext;
     protected DownloadFileListener mNotifier;
@@ -71,6 +73,7 @@ public class DownloadFileTask extends AsyncTask<Void, Integer, Long> {
 
         try {
             URL url = new URL(getURLString());
+            TrafficStats.setThreadStatsTag(Constants.THREAD_STATS_TAG);
             URLConnection connection = createConnection(url, MAX_REDIRECTS);
             connection.connect();
 
@@ -108,6 +111,7 @@ public class DownloadFileTask extends AsyncTask<Void, Integer, Long> {
             HockeyLog.error("Failed to download " + mUrlString, e);
             return 0L;
         } finally {
+            TrafficStats.clearThreadStatsTag();
             try {
                 if (output != null) {
                     output.close();
@@ -123,6 +127,8 @@ public class DownloadFileTask extends AsyncTask<Void, Integer, Long> {
     protected void setConnectionProperties(HttpURLConnection connection) {
         connection.addRequestProperty("User-Agent", Constants.SDK_USER_AGENT);
         connection.setInstanceFollowRedirects(true);
+        connection.setConnectTimeout(TIMEOUT);
+        connection.setReadTimeout(TIMEOUT);
     }
 
     /**

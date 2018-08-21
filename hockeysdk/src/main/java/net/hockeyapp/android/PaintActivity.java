@@ -3,16 +3,13 @@ package net.hockeyapp.android;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -23,6 +20,7 @@ import android.widget.Toast;
 import net.hockeyapp.android.utils.AsyncTaskUtils;
 import net.hockeyapp.android.utils.HockeyLog;
 import net.hockeyapp.android.utils.ImageUtils;
+import net.hockeyapp.android.utils.Util;
 import net.hockeyapp.android.views.PaintView;
 
 import java.io.File;
@@ -192,7 +190,8 @@ public class PaintActivity extends Activity {
                 if (!hockeyAppCache.exists() && !hockeyAppCache.mkdir()) {
                     return false;
                 }
-                String imageName = determineFilename(mImageUri, mImageUri.getLastPathSegment());
+                String imageName = Util.getFileName(PaintActivity.this, mImageUri);
+                imageName = imageName.substring(0, imageName.lastIndexOf('.'));
                 String filename = imageName + ".jpg";
                 result = new File(hockeyAppCache, filename);
                 int suffix = 1;
@@ -232,24 +231,5 @@ public class PaintActivity extends Activity {
                 finish();
             }
         });
-    }
-
-    private String determineFilename(Uri uri, String fallback) {
-        String[] projection = {MediaStore.MediaColumns.DATA};
-        String path = null;
-
-        ContentResolver cr = getApplicationContext().getContentResolver();
-        Cursor metaCursor = cr.query(uri, projection, null, null, null);
-
-        if (metaCursor != null) {
-            try {
-                if (metaCursor.moveToFirst()) {
-                    path = metaCursor.getString(0);
-                }
-            } finally {
-                metaCursor.close();
-            }
-        }
-        return path == null ? fallback : new File(path).getName();
     }
 }

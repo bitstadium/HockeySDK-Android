@@ -16,6 +16,7 @@ import java.io.Writer;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.Date;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 /**
  * <h3>Description</h3>
@@ -49,9 +50,6 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
     public static void saveException(Throwable exception, Thread thread, CrashManagerListener listener) {
         final Date now = new Date();
         final Date startDate = new Date(CrashManager.getInitializeTimestamp());
-        final Writer result = new StringWriter();
-        final PrintWriter printWriter = new PrintWriter(result);
-        exception.printStackTrace(printWriter);
 
         Context context = CrashManager.weakContext != null ? CrashManager.weakContext.get() : null;
         if (context == null)
@@ -88,9 +86,11 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
         }
 
         // Get device identifier without waiting for initialization to avoid deadlock.
-        String deviceIdentifier = Constants.DEVICE_IDENTIFIER;
-        if (deviceIdentifier != null && (listener == null || listener.includeDeviceIdentifier())) {
-            crashDetails.setReporterKey(deviceIdentifier);
+        if (Constants.DEVICE_IDENTIFIER.isDone() && (listener == null || listener.includeDeviceIdentifier())) {
+            try {
+                crashDetails.setReporterKey(Constants.DEVICE_IDENTIFIER.get());
+            } catch (InterruptedException | ExecutionException ignored) {
+            }
         }
 
         crashDetails.writeCrashReport(context);
@@ -148,12 +148,6 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
         String filename = UUID.randomUUID().toString();
         final Date now = new Date();
 
-        final Writer result = new StringWriter();
-        final PrintWriter printWriter = new PrintWriter(result);
-        if (exception != null) {
-            exception.printStackTrace(printWriter);
-        }
-
         Context context = CrashManager.weakContext != null ? CrashManager.weakContext.get() : null;
         if (context == null)
         {
@@ -180,9 +174,11 @@ public class ExceptionHandler implements UncaughtExceptionHandler {
         }
 
         // Get device identifier without waiting for initialization to avoid deadlock.
-        String deviceIdentifier = Constants.DEVICE_IDENTIFIER;
-        if (deviceIdentifier != null && (listener == null || listener.includeDeviceIdentifier())) {
-            crashDetails.setReporterKey(deviceIdentifier);
+        if (Constants.DEVICE_IDENTIFIER.isDone() && (listener == null || listener.includeDeviceIdentifier())) {
+            try {
+                crashDetails.setReporterKey(Constants.DEVICE_IDENTIFIER.get());
+            } catch (InterruptedException | ExecutionException ignored) {
+            }
         }
 
         crashDetails.writeCrashReport(context);

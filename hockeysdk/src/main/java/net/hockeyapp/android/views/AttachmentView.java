@@ -73,7 +73,7 @@ public class AttachmentView extends FrameLayout {
         this.mParent = parent;
         this.mAttachment = null;
         this.mAttachmentUri = attachmentUri;
-        this.mFilename = attachmentUri.getLastPathSegment();
+        this.mFilename = Util.getFileName(context, attachmentUri);
 
         calculateDimensions(10);
         initializeView(context, removable);
