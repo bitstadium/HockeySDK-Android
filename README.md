@@ -25,7 +25,7 @@ It is super easy to use HockeyApp in your Android app. Have a look at our [docum
 
 Please visit [our landing page](https://support.hockeyapp.net/kb/client-integration-android) as a starting point for all of our documentation.
 
-Please check out our [getting started documentation](https://support.hockeyapp.net/kb/client-integration-android/hockeyapp-for-android-sdk), [change log](https://github.com/bitstadium/HockeySDK-Android/releases/tag/5.1.0), [java doc](https://www.hockeyapp.net/help/sdk/android/5.1.0/index.html) as well as our [troubleshooting section](https://support.hockeyapp.net/kb/client-integration-android/hockeyapp-for-android-sdk#troubleshooting).
+Please check out our [getting started documentation](https://support.hockeyapp.net/kb/client-integration-android/hockeyapp-for-android-sdk), [change log](https://github.com/bitstadium/HockeySDK-Android/releases/tag/5.1.1), [java doc](https://www.hockeyapp.net/help/sdk/android/5.1.1/index.html) as well as our [troubleshooting section](https://support.hockeyapp.net/kb/client-integration-android/hockeyapp-for-android-sdk#troubleshooting).
 
 ## 3. Contributing
 
