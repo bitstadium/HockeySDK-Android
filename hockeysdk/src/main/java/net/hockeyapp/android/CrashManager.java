@@ -631,6 +631,7 @@ public class CrashManager {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         String alertTitle = getAlertTitle(context);
         builder.setTitle(alertTitle);
+        builder.setCancelable(false);
         builder.setMessage(R.string.hockeyapp_crash_dialog_message);
 
         builder.setNegativeButton(R.string.hockeyapp_crash_dialog_negative_button, new DialogInterface.OnClickListener() {
