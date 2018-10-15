@@ -42,13 +42,12 @@ import java.util.concurrent.Future;
 
 /**
  * <h3>Description</h3>
- *
+ * <p>
  * The crash manager sets an exception handler to catch all unhandled
  * exceptions. The handler writes the stack trace and additional meta data to
  * a file. If it finds one or more of these files at the next start, it shows
  * an alert dialog to ask the user if he want the send the crash data to
  * HockeyApp.
- *
  **/
 public class CrashManager {
     /**
@@ -121,10 +120,10 @@ public class CrashManager {
      * Registers new crash manager and handles existing crash logs.
      * HockeyApp App Identifier is read from configuration values in AndroidManifest.xml
      *
-     * @param context   The context to use. Usually your Activity object. If
-     *                  context is not an instance of Activity (or a subclass of it),
-     *                  crashes will be sent automatically.
-     * @param listener  Implement for callback functions.
+     * @param context  The context to use. Usually your Activity object. If
+     *                 context is not an instance of Activity (or a subclass of it),
+     *                 crashes will be sent automatically.
+     * @param listener Implement for callback functions.
      */
     @SuppressWarnings("unused")
     public static void register(Context context, CrashManagerListener listener) {
@@ -373,7 +372,7 @@ public class CrashManager {
      * Submits all stack traces in the files dir to HockeyApp.
      *
      * @param weakContext The context to use. Usually your Activity object.
-     * @param listener Implement for callback functions.
+     * @param listener    Implement for callback functions.
      */
     @SuppressWarnings("unused")
     public static void submitStackTraces(final WeakReference<Context> weakContext, CrashManagerListener listener) {
@@ -383,7 +382,7 @@ public class CrashManager {
     /**
      * Submits all stack traces in the files dir to HockeyApp.
      *
-     * @param weakContext The context to use. Usually your Activity object.
+     * @param weakContext   The context to use. Usually your Activity object.
      * @param listener      Implement for callback functions.
      * @param crashMetaData The crashMetaData, provided by the user.
      */
@@ -602,7 +601,7 @@ public class CrashManager {
             CrashManager.weakContext = new WeakReference<>(context);
 
             Constants.loadFromContext(context);
-            
+
             if (CrashManager.identifier == null) {
                 CrashManager.identifier = Constants.APP_PACKAGE;
             }
@@ -628,10 +627,11 @@ public class CrashManager {
             return false;
         }
 
+        AlertDialog alertDialog;
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         String alertTitle = getAlertTitle(context);
         builder.setTitle(alertTitle);
-        builder.setCancelable(false);
+        //builder.setCancelable(false);
         builder.setMessage(R.string.hockeyapp_crash_dialog_message);
 
         builder.setNegativeButton(R.string.hockeyapp_crash_dialog_negative_button, new DialogInterface.OnClickListener() {
@@ -652,7 +652,15 @@ public class CrashManager {
             }
         });
 
-        builder.create().show();
+        alertDialog = builder.create();
+
+        alertDialog.setOnCancelListener(dialogInterface -> {
+            if(listener != null)
+                listener.onCancel();
+        });
+
+        alertDialog.show();
+
         return true;
     }
 
@@ -797,7 +805,7 @@ public class CrashManager {
         Context context = weakContext != null ? weakContext.get() : null;
         if (context != null) {
             File file = context.getFileStreamPath(filename);
-            if(file == null || !file.exists()) {
+            if (file == null || !file.exists()) {
                 return "";
             }
             final StringWriter result = new StringWriter();

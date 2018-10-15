@@ -147,4 +147,11 @@ public abstract class CrashManagerListener {
     public boolean onHandleAlertView() {
         return false;
     }
+
+    /**
+     * Called when the dialog is cancelled
+     *
+     */
+
+    public void onCancel() {}
 }
