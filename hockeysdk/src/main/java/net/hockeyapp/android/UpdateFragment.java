@@ -25,6 +25,7 @@ import net.hockeyapp.android.listeners.DownloadFileListener;
 import net.hockeyapp.android.tasks.DownloadFileTask;
 import net.hockeyapp.android.tasks.GetFileSizeTask;
 import net.hockeyapp.android.utils.AsyncTaskUtils;
+import net.hockeyapp.android.utils.HockeyLog;
 import net.hockeyapp.android.utils.PermissionsUtil;
 import net.hockeyapp.android.utils.Util;
 import net.hockeyapp.android.utils.VersionHelper;
@@ -40,6 +41,10 @@ import java.util.Locale;
  *
  **/
 public class UpdateFragment extends DialogFragment implements OnClickListener, UpdateInfoListener {
+
+    private static final String TAG = "HockeyApp-Update";
+
+    private Button mUpdateButton;
 
     /**
      * The URL of the APK to offer as download
@@ -162,8 +167,8 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
         }
         versionLabel.setText(getString(R.string.hockeyapp_update_version_details_label, versionString, fileDate, appSizeString));
 
-        Button updateButton = view.findViewById(R.id.button_update);
-        updateButton.setOnClickListener(this);
+        mUpdateButton = view.findViewById(R.id.button_update);
+        mUpdateButton.setOnClickListener(this);
 
         WebView webView = view.findViewById(R.id.web_update_details);
         webView.clearCache(true);
@@ -264,8 +269,14 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
         if (context == null) {
             return;
         }
+
+        setUpdateButtonEnabled(false);
+
         AsyncTaskUtils.execute(new DownloadFileTask(context, mUrlString, new DownloadFileListener() {
             public void downloadFailed(DownloadFileTask task, Boolean userWantsRetry) {
+
+                setUpdateButtonEnabled(true);
+
                 if (userWantsRetry) {
                     startDownloadTask();
                 }
@@ -286,5 +297,24 @@ public class UpdateFragment extends DialogFragment implements OnClickListener, U
         LinearLayout layout = new LinearLayout(getActivity());
         LayoutInflater.from(getActivity()).inflate(R.layout.hockeyapp_fragment_update, layout);
         return layout;
+    }
+
+    @Override
+    public void onPause() {
+        setUpdateButtonEnabled(true);
+        super.onPause();
+    }
+
+    private void setUpdateButtonEnabled(boolean isEnabled)
+    {
+        if (mUpdateButton != null)
+        {
+            HockeyLog.verbose(TAG, String.format("Setting update button enabled to %b", isEnabled));
+            mUpdateButton.setEnabled(isEnabled);
+        }
+        else
+        {
+            HockeyLog.verbose(TAG, String.format("Attempted to set update button enabled to %b but mUpdateButton was NULL", isEnabled));
+        }
     }
 }
