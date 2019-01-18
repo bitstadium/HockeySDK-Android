@@ -18,10 +18,14 @@ import java.net.HttpURLConnection;
 public abstract class ConnectionTask<Params, Progress, Result> extends AsyncTask<Params, Progress, Result> {
 
     protected static String getStringFromConnection(HttpURLConnection connection) throws IOException {
-        InputStream inputStream = new BufferedInputStream(connection.getInputStream());
-        String jsonString = Util.convertStreamToString(inputStream);
-        inputStream.close();
-
-        return jsonString;
+        InputStream inputStream = null;
+        try {
+            inputStream = new BufferedInputStream(connection.getInputStream());
+            return Util.convertStreamToString(inputStream);
+        } finally {
+            if (inputStream != null) {
+                inputStream.close();
+            }
+        }
     }
 }
