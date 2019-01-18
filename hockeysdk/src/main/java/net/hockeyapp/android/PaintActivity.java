@@ -41,7 +41,6 @@ public class PaintActivity extends Activity {
     private PaintView mPaintView;
     private Uri mImageUri;
 
-    @SuppressLint("StaticFieldLeak")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,7 +52,11 @@ public class PaintActivity extends Activity {
             return;
         }
         mImageUri = extras.getParcelable(EXTRA_IMAGE_URI);
+        determineOrientation();
+    }
 
+    @SuppressLint("StaticFieldLeak")
+    private void determineOrientation() {
         AsyncTaskUtils.execute(new AsyncTask<Void, Object, Integer>() {
             @Override
             protected Integer doInBackground(Void... voids) {
