@@ -14,13 +14,13 @@ import android.os.Message;
 import net.hockeyapp.android.Constants;
 import net.hockeyapp.android.R;
 import net.hockeyapp.android.utils.HockeyLog;
-import net.hockeyapp.android.utils.HttpURLConnectionBuilder;
+import net.hockeyapp.android.utils.HttpsURLConnectionBuilder;
 import net.hockeyapp.android.utils.Util;
 
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.net.HttpURLConnection;
+import javax.net.ssl.HttpsURLConnection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -233,7 +233,7 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
         HashMap<String, String> result = new HashMap<>();
         result.put("type", "send");
 
-        HttpURLConnection urlConnection = null;
+        HttpsURLConnection urlConnection = null;
         try {
             Map<String, String> parameters = new HashMap<>();
             parameters.put("name", mName);
@@ -256,7 +256,7 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
             }
 
             TrafficStats.setThreadStatsTag(Constants.THREAD_STATS_TAG);
-            urlConnection = new HttpURLConnectionBuilder(mUrlString)
+            urlConnection = new HttpsURLConnectionBuilder(mUrlString)
                     .setRequestMethod(mToken != null ? "PUT" : "POST")
                     .writeFormFields(parameters)
                     .build();
@@ -286,7 +286,7 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
         HashMap<String, String> result = new HashMap<>();
         result.put("type", "send");
 
-        HttpURLConnection urlConnection = null;
+        HttpsURLConnection urlConnection = null;
         try {
             Map<String, String> parameters = new HashMap<>();
             parameters.put("name", mName);
@@ -308,7 +308,7 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
             }
 
             TrafficStats.setThreadStatsTag(Constants.THREAD_STATS_TAG);
-            urlConnection = new HttpURLConnectionBuilder(mUrlString)
+            urlConnection = new HttpsURLConnectionBuilder(mUrlString)
                     .setRequestMethod(mToken != null ? "PUT" : "POST")
                     .writeMultipartData(parameters, mContext, mAttachmentUris)
                     .build();
@@ -345,10 +345,10 @@ public class SendFeedbackTask extends ConnectionTask<Void, Void, HashMap<String,
 
         HashMap<String, String> result = new HashMap<>();
 
-        HttpURLConnection urlConnection = null;
+        HttpsURLConnection urlConnection = null;
         try {
             TrafficStats.setThreadStatsTag(Constants.THREAD_STATS_TAG);
-            urlConnection = new HttpURLConnectionBuilder(sb.toString())
+            urlConnection = new HttpsURLConnectionBuilder(sb.toString())
                     .build();
 
             result.put("type", "fetch");

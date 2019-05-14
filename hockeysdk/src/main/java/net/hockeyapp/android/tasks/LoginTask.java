@@ -14,13 +14,13 @@ import android.text.TextUtils;
 import net.hockeyapp.android.Constants;
 import net.hockeyapp.android.LoginManager;
 import net.hockeyapp.android.utils.HockeyLog;
-import net.hockeyapp.android.utils.HttpURLConnectionBuilder;
+import net.hockeyapp.android.utils.HttpsURLConnectionBuilder;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
+import javax.net.ssl.HttpsURLConnection;
 import java.util.Map;
 
 /**
@@ -93,7 +93,7 @@ public class LoginTask extends ConnectionTask<Void, Void, Boolean> {
 
     @Override
     protected Boolean doInBackground(Void... args) {
-        HttpURLConnection connection = null;
+        HttpsURLConnection connection = null;
         try {
             TrafficStats.setThreadStatsTag(Constants.THREAD_STATS_TAG);
             connection = makeRequest(mMode, mParams);
@@ -138,16 +138,16 @@ public class LoginTask extends ConnectionTask<Void, Void, Boolean> {
         }
     }
 
-    private HttpURLConnection makeRequest(int mode, Map<String, String> params) throws IOException {
+    private HttpsURLConnection makeRequest(int mode, Map<String, String> params) throws IOException {
         if (mode == LoginManager.LOGIN_MODE_EMAIL_ONLY) {
 
-            return new HttpURLConnectionBuilder(mUrlString)
+            return new HttpsURLConnectionBuilder(mUrlString)
                     .setRequestMethod("POST")
                     .writeFormFields(params)
                     .build();
         } else if (mode == LoginManager.LOGIN_MODE_EMAIL_PASSWORD) {
 
-            return new HttpURLConnectionBuilder(mUrlString)
+            return new HttpsURLConnectionBuilder(mUrlString)
                     .setRequestMethod("POST")
                     .setBasicAuthorization(params.get("email"), params.get("password"))
                     .build();
@@ -157,7 +157,7 @@ public class LoginTask extends ConnectionTask<Void, Void, Boolean> {
             String id = params.get("id");
             String paramUrl = mUrlString + "?" + type + "=" + id;
 
-            return new HttpURLConnectionBuilder(paramUrl)
+            return new HttpsURLConnectionBuilder(paramUrl)
                     .build();
         } else {
             throw new IllegalArgumentException("Login mode " + mode + " not supported.");

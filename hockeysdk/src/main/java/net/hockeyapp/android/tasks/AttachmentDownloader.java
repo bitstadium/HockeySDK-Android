@@ -21,7 +21,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.HttpURLConnection;
+import javax.net.ssl.HttpsURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.LinkedList;
@@ -227,9 +227,9 @@ public class AttachmentDownloader {
         private boolean downloadAttachment(String url, File file) {
             InputStream input = null;
             OutputStream output = null;
-            HttpURLConnection connection = null;
+            HttpsURLConnection connection = null;
             try {
-                connection = (HttpURLConnection) createConnection(new URL(url));
+                connection = (HttpsURLConnection) createConnection(new URL(url));
                 TrafficStats.setThreadStatsTag(Constants.THREAD_STATS_TAG);
                 connection.connect();
 
@@ -278,7 +278,7 @@ public class AttachmentDownloader {
         }
 
         private URLConnection createConnection(URL url) throws IOException {
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
             connection.addRequestProperty("User-Agent", Constants.SDK_USER_AGENT);
             connection.setInstanceFollowRedirects(true);
             return connection;
