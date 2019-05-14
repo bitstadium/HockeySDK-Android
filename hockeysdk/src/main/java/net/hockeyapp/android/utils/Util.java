@@ -198,10 +198,6 @@ public class Util {
         if (!manager.isEnabled()) {
             return;
         }
-
-        // Prior to SDK 16, announcements could only be made through FOCUSED
-        // events. Jelly Bean (SDK 16) added support for speaking text verbatim
-        // using the ANNOUNCEMENT event type.
         final int eventType = AccessibilityEvent.TYPE_ANNOUNCEMENT;
         final AccessibilityEvent event = AccessibilityEvent.obtain(eventType);
         event.getText().add(text);
