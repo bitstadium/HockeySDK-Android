@@ -175,12 +175,7 @@ public class Util {
                .setContentText(text)
                .setContentIntent(pendingIntent)
                .setSmallIcon(iconId);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            return builder.build();
-        } else {
-            return builder.getNotification();
-        }
+        return builder.build();
     }
 
     public static void sendNotification(Context context, int id, Notification notification, String channelId, CharSequence channelName) {
@@ -207,13 +202,7 @@ public class Util {
         // Prior to SDK 16, announcements could only be made through FOCUSED
         // events. Jelly Bean (SDK 16) added support for speaking text verbatim
         // using the ANNOUNCEMENT event type.
-        final int eventType;
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-            eventType = AccessibilityEvent.TYPE_VIEW_FOCUSED;
-        } else {
-            eventType = AccessibilityEvent.TYPE_ANNOUNCEMENT;
-        }
-
+        final int eventType = AccessibilityEvent.TYPE_ANNOUNCEMENT;
         final AccessibilityEvent event = AccessibilityEvent.obtain(eventType);
         event.getText().add(text);
         event.setSource(view);
