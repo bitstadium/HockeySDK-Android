@@ -198,7 +198,7 @@ public class Util {
         if (!manager.isEnabled()) {
             return;
         }
-         final AccessibilityEvent event = AccessibilityEvent.obtain(AccessibilityEvent.TYPE_ANNOUNCEMENT);
+        final AccessibilityEvent event = AccessibilityEvent.obtain(AccessibilityEvent.TYPE_ANNOUNCEMENT);
         event.getText().add(text);
         event.setSource(view);
         event.setEnabled(view.isEnabled());
