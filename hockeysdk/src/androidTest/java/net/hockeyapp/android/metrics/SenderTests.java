@@ -11,7 +11,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.File;
-import java.net.HttpURLConnection;
+import javax.net.ssl.HttpsURLConnection;
 import java.util.concurrent.Executor;
 
 import static org.junit.Assert.*;
@@ -55,7 +55,7 @@ public class SenderTests {
 
     @Test
     public void testCreateConnection() {
-        HttpURLConnection connection = sut.createConnection();
+        HttpsURLConnection connection = sut.createConnection();
         assertNotNull(connection);
 
     }

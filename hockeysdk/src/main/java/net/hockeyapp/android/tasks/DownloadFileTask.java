@@ -23,7 +23,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.HttpURLConnection;
+import javax.net.ssl.HttpsURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.UUID;
@@ -124,7 +124,7 @@ public class DownloadFileTask extends AsyncTask<Void, Integer, Long> {
         }
     }
 
-    protected void setConnectionProperties(HttpURLConnection connection) {
+    protected void setConnectionProperties(HttpsURLConnection connection) {
         connection.addRequestProperty("User-Agent", Constants.SDK_USER_AGENT);
         connection.setInstanceFollowRedirects(true);
         connection.setConnectTimeout(TIMEOUT);
@@ -140,13 +140,13 @@ public class DownloadFileTask extends AsyncTask<Void, Integer, Long> {
      * @throws IOException if connection fails
      */
     protected URLConnection createConnection(URL url, int remainingRedirects) throws IOException {
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
         setConnectionProperties(connection);
 
         int code = connection.getResponseCode();
-        if (code == HttpURLConnection.HTTP_MOVED_PERM ||
-                code == HttpURLConnection.HTTP_MOVED_TEMP ||
-                code == HttpURLConnection.HTTP_SEE_OTHER) {
+        if (code == HttpsURLConnection.HTTP_MOVED_PERM ||
+                code == HttpsURLConnection.HTTP_MOVED_TEMP ||
+                code == HttpsURLConnection.HTTP_SEE_OTHER) {
 
             if (remainingRedirects == 0) {
                 // Stop redirecting.
@@ -155,7 +155,7 @@ public class DownloadFileTask extends AsyncTask<Void, Integer, Long> {
 
             URL movedUrl = new URL(connection.getHeaderField("Location"));
             if (!url.getProtocol().equals(movedUrl.getProtocol())) {
-                // HttpURLConnection doesn't handle redirects across schemes, so handle it manually, see
+                // HttpsURLConnection doesn't handle redirects across schemes, so handle it manually, see
                 // http://code.google.com/p/android/issues/detail?id=41651
                 connection.disconnect();
                 return createConnection(movedUrl, --remainingRedirects); // Recursion

@@ -5,7 +5,7 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 
-public class HttpURLConnectionBuilderTest {
+public class HttpsURLConnectionBuilderTest {
 
     private static final String TEST_URL = "https://sdk.hockeyapp.net";
 
@@ -14,7 +14,7 @@ public class HttpURLConnectionBuilderTest {
 
         String mockString = new String(new char[(4 * 1024 * 1024) + 1]).replace('\0', ' ');
 
-        HttpURLConnectionBuilder builder = new HttpURLConnectionBuilder(TEST_URL);
+        HttpsURLConnectionBuilder builder = new HttpsURLConnectionBuilder(TEST_URL);
         builder.setRequestMethod("POST");
 
         Map<String, String> fields = new HashMap<>();
@@ -27,12 +27,12 @@ public class HttpURLConnectionBuilderTest {
     public void testFormFieldsSizeLimit() {
 
         Map<String, String> fields = new HashMap<>();
-        for(int i = 0; i < HttpURLConnectionBuilder.FIELDS_LIMIT + 1; ++i) {
+        for (int i = 0; i < HttpsURLConnectionBuilder.FIELDS_LIMIT + 1; ++i) {
             String keyValue = String.valueOf(i);
-            fields.put(keyValue,keyValue);
+            fields.put(keyValue, keyValue);
         }
 
-        HttpURLConnectionBuilder builder = new HttpURLConnectionBuilder(TEST_URL);
+        HttpsURLConnectionBuilder builder = new HttpsURLConnectionBuilder(TEST_URL);
         builder.setRequestMethod("POST");
         builder.writeFormFields(fields);
     }

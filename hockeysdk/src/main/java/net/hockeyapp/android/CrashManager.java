@@ -18,7 +18,7 @@ import net.hockeyapp.android.objects.CrashMetaData;
 import net.hockeyapp.android.utils.AsyncTaskUtils;
 import net.hockeyapp.android.utils.CompletedFuture;
 import net.hockeyapp.android.utils.HockeyLog;
-import net.hockeyapp.android.utils.HttpURLConnectionBuilder;
+import net.hockeyapp.android.utils.HttpsURLConnectionBuilder;
 import net.hockeyapp.android.utils.Util;
 
 import java.io.BufferedReader;
@@ -30,7 +30,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.lang.ref.WeakReference;
-import java.net.HttpURLConnection;
+import javax.net.ssl.HttpsURLConnection;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -408,7 +408,7 @@ public class CrashManager {
     private static void submitStackTrace(final WeakReference<Context> weakContext, String filename, CrashManagerListener listener, CrashMetaData crashMetaData) {
         String stacktrace = null;
         try {
-            stacktrace = contentsOfFile(weakContext, filename, HttpURLConnectionBuilder.FORM_FIELD_LIMIT);
+            stacktrace = contentsOfFile(weakContext, filename, HttpsURLConnectionBuilder.FORM_FIELD_LIMIT);
         } catch (Exception e) {
             HockeyLog.error("Failed to read crash data", e);
         }
@@ -422,7 +422,7 @@ public class CrashManager {
             return;
         }
         Boolean successful = false;
-        HttpURLConnection urlConnection = null;
+        HttpsURLConnection urlConnection = null;
         try {
             // Transmit stack trace with POST request
             HockeyLog.debug("Transmitting crash data: \n" + stacktrace);
@@ -462,13 +462,13 @@ public class CrashManager {
             parameters.put("sdk_version", BuildConfig.VERSION_NAME);
 
             TrafficStats.setThreadStatsTag(Constants.THREAD_STATS_TAG);
-            urlConnection = new HttpURLConnectionBuilder(getURLString())
+            urlConnection = new HttpsURLConnectionBuilder(getURLString())
                     .setRequestMethod("POST")
                     .writeFormFields(parameters)
                     .build();
 
             int responseCode = urlConnection.getResponseCode();
-            successful = (responseCode == HttpURLConnection.HTTP_ACCEPTED || responseCode == HttpURLConnection.HTTP_CREATED);
+            successful = (responseCode == HttpsURLConnection.HTTP_ACCEPTED || responseCode == HttpsURLConnection.HTTP_CREATED);
         } catch (Exception e) {
             HockeyLog.error("Failed to transmit crash data", e);
         } finally {

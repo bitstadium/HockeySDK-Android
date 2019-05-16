@@ -7,7 +7,7 @@ import net.hockeyapp.android.utils.Util;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
+import javax.net.ssl.HttpsURLConnection;
 
 /**
  * <h3>Description</h3>
@@ -17,7 +17,7 @@ import java.net.HttpURLConnection;
  **/
 public abstract class ConnectionTask<Params, Progress, Result> extends AsyncTask<Params, Progress, Result> {
 
-    protected static String getStringFromConnection(HttpURLConnection connection) throws IOException {
+    protected static String getStringFromConnection(HttpsURLConnection connection) throws IOException {
         InputStream inputStream = null;
         try {
             inputStream = new BufferedInputStream(connection.getInputStream());
