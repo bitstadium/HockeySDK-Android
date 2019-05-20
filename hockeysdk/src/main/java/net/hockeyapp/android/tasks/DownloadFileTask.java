@@ -16,6 +16,7 @@ import net.hockeyapp.android.Constants;
 import net.hockeyapp.android.R;
 import net.hockeyapp.android.listeners.DownloadFileListener;
 import net.hockeyapp.android.utils.HockeyLog;
+import net.hockeyapp.android.utils.Util;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -140,7 +141,7 @@ public class DownloadFileTask extends AsyncTask<Void, Integer, Long> {
      * @throws IOException if connection fails
      */
     protected URLConnection createConnection(URL url, int remainingRedirects) throws IOException {
-        HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+        HttpsURLConnection connection = Util.openHttpsConnection(url);
         setConnectionProperties(connection);
 
         int code = connection.getResponseCode();

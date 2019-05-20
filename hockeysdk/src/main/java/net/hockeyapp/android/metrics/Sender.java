@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import net.hockeyapp.android.Constants;
 import net.hockeyapp.android.utils.AsyncTaskUtils;
 import net.hockeyapp.android.utils.HockeyLog;
+import net.hockeyapp.android.utils.Util;
 
 import java.io.*;
 import java.lang.ref.WeakReference;
@@ -231,7 +232,7 @@ public class Sender {
             }
 
             // TODO Replace with HttpsUrlConnectionBuilder calls - expand this if necessary.
-            connection = (HttpsURLConnection) url.openConnection();
+            connection = Util.openHttpsConnection(url);
             connection.setReadTimeout(DEFAULT_SENDER_READ_TIMEOUT);
             connection.setConnectTimeout(DEFAULT_SENDER_CONNECT_TIMEOUT);
             connection.setRequestMethod("POST");

@@ -13,6 +13,7 @@ import net.hockeyapp.android.objects.FeedbackAttachment;
 import net.hockeyapp.android.utils.AsyncTaskUtils;
 import net.hockeyapp.android.utils.HockeyLog;
 import net.hockeyapp.android.utils.ImageUtils;
+import net.hockeyapp.android.utils.Util;
 import net.hockeyapp.android.views.AttachmentView;
 
 import java.io.BufferedInputStream;
@@ -278,7 +279,7 @@ public class AttachmentDownloader {
         }
 
         private URLConnection createConnection(URL url) throws IOException {
-            HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+            HttpsURLConnection connection = Util.openHttpsConnection(url);
             connection.addRequestProperty("User-Agent", Constants.SDK_USER_AGENT);
             connection.setInstanceFollowRedirects(true);
             return connection;

@@ -2,7 +2,6 @@ package net.hockeyapp.android.utils;
 
 import android.content.Context;
 import android.net.Uri;
-import android.os.Build;
 import android.text.TextUtils;
 
 import net.hockeyapp.android.Constants;
@@ -137,27 +136,8 @@ public class HttpsURLConnectionBuilder {
     }
 
     public HttpsURLConnection build() throws IOException {
-        HttpsURLConnection connection;
         URL url = new URL(mUrlString);
-        connection = (HttpsURLConnection) url.openConnection();
-
-        /*
-         * Make sure we use TLS 1.2 when the device supports it but not enabled by default.
-         * Don't hardcode TLS version when enabled by default to avoid unnecessary wrapping and
-         * to support future versions of TLS such as say 1.3 without having to patch this code.
-         *
-         * TLS 1.2 was enabled by default only on Android 5.0:
-         * https://developer.android.com/about/versions/android-5.0-changes#ssl
-         * https://developer.android.com/reference/javax/net/ssl/SSLSocket#default-configuration-for-different-android-versions
-         *
-         * There is a problem that TLS 1.2 is still disabled by default on some Samsung devices
-         * with API 21, so apply the rule to this API level as well.
-         * See https://github.com/square/okhttp/issues/2372#issuecomment-244807676
-         */
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP) {
-            connection.setSSLSocketFactory(new TLS1_2SocketFactory());
-        }
-
+        HttpsURLConnection connection = Util.openHttpsConnection(url);
         connection.setConnectTimeout(mTimeout);
         connection.setReadTimeout(mTimeout);
 
