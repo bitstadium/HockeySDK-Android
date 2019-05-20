@@ -17,6 +17,11 @@ android {
             minifyEnabled false
         }
     }
+    testOptions {
+        unitTests.all {
+            jvmArgs '-noverify'
+        }
+    }
     lintOptions {
         disable 'GoogleAppIndexingWarning','RtlEnabled'
         textReport true
