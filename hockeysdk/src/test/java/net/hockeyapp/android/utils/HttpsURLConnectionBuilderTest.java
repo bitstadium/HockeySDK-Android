@@ -6,7 +6,6 @@ import android.text.TextUtils;
 import net.hockeyapp.android.TestUtils;
 
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -35,7 +34,8 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
 @SuppressWarnings("unused")
 @PrepareForTest({
         HttpsURLConnectionBuilder.class,
-        TextUtils.class
+        TextUtils.class,
+        Util.class
 })
 public class HttpsURLConnectionBuilderTest {
 

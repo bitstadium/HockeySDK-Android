@@ -132,7 +132,7 @@ public class CheckUpdateTask extends AsyncTask<Void, String, JSONArray> {
     }
 
     protected URLConnection createConnection(URL url) throws IOException {
-        URLConnection connection = url.openConnection();
+        URLConnection connection = Util.openHttpsConnection(url);
         connection.addRequestProperty("User-Agent", Constants.SDK_USER_AGENT);
         return connection;
     }
