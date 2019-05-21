@@ -5,7 +5,7 @@ android {
     compileSdkVersion COMPILE_SDK
 
     defaultConfig {
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 28
         versionCode VERSION_CODE
         versionName VERSION_NAME
@@ -15,6 +15,11 @@ android {
     buildTypes {
         release {
             minifyEnabled false
+        }
+    }
+    testOptions {
+        unitTests.all {
+            jvmArgs '-noverify'
         }
     }
     lintOptions {

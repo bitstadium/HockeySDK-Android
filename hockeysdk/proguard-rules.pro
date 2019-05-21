@@ -6,3 +6,7 @@
 -keepclassmembers class net.hockeyapp.android.UpdateFragment {
   *;
 }
+
+-keepclassmembers class * implements javax.net.ssl.SSLSocketFactory {
+    private final javax.net.ssl.SSLSocketFactory delegate;
+}

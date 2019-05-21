@@ -6,7 +6,7 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath 'com.android.tools.build:gradle:3.3.0'
         classpath 'com.novoda:bintray-release:0.8.0'
     }
 }
@@ -37,8 +37,8 @@ allprojects {
 
 ext {
     ARTIFACT_ID = 'HockeySDK'
-    VERSION_NAME = '5.1.1'
-    VERSION_CODE = 20
+    VERSION_NAME = '5.2.0'
+    VERSION_CODE = 21
     SITE_URL = 'https://github.com/bitstadium/hockeysdk-android'
     GIT_URL = 'https://github.com/bitstadium/HockeySDK-Android.git'
     BINTRAY_USER = HOCKEYAPP_BINTRAY_USER

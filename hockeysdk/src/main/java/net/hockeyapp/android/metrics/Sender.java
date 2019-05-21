@@ -10,10 +10,11 @@ import android.text.TextUtils;
 import net.hockeyapp.android.Constants;
 import net.hockeyapp.android.utils.AsyncTaskUtils;
 import net.hockeyapp.android.utils.HockeyLog;
+import net.hockeyapp.android.utils.Util;
 
 import java.io.*;
 import java.lang.ref.WeakReference;
-import java.net.HttpURLConnection;
+import javax.net.ssl.HttpsURLConnection;;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
@@ -101,7 +102,7 @@ public class Sender {
     }
 
     @SuppressLint("StaticFieldLeak")
-    protected void triggerSendingForTesting(final HttpURLConnection connection, final File file, final String persistedData) {
+    protected void triggerSendingForTesting(final HttpsURLConnection connection, final File file, final String persistedData) {
         if (requestCount() < MAX_REQUEST_COUNT) {
             mRequestCount.getAndIncrement();
 
@@ -125,7 +126,7 @@ public class Sender {
         if (this.getPersistence() != null) {
             File fileToSend = this.getPersistence().nextAvailableFileInDirectory();
             String persistedData = loadData(fileToSend);
-            HttpURLConnection connection = createConnection();
+            HttpsURLConnection connection = createConnection();
 
             if ((persistedData != null) && (connection != null)) {
                 send(connection, fileToSend, persistedData);
@@ -143,7 +144,7 @@ public class Sender {
      * @param file
      * @param persistedData
      */
-    protected void send(HttpURLConnection connection, File file, String persistedData) {
+    protected void send(HttpsURLConnection connection, File file, String persistedData) {
         // TODO Why does this get the file and persistedData reference, even though everything is in the connection?
         // TODO Looks like this will have to be rewritten for its own AsyncTask subclass.
         if (connection != null && file != null && persistedData != null) {
@@ -215,9 +216,9 @@ public class Sender {
      * @return connection to the API endpoint
      */
     @SuppressWarnings("ConstantConditions")
-    protected HttpURLConnection createConnection() {
+    protected HttpsURLConnection createConnection() {
         URL url;
-        HttpURLConnection connection = null;
+        HttpsURLConnection connection = null;
         try {
             if (getCustomServerURL() == null) {
                 url = new URL(DEFAULT_ENDPOINT_URL);
@@ -230,8 +231,8 @@ public class Sender {
                 }
             }
 
-            // TODO Replace with HttpUrlConnectionBuilder calls - expand this if necessary.
-            connection = (HttpURLConnection) url.openConnection();
+            // TODO Replace with HttpsUrlConnectionBuilder calls - expand this if necessary.
+            connection = Util.openHttpsConnection(url);
             connection.setReadTimeout(DEFAULT_SENDER_READ_TIMEOUT);
             connection.setConnectTimeout(DEFAULT_SENDER_CONNECT_TIMEOUT);
             connection.setRequestMethod("POST");
@@ -253,7 +254,7 @@ public class Sender {
      * @param payload      the payload which generated this response
      * @param fileToSend   reference to the file we want to send
      */
-    protected void onResponse(HttpURLConnection connection, int responseCode, String payload, File
+    protected void onResponse(HttpsURLConnection connection, int responseCode, String payload, File
             fileToSend) {
         // TODO Remove possible redundancy between response code and connection which also provides the same response code.
         // TODO This looks like a weird solution to keep the reference to the payload and the sent file.
@@ -301,9 +302,9 @@ public class Sender {
             429 -> TOO MANY REQUESTS
             503 -> SERVICE UNAVAILABLE
             511 -> NETWORK AUTHENTICATION REQUIRED
-            All not available in HttpUrlConnection, thus listed here for reference.
+            All not available in HttpsUrlConnection, thus listed here for reference.
          */
-        List<Integer> recoverableCodes = Arrays.asList(HttpURLConnection.HTTP_CLIENT_TIMEOUT, 429, HttpURLConnection.HTTP_INTERNAL_ERROR, 503, 511);
+        List<Integer> recoverableCodes = Arrays.asList(HttpsURLConnection.HTTP_CLIENT_TIMEOUT, 429, HttpsURLConnection.HTTP_INTERNAL_ERROR, 503, 511);
         return recoverableCodes.contains(responseCode);
     }
 
@@ -314,7 +315,7 @@ public class Sender {
      * @return True, if the response code means a successful operation, otherwise false.
      */
     protected boolean isExpected(int responseCode) {
-        return (HttpURLConnection.HTTP_OK <= responseCode && responseCode <= HttpURLConnection.HTTP_NOT_AUTHORITATIVE);
+        return (HttpsURLConnection.HTTP_OK <= responseCode && responseCode <= HttpsURLConnection.HTTP_NOT_AUTHORITATIVE);
     }
 
     /**
@@ -324,7 +325,7 @@ public class Sender {
      * @param responseCode The response code from the connection.
      * @param builder      A string builder for storing the response.
      */
-    protected void onUnexpected(HttpURLConnection connection, int responseCode, StringBuilder
+    protected void onUnexpected(HttpsURLConnection connection, int responseCode, StringBuilder
             builder) {
         String message = String.format(Locale.ROOT, "Unexpected response code: %d", responseCode);
         builder.append(message);
@@ -344,7 +345,7 @@ public class Sender {
      * @param connection the connection
      * @param payload    the payload of telemetry data
      */
-    private void logRequest(HttpURLConnection connection, String payload) throws IOException, SecurityException {
+    private void logRequest(HttpsURLConnection connection, String payload) throws IOException, SecurityException {
         // TODO Rename this to reflect the true nature of this method: Sending the payload
         Writer writer = null;
         try {
@@ -373,7 +374,7 @@ public class Sender {
      * @param connection the connection which will read the response
      * @param builder    a string builder for storing the response
      */
-    protected void readResponse(HttpURLConnection connection, StringBuilder builder) {
+    protected void readResponse(HttpsURLConnection connection, StringBuilder builder) {
         String result;
         StringBuilder buffer = new StringBuilder();
         InputStream inputStream = null;
@@ -423,7 +424,7 @@ public class Sender {
      * @throws java.io.IOException Exception thrown by GZIP (used in SDK 19+)
      */
     @TargetApi(Build.VERSION_CODES.KITKAT)
-    protected Writer getWriter(HttpURLConnection connection) throws IOException {
+    protected Writer getWriter(HttpsURLConnection connection) throws IOException {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             // GZIP if we are running SDK 19 or higher
             connection.addRequestProperty("Content-Encoding", "gzip");
