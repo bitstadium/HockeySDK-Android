@@ -1,6 +1,6 @@
 [![Slack Status](https://slack.hockeyapp.net/badge.svg)](https://slack.hockeyapp.net)
 
-## Version 5.1.1
+## Version 5.2.0
 
 HockeySDK-Android implements support for using HockeyApp in your Android applications.
 
