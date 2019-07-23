@@ -19,13 +19,7 @@ public abstract class ConnectionTask<Params, Progress, Result> extends AsyncTask
 
     protected static String getStringFromConnection(HttpsURLConnection connection) throws IOException {
         InputStream inputStream = null;
-        try {
-            inputStream = new BufferedInputStream(connection.getInputStream());
-            return Util.convertStreamToString(inputStream);
-        } finally {
-            if (inputStream != null) {
-                inputStream.close();
-            }
-        }
+        inputStream = new BufferedInputStream(connection.getInputStream());
+        return Util.convertStreamToString(inputStream);
     }
 }
