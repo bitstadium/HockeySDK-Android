@@ -281,7 +281,7 @@ public class Sender {
                     if (inputStream != null) {
                         inputStream.close();
                     }
-                } catch (IOException e) {
+                } catch (Exception e) {
                     HockeyLog.error(TAG, "Could not close input stream", e);
                 }
                 triggerSending();
@@ -409,7 +409,7 @@ public class Sender {
             if (inputStream != null) {
                 try {
                     inputStream.close();
-                } catch (IOException e) {
+                } catch (Exception e) {
                     HockeyLog.error(TAG, e.toString());
                 }
             }
