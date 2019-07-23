@@ -113,7 +113,6 @@ public class CheckUpdateTask extends AsyncTask<Void, String, JSONArray> {
 
             InputStream inputStream = new BufferedInputStream(connection.getInputStream());
             String jsonString = Util.convertStreamToString(inputStream);
-            inputStream.close();
 
             JSONArray json = new JSONArray(jsonString);
             if (findNewVersion(context, json, versionCode)) {
