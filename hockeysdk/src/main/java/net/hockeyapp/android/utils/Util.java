@@ -363,8 +363,10 @@ public class Util {
             HockeyLog.error("Failed to convert stream to string", e);
         } finally {
             try {
-                inputStream.close();
-            } catch (IOException ignored) {
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+            } catch (Exception ignored) {
             }
         }
         return stringBuilder.toString();
