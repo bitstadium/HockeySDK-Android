@@ -120,7 +120,7 @@ public class CheckUpdateTask extends AsyncTask<Void, String, JSONArray> {
                 json = limitResponseSize(json);
                 return json;
             }
-        } catch (Exception | JSONException e) {
+        } catch (IOException | JSONException e) {
             if(Util.isConnectedToNetwork(context)) {
                 HockeyLog.error("HockeyUpdate", "Could not fetch updates although connected to internet", e);
             }
