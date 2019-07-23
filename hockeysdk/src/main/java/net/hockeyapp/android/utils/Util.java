@@ -25,7 +25,6 @@ import android.view.accessibility.AccessibilityManager;
 import net.hockeyapp.android.R;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
@@ -261,7 +260,7 @@ public class Util {
         return false;
     }
 
-    public static HttpsURLConnection openHttpsConnection(URL url) throws IOException {
+    public static HttpsURLConnection openHttpsConnection(URL url) throws Exception {
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
 
         /*
@@ -359,12 +358,12 @@ public class Util {
             while ((line = reader.readLine()) != null) {
                 stringBuilder.append(line).append('\n');
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             HockeyLog.error("Failed to convert stream to string", e);
         } finally {
             try {
                 inputStream.close();
-            } catch (IOException ignored) {
+            } catch (Exception ignored) {
             }
         }
         return stringBuilder.toString();
