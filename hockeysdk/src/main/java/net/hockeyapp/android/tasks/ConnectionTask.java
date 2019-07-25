@@ -18,14 +18,7 @@ import javax.net.ssl.HttpsURLConnection;
 public abstract class ConnectionTask<Params, Progress, Result> extends AsyncTask<Params, Progress, Result> {
 
     protected static String getStringFromConnection(HttpsURLConnection connection) throws IOException {
-        InputStream inputStream = null;
-        try {
-            inputStream = new BufferedInputStream(connection.getInputStream());
-            return Util.convertStreamToString(inputStream);
-        } finally {
-            if (inputStream != null) {
-                inputStream.close();
-            }
-        }
+        InputStream inputStream = new BufferedInputStream(connection.getInputStream());
+        return Util.convertStreamToString(inputStream);
     }
 }
